@@ -1,0 +1,4 @@
+Set parameter LicenseID to value 2674428
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "en-cc-unicorn-data-dirs.coecis.cornell.edu"
+{"status": "passed", "checks": ["immutable CG/MIP sources, borrowed object stores and independent frozen previous-input gate checked", "six frozen k28 inputs and published parent gates checked", "12 frozen case inputs match manifest", "24 production CG/cache command lines pass actual parser", "2001-variable native Gurobi optimization passes size-unrestricted license", "instrumented/uninstrumented four-trip graphs have identical pickle SHA256", "native cache-required CG and full-pool inheritance both return usable LPs", "two-stage MIP with source hashes and physical replay passes"]}

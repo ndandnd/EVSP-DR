@@ -580,3 +580,10 @@ Validated15687 returncode0, watchdogfalse, schedulerCOMPLETED0:0, certified CG w
 
 
 Authoritative successor attempts are now37583/37584/37585 under w2_chain_recovery_retry2_20260912. Earlier37532/33 failed wrapper preflight (PYTHON_BIN missing),37534 blocked; preserve and never requeue blindly. Exact corrected preflight passed. First recovery root is still required for frozen inputs/cache and entry.py. Collector includes both roots. Same MIP cohort tracks all attempts.
+
+
+## 15 September04:19EDT verification;04:26EDT launch
+
+**Verified at 04:19 EDT, 15 September:** [Current results and source tables](../overnight_next_20260914/status_20260915T080947Z/README.md). Largest one-hour target matches by chain:26/27/27/26/26/27. C5 k27 has fractional route weight26 (CG time-capped). C1 k15 audit shows useful integer routes absent from compact pools and positive reduced cost at final LP duals. Larger compact starts:9 verified MIPs,7 targets,2 open C3 k20 gaps;15 remain unverified. Register3220records/72groups. New k29–30 extension launched separately04:26EDT, array224628,12graphs/12CG/12MIPs; [launch record](../chain_extension_20260915/README.md). Dashboard tables and explanations updated in place; figures preserved.
+
+Full snapshot SHA d8935da3e6760d8d1ad5073cb5168db634f00c5f824624ae40e7aab7377c537b;24running/6true dependencies,929preemption attempt records,none new confirmed. Larger compact late completion207675 has retained source/hash for next verification. Two longer searches220545/222757remain pending results. New extension is a separately dated launch, not a scientific endpoint in the earlier snapshot. k29–30 manifest c4cb5a25da20088354b312efdfbe1daa4c4d943c1e0d1feeae9b5576e7328d97, production36tasks after native validation; graph24hwatchdog/25hallocation, CG/MIP scientific budgets unchanged. Registry additions12under lock, collector mappings verified. No arbitrary throttle, true dependency removal, held/V2G changes or Slides edits. Morning consolidation around09:00EDT remains scheduled in the existing hourly heartbeat.

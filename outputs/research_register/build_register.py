@@ -208,7 +208,7 @@ class Register:
                 }
         self.extension_cases = {}
         self.extension_jobs = {}
-        for campaign_id in ("chain_extension_20260913", "chain_extension_20260914"):
+        for campaign_id in ("chain_extension_20260913", "chain_extension_20260914", "chain_extension_20260915"):
             extension = snapshot.get("campaigns", {}).get(campaign_id, {})
             extension_workflow = extension.get("workflow", {}) or {}
             self.extension_cases[campaign_id] = {

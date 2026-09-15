@@ -1,0 +1,484 @@
+--- outputs/chain_extension_20260914/campaign.py
++++ outputs/chain_extension_20260915/campaign.py
+@@ -1,4 +1,4 @@
+-"""Frozen k26–28 continuation: independent graphs, sequential CG, per-case MIPs."""
++"""Frozen k29–30 continuation: independent graphs, sequential CG, per-case MIPs."""
+ from pathlib import Path
+ import argparse
+ import datetime
+@@ -12,9 +12,9 @@
+ import sys
+ import time
+ 
+-B = Path('/home/nc437/ladder-lite/chain_extension_20260914')
+-D = Path('/share/scaglione/nc437/evsp-dr/chain_extension_20260914')
+-PARENT = Path('/home/nc437/ladder-lite/chain_extension_20260913')
++B = Path('/home/nc437/ladder-lite/chain_extension_20260915')
++D = Path('/share/scaglione/nc437/evsp-dr/chain_extension_20260915')
++PARENT = Path('/home/nc437/ladder-lite/chain_extension_20260914')
+ SOURCE = Path('/home/nc437/ladder-lite/graph_recovery_20260912/code')
+ COMMIT = 'a0e0bb7681c8451e3cbbbfa06aef390026d9af4b'
+ MIP_COMMIT = '871d057e1067411f09581e37d78f7c1ca43f68bb'
+@@ -63,6 +63,71 @@
+     assert sha(status) == gate['result_sha256']
+     assert sha(value['columns_journal']) == gate['journal_sha256']
+     return value
++
++
++def source_provenance(root, commit):
++    """Record the execution checkout and its complete borrowed object-store chain."""
++    root = Path(root)
++    assert git('rev-parse', 'HEAD', root=root) == commit
++    assert not git('status', '--porcelain', '--untracked-files=no', root=root)
++    assert subprocess.run(['git', '-C', str(root), 'symbolic-ref', '-q', 'HEAD'],
++                          capture_output=True).returncode == 1
++    stores = []; seen = set()
++    def visit(path):
++        path = Path(path).resolve()
++        if str(path) in seen: return
++        seen.add(str(path)); assert path.is_dir()
++        alternate = path/'info/alternates'
++        row = {'object_store': str(path), 'alternates': []}
++        if alternate.exists():
++            row['alternates_sha256'] = sha(alternate)
++            for line in alternate.read_text().splitlines():
++                target = (path/line).resolve()
++                row['alternates'].append(str(target))
++        stores.append(row)
++        for target in row['alternates']: visit(target)
++    visit(root/'.git/objects')
++    return {'root': str(root), 'commit': commit,
++            'tree': git('rev-parse', 'HEAD^{tree}', root=root),
++            'object_stores': stores,
++            'source_sha256': {str(p.relative_to(root)): sha(p) for p in (root/'src').glob('*.py')}}
++
++
++def initial_parent_gate(v, require_job=False):
++    """Authenticate frozen parent identity independently before any production launch."""
++    assert sha(PARENT/'manifest.json') == v['parent_manifest_sha256']
++    assert sha(PARENT/'case_jobs.json') == v['parent_case_jobs_sha256']
++    old = read(PARENT/'manifest.json'); old_jobs = read(PARENT/'case_jobs.json')
++    rows = {}
++    for chain, p in v['initial_parents'].items():
++        cid = p['parent_case_id']; case = old['cases'][cid]
++        child = v['cases'][v['warm_chains'][chain][0]]
++        assert child['previous_case'] == cid
++        assert child['previous_input_sha256'] == p['csv_sha256'] == case['input_sha256']
++        assert sha(PARENT/'code/data'/case['csv']) == p['csv_sha256']
++        assert sha(B/'code/data'/p['csv']) == p['csv_sha256']
++        assert p['parent_job_id'] == old_jobs[cid]['cg']
++        row = {'case_id': cid, 'parent_job_id': p['parent_job_id'], 'input_sha256': p['csv_sha256']}
++        if Path(p['status']).exists():
++            value = authenticate_parent(p['status'], p['csv_sha256'])
++            assert value['csv'] == p['csv']
++            row.update(status='published_authenticated', result_sha256=sha(p['status']),
++                       journal_sha256=sha(value['columns_journal']))
++            if p['published_at_prepare']:
++                assert row['result_sha256'] == p['status_sha256']
++                assert row['journal_sha256'] == p['journal_sha256']
++        else:
++            assert not p['published_at_prepare'], 'Frozen published parent disappeared'
++            row['status'] = 'pending_published_artifact'
++            if require_job:
++                state = subprocess.check_output([SLURM+'scontrol', 'show', 'job', p['parent_job_id'], '-o'], text=True, timeout=45)
++                assert 'JobState=PENDING' in state or 'JobState=RUNNING' in state
++                assert 'Command='+str(PARENT/'worker.sub')+' ' in state
++                assert 'JobName=drX_'+cid+'_cg ' in state
++                assert 'ExcNodeList=scaglione-compute-01' in state
++                row['scontrol'] = state
++        rows[chain] = row
++    return rows
+ 
+ 
+ def prepare():
+@@ -84,7 +149,7 @@
+     parents = {}; cases = {}; chains = {}
+     assert old['execution_commit'] == COMMIT
+     for chain in range(1, 7):
+-        key = str(chain); pid = f'w{chain}_k25'; pc = old['cases'][pid]
++        key = str(chain); pid = f'w{chain}_k28'; pc = old['cases'][pid]
+         previous = PARENT/'code/data'/pc['csv']; target = data/pc['csv']
+         assert sha(previous) == pc['input_sha256'] == source['cases'][pid]['input_sha256']
+         target.parent.mkdir(parents=True, exist_ok=True); shutil.copy2(previous, target)
+@@ -95,10 +160,10 @@
+         if status.exists():
+             authenticate_parent(status, pc['input_sha256'])
+             parents[key].update(status_sha256=sha(status), journal_sha256=sha(read(status)['columns_journal']))
+-        chains[key] = [f'w{chain}_k{k}' for k in range(26,29)]
++        chains[key] = [f'w{chain}_k{k}' for k in range(29,31)]
+         for pos,cid in enumerate(chains[key]):
+             spec = source['cases'][cid]
+-            rel = 'scale_ladder/instances/chain_extension_20260914/'+spec['csv']
++            rel = 'scale_ladder/instances/chain_extension_20260915/'+spec['csv']
+             target = data/rel; target.parent.mkdir(parents=True, exist_ok=True)
+             shutil.copy2(B/'inputs'/spec['csv'], target); assert sha(target) == spec['input_sha256']
+             cases[cid] = {**spec, 'stage_enabled': True, 'id': cid, 'csv': rel,
+@@ -119,15 +184,18 @@
+         'source_sha256': {str(p.relative_to(B/'code')): sha(p) for p in (B/'code/src').glob('*.py')},
+         'parent_manifest_sha256': sha(PARENT/'manifest.json'), 'parent_case_jobs_sha256': sha(PARENT/'case_jobs.json'),
+         'tooling_sha256': {p: sha(B/p) for p in ['campaign.py', 'graph_entry.py', 'worker.sub']},
+-        'graph_seconds': 43200, 'resources': {
+-            'cache': {'cpus': 2, 'mem': '64G', 'wall': '12:30:00'},
++        'source_provenance': {'cg': source_provenance(B/'code', COMMIT),
++                              'mip': source_provenance(MIP, MIP_COMMIT)},
++        'graph_seconds': 86400, 'resources': {
++            'cache': {'cpus': 2, 'mem': '64G', 'wall': '25:00:00'},
+             'cg': {'cpus': 8, 'mem': '96G', 'wall': '05:00:00'},
+             'mip': {'cpus': 8, 'mem': '24G', 'wall': '02:00:00'}},
+-        'cache_array_concurrency': 18, 'storage_root': str(D),
+-        'resource_basis': 'Parent750-trip graph used25.4GiB peak; frozen k26–28 graphs have564–674 trips; previous750-trip graph hit12.5h wallcap, so completion is uncertain.64GiB requests allow headroom. CG96GiB and MIP24GiB retain successful k15 requests. Slurm admits jobs by real resources; six CG chains are true data dependencies.',
++        'cache_array_concurrency': 12, 'storage_root': str(D),
++        'resource_basis': 'Campaign14 C1 k28 graph187967_2 failed124 after12:01:11 at its12h native watchdog, within its12:30 Slurm allocation (sacct); recovery job189917 uses24h native watchdog and24:30 allocation. Larger k29–30 graphs therefore use a 24h native watchdog and 25h Slurm allocation, with graph preparation timed separately. Prior750-trip graph used25.4GiB peak; 64GiB retains headroom. CG96GiB and MIP24GiB retain successful requests. All12 independent graphs are eligible; six CG chains retain true previous-k data dependencies.',
+         'graph_change': 'Only source diff from baseline e091a4d is validated deferred JSON tie-key evaluation; original graph winner/order rule unchanged. Coarse synchronous progress wrapper is separate tooling.',
+         'requeue_policy': 'Automatic scheduler preemption requeue uses unique stage/job/restart directories. CG resumes a copied identity-validated checkpoint; graph starts fresh if unpublished; MIP starts a fresh tree. No blind retry of algorithmic/time-limit failure.',
+         'borrowed_object_store': str(SOURCE/'.git/objects')}
++    v['parent_gate_at_prepare'] = initial_parent_gate(v, require_job=True)
+     save(B/'manifest.json', v)
+     print(json.dumps({'prepared_cases': len(cases), 'manifest_sha256': sha(B/'manifest.json')}))
+ 
+@@ -203,6 +271,8 @@
+                       parent_journal_sha256=sha(value['columns_journal']))
+         initial = v['initial_parents'][str(c['chain'])]
+         if str(parent) == initial['status']:
++            assert c['previous_case'] == initial['parent_case_id']
++            assert c['previous_input_sha256'] == initial['csv_sha256']
+             assert sha(PARENT/'manifest.json') == initial['parent_manifest_sha256']
+             authenticate_parent(parent, initial['csv_sha256'])
+             if initial['published_at_prepare']:
+@@ -228,7 +298,8 @@
+             args += ['--resume']; break
+         limit = 16200
+     elif mode == 'mip':
+-        status = root/'cg.json'; value = read(status); assert usable(value)
++        status = root/'cg.json'; value = authenticate_parent(status, c['input_sha256'])
++        assert source_provenance(MIP, v['mip_execution_commit']) == v['source_provenance']['mip']
+         os.environ.update(EVSP_EXPECTED_COMMIT=v['mip_execution_commit'], EVSP_REQUIRE_DETACHED='1',
+             EVSP_MIP_EXPECTED_RESULT_SHA256=sha(status), EVSP_MIP_EXPECTED_JOURNAL_SHA256=sha(value['columns_journal']))
+         out = a/'result.json'
+@@ -285,19 +356,58 @@
+             'source_status_sha256': record['source_status_sha256'], 'execution_commit': v['mip_execution_commit']})
+ 
+ 
+-def submit():
++def submission_args(v, mode, cid, dependencies=(), array=None):
++    r = v['resources'][mode]
++    args = [SLURM+'sbatch', '--parsable', '--partition=default_partition', '--exclude=scaglione-compute-01',
++        '--cpus-per-task='+str(r['cpus']), '--mem='+r['mem'], '--time='+r['wall'], '--requeue',
++        '--kill-on-invalid-dep=yes', '--job-name=drX_'+('graphs' if array else cid+'_'+mode),
++        '--output='+str(B/'logs/%x_%A_%a_%j.out'), '--error='+str(B/'logs/%x_%A_%a_%j.err')]
++    if dependencies: args += ['--dependency=afterok:'+':'.join(dependencies)]
++    if array: args += ['--array='+array]
++    return args+[str(B/'worker.sub'), mode, cid]
++
++
++def prelaunch():
+     assert (B/'validation.json').exists(), 'Complete validation before submission'
+     assert not (B/'jobs.json').exists(), 'Do not duplicate this campaign'
++    v = read(B/'manifest.json'); validation = read(B/'validation.json')
++    assert validation['status'] == 'passed'
++    assert validation['tooling_sha256'] == v['tooling_sha256']
++    assert validation['manifest_sha256'] == sha(B/'manifest.json')
++    assert validation['validator_sha256'] == sha(B/'validate.py')
++    assert validation['input_validation_sha256'] == sha(B/'input_validation.json')
++    for name, digest in v['tooling_sha256'].items(): assert sha(B/name) == digest
++    for kind, root in [('cg', B/'code'), ('mip', MIP)]:
++        assert source_provenance(root, v['source_provenance'][kind]['commit']) == v['source_provenance'][kind]
++    return initial_parent_gate(v, require_job=True)
++
++
++def plan():
++    gate = prelaunch(); v = read(B/'manifest.json'); ids = sorted(v['cases']); rows = []
++    array = f'0-{len(ids)-1}%{v["cache_array_concurrency"]}'
++    rows.append({'mode': 'cache', 'case_id': 'array', 'job_symbol': 'GRAPH_ARRAY',
++                 'argv': submission_args(v, 'cache', 'array', array=array)})
++    for chain, chain_ids in v['warm_chains'].items():
++        p = v['initial_parents'][chain]
++        previous = None if gate[chain]['status'] == 'published_authenticated' else p['parent_job_id']
++        for cid in chain_ids:
++            cg = 'CG_'+cid; deps = ['GRAPH_ARRAY_'+str(ids.index(cid))]+([previous] if previous else [])
++            rows += [{'mode': 'cg', 'case_id': cid, 'job_symbol': cg, 'dependencies': deps,
++                      'argv': submission_args(v, 'cg', cid, deps)},
++                     {'mode': 'mip', 'case_id': cid, 'job_symbol': 'MIP_'+cid, 'dependencies': [cg],
++                      'argv': submission_args(v, 'mip', cid, [cg])}]
++            previous = cg
++    save(B/'submission_plan.json', {'status': 'review_only_not_submitted', 'manifest_sha256': sha(B/'manifest.json'),
++        'parent_gate': gate, 'jobs': rows, 'individual_tasks': 36, 'graph_concurrency': 12,
++        'production_command': [PY, str(B/'campaign.py'), 'submit']})
++    print(json.dumps({'plan': str(B/'submission_plan.json'), 'submission_calls': len(rows), 'individual_tasks': 36}))
++
++
++def submit():
++    prelaunch()
+     v = read(B/'manifest.json'); jobs = []; mapping = {}; ids = sorted(v['cases'])
+     def launch(mode, cid, dependencies=(), array=None):
+-        r = v['resources'][mode]
+-        args = [SLURM+'sbatch', '--parsable', '--partition=default_partition', '--exclude=scaglione-compute-01',
+-            '--cpus-per-task='+str(r['cpus']), '--mem='+r['mem'], '--time='+r['wall'], '--requeue',
+-            '--kill-on-invalid-dep=yes', '--job-name=drX_'+('graphs' if array else cid+'_'+mode),
+-            '--output='+str(B/'logs/%x_%A_%a_%j.out'), '--error='+str(B/'logs/%x_%A_%a_%j.err')]
+-        if dependencies: args += ['--dependency=afterok:'+':'.join(dependencies)]
+-        if array: args += ['--array='+array]
+-        args += [str(B/'worker.sub'), mode, cid]
++        args = submission_args(v, mode, cid, dependencies, array)
+         response = subprocess.run(args, capture_output=True, text=True, check=True)
+         job = response.stdout.strip().split(';')[0]; assert job.isdigit()
+         row = {'job_id': job, 'mode': mode, 'case_id': cid, 'dependencies': list(dependencies),
+@@ -305,10 +415,10 @@
+         jobs.append(row); save(B/'jobs.json', jobs)
+         state = subprocess.check_output([SLURM+'scontrol', 'show', 'job', job, '-o'], text=True)
+         assert 'ExcNodeList=scaglione-compute-01' in state and 'Partition=default_partition' in state
+-        if array: assert 'ArrayTaskThrottle=18' in state
++        if array: assert 'ArrayTaskThrottle=12' in state
+         row['scontrol'] = state; save(B/'jobs.json', jobs)
+         return job
+-    graph = launch('cache', 'array', array=f'0-{len(ids)-1}%18')
++    graph = launch('cache', 'array', array=f'0-{len(ids)-1}%12')
+     index = {cid: str(i) for i, cid in enumerate(ids)}
+     # Each k depends only on its graph and the previous CG, never the previous MIP.
+     for chain, chain_ids in v['warm_chains'].items():
+@@ -323,13 +433,14 @@
+             cg = launch('cg', cid, deps); mip = launch('mip', cid, [cg])
+             mapping[cid] = {'cache': graph+'_'+index[cid], 'cg': cg, 'mip': mip}
+             previous = cg; save(B/'case_jobs.json', mapping)
+-    print(json.dumps({'graph_array': graph, 'independent_graph_tasks': len(ids), 'graph_concurrency': 18,
++    print(json.dumps({'graph_array': graph, 'independent_graph_tasks': len(ids), 'graph_concurrency': 12,
+         'cg_jobs': len(mapping), 'mip_jobs': len(mapping), 'sequential_chains': len(v['warm_chains'])}))
+ 
+ 
+ if __name__ == '__main__':
+-    parser = argparse.ArgumentParser(); parser.add_argument('command', choices=['prepare', 'submit', 'worker'])
++    parser = argparse.ArgumentParser(); parser.add_argument('command', choices=['prepare', 'plan', 'submit', 'worker'])
+     parser.add_argument('mode', nargs='?'); parser.add_argument('case', nargs='?'); args = parser.parse_args()
+     if args.command == 'prepare': prepare()
++    elif args.command == 'plan': plan()
+     elif args.command == 'submit': submit()
+     else: worker(args.mode, args.case)
+--- outputs/chain_extension_20260914/validate.py
++++ outputs/chain_extension_20260915/validate.py
+@@ -3,17 +3,22 @@
+ from pathlib import Path
+ from unittest import mock
+ import campaign as c
+-v=c.read(c.B/'manifest.json'); out=c.B/'validation'; out.mkdir(exist_ok=True)
++v=c.read(c.B/'manifest.json'); out=c.B/'validation'/('job_'+os.environ.get('SLURM_JOB_ID','local')); out.mkdir(parents=True,exist_ok=False)
+ checks=[]
++c.initial_parent_gate(v, require_job=True)
++for kind,root in [('cg',c.B/'code'),('mip',c.MIP)]:
++    assert c.source_provenance(root,v['source_provenance'][kind]['commit']) == v['source_provenance'][kind]
++assert c.read(c.B/'input_validation.json')['status'] == 'passed'
++checks.append('immutable CG/MIP sources, borrowed object stores and independent frozen previous-input gate checked')
+ for chain,p in v['initial_parents'].items():
+     assert c.sha(c.PARENT/'manifest.json') == p['parent_manifest_sha256']
+     assert c.sha(c.B/'code/data'/p['csv']) == p['csv_sha256']
+     if Path(p['status']).exists(): c.authenticate_parent(p['status'],p['csv_sha256'])
+-checks.append('six frozen k25 inputs and published parent gates checked')
++checks.append('six frozen k28 inputs and published parent gates checked')
+ for case in v['cases'].values():
+     assert c.sha(c.B/'code/data'/case['csv'])==case['input_sha256']
+-assert len(v['cases'])==18 and len(v['warm_chains'])==6
+-checks.append('18 frozen case inputs match manifest')
++assert len(v['cases'])==12 and len(v['warm_chains'])==6
++checks.append('12 frozen case inputs match manifest')
+ sys.path.insert(0,str(c.B/'code/src'))
+ import exact_pricer_expanded as exact
+ for case in v['cases'].values():
+@@ -21,18 +26,18 @@
+         with mock.patch.object(exact,'run_cg',return_value={}) as run:
+             assert exact.main(c.cg_argv(v,case,out/'parser.json',cache_only))==0
+             run.assert_called_once()
+-checks.append('36 production CG/cache command lines pass actual parser')
++checks.append('24 production CG/cache command lines pass actual parser')
+ import gurobipy as gp
+ m=gp.Model('extension_license_2001'); m.Params.OutputFlag=0; m.Params.Threads=1
+ x=m.addVars(2001,lb=0,ub=1,obj=1); m.addConstr(gp.quicksum(x.values())>=1);m.optimize()
+ assert m.Status==gp.GRB.OPTIMAL; m.dispose()
+ checks.append('2001-variable native Gurobi optimization passes size-unrestricted license')
+-source=c.B/'code/data'/v['cases']['w1_k26']['csv']
++source=c.B/'code/data'/v['cases']['w1_k29']['csv']
+ with source.open() as f: r=csv.DictReader(f); fields=r.fieldnames; rows=list(r)[:4]
+-rel='scale_ladder/instances/chain_extension_20260914/validation_four_trips.csv'
++rel='scale_ladder/instances/chain_extension_20260915/validation_four_trips.csv'
+ with (c.B/'code/data'/rel).open('w') as f:
+     w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(rows)
+-tiny={**v['cases']['w1_k26'],'csv':rel,'cg_seconds':90,'cache':str(out/'plain.pkl')}
++tiny={**v['cases']['w1_k29'],'csv':rel,'cg_seconds':90,'cache':str(out/'plain.pkl')}
+ def run(name,args,timeout=180):
+     with (out/(name+'.log')).open('w') as log:
+         p=subprocess.run(args,cwd=c.B/'code',stdout=log,stderr=subprocess.STDOUT,timeout=timeout)
+@@ -57,5 +62,5 @@
+ run('mip',[c.PY,str(c.MIP/'src/run_exact_pool_mip.py'),'--result',str(child),'--data-dir',str(c.B/'code/data'),'--reference-data-dir',str(c.B/'code/data'),'--cover','--two-stage','--timelimit','30','--stage1-timelimit','15','--threads','2','--mipgap','0.0001','--gurobi-log',str(out/'mip.gurobi.log'),'--out',str(out/'mip.json')])
+ assert c.read(out/'mip.json').get('physical_replay_validated') is True
+ checks.append('two-stage MIP with source hashes and physical replay passes')
+-c.save(c.B/'validation.json',{'status':'passed','checks':checks,'slurm_job_id':os.environ.get('SLURM_JOB_ID'),'execution_commit':v['execution_commit'],'tooling_sha256':v['tooling_sha256'],'validator_sha256':c.sha(__file__),'artifacts':{p.name:c.sha(p) for p in out.iterdir() if p.is_file() and p.suffix in ['.json','.log']}})
++c.save(c.B/'validation.json',{'status':'passed','checks':checks,'slurm_job_id':os.environ.get('SLURM_JOB_ID'),'execution_commit':v['execution_commit'],'tooling_sha256':v['tooling_sha256'],'validator_sha256':c.sha(__file__),'manifest_sha256':c.sha(c.B/'manifest.json'),'input_validation_sha256':c.sha(c.B/'input_validation.json'),'artifact_directory':str(out),'artifacts':{p.name:c.sha(p) for p in out.iterdir() if p.is_file() and p.suffix in ['.json','.log','.jsonl','.pkl']}})
+ print(json.dumps({'status':'passed','checks':checks}),flush=True)
+--- outputs/chain_extension_20260914/worker.sub
++++ outputs/chain_extension_20260915/worker.sub
+@@ -6,6 +6,6 @@
+ export PYTHONHASHSEED=0
+ export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+ export PYTHON_BIN=/home/nc437/evsp_env/bin/python
+-export EVSP_EXTENSION_ROOT=/home/nc437/ladder-lite/chain_extension_20260914
++export EVSP_EXTENSION_ROOT=/home/nc437/ladder-lite/chain_extension_20260915
+ source "$EVSP_EXTENSION_ROOT/code/scripts/event_uniform_envelope/gurobi_worker_preflight.sh"
+ exec "$PYTHON_BIN" -u "$EVSP_EXTENSION_ROOT/campaign.py" worker "$@"
+--- outputs/chain_extension_20260914/validate.sub
++++ outputs/chain_extension_20260915/validate.sub
+@@ -4,4 +4,4 @@
+ export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+ export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 PYTHONHASHSEED=0
+ export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+-exec /home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/chain_extension_20260914/validate.py
++exec /home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/chain_extension_20260915/validate.py
+--- outputs/chain_extension_20260914/verify_launch.py
++++ outputs/chain_extension_20260915/verify_launch.py
+@@ -3,14 +3,14 @@
+ from pathlib import Path
+ import campaign as c
+ v=c.read(c.B/'manifest.json'); jobs=c.read(c.B/'jobs.json'); mapping=c.read(c.B/'case_jobs.json')
+-assert len(jobs)==37 and len(mapping)==18
++assert len(jobs)==25 and len(mapping)==12
+ ids=sorted(v['cases']);graph=jobs[0]['job_id'];cohort=[];states={}
+ for row in jobs:
+  text=subprocess.check_output([c.SLURM+'scontrol','show','job',row['job_id'],'-o'],text=True)
+  assert 'ExcNodeList=scaglione-compute-01' in text and 'Partition=default_partition' in text
+  assert 'MinMemoryNode='+v['resources'][row['mode']]['mem'] in text
+  states[row['job_id']]=text
+- if row['mode']=='cache':assert 'ArrayTaskThrottle=18' in text
++ if row['mode']=='cache':assert 'ArrayTaskThrottle=12' in text
+ byid={x['job_id']:x for x in jobs}
+ for chain,chain_ids in v['warm_chains'].items():
+  previous=None
+@@ -25,9 +25,9 @@
+   else:assert cg['dependencies']==expected
+   assert mip['dependencies']==[m['cg']]
+   previous=m['cg']
+-  cohort.append({'job_id':m['mip'],'case_id':cid,'cohort':'default_chain_extension_3600','solver_budget_s':3600,'result_path':str(c.B/'cases'/cid/'mip_result.json'),'attempt_tag':'chain_extension_20260914','requeue':True})
++  cohort.append({'job_id':m['mip'],'case_id':cid,'cohort':'default_chain_extension_3600','solver_budget_s':3600,'result_path':str(c.B/'cases'/cid/'mip_result.json'),'attempt_tag':'chain_extension_20260915','requeue':True})
+ squeue=subprocess.check_output([c.SLURM+'squeue','-r','-j',','.join(x['job_id'] for x in jobs),'-h','-o','%i|%T|%R|%m|%C|%P'],text=True)
+ sacct=subprocess.check_output([c.SLURM+'sacct','-j',','.join(x['job_id'] for x in jobs),'--format=JobID,State,ExitCode,Elapsed,ReqMem,AllocCPUS','-n','-P'],text=True)
+-c.save(c.B/'launch_verification.json',{'verified_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'manifest_sha256':c.sha(c.B/'manifest.json'),'jobs_sha256':c.sha(c.B/'jobs.json'),'case_jobs_sha256':c.sha(c.B/'case_jobs.json'),'production_tasks':54,'independent_graphs':18,'cg_jobs':18,'mip_jobs':18,'all_resources_exclusions_dependencies_verified':True,'scontrol':states,'squeue':squeue,'sacct':sacct})
++c.save(c.B/'launch_verification.json',{'verified_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'manifest_sha256':c.sha(c.B/'manifest.json'),'jobs_sha256':c.sha(c.B/'jobs.json'),'case_jobs_sha256':c.sha(c.B/'case_jobs.json'),'production_tasks':36,'independent_graphs':12,'cg_jobs':12,'mip_jobs':12,'all_resources_exclusions_dependencies_verified':True,'scontrol':states,'squeue':squeue,'sacct':sacct})
+ c.save(c.B/'mip_registry_additions.json',cohort)
+ print(json.dumps({'graph_array':graph,'jobs':len(jobs),'cases':len(mapping),'squeue':squeue}))
+--- outputs/chain_extension_20260914/audit_inputs.py
++++ outputs/chain_extension_20260915/audit_inputs.py
+@@ -0,0 +1,84 @@
++"""Read-only verification of staged inputs, frozen duty prefixes and launch collisions."""
++import csv
++import datetime
++from pathlib import Path
++import campaign as c
++
++
++def rows(path):
++    with Path(path).open() as stream:
++        reader = csv.DictReader(stream); result = list(reader)
++    indexed = {r['Ordered_Trip_ID']: r for r in result}
++    assert len(indexed) == len(result), (path, 'duplicate stable trip ID')
++    return indexed
++
++
++v = c.read(c.B/'manifest.json')
++frozen = c.read(c.B/'inputs/manifest.json')
++parent_manifest = c.read(c.PARENT/'manifest.json')
++assert v['scientific_settings'] == parent_manifest['scientific_settings']
++assert v['execution_commit'] == parent_manifest['execution_commit'] == c.COMMIT
++assert v['mip_execution_commit'] == parent_manifest['mip_execution_commit'] == c.MIP_COMMIT
++for mode in ['cg', 'mip']: assert v['resources'][mode] == parent_manifest['resources'][mode]
++assert all(case['cg_seconds'] == 14400 for case in v['cases'].values())
++original = c.PARENT.parent/'chain_extension_20260913/inputs'
++assert c.sha(original/'manifest.json') == v['input_manifest_sha256']
++assert c.sha(c.PARENT/'inputs/manifest.json') == v['input_manifest_sha256']
++assert len(frozen['cases']) == 150
++checks = []
++for chain in range(1, 7):
++    previous_id = f'w{chain}_k28'
++    p = v['initial_parents'][str(chain)]
++    previous = rows(c.PARENT/'code/data'/p['csv'])
++    assert c.sha(original/frozen['cases'][previous_id]['csv']) == p['csv_sha256']
++    assert c.sha(c.PARENT/'inputs'/frozen['cases'][previous_id]['csv']) == p['csv_sha256']
++    assert c.sha(c.B/'code/data'/p['csv']) == p['csv_sha256']
++    for k in [29, 30]:
++        cid = f'w{chain}_k{k}'; spec = frozen['cases'][cid]; case = v['cases'][cid]
++        staged = c.B/'inputs'/spec['csv']
++        assert c.sha(staged) == c.sha(original/spec['csv']) == spec['input_sha256']
++        assert c.sha(c.B/'code/data'/case['csv']) == spec['input_sha256']
++        assert spec['previous_case'] == previous_id
++        assert spec['previous_input_sha256'] == frozen['cases'][previous_id]['input_sha256']
++        old_spec = frozen['cases'][previous_id]
++        assert spec['duties'][:-1] == old_spec['duties']
++        assert spec['duties'][-1] == spec['added_duty'] == frozen['chains'][str(chain)]['added_duty_order'][k-16]
++        assert len({''.join(x for x in d if x.isdigit()) for d in spec['duties']}) == k
++        current = rows(staged)
++        assert len(current) == spec['trip_count']
++        assert set(previous) <= set(current)
++        for trip_id, old_row in previous.items():
++            assert {k: value for k, value in old_row.items() if k != 'count_trip_id'} == {
++                k: value for k, value in current[trip_id].items() if k != 'count_trip_id'}
++        assert len(current)-len(previous) == spec['added_trip_count']
++        checks.append({'case_id': cid, 'input_sha256': c.sha(staged),
++            'original_csv': str(original/spec['csv']), 'previous_case': previous_id,
++            'previous_input_sha256': spec['previous_input_sha256'], 'trips': len(current),
++            'added_trips': len(current)-len(previous), 'added_duty': spec['added_duty'],
++            'stable_nesting': True, 'previous_attributes_unchanged_except_count_trip_id': True})
++        previous_id = cid; previous = current
++
++scanned = []; collisions = []
++for path in sorted(c.B.parent.glob('*/case_jobs.json')):
++    if path.parent == c.B: continue
++    mapping = c.read(path); overlap = set(mapping) & set(v['cases'])
++    scanned.append({'path': str(path), 'sha256': c.sha(path), 'overlapping_case_ids': sorted(overlap)})
++    if not overlap: continue
++    manifest_path = path.parent/'manifest.json'
++    if not manifest_path.is_file():
++        collisions.append({'path': str(path), 'reason': 'unresolved overlapping case IDs'}); continue
++    other = c.read(manifest_path)
++    for cid in overlap:
++        if other.get('cases', {}).get(cid, {}).get('input_sha256') == v['cases'][cid]['input_sha256']:
++            collisions.append({'path': str(path), 'case_id': cid, 'jobs': mapping[cid]})
++assert not collisions, collisions
++c.save(c.B/'input_validation.json', {'status': 'passed',
++    'checked_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
++    'manifest_sha256': c.sha(c.B/'manifest.json'), 'input_manifest_sha256': v['input_manifest_sha256'],
++    'frozen_original_manifest_sha256': c.sha(original/'manifest.json'), 'random_redraw': False,
++    'source_generator_manifest_case_count': len(frozen['cases']),
++    'staged_case_count': len(checks), 'cases': checks,
++    'scientific_settings_equal_parent': True, 'execution_commits_equal_parent': True,
++    'cg_mip_requests_equal_parent': True,
++    'equivalent_submitted_case_collisions': collisions, 'collision_scan': scanned})
++print('PASS: 12 frozen inputs, six k28 parents, stable trip nesting and launch-collision checks')
+--- outputs/chain_extension_20260914/submit_validation.py
++++ outputs/chain_extension_20260915/submit_validation.py
+@@ -0,0 +1,16 @@
++"""Submit the bounded native fixture only; no production jobs."""
++import datetime
++import subprocess
++import campaign as c
++assert c.read(c.B/'input_validation.json')['status']=='passed'
++assert not (c.B/'validation_submission.json').exists()
++args=[c.SLURM+'sbatch','--parsable','--partition=default_partition','--exclude=scaglione-compute-01',
++ '--cpus-per-task=2','--mem=8G','--time=00:15:00','--no-requeue','--job-name=drX29_native_validate',
++ '--output='+str(c.B/'logs/native_validation_%j.out'),'--error='+str(c.B/'logs/native_validation_%j.err'),str(c.B/'validate.sub')]
++response=subprocess.run(args,check=True,capture_output=True,text=True)
++job=response.stdout.strip().split(';')[0];assert job.isdigit()
++c.save(c.B/'validation_submission.json',{'job_id':job,'argv':args,'submitted_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'research_result':False})
++state=subprocess.check_output([c.SLURM+'scontrol','show','job',job,'-o'],text=True)
++assert 'ExcNodeList=scaglione-compute-01' in state and 'Partition=default_partition' in state
++c.save(c.B/'validation_scheduler_initial.json',{'job_id':job,'scontrol':state})
++print(job,flush=True)
+--- outputs/chain_extension_20260914/amend_resource_evidence.py
++++ outputs/chain_extension_20260915/amend_resource_evidence.py
+@@ -0,0 +1,12 @@
++"""Preserve the first passed fixture and correct the measured timeout description."""
++import campaign as c
++v=c.read(c.B/'manifest.json')
++old=c.sha(c.B/'manifest.json')
++for name in ['manifest.json','input_validation.json','validation.json','validation_submission.json','validation_scheduler_initial.json']:
++ p=c.B/name
++ if p.exists(): p.rename(c.B/'preparation'/('before_resource_evidence_'+name))
++v['resource_basis']=v['resource_basis'].replace('Campaign14 C1 k28 native graph exceeded its original 12.5h Slurm allocation; recovery job189917 uses a longer allowance.', 'Campaign14 C1 k28 graph187967_2 failed124 after12:01:11 at its12h native watchdog, within its12:30 Slurm allocation (sacct); recovery job189917 uses24h native watchdog and24:30 allocation.')
++v['tooling_sha256']['campaign.py']=c.sha(c.B/'campaign.py')
++v['prelaunch_amendment']={'superseded_manifest_sha256':old,'reason':'Correct timeout cause from native12h watchdog evidence; resources and scientific settings unchanged. Add explicit validation-tooling hash equality gate. Repeat bounded native fixture against final manifest.', 'resource_evidence':'preparation/graph_resource_evidence.txt','resource_evidence_sha256':c.sha(c.B/'preparation/graph_resource_evidence.txt'),'superseded_validation_job':'224563'}
++c.save(c.B/'manifest.json',v)
++print(c.sha(c.B/'manifest.json'))

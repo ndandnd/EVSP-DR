@@ -1,0 +1,17 @@
+Set parameter LicenseID to value 2674428
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "en-cc-unicorn-data-dirs.coecis.cornell.edu"
+[GUROBI] preflight OK 12.0.3
+RUN ["/home/nc437/evsp_env/bin/python", "/home/nc437/ladder-lite/chain_extension_20260915/graph_entry.py", "/home/nc437/ladder-lite/chain_extension_20260915/code", "/home/nc437/ladder-lite/chain_extension_20260915/cases/w1_k30/cache/224654_r0/progress.jsonl", "--csv", "scale_ladder/instances/chain_extension_20260915/w1_k30.csv", "--prices_csv", "hourly_prices_flat.csv", "--time-model", "event", "--event-arc-mode", "lazy", "--event-network-cache", "/home/nc437/ladder-lite/chain_extension_20260915/cases/w1_k30/cache/224654_r0/network.pkl", "--event-network-cache-mode", "build-or-load", "--fixed-sequence-index", "--soc-step", "2.5", "--block-min", "5", "--max-iters", "50000", "--columns_per_iter", "30", "--column-selection", "reduced_cost", "--column-diversity-weight", "0.0", "--column-candidate-multiplier", "4", "--rc-eps", "0.0001", "--master-sense", "cover", "--master-backend", "gurobi", "--initial-pool", "singletons", "--wall-limit-s", "86400", "--checkpoint-every", "25", "--g-kwh", "240", "--charge-kw", "240", "--min-soc-frac", "0", "--event-network-cache-only"]
+GRAPH_PROGRESS {"elapsed_s": 0.0005773431621491909, "event": "start", "peak_rss_kib": 102088, "phase": "entry", "pid": 2060754}
+Set parameter LicenseID to value 2674428
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "en-cc-unicorn-data-dirs.coecis.cornell.edu"
+GRAPH_PROGRESS {"elapsed_s": 0.034608997870236635, "event": "start", "peak_rss_kib": 111436, "phase": "build_problem", "pid": 2060754}
+GRAPH_PROGRESS {"duration_s": 7.277179457247257, "elapsed_s": 7.313202339224517, "event": "complete", "peak_rss_kib": 204952, "phase": "build_problem", "pid": 2060754}
+GRAPH_PROGRESS {"elapsed_s": 7.365450725890696, "event": "start", "peak_rss_kib": 204952, "phase": "_split_arcs", "pid": 2060754}
+GRAPH_PROGRESS {"duration_s": 0.008615498896688223, "elapsed_s": 7.375423063058406, "event": "complete", "peak_rss_kib": 204952, "phase": "_split_arcs", "pid": 2060754}
+GRAPH_PROGRESS {"elapsed_s": 7.376816200092435, "event": "start", "peak_rss_kib": 204952, "phase": "_build_nodes", "pid": 2060754}
+GRAPH_PROGRESS {"duration_s": 0.07471876358613372, "elapsed_s": 7.452538866084069, "event": "complete", "peak_rss_kib": 204952, "phase": "_build_nodes", "pid": 2060754}
+GRAPH_PROGRESS {"elapsed_s": 7.4539419752545655, "event": "start", "peak_rss_kib": 204952, "phase": "_build_arcs", "pid": 2060754}
+GRAPH_PROGRESS {"elapsed_s": 7.463009994011372, "event": "progress", "finished_sources": 1, "peak_rss_kib": 204952, "phase": "_build_arcs", "pid": 2060754, "source": 0, "stored_arcs": 706, "total_sources": 62174}

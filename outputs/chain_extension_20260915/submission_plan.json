@@ -1,0 +1,716 @@
+{
+  "status": "review_only_not_submitted",
+  "manifest_sha256": "c4cb5a25da20088354b312efdfbe1daa4c4d943c1e0d1feeae9b5576e7328d97",
+  "parent_gate": {
+    "1": {
+      "case_id": "w1_k28",
+      "parent_job_id": "187972",
+      "input_sha256": "befe75d690efd98b2e7b25b5d7426f69e3a8a5720d5307d9fdad0fe03c130dbf",
+      "status": "pending_published_artifact",
+      "scontrol": "JobId=187972 JobName=drX_w1_k28_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14551 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:189917(unfulfilled),afterok:187970(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:16 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:16 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w1_k28_cg_187972_4294967294_187972.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w1_k28_cg_187972_4294967294_187972.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+    },
+    "2": {
+      "case_id": "w2_k28",
+      "parent_job_id": "187978",
+      "input_sha256": "996e242f858fa4f89de7bd3c73fd4e0ef4af063b42994067789c48767ca2a40f",
+      "status": "pending_published_artifact",
+      "scontrol": "JobId=187978 JobName=drX_w2_k28_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14551 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=01:30:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:21 EligibleTime=2026-09-15T02:53:43 AccrueTime=2026-09-15T02:53:43 StartTime=2026-09-15T02:53:43 EndTime=2026-09-15T07:53:43 Deadline=N/A PreemptEligibleTime=2026-09-15T02:53:43 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-15T02:53:43 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList=unicorn-cpu-73 BatchHost=unicorn-cpu-73 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=cpu=8,mem=96G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w2_k28_cg_187978_4294967294_187978.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w2_k28_cg_187978_4294967294_187978.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+    },
+    "3": {
+      "case_id": "w3_k28",
+      "parent_job_id": "187984",
+      "input_sha256": "f412c76bfb62d9df3c06dd16f8df890734330595df0d622c4507ccb5e80d3b3d",
+      "status": "published_authenticated",
+      "result_sha256": "2945438839ca8f108f82656cf57214e360f04e54171fce6a59448c8ea73d0f89",
+      "journal_sha256": "eb16dd14e049263c8d233ba1a78c90dfe55e38b02215d6cff0a45750e21becc9"
+    },
+    "4": {
+      "case_id": "w4_k28",
+      "parent_job_id": "187990",
+      "input_sha256": "99bee86081fdd454961efb00daf9abec09ee45bd03b8cc3bf42c67dff0c21294",
+      "status": "pending_published_artifact",
+      "scontrol": "JobId=187990 JobName=drX_w4_k28_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14551 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:07:58 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:26 EligibleTime=2026-09-15T04:15:49 AccrueTime=2026-09-15T04:15:49 StartTime=2026-09-15T04:15:49 EndTime=2026-09-15T09:15:49 Deadline=N/A PreemptEligibleTime=2026-09-15T04:15:49 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-15T04:15:49 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList=unicorn-cpu-75 BatchHost=unicorn-cpu-75 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=cpu=8,mem=96G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w4_k28_cg_187990_4294967294_187990.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w4_k28_cg_187990_4294967294_187990.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+    },
+    "5": {
+      "case_id": "w5_k28",
+      "parent_job_id": "187996",
+      "input_sha256": "1d9f80b86d85e7f43ea37aeab36524dbedd518a397d2ec68a1450811332e14f5",
+      "status": "pending_published_artifact",
+      "scontrol": "JobId=187996 JobName=drX_w5_k28_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14551 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:14:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:27 EligibleTime=2026-09-15T04:09:19 AccrueTime=2026-09-15T04:09:19 StartTime=2026-09-15T04:09:48 EndTime=2026-09-15T09:09:48 Deadline=N/A PreemptEligibleTime=2026-09-15T04:09:48 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-15T04:09:48 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList=unicorn-cpu-74 BatchHost=unicorn-cpu-74 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=cpu=8,mem=96G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w5_k28_cg_187996_4294967294_187996.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w5_k28_cg_187996_4294967294_187996.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+    },
+    "6": {
+      "case_id": "w6_k28",
+      "parent_job_id": "188002",
+      "input_sha256": "079b3d554782ac880851b50507d08039385da1995a612dd632c6d76c71526bdf",
+      "status": "published_authenticated",
+      "result_sha256": "f7500c57a0736d69df0b1841acf5f8c7e2b9a27a402745cef5d7ebffe9027950",
+      "journal_sha256": "69b5a6af8e7503f8b74825cb22806f2939bb0f56f7c2328b83a3f259e75798a1"
+    }
+  },
+  "jobs": [
+    {
+      "mode": "cache",
+      "case_id": "array",
+      "job_symbol": "GRAPH_ARRAY",
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=2",
+        "--mem=64G",
+        "--time=25:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_graphs",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--array=0-11%12",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "cache",
+        "array"
+      ]
+    },
+    {
+      "mode": "cg",
+      "case_id": "w1_k29",
+      "job_symbol": "CG_w1_k29",
+      "dependencies": [
+        "GRAPH_ARRAY_0",
+        "187972"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=05:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w1_k29_cg",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:GRAPH_ARRAY_0:187972",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "cg",
+        "w1_k29"
+      ]
+    },
+    {
+      "mode": "mip",
+      "case_id": "w1_k29",
+      "job_symbol": "MIP_w1_k29",
+      "dependencies": [
+        "CG_w1_k29"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w1_k29_mip",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:CG_w1_k29",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "mip",
+        "w1_k29"
+      ]
+    },
+    {
+      "mode": "cg",
+      "case_id": "w1_k30",
+      "job_symbol": "CG_w1_k30",
+      "dependencies": [
+        "GRAPH_ARRAY_1",
+        "CG_w1_k29"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=05:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w1_k30_cg",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:GRAPH_ARRAY_1:CG_w1_k29",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "cg",
+        "w1_k30"
+      ]
+    },
+    {
+      "mode": "mip",
+      "case_id": "w1_k30",
+      "job_symbol": "MIP_w1_k30",
+      "dependencies": [
+        "CG_w1_k30"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w1_k30_mip",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:CG_w1_k30",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "mip",
+        "w1_k30"
+      ]
+    },
+    {
+      "mode": "cg",
+      "case_id": "w2_k29",
+      "job_symbol": "CG_w2_k29",
+      "dependencies": [
+        "GRAPH_ARRAY_2",
+        "187978"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=05:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w2_k29_cg",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:GRAPH_ARRAY_2:187978",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "cg",
+        "w2_k29"
+      ]
+    },
+    {
+      "mode": "mip",
+      "case_id": "w2_k29",
+      "job_symbol": "MIP_w2_k29",
+      "dependencies": [
+        "CG_w2_k29"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w2_k29_mip",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:CG_w2_k29",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "mip",
+        "w2_k29"
+      ]
+    },
+    {
+      "mode": "cg",
+      "case_id": "w2_k30",
+      "job_symbol": "CG_w2_k30",
+      "dependencies": [
+        "GRAPH_ARRAY_3",
+        "CG_w2_k29"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=05:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w2_k30_cg",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:GRAPH_ARRAY_3:CG_w2_k29",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "cg",
+        "w2_k30"
+      ]
+    },
+    {
+      "mode": "mip",
+      "case_id": "w2_k30",
+      "job_symbol": "MIP_w2_k30",
+      "dependencies": [
+        "CG_w2_k30"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w2_k30_mip",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:CG_w2_k30",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "mip",
+        "w2_k30"
+      ]
+    },
+    {
+      "mode": "cg",
+      "case_id": "w3_k29",
+      "job_symbol": "CG_w3_k29",
+      "dependencies": [
+        "GRAPH_ARRAY_4"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=05:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w3_k29_cg",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:GRAPH_ARRAY_4",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "cg",
+        "w3_k29"
+      ]
+    },
+    {
+      "mode": "mip",
+      "case_id": "w3_k29",
+      "job_symbol": "MIP_w3_k29",
+      "dependencies": [
+        "CG_w3_k29"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w3_k29_mip",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:CG_w3_k29",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "mip",
+        "w3_k29"
+      ]
+    },
+    {
+      "mode": "cg",
+      "case_id": "w3_k30",
+      "job_symbol": "CG_w3_k30",
+      "dependencies": [
+        "GRAPH_ARRAY_5",
+        "CG_w3_k29"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=05:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w3_k30_cg",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:GRAPH_ARRAY_5:CG_w3_k29",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "cg",
+        "w3_k30"
+      ]
+    },
+    {
+      "mode": "mip",
+      "case_id": "w3_k30",
+      "job_symbol": "MIP_w3_k30",
+      "dependencies": [
+        "CG_w3_k30"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w3_k30_mip",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:CG_w3_k30",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "mip",
+        "w3_k30"
+      ]
+    },
+    {
+      "mode": "cg",
+      "case_id": "w4_k29",
+      "job_symbol": "CG_w4_k29",
+      "dependencies": [
+        "GRAPH_ARRAY_6",
+        "187990"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=05:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w4_k29_cg",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:GRAPH_ARRAY_6:187990",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "cg",
+        "w4_k29"
+      ]
+    },
+    {
+      "mode": "mip",
+      "case_id": "w4_k29",
+      "job_symbol": "MIP_w4_k29",
+      "dependencies": [
+        "CG_w4_k29"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w4_k29_mip",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:CG_w4_k29",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "mip",
+        "w4_k29"
+      ]
+    },
+    {
+      "mode": "cg",
+      "case_id": "w4_k30",
+      "job_symbol": "CG_w4_k30",
+      "dependencies": [
+        "GRAPH_ARRAY_7",
+        "CG_w4_k29"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=05:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w4_k30_cg",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:GRAPH_ARRAY_7:CG_w4_k29",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "cg",
+        "w4_k30"
+      ]
+    },
+    {
+      "mode": "mip",
+      "case_id": "w4_k30",
+      "job_symbol": "MIP_w4_k30",
+      "dependencies": [
+        "CG_w4_k30"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w4_k30_mip",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:CG_w4_k30",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "mip",
+        "w4_k30"
+      ]
+    },
+    {
+      "mode": "cg",
+      "case_id": "w5_k29",
+      "job_symbol": "CG_w5_k29",
+      "dependencies": [
+        "GRAPH_ARRAY_8",
+        "187996"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=05:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w5_k29_cg",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:GRAPH_ARRAY_8:187996",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "cg",
+        "w5_k29"
+      ]
+    },
+    {
+      "mode": "mip",
+      "case_id": "w5_k29",
+      "job_symbol": "MIP_w5_k29",
+      "dependencies": [
+        "CG_w5_k29"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w5_k29_mip",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:CG_w5_k29",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "mip",
+        "w5_k29"
+      ]
+    },
+    {
+      "mode": "cg",
+      "case_id": "w5_k30",
+      "job_symbol": "CG_w5_k30",
+      "dependencies": [
+        "GRAPH_ARRAY_9",
+        "CG_w5_k29"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=05:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w5_k30_cg",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:GRAPH_ARRAY_9:CG_w5_k29",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "cg",
+        "w5_k30"
+      ]
+    },
+    {
+      "mode": "mip",
+      "case_id": "w5_k30",
+      "job_symbol": "MIP_w5_k30",
+      "dependencies": [
+        "CG_w5_k30"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w5_k30_mip",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:CG_w5_k30",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "mip",
+        "w5_k30"
+      ]
+    },
+    {
+      "mode": "cg",
+      "case_id": "w6_k29",
+      "job_symbol": "CG_w6_k29",
+      "dependencies": [
+        "GRAPH_ARRAY_10"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=05:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w6_k29_cg",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:GRAPH_ARRAY_10",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "cg",
+        "w6_k29"
+      ]
+    },
+    {
+      "mode": "mip",
+      "case_id": "w6_k29",
+      "job_symbol": "MIP_w6_k29",
+      "dependencies": [
+        "CG_w6_k29"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w6_k29_mip",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:CG_w6_k29",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "mip",
+        "w6_k29"
+      ]
+    },
+    {
+      "mode": "cg",
+      "case_id": "w6_k30",
+      "job_symbol": "CG_w6_k30",
+      "dependencies": [
+        "GRAPH_ARRAY_11",
+        "CG_w6_k29"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=05:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w6_k30_cg",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:GRAPH_ARRAY_11:CG_w6_k29",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "cg",
+        "w6_k30"
+      ]
+    },
+    {
+      "mode": "mip",
+      "case_id": "w6_k30",
+      "job_symbol": "MIP_w6_k30",
+      "dependencies": [
+        "CG_w6_k30"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=drX_w6_k30_mip",
+        "--output=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.out",
+        "--error=/home/nc437/ladder-lite/chain_extension_20260915/logs/%x_%A_%a_%j.err",
+        "--dependency=afterok:CG_w6_k30",
+        "/home/nc437/ladder-lite/chain_extension_20260915/worker.sub",
+        "mip",
+        "w6_k30"
+      ]
+    }
+  ],
+  "individual_tasks": 36,
+  "graph_concurrency": 12,
+  "production_command": [
+    "/home/nc437/evsp_env/bin/python",
+    "/home/nc437/ladder-lite/chain_extension_20260915/campaign.py",
+    "submit"
+  ]
+}

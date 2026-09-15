@@ -1,0 +1,725 @@
+{
+  "status": "launched_and_verified",
+  "derived_utc": "2026-09-15T08:28:28.028286+00:00",
+  "submission_started_utc": "2026-09-15T08:26:24.874593+00:00",
+  "submission_finished_utc": "2026-09-15T08:26:36.598993+00:00",
+  "scheduler_snapshot_saved_utc": "2026-09-15T08:26:53.023026+00:00",
+  "scheduler_snapshot_count": 1,
+  "graph_array": "224628",
+  "graph_tasks": 12,
+  "graph_running_in_snapshot": 0,
+  "graph_pending_in_snapshot": 12,
+  "downstream_jobs": 24,
+  "all_effective_resources_and_dependencies_match": true,
+  "mip_registry_additions_count": 12,
+  "shared_registry_modified": false,
+  "jobs": [
+    {
+      "job_id": "224628",
+      "case_id": "array",
+      "mode": "cache",
+      "submitted_utc": "2026-09-15T08:26:24.874593+00:00",
+      "effective_dependencies": [],
+      "effective_cpus": 2,
+      "effective_mem": "64G",
+      "effective_time_limit": "1-01:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224629",
+      "case_id": "w1_k29",
+      "mode": "cg",
+      "submitted_utc": "2026-09-15T08:26:25.090815+00:00",
+      "effective_dependencies": [
+        "224628_0",
+        "187972"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "96G",
+      "effective_time_limit": "05:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224630",
+      "case_id": "w1_k29",
+      "mode": "mip",
+      "submitted_utc": "2026-09-15T08:26:25.299708+00:00",
+      "effective_dependencies": [
+        "224629"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "24G",
+      "effective_time_limit": "02:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224631",
+      "case_id": "w1_k30",
+      "mode": "cg",
+      "submitted_utc": "2026-09-15T08:26:25.498244+00:00",
+      "effective_dependencies": [
+        "224628_1",
+        "224629"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "96G",
+      "effective_time_limit": "05:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224632",
+      "case_id": "w1_k30",
+      "mode": "mip",
+      "submitted_utc": "2026-09-15T08:26:25.689790+00:00",
+      "effective_dependencies": [
+        "224631"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "24G",
+      "effective_time_limit": "02:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224633",
+      "case_id": "w2_k29",
+      "mode": "cg",
+      "submitted_utc": "2026-09-15T08:26:25.886036+00:00",
+      "effective_dependencies": [
+        "224628_2",
+        "187978"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "96G",
+      "effective_time_limit": "05:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224634",
+      "case_id": "w2_k29",
+      "mode": "mip",
+      "submitted_utc": "2026-09-15T08:26:26.153247+00:00",
+      "effective_dependencies": [
+        "224633"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "24G",
+      "effective_time_limit": "02:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224635",
+      "case_id": "w2_k30",
+      "mode": "cg",
+      "submitted_utc": "2026-09-15T08:26:26.367831+00:00",
+      "effective_dependencies": [
+        "224628_3",
+        "224633"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "96G",
+      "effective_time_limit": "05:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224636",
+      "case_id": "w2_k30",
+      "mode": "mip",
+      "submitted_utc": "2026-09-15T08:26:26.735695+00:00",
+      "effective_dependencies": [
+        "224635"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "24G",
+      "effective_time_limit": "02:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224637",
+      "case_id": "w3_k29",
+      "mode": "cg",
+      "submitted_utc": "2026-09-15T08:26:29.622027+00:00",
+      "effective_dependencies": [
+        "224628_4"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "96G",
+      "effective_time_limit": "05:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224638",
+      "case_id": "w3_k29",
+      "mode": "mip",
+      "submitted_utc": "2026-09-15T08:26:29.834546+00:00",
+      "effective_dependencies": [
+        "224637"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "24G",
+      "effective_time_limit": "02:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224639",
+      "case_id": "w3_k30",
+      "mode": "cg",
+      "submitted_utc": "2026-09-15T08:26:30.053490+00:00",
+      "effective_dependencies": [
+        "224628_5",
+        "224637"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "96G",
+      "effective_time_limit": "05:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224640",
+      "case_id": "w3_k30",
+      "mode": "mip",
+      "submitted_utc": "2026-09-15T08:26:30.260253+00:00",
+      "effective_dependencies": [
+        "224639"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "24G",
+      "effective_time_limit": "02:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224641",
+      "case_id": "w4_k29",
+      "mode": "cg",
+      "submitted_utc": "2026-09-15T08:26:30.469850+00:00",
+      "effective_dependencies": [
+        "224628_6",
+        "187990"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "96G",
+      "effective_time_limit": "05:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224642",
+      "case_id": "w4_k29",
+      "mode": "mip",
+      "submitted_utc": "2026-09-15T08:26:30.718453+00:00",
+      "effective_dependencies": [
+        "224641"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "24G",
+      "effective_time_limit": "02:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224643",
+      "case_id": "w4_k30",
+      "mode": "cg",
+      "submitted_utc": "2026-09-15T08:26:31.174333+00:00",
+      "effective_dependencies": [
+        "224628_7",
+        "224641"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "96G",
+      "effective_time_limit": "05:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224644",
+      "case_id": "w4_k30",
+      "mode": "mip",
+      "submitted_utc": "2026-09-15T08:26:31.875170+00:00",
+      "effective_dependencies": [
+        "224643"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "24G",
+      "effective_time_limit": "02:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224645",
+      "case_id": "w5_k29",
+      "mode": "cg",
+      "submitted_utc": "2026-09-15T08:26:32.088971+00:00",
+      "effective_dependencies": [
+        "224628_8",
+        "187996"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "96G",
+      "effective_time_limit": "05:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224646",
+      "case_id": "w5_k29",
+      "mode": "mip",
+      "submitted_utc": "2026-09-15T08:26:32.290222+00:00",
+      "effective_dependencies": [
+        "224645"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "24G",
+      "effective_time_limit": "02:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224647",
+      "case_id": "w5_k30",
+      "mode": "cg",
+      "submitted_utc": "2026-09-15T08:26:32.482356+00:00",
+      "effective_dependencies": [
+        "224628_9",
+        "224645"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "96G",
+      "effective_time_limit": "05:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224648",
+      "case_id": "w5_k30",
+      "mode": "mip",
+      "submitted_utc": "2026-09-15T08:26:32.711269+00:00",
+      "effective_dependencies": [
+        "224647"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "24G",
+      "effective_time_limit": "02:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224649",
+      "case_id": "w6_k29",
+      "mode": "cg",
+      "submitted_utc": "2026-09-15T08:26:36.008358+00:00",
+      "effective_dependencies": [
+        "224628_10"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "96G",
+      "effective_time_limit": "05:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224650",
+      "case_id": "w6_k29",
+      "mode": "mip",
+      "submitted_utc": "2026-09-15T08:26:36.208632+00:00",
+      "effective_dependencies": [
+        "224649"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "24G",
+      "effective_time_limit": "02:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224651",
+      "case_id": "w6_k30",
+      "mode": "cg",
+      "submitted_utc": "2026-09-15T08:26:36.409115+00:00",
+      "effective_dependencies": [
+        "224628_11",
+        "224649"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "96G",
+      "effective_time_limit": "05:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    },
+    {
+      "job_id": "224652",
+      "case_id": "w6_k30",
+      "mode": "mip",
+      "submitted_utc": "2026-09-15T08:26:36.598993+00:00",
+      "effective_dependencies": [
+        "224651"
+      ],
+      "effective_cpus": 8,
+      "effective_mem": "24G",
+      "effective_time_limit": "02:00:00",
+      "effective_partition": "default_partition",
+      "effective_exclusion": "scaglione-compute-01",
+      "scheduler_state": "PENDING",
+      "slurm_start_time_as_returned": "Unknown"
+    }
+  ],
+  "scheduler_snapshot": [
+    {
+      "job_id": "224651",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "96G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224649",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "96G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224647",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "96G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224645",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "96G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224643",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "96G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224641",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "96G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224639",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "96G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224637",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "96G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224635",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "96G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224633",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "96G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224631",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "96G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224629",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "96G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224652",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "24G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224650",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "24G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224648",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "24G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224646",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "24G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224644",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "24G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224642",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "24G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224640",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "24G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224638",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "24G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224636",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "24G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224634",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "24G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224632",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "24G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224630",
+      "state": "PENDING",
+      "reason": "(Dependency)",
+      "mem": "24G",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224628_0",
+      "state": "PENDING",
+      "reason": "(None)",
+      "mem": "64G",
+      "cpus": "2",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224628_1",
+      "state": "PENDING",
+      "reason": "(None)",
+      "mem": "64G",
+      "cpus": "2",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224628_2",
+      "state": "PENDING",
+      "reason": "(None)",
+      "mem": "64G",
+      "cpus": "2",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224628_3",
+      "state": "PENDING",
+      "reason": "(None)",
+      "mem": "64G",
+      "cpus": "2",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224628_4",
+      "state": "PENDING",
+      "reason": "(None)",
+      "mem": "64G",
+      "cpus": "2",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224628_5",
+      "state": "PENDING",
+      "reason": "(None)",
+      "mem": "64G",
+      "cpus": "2",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224628_6",
+      "state": "PENDING",
+      "reason": "(None)",
+      "mem": "64G",
+      "cpus": "2",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224628_7",
+      "state": "PENDING",
+      "reason": "(None)",
+      "mem": "64G",
+      "cpus": "2",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224628_8",
+      "state": "PENDING",
+      "reason": "(None)",
+      "mem": "64G",
+      "cpus": "2",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224628_9",
+      "state": "PENDING",
+      "reason": "(None)",
+      "mem": "64G",
+      "cpus": "2",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224628_10",
+      "state": "PENDING",
+      "reason": "(None)",
+      "mem": "64G",
+      "cpus": "2",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "224628_11",
+      "state": "PENDING",
+      "reason": "(None)",
+      "mem": "64G",
+      "cpus": "2",
+      "partition": "default_partition"
+    }
+  ],
+  "artifact_sha256": {
+    "manifest.json": "c4cb5a25da20088354b312efdfbe1daa4c4d943c1e0d1feeae9b5576e7328d97",
+    "validation.json": "9405e09c33b0b5342eeadf97643342d88fb0a59beea8bc33a236d7d12ffe96df",
+    "jobs.json": "fe9e0be5db9adb4e15dc29632914e3adeff7e26b06e788a00f1269e510238065",
+    "case_jobs.json": "456448380ab1d97be28f989ccaa9e6e420ad3095bd319916d4015274e7533a65",
+    "launch_verification.json": "1a719e5f5b22e7802712a254a52f3d06e44778a1602ea5dac0ca8b973d309df0",
+    "mip_registry_additions.json": "bc1fa2d15668334962bd31315e56979b2cf7ac882089a786bc30df676481ab88",
+    "README.md": "20fab998c50a435cc2f65753b1f7201d723e8b004117a4b32b8da1f6c2926df4"
+  }
+}

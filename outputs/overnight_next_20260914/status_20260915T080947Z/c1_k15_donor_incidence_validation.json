@@ -1,0 +1,9 @@
+{
+  "donor_routes": 15,
+  "core_missing": 12,
+  "expanded_missing": 11,
+  "all_weighted_reduced_costs_positive": true,
+  "each_journal_row_count_matches_native_mip_pool": true,
+  "script_sha256": "8e8f9d4acdb2705f60a1d6f285412b59a281e530452633049ea279be575dd896",
+  "note": "Read-only audit; original full/compact MIP hashes and native source/journal hashes checked. No new optimization or physical replay. Positive cost of this witness does not prove every possible 15-bus solution requires positive reduced-cost columns."
+}

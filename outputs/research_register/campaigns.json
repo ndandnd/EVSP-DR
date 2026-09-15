@@ -244,7 +244,7 @@
     "family": "production_or_historical",
     "report_links": [],
     "root": "/home/nc437/ladder-lite/chain_extension_20260914",
-    "row_count": 37,
+    "row_count": 42,
     "workflow_job_ids": [
       "133927",
       "133947",
@@ -296,7 +296,7 @@
     "family": "production_or_historical",
     "report_links": [],
     "root": "/home/nc437/ladder-lite/compact_large_seed_20260914",
-    "row_count": 65,
+    "row_count": 67,
     "workflow_job_ids": [
       "207647",
       "207648",
@@ -511,6 +511,16 @@
       "810351",
       "810353",
       "810354"
+    ]
+  },
+  {
+    "campaign_id": "continuation_gap_20260915",
+    "family": "production_or_historical",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/continuation_gap_20260915",
+    "row_count": 6,
+    "workflow_job_ids": [
+      "222757"
     ]
   },
   {
@@ -1862,21 +1872,17 @@
     "family": "scheduler",
     "report_links": [],
     "root": null,
-    "row_count": 68,
+    "row_count": 63,
     "workflow_job_ids": [
-      "187969",
       "187970",
       "187971",
       "187972",
       "187973",
-      "187977",
       "187978",
       "187979",
-      "187988",
       "187989",
       "187990",
       "187991",
-      "187994",
       "187995",
       "187996",
       "187997",
@@ -1884,7 +1890,6 @@
       "189917",
       "207671",
       "207672",
-      "207675",
       "207676",
       "207677",
       "207678",

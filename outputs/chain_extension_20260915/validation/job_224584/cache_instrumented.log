@@ -1,0 +1,16 @@
+GRAPH_PROGRESS {"elapsed_s": 0.0004036780446767807, "event": "start", "peak_rss_kib": 118480, "phase": "entry", "pid": 39838}
+Set parameter LicenseID to value 2674428
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "en-cc-unicorn-data-dirs.coecis.cornell.edu"
+GRAPH_PROGRESS {"elapsed_s": 0.026085793040692806, "event": "start", "peak_rss_kib": 118480, "phase": "build_problem", "pid": 39838}
+GRAPH_PROGRESS {"duration_s": 0.012797337025403976, "elapsed_s": 0.04010311607271433, "event": "complete", "peak_rss_kib": 118480, "phase": "build_problem", "pid": 39838}
+GRAPH_PROGRESS {"elapsed_s": 0.08482162887230515, "event": "start", "peak_rss_kib": 118480, "phase": "_split_arcs", "pid": 39838}
+GRAPH_PROGRESS {"duration_s": 2.9220711439847946e-05, "elapsed_s": 0.0860351431183517, "event": "complete", "peak_rss_kib": 118480, "phase": "_split_arcs", "pid": 39838}
+GRAPH_PROGRESS {"elapsed_s": 0.08709390880540013, "event": "start", "peak_rss_kib": 118480, "phase": "_build_nodes", "pid": 39838}
+GRAPH_PROGRESS {"duration_s": 0.00027862610295414925, "elapsed_s": 0.08837575279176235, "event": "complete", "peak_rss_kib": 118480, "phase": "_build_nodes", "pid": 39838}
+GRAPH_PROGRESS {"elapsed_s": 0.08941049221903086, "event": "start", "peak_rss_kib": 118480, "phase": "_build_arcs", "pid": 39838}
+GRAPH_PROGRESS {"elapsed_s": 0.09054562076926231, "event": "progress", "finished_sources": 1, "peak_rss_kib": 118480, "phase": "_build_arcs", "pid": 39838, "source": 0, "stored_arcs": 4, "total_sources": 330}
+GRAPH_PROGRESS {"duration_s": 0.2595672900788486, "elapsed_s": 0.3500183247961104, "event": "complete", "peak_rss_kib": 118480, "phase": "_build_arcs", "pid": 39838}
+GRAPH_PROGRESS {"elapsed_s": 0.3513992507942021, "event": "start", "peak_rss_kib": 118480, "phase": "_write_event_network_cache", "pid": 39838}
+GRAPH_PROGRESS {"duration_s": 0.008174510207027197, "elapsed_s": 0.36076623294502497, "event": "complete", "peak_rss_kib": 118480, "phase": "_write_event_network_cache", "pid": 39838}
+[EXACT] network: 331 nodes, 330 arcs (soc_step=2.5, block=5min) built in 0.3s

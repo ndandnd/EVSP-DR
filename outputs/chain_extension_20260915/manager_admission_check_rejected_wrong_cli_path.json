@@ -1,0 +1,8 @@
+{
+  "observed_utc": "2026-09-15T08:32:57.474791+00:00",
+  "raw_squeue": "",
+  "active_counts_excluding_held537227": {},
+  "new_graph_counts": {},
+  "valid": false,
+  "reason": "Root audit called nonexistent Slurm CLI path; remote SSH succeeded. Empty stdout is not an empty queue."
+}

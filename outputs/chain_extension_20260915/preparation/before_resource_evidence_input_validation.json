@@ -1,0 +1,262 @@
+{
+  "status": "passed",
+  "checked_utc": "2026-09-15T08:18:53.401391+00:00",
+  "manifest_sha256": "ebf1a2684d72d7978e506fa74a9bb7e076a743c773382cca31365d4d0a8be856",
+  "input_manifest_sha256": "699fa290ac5087e0327dbfff57a18920642b4e4c54bd874fa4c0d3e92824bb6a",
+  "frozen_original_manifest_sha256": "699fa290ac5087e0327dbfff57a18920642b4e4c54bd874fa4c0d3e92824bb6a",
+  "random_redraw": false,
+  "source_generator_manifest_case_count": 150,
+  "staged_case_count": 12,
+  "cases": [
+    {
+      "case_id": "w1_k29",
+      "input_sha256": "8e43b7ab4d2be69f2539fcb399b1d11987e9dbce7ab9eedaaa4ee1fc7dbffe76",
+      "original_csv": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w1_k29.csv",
+      "previous_case": "w1_k28",
+      "previous_input_sha256": "befe75d690efd98b2e7b25b5d7426f69e3a8a5720d5307d9fdad0fe03c130dbf",
+      "trips": 690,
+      "added_trips": 23,
+      "added_duty": "13316m",
+      "stable_nesting": true,
+      "previous_attributes_unchanged_except_count_trip_id": true
+    },
+    {
+      "case_id": "w1_k30",
+      "input_sha256": "6f53fb67f3aeb4b63ffc7057e229d19b9e8ee97dbaa7e6944ae6312d5f8638dc",
+      "original_csv": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w1_k30.csv",
+      "previous_case": "w1_k29",
+      "previous_input_sha256": "8e43b7ab4d2be69f2539fcb399b1d11987e9dbce7ab9eedaaa4ee1fc7dbffe76",
+      "trips": 706,
+      "added_trips": 16,
+      "added_duty": "13314",
+      "stable_nesting": true,
+      "previous_attributes_unchanged_except_count_trip_id": true
+    },
+    {
+      "case_id": "w2_k29",
+      "input_sha256": "c0335faee802a06736c5f1067e512293ba922a5f7ad4eba1ae83ab82df467530",
+      "original_csv": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w2_k29.csv",
+      "previous_case": "w2_k28",
+      "previous_input_sha256": "996e242f858fa4f89de7bd3c73fd4e0ef4af063b42994067789c48767ca2a40f",
+      "trips": 674,
+      "added_trips": 31,
+      "added_duty": "13315",
+      "stable_nesting": true,
+      "previous_attributes_unchanged_except_count_trip_id": true
+    },
+    {
+      "case_id": "w2_k30",
+      "input_sha256": "010a3ee44af65c8bcae53bfd820ba154ef1a8057e8bde6d2eb54a50b8659f21b",
+      "original_csv": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w2_k30.csv",
+      "previous_case": "w2_k29",
+      "previous_input_sha256": "c0335faee802a06736c5f1067e512293ba922a5f7ad4eba1ae83ab82df467530",
+      "trips": 704,
+      "added_trips": 30,
+      "added_duty": "13305",
+      "stable_nesting": true,
+      "previous_attributes_unchanged_except_count_trip_id": true
+    },
+    {
+      "case_id": "w3_k29",
+      "input_sha256": "c2c70ec8eb86a52097a6fd53b1c88c2c14d1c6fde8702d81082d3f05c9139574",
+      "original_csv": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w3_k29.csv",
+      "previous_case": "w3_k28",
+      "previous_input_sha256": "f412c76bfb62d9df3c06dd16f8df890734330595df0d622c4507ccb5e80d3b3d",
+      "trips": 637,
+      "added_trips": 31,
+      "added_duty": "13315",
+      "stable_nesting": true,
+      "previous_attributes_unchanged_except_count_trip_id": true
+    },
+    {
+      "case_id": "w3_k30",
+      "input_sha256": "d4483ee1e66fc64413cc8be75ec04226bb29057ad6522a2c1d0a28823399dec6",
+      "original_csv": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w3_k30.csv",
+      "previous_case": "w3_k29",
+      "previous_input_sha256": "c2c70ec8eb86a52097a6fd53b1c88c2c14d1c6fde8702d81082d3f05c9139574",
+      "trips": 674,
+      "added_trips": 37,
+      "added_duty": "13317",
+      "stable_nesting": true,
+      "previous_attributes_unchanged_except_count_trip_id": true
+    },
+    {
+      "case_id": "w4_k29",
+      "input_sha256": "2cd3c50828eed4ac154ede6f9f209ee0b0d7d7c0d55d52065bf642a2f446cf68",
+      "original_csv": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w4_k29.csv",
+      "previous_case": "w4_k28",
+      "previous_input_sha256": "99bee86081fdd454961efb00daf9abec09ee45bd03b8cc3bf42c67dff0c21294",
+      "trips": 693,
+      "added_trips": 22,
+      "added_duty": "13309",
+      "stable_nesting": true,
+      "previous_attributes_unchanged_except_count_trip_id": true
+    },
+    {
+      "case_id": "w4_k30",
+      "input_sha256": "dfc929d5c0e4d8e688ffd3ac1449b36d7425e3180e65b1d9627fd3ac8f441bfb",
+      "original_csv": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w4_k30.csv",
+      "previous_case": "w4_k29",
+      "previous_input_sha256": "2cd3c50828eed4ac154ede6f9f209ee0b0d7d7c0d55d52065bf642a2f446cf68",
+      "trips": 707,
+      "added_trips": 14,
+      "added_duty": "13411",
+      "stable_nesting": true,
+      "previous_attributes_unchanged_except_count_trip_id": true
+    },
+    {
+      "case_id": "w5_k29",
+      "input_sha256": "a50b41e17ecea246170021fbd256d618305bcdb636f38b9654ec04282f40169d",
+      "original_csv": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w5_k29.csv",
+      "previous_case": "w5_k28",
+      "previous_input_sha256": "1d9f80b86d85e7f43ea37aeab36524dbedd518a397d2ec68a1450811332e14f5",
+      "trips": 691,
+      "added_trips": 17,
+      "added_duty": "13324muw",
+      "stable_nesting": true,
+      "previous_attributes_unchanged_except_count_trip_id": true
+    },
+    {
+      "case_id": "w5_k30",
+      "input_sha256": "688b32fbc8654c621451469da938c9c893b071aa4afe3c487802fbc8ccc0ee23",
+      "original_csv": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w5_k30.csv",
+      "previous_case": "w5_k29",
+      "previous_input_sha256": "a50b41e17ecea246170021fbd256d618305bcdb636f38b9654ec04282f40169d",
+      "trips": 704,
+      "added_trips": 13,
+      "added_duty": "13405",
+      "stable_nesting": true,
+      "previous_attributes_unchanged_except_count_trip_id": true
+    },
+    {
+      "case_id": "w6_k29",
+      "input_sha256": "b0f03a80ba66da01de71799931ea14d0b2b4da1ca603b47b54cafd922c46a240",
+      "original_csv": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w6_k29.csv",
+      "previous_case": "w6_k28",
+      "previous_input_sha256": "079b3d554782ac880851b50507d08039385da1995a612dd632c6d76c71526bdf",
+      "trips": 684,
+      "added_trips": 17,
+      "added_duty": "13402",
+      "stable_nesting": true,
+      "previous_attributes_unchanged_except_count_trip_id": true
+    },
+    {
+      "case_id": "w6_k30",
+      "input_sha256": "203a55f2a3e041a5659f9a966d7a68d8fac34a1f99c89934bd301557cf52cf5b",
+      "original_csv": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w6_k30.csv",
+      "previous_case": "w6_k29",
+      "previous_input_sha256": "b0f03a80ba66da01de71799931ea14d0b2b4da1ca603b47b54cafd922c46a240",
+      "trips": 705,
+      "added_trips": 21,
+      "added_duty": "13326",
+      "stable_nesting": true,
+      "previous_attributes_unchanged_except_count_trip_id": true
+    }
+  ],
+  "scientific_settings_equal_parent": true,
+  "execution_commits_equal_parent": true,
+  "cg_mip_requests_equal_parent": true,
+  "equivalent_submitted_case_collisions": [],
+  "collision_scan": [
+    {
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/case_jobs.json",
+      "sha256": "4b6f8fb5141604508f975a18e8f1e1a0302c97d3a387e6cca7b6fdfb720e7135",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/case_jobs.json",
+      "sha256": "6e8dae58cd3f64f0388d10c422b595edd047ebd397b617172817de9b90b69185",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/case_jobs.json",
+      "sha256": "6a2b5cefc493636311a6732e4e980c2da25dd52a0818f6929743660e9d303f24",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/case_jobs.json",
+      "sha256": "330ac0b8113f0ab2da9caf35c23975f85889e099417158a0cf862c796c72e017",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gap_20260915/case_jobs.json",
+      "sha256": "5855c5aec8033fbdf6a2c046680ff6ed5961e42e8c31e49ecf93fb69ca752192",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/case_jobs.json",
+      "sha256": "546a4351d20b5deed8701176c7547d574ea79be501f564f0af17e29cdba7d964",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/final_chain_gap_20260915/case_jobs.json",
+      "sha256": "2077d79776d6e16ee630e60a747d8faecff061a5cc710e581cd3262501c69120",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/case_jobs.json",
+      "sha256": "c49679936fd206690909a7f86983f7fa7d52f33f174218153178f4d084d80238",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_recovery_20260912/case_jobs.json",
+      "sha256": "e2a8716e0e6f0829f173e361a369707856b2c0e50597fa4653e978db80ace9f2",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/case_jobs.json",
+      "sha256": "9a14b6d59b937219c97dc8549bd6ef9810db73086dd78c2f8948996b003114be",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_timeout_gates_20260914/case_jobs.json",
+      "sha256": "7f6a0955ba4f7d360cb5f9b725ab8aefb167875a322145ec4c382810ff5ecd6e",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_timeout_gates_v2_20260914/case_jobs.json",
+      "sha256": "f49b18102fff9570d7eb668851d250bf4e79ddbcf1fd24661ed1e7fccf563903",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/case_jobs.json",
+      "sha256": "a314b64f9bc672063062b2de213f1bf5f636d7789557394799bfe8238dfba5e8",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/case_jobs.json",
+      "sha256": "ae84504188f2e3a40180ccbe0745ec71b35a28f5089d8e515389abcc957d092d",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/case_jobs.json",
+      "sha256": "9501d0e24b84171f425ee0f3cad5945572215c32a8750171c678e2b7c6325d56",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/case_jobs.json",
+      "sha256": "2fe45ba59138ea79e9223129a363984fd3a3d8d5963c8b665aee1f9ee3f8b0eb",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/case_jobs.json",
+      "sha256": "a75f4028389525e10d6a5431502c5412d4527edf01fc0495e1c798c1885d7e1b",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_unions_20260914/case_jobs.json",
+      "sha256": "bfecafffb26349d2e2ce420b4412cf5240d52274a1c9c487055334c5113af325",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/case_jobs.json",
+      "sha256": "616aa013d8b3c92e163e2abd1018ed3944059c5e0cb7c58b50baedd5cb844f9a",
+      "overlapping_case_ids": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/case_jobs.json",
+      "sha256": "1b68df50ba2148db4ab4975e95574f8cb7e0df1f490887d9f0f3df62d064ed5d",
+      "overlapping_case_ids": []
+    }
+  ]
+}
