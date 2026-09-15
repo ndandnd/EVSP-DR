@@ -1,4 +1,4 @@
-**Results through 23:14 EDT:** [Nine fleet recoveries, completed reserve tests and pricing evidence](status_20260915T030644Z/README.md). The launch record below retains its original timestamp.
+**Results through 00:16 EDT, 15 September:** [New chain matches, compact-start gap and paired pricing results](status_20260915T040735Z/README.md). The launch record below retains its original timestamp.
 
 # Overnight additions — 14 September 2026
 

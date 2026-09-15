@@ -1,0 +1,10 @@
+{
+  "old_path": "/private/tmp/evsp-research-register-20260910",
+  "observed_problem": "Missing .git link; worktree administrative entry remained but was prunable. Some older checkout files were absent. Cause not established.",
+  "source_commit": "dac4005840ffa6fc8da950de7ecf0822a1f16c4a",
+  "remote_head_verified": true,
+  "new_path": "/Users/nadan/Documents/projects/demandresponse/.codex-work/research-register-20260915",
+  "new_branch": "codex/research-register-20260915",
+  "destination_branch": "codex/parallel-research-20260911",
+  "recovery": "Created a fresh durable worktree at the verified publication commit, then reapplied only the current allowlist. Main checkout, older worktrees and cluster jobs were not changed."
+}

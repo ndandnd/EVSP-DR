@@ -1,0 +1,517 @@
+{
+  "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T030644Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T040735Z.json",
+  "timestamp_utc": "2026-09-15T04:07:36.255019+00:00",
+  "changed_results": [
+    {
+      "campaign": "compact_large_seed_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c3_k20_core/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 6644.645090963226,
+        "final": {
+          "iter": 1486,
+          "attempt_iter": 1486,
+          "lp_obj": 2000780.1004924544,
+          "route_weight": 20.00000000000036,
+          "artificials": 0.0,
+          "min_rc": -2.15175814943791e-08,
+          "max_row_violation": 4.086730953645201e-13,
+          "max_bound_violation": 2.8073376956427865e-13
+        }
+      },
+      "sha256": "03205b4a9060233842d9a24864671a41107b34229640be6482bb88d399e29bff",
+      "payload_sha256": "03205b4a9060233842d9a24864671a41107b34229640be6482bb88d399e29bff"
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c3_k20_core512/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 6159.676266134717,
+        "final": {
+          "iter": 1388,
+          "attempt_iter": 1388,
+          "lp_obj": 2000780.1004924024,
+          "route_weight": 19.99999999999984,
+          "artificials": 0.0,
+          "min_rc": -2.769945606218016e-08,
+          "max_row_violation": 4.773959005888173e-13,
+          "max_bound_violation": 5.203754094296187e-13
+        }
+      },
+      "sha256": "4e4f288997551533b31b593c69a02a649077ad06bfbff57e8714f02c14b8bee1",
+      "payload_sha256": "4e4f288997551533b31b593c69a02a649077ad06bfbff57e8714f02c14b8bee1"
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k15_core512_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 15,
+        "fleet_bound": 14.999999999999984,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12603.189852237701,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "0c1a94c509f39a49e5824cc54d08f32bf96fcef6e37175041f3defe1f2277dc1",
+      "payload_sha256": "0c1a94c509f39a49e5824cc54d08f32bf96fcef6e37175041f3defe1f2277dc1"
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k15_core_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 17,
+        "fleet_bound": 15.000000000000027,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 12603.887426137924,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "a9920e4b40be82ee5b8d2e99faf2c40ad2c0f9584241ff5cedd1883a3e45551a",
+      "payload_sha256": "a9920e4b40be82ee5b8d2e99faf2c40ad2c0f9584241ff5cedd1883a3e45551a"
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w2_k26/mip/187975_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 26,
+        "fleet_bound": 26.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3607.419105529785,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "c1dad8e6a1c25b516f5877069986f679ca00213990c666fbdca445a3b53e4644",
+      "payload_sha256": "c1dad8e6a1c25b516f5877069986f679ca00213990c666fbdca445a3b53e4644"
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w5_k26/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "wall_s": 14385.101610072888,
+        "final": {
+          "iter": 248,
+          "attempt_iter": 248,
+          "lp_obj": 2601120.2615417014,
+          "route_weight": 25.999999999999925,
+          "artificials": 0.0,
+          "min_rc": -0.04797659486200878,
+          "max_row_violation": 6.906697436193099e-13,
+          "max_bound_violation": 7.950683531829211e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "20bdb17b8d4bdd1ec87d7b747ce416b1ee248443f3b9830d591e36a45d38ca3d"
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w6_k27/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "wall_s": 14394.13057738822,
+        "final": {
+          "iter": 299,
+          "attempt_iter": 299,
+          "lp_obj": 2701128.4094999824,
+          "route_weight": 26.999999999999925,
+          "artificials": 0.0,
+          "min_rc": -0.060112357094305846,
+          "max_row_violation": 7.260858581048524e-13,
+          "max_bound_violation": 3.8152113984640103e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "64b2a1fd71338483ba6c556e2fe64eab29cf539643b410004b648f4ba58c04ef"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w1_k25/mip/133928_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 25,
+        "fleet_bound": 25.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3608.5465631484985,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "7b9f094ea2f1a19f7db340329cf68e991f4d36f9f278c00251e1ba0c18aa2075",
+      "payload_sha256": "7b9f094ea2f1a19f7db340329cf68e991f4d36f9f278c00251e1ba0c18aa2075"
+    },
+    {
+      "campaign": "capacity_fixed_dual_20260914",
+      "stage": "pricing_calls",
+      "path": "/home/nc437/ladder-lite/capacity_fixed_dual_20260914/results/k1_13407_i16_reference/202362_r0/diagnostic.json",
+      "new_path": true,
+      "summary": {
+        "final": {},
+        "case_id": "k1_13407_i16_reference",
+        "selector": "reference",
+        "pricing_call": {
+          "attempted_calls": 1,
+          "candidate_payload_sha256": "eb08e8d0d384624f323acca7650215de4ac3b7710c00e1c2c7d7c9e00084b4ec",
+          "candidate_route_key_sha256": "3208e4a63031dab77080cf743099806692dde9180b3347087a48b7057ec2ba39",
+          "candidate_trip_count": 7,
+          "capacity_selector": "reference",
+          "case_id": "k1_13407_i16_reference",
+          "completed_calls": 1,
+          "elapsed_s": 12892.643765538,
+          "ended_utc": "2026-09-15T03:19:50.039210+00:00",
+          "min_reduced_cost": -599985.576,
+          "nonzero_capacity_dual_count": 1,
+          "normalized_9dp_dual_vector_sha256": "fa89cc42f601262b92158fc20274a48acfaae7594b9044541e20b8da96e55a39",
+          "pair_id": "k1_13407_i16",
+          "raw_dual_vector_sha256": "814db9bda08f43dc65c48bf13084b79c4813abd5141de253af15e9d46caf9f84",
+          "schema": "evsp-dr-fixed-capacity-pricing-call-v1",
+          "started_utc": "2026-09-14T23:44:57.395427+00:00",
+          "status": "complete",
+          "stop_reason": null,
+          "trip_dual_count": 17
+        },
+        "proof_scope": "One exact pricing call at a hash-bound fixed RMP dual vector. This is not a complete CG run or a full-model certificate unless the driver itself returns exact_nonnegative_reduced_cost."
+      },
+      "sha256": null,
+      "payload_sha256": "36bd91283a9cc86abf9b3715b9e96deba62911e3cefa6fc3aad82a954dbf5641"
+    },
+    {
+      "campaign": "capacity_fixed_dual_retry_20260914",
+      "stage": "pricing_calls",
+      "path": "/home/nc437/ladder-lite/capacity_fixed_dual_retry_20260914/results/k1_13407_i16_prefix_memo/202450_r0/diagnostic.json",
+      "new_path": true,
+      "summary": {
+        "final": {},
+        "case_id": "k1_13407_i16_prefix_memo",
+        "selector": "prefix-memo",
+        "pricing_call": {
+          "attempted_calls": 1,
+          "candidate_payload_sha256": null,
+          "candidate_route_key_sha256": null,
+          "capacity_selector": "prefix-memo",
+          "case_id": "k1_13407_i16_prefix_memo",
+          "completed_calls": 0,
+          "elapsed_s": 14301.43623430701,
+          "ended_utc": "2026-09-15T03:53:55.088283+00:00",
+          "min_reduced_cost": null,
+          "nonzero_capacity_dual_count": 1,
+          "normalized_9dp_dual_vector_sha256": "fa89cc42f601262b92158fc20274a48acfaae7594b9044541e20b8da96e55a39",
+          "pair_id": "k1_13407_i16",
+          "raw_dual_vector_sha256": "814db9bda08f43dc65c48bf13084b79c4813abd5141de253af15e9d46caf9f84",
+          "schema": "evsp-dr-fixed-capacity-pricing-call-v1",
+          "started_utc": "2026-09-14T23:55:33.652047+00:00",
+          "status": "censored",
+          "stop_reason": "pricing_deadline",
+          "trip_dual_count": 17
+        },
+        "proof_scope": "One exact pricing call at a hash-bound fixed RMP dual vector. This is not a complete CG run or a full-model certificate unless the driver itself returns exact_nonnegative_reduced_cost."
+      },
+      "sha256": null,
+      "payload_sha256": "c6d65802bca38746ea79b0d5047b1c1171b6c25423ec8ca8c8502e90a8b0aeab"
+    },
+    {
+      "campaign": "capacity_fixed_dual_retry_20260914",
+      "stage": "pricing_calls",
+      "path": "/home/nc437/ladder-lite/capacity_fixed_dual_retry_20260914/results/k2_240r0_i5_prefix_memo/202451_r0/diagnostic.json",
+      "new_path": true,
+      "summary": {
+        "final": {},
+        "case_id": "k2_240r0_i5_prefix_memo",
+        "selector": "prefix-memo",
+        "pricing_call": {
+          "attempted_calls": 1,
+          "candidate_payload_sha256": null,
+          "candidate_route_key_sha256": null,
+          "capacity_selector": "prefix-memo",
+          "case_id": "k2_240r0_i5_prefix_memo",
+          "completed_calls": 0,
+          "elapsed_s": 14227.762228460982,
+          "ended_utc": "2026-09-15T03:55:06.137130+00:00",
+          "min_reduced_cost": null,
+          "nonzero_capacity_dual_count": 2,
+          "normalized_9dp_dual_vector_sha256": "a2a01bd3b46feb20aa61a3c3c5a7fe5a34353fdde8548a8e96be373182a8bc29",
+          "pair_id": "k2_240r0_i5",
+          "raw_dual_vector_sha256": "209385fcd0d3140bfe67a98b3183bd7fb6ae5833218e2ab91bb895fbec180736",
+          "schema": "evsp-dr-fixed-capacity-pricing-call-v1",
+          "started_utc": "2026-09-14T23:57:58.374902+00:00",
+          "status": "censored",
+          "stop_reason": "pricing_deadline",
+          "trip_dual_count": 23
+        },
+        "proof_scope": "One exact pricing call at a hash-bound fixed RMP dual vector. This is not a complete CG run or a full-model certificate unless the driver itself returns exact_nonnegative_reduced_cost."
+      },
+      "sha256": null,
+      "payload_sha256": "dc6123792b1d78b9c2bb15b972e45c3911608e325da6ccba3392b894a51a19f7"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "133928",
+      "case_id": "w1_k25",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "187975",
+      "case_id": "w2_k26",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "187987",
+      "case_id": "w4_k26",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "187993",
+      "case_id": "w5_k26",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "201490",
+      "case_id": "c3_k15_core512_mip",
+      "cohort": "default_compact_seed_support_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "201491",
+      "case_id": "c3_k15_core_mip",
+      "cohort": "default_compact_seed_support_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207017",
+      "case_id": "c3_k08_integer_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207679",
+      "case_id": "c3_k20_core512_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207680",
+      "case_id": "c3_k20_core_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "133928",
+      "before": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "187975",
+      "before": {
+        "state": "RUNNING",
+        "reason": "harpo"
+      },
+      "after": null
+    },
+    {
+      "job": "187986",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "187987",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-02"
+      }
+    },
+    {
+      "job": "187988",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "harpo"
+      }
+    },
+    {
+      "job": "187992",
+      "before": {
+        "state": "RUNNING",
+        "reason": "luxlab-cpu-03"
+      },
+      "after": null
+    },
+    {
+      "job": "187993",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-01"
+      }
+    },
+    {
+      "job": "187994",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-02"
+      }
+    },
+    {
+      "job": "201490",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-12"
+      },
+      "after": null
+    },
+    {
+      "job": "201491",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-13"
+      },
+      "after": null
+    },
+    {
+      "job": "202362",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-73"
+      },
+      "after": null
+    },
+    {
+      "job": "202450",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-09"
+      },
+      "after": null
+    },
+    {
+      "job": "202451",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-12"
+      },
+      "after": null
+    },
+    {
+      "job": "207017",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-20"
+      },
+      "after": null
+    },
+    {
+      "job": "207655",
+      "before": {
+        "state": "RUNNING",
+        "reason": "culberg-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "207656",
+      "before": {
+        "state": "RUNNING",
+        "reason": "culberg-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "207679",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-04"
+      }
+    },
+    {
+      "job": "207680",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-01"
+      }
+    }
+  ]
+}

@@ -94,12 +94,35 @@ def main():
             original_sha256=prior['sha256'], source_status_sha256=item['source_status_sha256'],
             source_journal_sha256=item['source_journal_sha256'], path=item['path'], sha256=item['sha256']))
         checks.append(dict(campaign=name, case=cid, stage='mip', path=item['path'], sha256=item['sha256']))
-    pricing = source['campaigns']['capacity_fixed_dual_20260914']['pricing_calls']
+    pricing = []
+    for name in ['capacity_fixed_dual_20260914', 'capacity_fixed_dual_retry_20260914']:
+        pricing.extend(dict(item, source_campaign=name)
+                       for item in source['campaigns'][name]['pricing_calls'])
     for item in pricing:
         assert item['actual_pricing_raw_dual_vector_sha256'] == item['starting_raw_dual_vector_sha256']
         assert item['pricing_call']['raw_dual_vector_sha256'] == item['starting_raw_dual_vector_sha256']
-        checks.append(dict(campaign='capacity_fixed_dual_20260914', case=item['case_id'],
+        checks.append(dict(campaign=item['source_campaign'], case=item['case_id'],
                            raw_dual_sha256=item['starting_raw_dual_vector_sha256']))
+    pairs = collections.defaultdict(dict)
+    for item in pricing:
+        pairs[item['pair_id']][item['selector']] = item
+    pair_rows = []
+    for pair_id, arms in sorted(pairs.items()):
+        if set(arms) != {'reference', 'prefix-memo'}:
+            continue
+        reference, cached = arms['reference'], arms['prefix-memo']
+        assert reference['source_pool_sha256'] == cached['source_pool_sha256']
+        assert reference['starting_raw_dual_vector_sha256'] == cached['starting_raw_dual_vector_sha256']
+        for key in ['rows', 'columns', 'nonzeros', 'objective', 'route_weight']:
+            assert reference['rmp'][key] == cached['rmp'][key]
+        a, b = reference['pricing_call'], cached['pricing_call']
+        pair_rows.append(dict(pair_id=pair_id, reference_seconds=a['elapsed_s'],
+            reference_status=a['status'], reference_min_reduced_cost=a.get('min_reduced_cost'),
+            cached_seconds=b['elapsed_s'], cached_status=b['status'], cached_stop_reason=b.get('stop_reason'),
+            cached_min_reduced_cost=b.get('min_reduced_cost'), raw_dual_sha256=a['raw_dual_vector_sha256'],
+            pool_sha256=reference['source_pool_sha256'], rmp_rows=reference['rmp']['rows'],
+            rmp_columns=reference['rmp']['columns'], rmp_nonzeros=reference['rmp']['nonzeros']))
+    write_csv(out/'pricing_comparison.csv', pair_rows)
     write_csv(out/'reserve_results.csv', reserves)
     write_csv(out/'remaining_gap_results.csv', gaps)
     (out/'pricing_calls.json').write_text(json.dumps(pricing, indent=2)+'\n')
