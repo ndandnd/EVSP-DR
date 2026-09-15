@@ -1,0 +1,1751 @@
+{
+  "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T010508Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T020532Z.json",
+  "timestamp_utc": "2026-09-15T02:05:32.914739+00:00",
+  "changed_results": [
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k08_support_only/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 9.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 0.6495251655578613,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "9a519042614ab2fbbfcf24ce499da7b6867b60889b724fb92206d1a78171630a",
+      "payload_sha256": "9a519042614ab2fbbfcf24ce499da7b6867b60889b724fb92206d1a78171630a"
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k10_support_only/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 12,
+        "fleet_bound": 12.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 1.9807004928588867,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "c6f51dee25a36803b7576a0083e116b0ec5bdb650e6b5a34ed30f9d5bca930ab",
+      "payload_sha256": "c6f51dee25a36803b7576a0083e116b0ec5bdb650e6b5a34ed30f9d5bca930ab"
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c2_k08_support_only/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 10,
+        "fleet_bound": 10.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 0.9848241806030273,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "2bb8f728b9f182631d4f55dd7ee204044a6c0a963283f0e8e81e9f9b01eb0762",
+      "payload_sha256": "2bb8f728b9f182631d4f55dd7ee204044a6c0a963283f0e8e81e9f9b01eb0762"
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c3_k08_support_only/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 10,
+        "fleet_bound": 10.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 0.7408854961395264,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "a52c5162610c631c326527836aaa31b27905caa3bab0b065f82bed27634cb4e5",
+      "payload_sha256": "a52c5162610c631c326527836aaa31b27905caa3bab0b065f82bed27634cb4e5"
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k08_support_only/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 10,
+        "fleet_bound": 10.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 0.6464939117431641,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "eaa227e5c11ccefbbe5ce54a57b61126c6b82a5caceeadd58261f2f834f949da",
+      "payload_sha256": "eaa227e5c11ccefbbe5ce54a57b61126c6b82a5caceeadd58261f2f834f949da"
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k10_support_only/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 13,
+        "fleet_bound": 13.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 1.4648635387420654,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "c699e33f481699a3902f285bba4dd78c6008528d8bc42751f3aa220a8133db98",
+      "payload_sha256": "c699e33f481699a3902f285bba4dd78c6008528d8bc42751f3aa220a8133db98"
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k08_support_only/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 10,
+        "fleet_bound": 10.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 0.6532840728759766,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "43521273ed8f41ac286cb0bab1da873e8613790cea042bc0012663e2c14e1b17",
+      "payload_sha256": "43521273ed8f41ac286cb0bab1da873e8613790cea042bc0012663e2c14e1b17"
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k10_support_only/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 12,
+        "fleet_bound": 12.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 0.9919857978820801,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "f526607899b1f433359da255282293e259dde0b26e978aa7c64eba61708a4ce9",
+      "payload_sha256": "f526607899b1f433359da255282293e259dde0b26e978aa7c64eba61708a4ce9"
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c6_k10_support_only/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 12,
+        "fleet_bound": 12.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 0.6940155029296875,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "e8f17e45c183bdef06285ffb9c7c353e1f9bb5585dbff07310c6e75b516b179b",
+      "payload_sha256": "e8f17e45c183bdef06285ffb9c7c353e1f9bb5585dbff07310c6e75b516b179b"
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k15_core512_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 15,
+        "fleet_bound": 15.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 2021.6668009757996,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "1dafe96f098c8e4525254911f409d5258fb9d200810103ac37a1136487e2f733",
+      "payload_sha256": "1dafe96f098c8e4525254911f409d5258fb9d200810103ac37a1136487e2f733"
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k15_core_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 15,
+        "fleet_bound": 15.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 885.2530469894409,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "e75d108707ad85c150dc17a94c7f90e282088856324f032e900f482b465c7498",
+      "payload_sha256": "e75d108707ad85c150dc17a94c7f90e282088856324f032e900f482b465c7498"
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c6_k15_core_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 15,
+        "fleet_bound": 14.999999999999323,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 1316.9996359348297,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "e6d8db8cfa35bdf7269a528d284958703dc0e7c2e4060b3a899f389f52b9b554",
+      "payload_sha256": "e6d8db8cfa35bdf7269a528d284958703dc0e7c2e4060b3a899f389f52b9b554"
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k15_core512/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 8856.901736117434,
+        "final": {
+          "iter": 1610,
+          "attempt_iter": 1610,
+          "lp_obj": 1500717.3733263535,
+          "route_weight": 14.999999999999927,
+          "artificials": 0.0,
+          "min_rc": -2.8270623344539558e-05,
+          "max_row_violation": 1.7068568780587157e-12,
+          "max_bound_violation": 1.2656542480726785e-13
+        }
+      },
+      "sha256": "1df6fa7b855410bd40195a7f726598b4a1c3b11bd808976f0b00fb3816e27b1b",
+      "payload_sha256": "1df6fa7b855410bd40195a7f726598b4a1c3b11bd808976f0b00fb3816e27b1b"
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c2_k15_core512/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 9573.598524655215,
+        "final": {
+          "iter": 1624,
+          "attempt_iter": 1624,
+          "lp_obj": 1500618.9515429437,
+          "route_weight": 15.00000000000015,
+          "artificials": 0.0,
+          "min_rc": -3.1502758623958016e-08,
+          "max_row_violation": 2.9243274468626623e-13,
+          "max_bound_violation": 4.739347803095484e-13
+        }
+      },
+      "sha256": "2a261e7c1f36548f3ab4ad17aa07a3465f788ba7e5e1a29a193c38f8a991bc60",
+      "payload_sha256": "2a261e7c1f36548f3ab4ad17aa07a3465f788ba7e5e1a29a193c38f8a991bc60"
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k15_core512/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 7936.091020639986,
+        "final": {
+          "iter": 1635,
+          "attempt_iter": 1635,
+          "lp_obj": 1500637.928984307,
+          "route_weight": 15.000000000000005,
+          "artificials": 0.0,
+          "min_rc": -7.87475380690239e-05,
+          "max_row_violation": 2.1949109196839345e-13,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": "bc06fa016fe6a88071032bdabfec1776f767c8586efade7e431e2b8700a53265",
+      "payload_sha256": "bc06fa016fe6a88071032bdabfec1776f767c8586efade7e431e2b8700a53265"
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w3_k27/mip/187983_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 27,
+        "fleet_bound": 27.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3609.197694301605,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "3eb1c66a4d2254e57212c490debde5e8e0f6aa0aa6f952c7b6b119c7a430c52f",
+      "payload_sha256": "3eb1c66a4d2254e57212c490debde5e8e0f6aa0aa6f952c7b6b119c7a430c52f"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w5_k25/mip/134060_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 26,
+        "fleet_bound": 25.00000000000004,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3611.886188030243,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "6500f34f8d4594233a4527ed9b47dc8101e1bec76d426c621f1ed7b4e79dc321",
+      "payload_sha256": "6500f34f8d4594233a4527ed9b47dc8101e1bec76d426c621f1ed7b4e79dc321"
+    },
+    {
+      "campaign": "reserve_feasibility_screen_20260914",
+      "stage": "records",
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/results/k1_13405_flat_236p44r15_baseline/207726_r0/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "exact_nonnegative_reduced_cost",
+        "runtime_s": 361.16212701494806,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 109177.58399999996,
+          "pool_columns": 60,
+          "route_weight": 1.0909090909090906
+        }
+      },
+      "sha256": "5776a566e2435b7be5b09eef10c629f8313ee1afd6764c4cea1280043e234222",
+      "payload_sha256": "5776a566e2435b7be5b09eef10c629f8313ee1afd6764c4cea1280043e234222"
+    },
+    {
+      "campaign": "reserve_feasibility_screen_20260914",
+      "stage": "records",
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/results/k1_13405_flat_236p44r15_parx60/207727_r0/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "exact_nonnegative_reduced_cost",
+        "runtime_s": 518.2961997461971,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 109177.6065454545,
+          "pool_columns": 62,
+          "route_weight": 1.0909090909090906
+        }
+      },
+      "sha256": "6f7fa5fe5f8cae7487caa24123c319b6dc8e6403b967d574fd446f314570b178",
+      "payload_sha256": "6f7fa5fe5f8cae7487caa24123c319b6dc8e6403b967d574fd446f314570b178"
+    },
+    {
+      "campaign": "reserve_feasibility_screen_20260914",
+      "stage": "records",
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/results/k1_13406_flat_236p44r15_baseline/207728_r0/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "exact_nonnegative_reduced_cost",
+        "runtime_s": 487.36884301598184,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 100065.672,
+          "pool_columns": 64,
+          "route_weight": 1.0
+        }
+      },
+      "sha256": "542ac24ea7d078c05051d9875d8038cbbbb05f55e7d3164366368b4eb7f5287c",
+      "payload_sha256": "542ac24ea7d078c05051d9875d8038cbbbb05f55e7d3164366368b4eb7f5287c"
+    },
+    {
+      "campaign": "reserve_feasibility_screen_20260914",
+      "stage": "records",
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/results/k1_13406_flat_236p44r15_parx60/207729_r0/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "exact_nonnegative_reduced_cost",
+        "runtime_s": 666.3789559621364,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 100065.672,
+          "pool_columns": 60,
+          "route_weight": 1.0
+        }
+      },
+      "sha256": "dff5e5e70721bf17ed503782faa255c6cdf5c5bc3573225f5490875e00830492",
+      "payload_sha256": "dff5e5e70721bf17ed503782faa255c6cdf5c5bc3573225f5490875e00830492"
+    },
+    {
+      "campaign": "reserve_feasibility_screen_20260914",
+      "stage": "records",
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/results/k1_13407_flat_236p44r15_baseline/207730_r0/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "exact_nonnegative_reduced_cost",
+        "runtime_s": 919.6513516460545,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 100095.304,
+          "pool_columns": 89,
+          "route_weight": 1.0
+        }
+      },
+      "sha256": "a6a854a3f7dd1615385ccfff0375efeef49a2d4c7c671703e523320fae0c019a",
+      "payload_sha256": "a6a854a3f7dd1615385ccfff0375efeef49a2d4c7c671703e523320fae0c019a"
+    },
+    {
+      "campaign": "reserve_feasibility_screen_20260914",
+      "stage": "records",
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/results/k1_13408_flat_236p44r15_baseline/207732_r0/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "exact_nonnegative_reduced_cost",
+        "runtime_s": 130.14993376471102,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 100045.256,
+          "pool_columns": 41,
+          "route_weight": 1.0
+        }
+      },
+      "sha256": "e039d67a11465c3a062fed3461bb4b7cf152e33268c3f90e4b97ad7b5cca58b4",
+      "payload_sha256": "e039d67a11465c3a062fed3461bb4b7cf152e33268c3f90e4b97ad7b5cca58b4"
+    },
+    {
+      "campaign": "reserve_feasibility_screen_20260914",
+      "stage": "records",
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/results/k1_13408_flat_236p44r15_parx60/207733_r0/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "exact_nonnegative_reduced_cost",
+        "runtime_s": 183.04399421205744,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 100045.256,
+          "pool_columns": 41,
+          "route_weight": 1.0
+        }
+      },
+      "sha256": "3cb043bc6ca3c20a3f581073c0429689c90b4d63d795cfd23e54cef2fa23e7c2",
+      "payload_sha256": "3cb043bc6ca3c20a3f581073c0429689c90b4d63d795cfd23e54cef2fa23e7c2"
+    },
+    {
+      "campaign": "reserve_feasibility_screen_20260914",
+      "stage": "records",
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/results/k1_13405_flat_236p44r15_baseline/207726_r0/mip.json",
+      "new_path": true,
+      "summary": {
+        "final": {}
+      },
+      "sha256": "7f16f892302370bb6bb36aa2a2b0d5bc8dda4c37f279f5f8888053daf53f5f1f",
+      "payload_sha256": "7f16f892302370bb6bb36aa2a2b0d5bc8dda4c37f279f5f8888053daf53f5f1f"
+    },
+    {
+      "campaign": "reserve_feasibility_screen_20260914",
+      "stage": "records",
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/results/k1_13405_flat_236p44r15_parx60/207727_r0/mip.json",
+      "new_path": true,
+      "summary": {
+        "final": {}
+      },
+      "sha256": "51ba99891b8a1f39d8f002b59800bfb2f3086824e71df7d9eb160efa621fd5b4",
+      "payload_sha256": "51ba99891b8a1f39d8f002b59800bfb2f3086824e71df7d9eb160efa621fd5b4"
+    },
+    {
+      "campaign": "reserve_feasibility_screen_20260914",
+      "stage": "records",
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/results/k1_13406_flat_236p44r15_baseline/207728_r0/mip.json",
+      "new_path": true,
+      "summary": {
+        "final": {}
+      },
+      "sha256": "d9d3792de2821a104564e0ff75acbd14bfc49408299dddec9dec4b725cb528c8",
+      "payload_sha256": "d9d3792de2821a104564e0ff75acbd14bfc49408299dddec9dec4b725cb528c8"
+    },
+    {
+      "campaign": "reserve_feasibility_screen_20260914",
+      "stage": "records",
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/results/k1_13406_flat_236p44r15_parx60/207729_r0/mip.json",
+      "new_path": true,
+      "summary": {
+        "final": {}
+      },
+      "sha256": "e54a3b5eff90cbc2259b68297c1837aa04b44da4aefe470b61bc40beda16edbc",
+      "payload_sha256": "e54a3b5eff90cbc2259b68297c1837aa04b44da4aefe470b61bc40beda16edbc"
+    },
+    {
+      "campaign": "reserve_feasibility_screen_20260914",
+      "stage": "records",
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/results/k1_13407_flat_236p44r15_baseline/207730_r0/mip.json",
+      "new_path": true,
+      "summary": {
+        "final": {}
+      },
+      "sha256": "01fbdea74914a5a7f91a17e8189d4650883e5370d16acb8fd1a10c461ef28d90",
+      "payload_sha256": "01fbdea74914a5a7f91a17e8189d4650883e5370d16acb8fd1a10c461ef28d90"
+    },
+    {
+      "campaign": "reserve_feasibility_screen_20260914",
+      "stage": "records",
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/results/k1_13408_flat_236p44r15_baseline/207732_r0/mip.json",
+      "new_path": true,
+      "summary": {
+        "final": {}
+      },
+      "sha256": "be4cd960c93220827938d9c7e22591374bda444318bf7f3d2dd81264ff43c702",
+      "payload_sha256": "be4cd960c93220827938d9c7e22591374bda444318bf7f3d2dd81264ff43c702"
+    },
+    {
+      "campaign": "reserve_feasibility_screen_20260914",
+      "stage": "records",
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/results/k1_13408_flat_236p44r15_parx60/207733_r0/mip.json",
+      "new_path": true,
+      "summary": {
+        "final": {}
+      },
+      "sha256": "d983ba5360397180974ccc0fe62950a93321cfc464dfde6d87de50b64e1e91b9",
+      "payload_sha256": "d983ba5360397180974ccc0fe62950a93321cfc464dfde6d87de50b64e1e91b9"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "133928",
+      "case_id": "w1_k25",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "187983",
+      "case_id": "w3_k27",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "201478",
+      "case_id": "c1_k15_core512_mip",
+      "cohort": "default_compact_seed_support_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "201484",
+      "case_id": "c2_k15_core512_mip",
+      "cohort": "default_compact_seed_support_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "201485",
+      "case_id": "c2_k15_core_mip",
+      "cohort": "default_compact_seed_support_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "201496",
+      "case_id": "c4_k15_core512_mip",
+      "cohort": "default_compact_seed_support_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "201497",
+      "case_id": "c4_k15_core_mip",
+      "cohort": "default_compact_seed_support_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "201502",
+      "case_id": "c5_k15_core512_mip",
+      "cohort": "default_compact_seed_support_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "201503",
+      "case_id": "c5_k15_core_mip",
+      "cohort": "default_compact_seed_support_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "201509",
+      "case_id": "c6_k15_core_mip",
+      "cohort": "default_compact_seed_support_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "206973",
+      "case_id": "c5_k25_core512_mip",
+      "cohort": "validation_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "206974",
+      "case_id": "c5_k25_core_mip",
+      "cohort": "validation_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "206977",
+      "case_id": "c3_k08_support_only",
+      "cohort": "validation_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "206978",
+      "case_id": "c3_k08_integer_positive_added",
+      "cohort": "validation_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "206979",
+      "case_id": "c3_k08_integer_matched_zero_added",
+      "cohort": "validation_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207005",
+      "case_id": "c1_k08_integer_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207006",
+      "case_id": "c1_k08_integer_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207007",
+      "case_id": "c1_k08_lpweight_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207008",
+      "case_id": "c1_k08_lpweight_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207009",
+      "case_id": "c1_k08_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207010",
+      "case_id": "c1_k10_integer_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207011",
+      "case_id": "c1_k10_integer_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207012",
+      "case_id": "c1_k10_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207013",
+      "case_id": "c2_k08_lpweight_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207014",
+      "case_id": "c2_k08_lpweight_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207015",
+      "case_id": "c2_k08_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207016",
+      "case_id": "c3_k08_integer_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207017",
+      "case_id": "c3_k08_integer_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207018",
+      "case_id": "c3_k08_lpweight_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207019",
+      "case_id": "c3_k08_lpweight_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207020",
+      "case_id": "c3_k08_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207022",
+      "case_id": "c4_k08_integer_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207023",
+      "case_id": "c4_k08_integer_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207024",
+      "case_id": "c4_k08_lpweight_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207025",
+      "case_id": "c4_k08_lpweight_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207026",
+      "case_id": "c4_k08_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207027",
+      "case_id": "c4_k10_integer_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207028",
+      "case_id": "c4_k10_integer_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207029",
+      "case_id": "c4_k10_lpweight_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207030",
+      "case_id": "c4_k10_lpweight_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207031",
+      "case_id": "c4_k10_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207032",
+      "case_id": "c5_k08_lpweight_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207033",
+      "case_id": "c5_k08_lpweight_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207034",
+      "case_id": "c5_k08_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207035",
+      "case_id": "c5_k10_lpweight_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207036",
+      "case_id": "c5_k10_lpweight_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207037",
+      "case_id": "c5_k10_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207038",
+      "case_id": "c6_k10_lpweight_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207039",
+      "case_id": "c6_k10_lpweight_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "207040",
+      "case_id": "c6_k10_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "133927",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-87"
+      },
+      "after": null
+    },
+    {
+      "job": "133928",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-01"
+      }
+    },
+    {
+      "job": "187968",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-87"
+      }
+    },
+    {
+      "job": "187983",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-75"
+      },
+      "after": null
+    },
+    {
+      "job": "201443",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-20"
+      },
+      "after": null
+    },
+    {
+      "job": "201448",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-04"
+      },
+      "after": null
+    },
+    {
+      "job": "201449",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-05"
+      },
+      "after": null
+    },
+    {
+      "job": "201460",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "201461",
+      "before": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "201478",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-01"
+      }
+    },
+    {
+      "job": "201484",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-05"
+      }
+    },
+    {
+      "job": "201485",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-04"
+      }
+    },
+    {
+      "job": "201496",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-15"
+      }
+    },
+    {
+      "job": "201497",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-14"
+      }
+    },
+    {
+      "job": "201502",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "201503",
+      "before": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-03"
+      },
+      "after": null
+    },
+    {
+      "job": "201509",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "207005",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      }
+    },
+    {
+      "job": "207006",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-01"
+      }
+    },
+    {
+      "job": "207007",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-02"
+      }
+    },
+    {
+      "job": "207008",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-87"
+      }
+    },
+    {
+      "job": "207010",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      }
+    },
+    {
+      "job": "207011",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "207013",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "207014",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "sablab-cpu-02"
+      }
+    },
+    {
+      "job": "207016",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-19"
+      }
+    },
+    {
+      "job": "207017",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-20"
+      }
+    },
+    {
+      "job": "207018",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-20"
+      }
+    },
+    {
+      "job": "207019",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-20"
+      }
+    },
+    {
+      "job": "207022",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      }
+    },
+    {
+      "job": "207023",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      }
+    },
+    {
+      "job": "207024",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-08"
+      }
+    },
+    {
+      "job": "207025",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-08"
+      }
+    },
+    {
+      "job": "207027",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      }
+    },
+    {
+      "job": "207028",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      }
+    },
+    {
+      "job": "207029",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      }
+    },
+    {
+      "job": "207030",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-04"
+      }
+    },
+    {
+      "job": "207032",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-04"
+      }
+    },
+    {
+      "job": "207033",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-03"
+      }
+    },
+    {
+      "job": "207035",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-03"
+      }
+    },
+    {
+      "job": "207036",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-03"
+      }
+    },
+    {
+      "job": "207038",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-05"
+      }
+    },
+    {
+      "job": "207039",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-05"
+      }
+    },
+    {
+      "job": "207647",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-74"
+      }
+    },
+    {
+      "job": "207648",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-75"
+      }
+    },
+    {
+      "job": "207649",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      }
+    },
+    {
+      "job": "207650",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "207651",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-03"
+      }
+    },
+    {
+      "job": "207652",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "sds-cpu-01"
+      }
+    },
+    {
+      "job": "207653",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "lin-cpu-01"
+      }
+    },
+    {
+      "job": "207654",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "culberg-cpu-01"
+      }
+    },
+    {
+      "job": "207655",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "culberg-cpu-01"
+      }
+    },
+    {
+      "job": "207656",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "culberg-cpu-01"
+      }
+    },
+    {
+      "job": "207657",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "culberg-cpu-01"
+      }
+    },
+    {
+      "job": "207658",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "mzhang-cpu-01"
+      }
+    },
+    {
+      "job": "207659",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "mzhang-cpu-01"
+      }
+    },
+    {
+      "job": "207660",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "petro-cpu-01"
+      }
+    },
+    {
+      "job": "207661",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "petro-cpu-01"
+      }
+    },
+    {
+      "job": "207662",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "petro-cpu-01"
+      }
+    },
+    {
+      "job": "207663",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "sablab-cpu-01"
+      }
+    },
+    {
+      "job": "207664",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "sablab-cpu-01"
+      }
+    },
+    {
+      "job": "207665",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "sablab-cpu-01"
+      }
+    },
+    {
+      "job": "207666",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "sablab-cpu-01"
+      }
+    },
+    {
+      "job": "207667",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "lisbeth"
+      }
+    },
+    {
+      "job": "207668",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "lisbeth"
+      }
+    },
+    {
+      "job": "207669",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "lisbeth"
+      }
+    },
+    {
+      "job": "207670",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "lisbeth"
+      }
+    },
+    {
+      "job": "207671",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207672",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207673",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207674",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207675",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207676",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207677",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207678",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207679",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207680",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207681",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207682",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207683",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207684",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207685",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207686",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207687",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207688",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207689",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207690",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207692",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207693",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207694",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207695",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "207731",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "luxlab-cpu-02"
+      }
+    },
+    {
+      "job": "207734",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "joachims-cpu-02"
+      }
+    },
+    {
+      "job": "207735",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "joachims-cpu-02"
+      }
+    }
+  ]
+}

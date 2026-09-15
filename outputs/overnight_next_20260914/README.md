@@ -1,3 +1,5 @@
+**Results through 22:13 EDT:** [Updated chain, seed and reserve tables](status_20260915T020532Z/README.md). The launch record below retains its original timestamp.
+
 # Overnight additions — 14 September 2026
 
 **Submitted and verified at 21:54 EDT: 89 EVSP–DR jobs running, 54 waiting for required inputs.** The three new campaigns add 69 independent allocations plus 24 own-CG MIPs. All ten reserve-screen jobs and all 24 larger CGs are running; nine of the 35 new pool MIPs have finished and 26 remain running. No array throttle, unsatisfiable dependency, or assignment to the reserved GPU node was observed. [Queue evidence](queue_verification.json).

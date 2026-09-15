@@ -1,3 +1,15 @@
+## 14 September, 22:13 EDT — chain 3 reaches 27; reserve screen produces a new discrepancy
+
+Full snapshot `20260915T020532Z` completed at 02:13:31 UTC after 478.1 seconds. SHA256: `8c0e1eabf0286ce7be588c07f1ed188970cb02ccdc2d2dd163accb3707acb27b`. Compare with `20260915T010508Z`. Preemption study: 902 attempt records. Queue: 82 running / 49 real dependency waits, with 33 held historical tasks excluded. No new confirmed preemption, MIP execution failure, invalid dependency, submission, cancellation or requeue.
+
+Chain 3 k27: 27 buses, bound 27, fleet proved in the 156,516-column pool. CG 118.3 minutes; fleet search 23.8 minutes; total MIP 60.2 minutes. Charging remains time-limited. Individual-route replay passes; 57 duplicated trip assignments have no separate removal validation. Shared capacity and terminal energy floor are absent. Largest individual one-hour matches across chains 1–6: 24/22/27/23/24/26. Original C5 k25 is now collected: 26 buses, bound 25, open gap.
+
+Compact cohort: 33 certified CGs and 28 target-matching, pool-proved and individually replayed MIPs. All k8/k10 cases complete; both methods on C5/C6 k15 now match 15. Eight k15 MIPs remain unpublished. Previous-k computation remains separate. Larger compact tests are a distinct source revision and cannot be treated as a pure size comparison with this cohort.
+
+Reserve screen: seven certified CG endpoints and seven completed MIPs; five one-bus results and two two-bus outcomes on duty 13405. All completed cases omit shared-capacity rows but pass post-hoc station-count checks; route feasibility is by driver construction, not independent continuous replay. Duty 13405 weighted LP route weight 1.090909 is not itself a fleet-only lower bound. Do not claim a global two-bus minimum without a separate argument. Three cases are unpublished, including both capacity-enforced tests. No speculative follow-up was launched.
+
+Register: 3,190 records, 70 source groups, all six supplements retained. Verified 319 core endpoints plus the campaign-specific seed/continuation/reserve checks. Workbook: 21 rendered views, zero formula-error matches, changed views inspected. The required marker ran once before its build. Current Doc tables and explanations updated; reference-and-later tail byte-identical, figure tabs and Slides untouched. Source report and document verification: `outputs/overnight_next_20260914/status_20260915T020532Z/`. Continue hourly collection; the nine LP-support-only MIPs were already reported in the 21:54 launch update and are not new this check.
+
 ## Additional authorized campaigns — 21:54 EDT, 14 September
 
 - `compact_large_seed_20260914`:24 independent CGs plus24 own-CG MIPs. Six chains ×k20/k25 ×core/core512. Native a0e0 graph producer/CG;871 MIP.4hCG;12600sMIP/10800sfleet. Existing graph pointers, no compatibility relabeling. Sources48cases in frozen manifest and jobs; preserve own-CG dependencies.
