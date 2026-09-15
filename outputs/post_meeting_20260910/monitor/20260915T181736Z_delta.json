@@ -1,0 +1,149 @@
+{
+  "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T171811Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T181736Z.json",
+  "timestamp_utc": "2026-09-15T18:17:36.958655+00:00",
+  "changed_results": [
+    {
+      "campaign": "continuation_gaps3_20260915",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/continuation_gaps3_20260915/cases/w4_k28_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 28,
+        "fleet_bound": 28.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12612.480898141861,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "0599c36ad8b6f43d02a398fc1ebde051d2fc336eddf18071f65da371bc03e719",
+      "payload_sha256": "0599c36ad8b6f43d02a398fc1ebde051d2fc336eddf18071f65da371bc03e719"
+    },
+    {
+      "campaign": "continuation_gaps3_20260915",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/continuation_gaps3_20260915/cases/w5_k28_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 31,
+        "fleet_bound": 27.00000000000012,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 12613.76534318924,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "67674419970658e8124ac13626927d339f6791fa4113a7c78d4fdfb0fb132d2c",
+      "payload_sha256": "67674419970658e8124ac13626927d339f6791fa4113a7c78d4fdfb0fb132d2c"
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w1_k28/mip/187973_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 31,
+        "fleet_bound": 28.00000000000002,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3614.3372354507446,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "598e4c7f9f83c62a5531927886f1f3de54ff6fa7d973a72b1162f7d13cc69a75",
+      "payload_sha256": "598e4c7f9f83c62a5531927886f1f3de54ff6fa7d973a72b1162f7d13cc69a75"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "187973",
+      "case_id": "w1_k28",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "228579",
+      "case_id": "w4_k28_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "228580",
+      "case_id": "w5_k28_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "236276",
+      "case_id": "w1_k28_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "187973",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-12"
+      },
+      "after": null
+    },
+    {
+      "job": "224628_8",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      },
+      "after": null
+    },
+    {
+      "job": "224645",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-19"
+      }
+    },
+    {
+      "job": "228579",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "228580",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-13"
+      },
+      "after": null
+    },
+    {
+      "job": "236276",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-04"
+      }
+    }
+  ]
+}

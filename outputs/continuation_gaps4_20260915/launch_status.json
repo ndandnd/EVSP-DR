@@ -1,0 +1,41 @@
+{
+  "utc": "2026-09-15T18:24:35.709327+00:00",
+  "rows": [
+    {
+      "case_id": "w1_k28_longmip",
+      "job_id": "236276",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-04",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/continuation_gaps4_20260915/cases/w1_k28_longmip/attempts/236276_r0"
+      ]
+    }
+  ],
+  "registry_entries": [
+    {
+      "job_id": "236276",
+      "case_id": "w1_k28_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/continuation_gaps4_20260915/cases/w1_k28_longmip/attempts/236276_r0/result.json",
+      "attempt_tag": "236276_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T18:23:02.047793+00:00"
+    }
+  ],
+  "registry_unique": true,
+  "counts": {
+    "RUNNING": 1
+  }
+}

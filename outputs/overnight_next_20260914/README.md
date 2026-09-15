@@ -1,4 +1,4 @@
-**Latest:** [15 September12:27EDT — Chain1 reaches27; target tests inconclusive](status_20260915T161748Z/README.md).
+**Latest:** [15 September14:26EDT — four chains reach28](status_20260915T181736Z/README.md).
 
 **Current verified update:** [15 September 09:24 EDT morning summary](status_20260915T131517Z/README.md) · [All original chain counts](status_20260915T131517Z/CHAIN_TABLES.md). Earlier dated summaries below are historical.
 

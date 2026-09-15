@@ -1,0 +1,1149 @@
+{
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T181736Z.json",
+  "snapshot_sha256": "a6b0fc95a17812e2b2f8c2986ed31a9f737bcf7a14377d446d177ba84325a2c5",
+  "source_timestamp": "2026-09-15T18:17:36.958655+00:00",
+  "normalized_endpoints_verified": 189,
+  "checks": [
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k08_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k08_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k10_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k10_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k15_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k15_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c2_k08_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c2_k08_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c2_k10_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c2_k10_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c2_k15_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c2_k15_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k08_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k08_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k10_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k10_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k15_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k15_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k08_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k08_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k10_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k10_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k15_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k15_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k08_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k08_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k10_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k10_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k15_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k15_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c6_k08_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c6_k08_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c6_k10_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c6_k10_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c6_k15_core/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c6_k15_core512/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k08_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k08_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k10_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k10_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k15_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k15_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c2_k08_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c2_k08_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c2_k10_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c2_k10_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c2_k15_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c2_k15_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k08_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k08_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k10_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k10_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k15_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k15_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k08_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k08_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k10_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k10_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k15_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k15_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k08_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k08_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k10_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k10_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k15_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k15_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c6_k08_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c6_k08_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c6_k10_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c6_k10_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c6_k15_core512_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "compact_seed_support_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c6_k15_core_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "remaining_chain_gaps_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w1_k20_longmip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "remaining_chain_gaps_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w1_k22_longmip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "remaining_chain_gaps_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w2_k23_longmip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "remaining_chain_gaps_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w2_k24_longmip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "remaining_chain_gaps_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w3_k25_longmip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "remaining_chain_gaps_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w4_k21_longmip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "remaining_chain_gaps_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w4_k24_longmip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "remaining_chain_gaps_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w4_k25_longmip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "remaining_chain_gaps_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w6_k25_longmip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w1_k26/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w1_k27/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w1_k28/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w2_k26/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w2_k27/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w2_k28/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w3_k26/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w3_k27/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w3_k28/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w4_k26/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w4_k27/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w4_k28/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w5_k26/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w5_k27/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w5_k28/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w6_k26/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w6_k27/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w6_k28/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w1_k26/mip/187969_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w1_k27/mip/187971_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w1_k28/mip/187973_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w2_k26/mip/187975_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w2_k27/mip/187977_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w2_k28/mip/187979_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w3_k26/mip/187981_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w3_k27/mip/187983_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w3_k28/mip/187985_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w4_k26/mip/187987_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w4_k27/mip/187989_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w4_k28/mip/187991_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w5_k26/mip/187993_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w5_k27/mip/187995_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w5_k28/mip/187997_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w6_k26/mip/187999_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w6_k27/mip/188001_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w6_k28/mip/188004_r0/result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k08_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k08_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k10_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k10_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k15_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k15_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k08_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k08_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k10_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k10_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k15_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k15_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k10_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k10_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k15_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k15_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k08_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k08_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k10_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k10_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k15_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k15_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k08_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k08_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k10_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k10_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k15_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k15_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k08_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k08_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k10_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k10_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k15_integer/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k15_lpweight/cg.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k08_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k08_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k10_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k10_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k15_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k15_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k08_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k08_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k10_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k10_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k15_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k15_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k10_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k10_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k15_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k15_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k08_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k08_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k10_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k10_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k15_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k15_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k08_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k08_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k10_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k10_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k15_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k15_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k08_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k08_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k10_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k10_lpweight_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k15_integer_mip/mip_result.json",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k15_lpweight_mip/mip_result.json",
+      "exact_match": true
+    }
+  ],
+  "compact_cg": 36,
+  "compact_mip": 36,
+  "queue_counts": {
+    "PENDING": 46,
+    "RUNNING": 25
+  },
+  "errors": []
+}

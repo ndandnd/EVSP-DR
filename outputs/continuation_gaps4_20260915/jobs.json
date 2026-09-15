@@ -1,0 +1,26 @@
+[
+  {
+    "case_id": "w1_k28_longmip",
+    "job_id": "236276",
+    "kind": "mip",
+    "treatment": "continuation_original_pool_longer_search",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=4:30:00",
+      "--requeue",
+      "--job-name=drP_w1_k28_longmip",
+      "--output=/home/nc437/ladder-lite/continuation_gaps4_20260915/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/continuation_gaps4_20260915/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/continuation_gaps4_20260915/worker.sub",
+      "/home/nc437/ladder-lite/continuation_gaps4_20260915",
+      "w1_k28_longmip"
+    ],
+    "submitted_utc": "2026-09-15T18:22:47.567498+00:00"
+  }
+]

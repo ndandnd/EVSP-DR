@@ -1,3 +1,11 @@
+## 15 September14:26EDT — C4 reaches28; longerC1k28 launched
+
+Snapshot181736 completed542.191s. C4k28samepoollongMIP28/proved101.39fleetmin; C5k28long31/bound27/open. C1k28original31/bound28/open. Allnewroutesreplaypass; chargingopen. Combinedmax27/28/28/28/26/28; originalmaxunchanged. ShortDoc onlydate/headline/C4tablecellupdated,figures/history/Slidespreserved.
+
+Launched236276 continuation_gaps4 C1k28 unchangedpool, same native871worker,12600total/10800fleet8CPU24G4.5h/default/requeue/excludedcompute01; no dependency. Source/duplicate/nativeworker/preflightpassed. Runningjingjie-cpu-04,fullsizelicensepassed,oneattemptregistered. Newroot addedsharedcollector/normalizer/longersummarizer; focusedlaunchcollection and mergednormalizationpass. Main snapshot startedbefore rootregistration; nextscanincludesit. Do not repeat already-completedC5longsearch unchanged.
+
+Register3349/78groups,78CG78MIPamong102cases,982attempts. Queue25running46true dependencies; C3/C5k29CGrunning,22graphsremain. No failures/preemptions/invaliddependencies/cancellations; held/V2Guntouched. See status_20260915T181736Z and continuation_gaps4_20260915.
+
 ## 15 September13:28EDT — C1k28 CG capped, C3k29 starts CG
 
 Snapshot171811 completed621.676s. C1k28CG239.435min/wallcap,final re-solve2801175.78764622/routeweight28/RC−0.13102109,no certificate; MIP187973running. C3k29cachefinished8.90h,CG224637running; remaining23graphscontinue. Register3347/78groups;78CG77MIPamong102cases. No newintegerresult,Docunchanged. Queue27running47true dependencies,981attempts,no failures/preemptions/invaliddependencies. No jobmutations. See status_20260915T171811Z; preserve realdependencies and question-ledshortDoc.

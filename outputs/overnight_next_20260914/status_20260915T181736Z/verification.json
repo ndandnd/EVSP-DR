@@ -1,0 +1,25 @@
+{
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T181736Z.json",
+  "sha256": "a6b0fc95a17812e2b2f8c2986ed31a9f737bcf7a14377d446d177ba84325a2c5",
+  "collection": {
+    "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T181736Z.json",
+    "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T171811Z.json",
+    "started_utc": "2026-09-15T18:17:36.845900+00:00",
+    "returncode": 0,
+    "elapsed_s": 542.1912589073181,
+    "stderr_path": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T181736Z_stderr.txt",
+    "finished_utc": "2026-09-15T18:26:39.041693+00:00"
+  },
+  "new_mip_results": 3,
+  "original_cg": 78,
+  "original_mip": 78,
+  "register_records": 3349,
+  "new_jobs": [
+    "236276"
+  ],
+  "cancelled_jobs": [],
+  "queue_running": 25,
+  "queue_true_dependencies": 46,
+  "preemption_records": 982,
+  "doc_update": "outputs/research_questions_20260915/update_20260915T1826Z"
+}
