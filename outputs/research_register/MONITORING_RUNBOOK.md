@@ -1,3 +1,7 @@
+## 15 September 06:19 EDT — complete larger compact batch
+
+Snapshot `20260915T101137Z`:17new MIP endpoints verified. All25original k16–25misses now recovered in separate unchanged-pool searches. C4k27 matches27; C5k27 has29/bound26. Complete larger compact batch splits8matches/8target-excluding pools/8open gaps. Exact fleet proof and target exclusion are different:22/bound21 at target20 already excludes20. New conservative flag in `summarize_pool_experiments.py` records this, without treating roundoff above20 as an exclusion. Source bindings321core/179evening/83pool/146chain pass. Queue18running/29true dependencies; no confirmed preemption or invalid dependency. Current Doc table updated, figure tabs preserved. Native union/control validation is separate from production and from this snapshot. A direct SSHcommand omitted the configured control socket; socket-based access remained available. Use the socket on every call.
+
 ## Active monitoring and document layout — 15 September
 
 Follow [ACTIVE_MONITOR_PLAN.md](ACTIVE_MONITOR_PLAN.md) for the current overnight priorities and concise-document workflow. The first Google Doc tab is now **START HERE — Current results** (`t.79m3d3x4h45m`). The old weekly tab `t.lumf8xm66fow` is preserved as a dated research log; do not prepend new hourly briefings there. Both figure tabs remain intact. Hourly heartbeat updated in place; morning consolidation around09:00EDT. [Queue and document-change evidence](overnight_monitor_20260915/).

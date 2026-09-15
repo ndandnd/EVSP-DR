@@ -1,0 +1,159 @@
+{
+  "source_snapshot": "20260915T101137Z",
+  "scheduler_transitions": [
+    {
+      "JobID": "187971",
+      "case_id": "w1_k27",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "187989",
+      "case_id": "w4_k27",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207671",
+      "case_id": "c1_k20_core512_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207672",
+      "case_id": "c1_k20_core_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207676",
+      "case_id": "c2_k20_core_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207677",
+      "case_id": "c2_k25_core512_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207678",
+      "case_id": "c2_k25_core_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207681",
+      "case_id": "c3_k25_core512_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207682",
+      "case_id": "c3_k25_core_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207685",
+      "case_id": "c4_k25_core512_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207686",
+      "case_id": "c4_k25_core_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207687",
+      "case_id": "c5_k20_core512_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207688",
+      "case_id": "c5_k20_core_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207689",
+      "case_id": "c5_k25_core512_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207690",
+      "case_id": "c5_k25_core_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "207695",
+      "case_id": "c6_k25_core_mip",
+      "cohort": "default_compact_large_seed_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "220545",
+      "case_id": "w5_k25_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    }
+  ],
+  "note": "Only native results in the validated scientific tables are promoted. Scheduler state is separate."
+}

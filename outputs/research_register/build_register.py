@@ -218,13 +218,18 @@ class Register:
             self.extension_jobs[campaign_id] = extension_workflow.get("case_jobs.json", {}) or {}
         self.diagnostic_cases = {}
         self.diagnostic_jobs = {}
-        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914", "compact_seed_support_20260914", "compact_large_seed_20260914", "lp_support_pool_diagnostic_20260914", "remaining_chain_gaps_20260914", "final_chain_gap_20260915", "continuation_gap_20260915", "retrospective_prefix_controls_20260914", "decomposition_pool_union_20260914", "decomposition_lp_support_union_20260914"):
+        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914", "compact_seed_support_20260914", "compact_large_seed_20260914", "compact_pool_union_20260915", "lp_support_pool_diagnostic_20260914", "remaining_chain_gaps_20260914", "final_chain_gap_20260915", "continuation_gap_20260915", "retrospective_prefix_controls_20260914", "decomposition_pool_union_20260914", "decomposition_lp_support_union_20260914"):
             diagnostic = snapshot.get("campaigns", {}).get(campaign_id, {})
             diagnostic_workflow = diagnostic.get("workflow", {}) or {}
             self.diagnostic_cases[campaign_id] = {
                 cid: {**metadata, "id": cid}
                 for cid, metadata in (diagnostic_workflow.get("manifest.json", {}).get("cases", {}) or {}).items()
             }
+            if campaign_id == "compact_pool_union_20260915":
+                # Explicit aliases for this frozen manifest; do not infer a
+                # constructed pool's target from its ancestry paths.
+                for case in self.diagnostic_cases[campaign_id].values():
+                    case.update(csv=case["input_path"], target_duties=case["target_k"])
             metadata_extension = diagnostic_workflow.get("case_metadata.json", {}).get("case_metadata", {})
             if metadata_extension:
                 if not diagnostic_workflow.get("case_metadata_verification", {}).get("verified"):
@@ -319,6 +324,7 @@ class Register:
                          "code_commit": metadata.get("execution_commit"),
                          "notes": metadata.get("interpretation"), **(overrides or {})}
             constructed_pool_notes = {
+                "compact_pool_union_20260915": "Union of core and expanded compact-start pools, or unchanged expanded-pool control; native greedy policy retained; donor upper bounds are not solver incumbents",
                 "parallel_pool_unions_20260914": "MIP on a constructed union of existing baseline pools",
                 "retrospective_prefix_controls_20260914": "MIP on a reconstructed historical iteration-prefix pool, not an exact wall-time CG endpoint",
                 "decomposition_pool_union_20260914": "MIP on remapped columns from partitions of one parent instance; target metadata comes from the verified benchmark sidecar",

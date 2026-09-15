@@ -311,6 +311,7 @@ def giro_original_metrics(original, fee):
 
 home = Path.home() / 'ladder-lite'
 roots = {
+    'compact_pool_union_20260915': home / 'compact_pool_union_20260915',
     'compact_large_seed_20260914': home / 'compact_large_seed_20260914',
     'lp_support_pool_diagnostic_20260914': home / 'lp_support_pool_diagnostic_20260914',
     'remaining_chain_gaps_20260914': home / 'remaining_chain_gaps_20260914',
@@ -364,6 +365,7 @@ out = {'timestamp_utc': datetime.datetime.now(datetime.timezone.utc).isoformat()
 for name, root in roots.items():
     rows = []
     diagnostic = name in ('overnight_diagnostics_20260914', 'mip_repeatability_20260914', 'parallel_pool_followup_20260914', 'parallel_pool_unions_20260914', 'overnight_parallel_20260914', 'compact_seed_support_20260914', 'compact_large_seed_20260914', 'lp_support_pool_diagnostic_20260914', 'remaining_chain_gaps_20260914', 'final_chain_gap_20260915', 'continuation_gap_20260915', 'retrospective_prefix_controls_20260914', 'decomposition_pool_union_20260914', 'decomposition_lp_support_union_20260914')
+    diagnostic = diagnostic or name == 'compact_pool_union_20260915'
     diagnostic_manifest_sha = hashlib.sha256((root/'manifest.json').read_bytes()).hexdigest() if diagnostic and (root/'manifest.json').exists() else None
     published_mips = set(root.glob('cases/*/mip_result.json')) if diagnostic else set()
     for p in sorted(set(root.rglob('*mip8h.json')) | set(root.rglob('*mip_budgeted.json')) | set(root.glob('*/mip.json')) | set((root/'results').glob('*60m.json')) | set((root/'mip').glob('*1h2stage.json')) | set(root.glob('p*/mip/*__1h2stage.json')) | set((root/'mip_attempts').glob('**/result.json')) | {p for p in root.glob('cases/*/mip/*/result.json') if 'smoke' not in p.parts} | published_mips):
@@ -480,6 +482,7 @@ for name, root in roots.items():
                              'path': str(p), 'state': record})
         out['campaigns'][name]['workflow']['attempt_progress'] = progress
         construction_kinds = {
+            'compact_pool_union_20260915': 'finite_pool_union',
             'parallel_pool_unions_20260914': 'finite_pool_union',
             'retrospective_prefix_controls_20260914': 'retrospective_iteration_prefix',
             'decomposition_pool_union_20260914': 'parent_mapped_partition_pool',
@@ -516,7 +519,11 @@ for name, root in roots.items():
                         ('sources', 'source_order', 'union_columns', 'source',
                          'cutoff_found_iter_exclusive', 'historical_log_elapsed_s',
                          'unique_pool_columns', 'semantics', 'columns',
-                         'component_audits', 'source_audits', 'parent_graph_constructed')},
+                         'component_audits', 'source_audits', 'parent_graph_constructed',
+                         'source_pool_sets', 'union_pool_set', 'shared_incidence_count',
+                         'best_independent_fleet_upper_bound', 'supplied_solver_start',
+                         'combined_child_cg_wall_s', 'constructor_wall_s',
+                         'dedup_cost_policy', 'prior_cg_accounting_scope')},
                     'journal_hash_scope': 'Verified by construction worker; not rehashed by this collector.'}
             out['campaigns'][name]['workflow']['pool_constructions'] = constructions
         for record_name in ['validation.json', 'scheduler_verification.json', 'selection.json']:

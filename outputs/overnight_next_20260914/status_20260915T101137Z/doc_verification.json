@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "date_current": true,
+    "all25_recovered": true,
+    "complete_larger_table": true,
+    "no_unverified_larger_remainder": true,
+    "paragraph_style_fixed": true,
+    "figures_link_preserved": true,
+    "gantt_link_preserved": true,
+    "historical_link_preserved": true,
+    "source_link_current": true,
+    "extra_time_not_causal": true,
+    "no_empty_heading": true
+  },
+  "before_sha256": "5359474e925e21630ac0b21049717098270752ef008e19abd43b2bbdc92f7249",
+  "after_sha256": "74af56c0748519163d79ec16561efa1a5846bb02734c21b6210332e0ed11784c",
+  "words_before": 1408,
+  "words_after": 1626,
+  "slides_edited": false
+}

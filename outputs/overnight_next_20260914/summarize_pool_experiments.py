@@ -3,6 +3,7 @@ import argparse
 import csv
 import hashlib
 import json
+import math
 from pathlib import Path
 
 
@@ -43,7 +44,14 @@ def verify_mip(item, case, manifest_hash, source_hash, journal_hash):
     assert audit['added_giro_route_count'] == 0
     for key in ['prices_sha256', 'reference_sha256', 'deadhead_sha256']:
         assert audit['input_hashes'][key] in case['static_hashes'].values()
+    # Excluding the target does not require proving the exact integer optimum.
+    # Keep a conservative margin so floating-point 20.00000000000008 does not
+    # exclude a target of 20. This is a fleet-search bound, not a weighted LP.
+    bound = item.get('fleet_bound')
+    target_excluded = (float(bound) > case['target_k'] + 1e-5
+                       if bound is not None and math.isfinite(float(bound)) else None)
     return dict(buses=item['buses'], pool_fleet_bound=item['fleet_bound'],
+        target_excluded_in_saved_pool=target_excluded,
         fleet_proved=item['fleet_proven'], pool_columns=item['pool_columns'],
         total_mip_minutes=item['runtime_s']/60,
         fleet_search_minutes=item['two_stage']['stage1_runtime_s']/60,
