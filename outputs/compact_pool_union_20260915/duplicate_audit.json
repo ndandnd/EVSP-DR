@@ -1,0 +1,193 @@
+{
+  "utc": "2026-09-15T10:27:26.365416+00:00",
+  "scope": "Every immediate campaign manifest <=30MB under /home/nc437/ladder-lite, matching exact16donor status hashes; plus prior union/compact manifest/receipt inventory and full current user queue in source_audit",
+  "manifests_scanned": 46,
+  "files": [
+    {
+      "path": "/home/nc437/ladder-lite/full_cache_witness_audit_20260909_1745/manifest.json",
+      "sha256": "5847b6ee326269cefc3b1e81c642fdbd1ebf049445dc681b4e0e36eea2a58a71"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_unions_20260914/manifest.json",
+      "sha256": "4008d1dd2f5f5eb04e9222729170cdb6dc2c70588aa42a9cb6792c73b320c9e9"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/manifest.json",
+      "sha256": "e4a08bbc128998b3a9207fe4a2e1e71c2dd581c8e353c9d3c07de3929c2d1548"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/manifest.json",
+      "sha256": "8f40b873804819aafb0dca66887211fd5138ce279945b8bb3c6abb854be5ae6e"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/manifest.json",
+      "sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/manifest.json",
+      "sha256": "b28a1a01aea6d4320b18db1fa66d12fa6a5e80aa7448921dd7997fd34508978b"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/w2_k14_import_fix_20260912/manifest.json",
+      "sha256": "6a7fd77a5c6f779e0c32d19319f55262afa31c8fa1b8e37888bd69d512c56559"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/w2_chain_recovery_20260912/manifest.json",
+      "sha256": "4aec50885519130e4a8ef0059e1172a23406de5045f0644f41e688ab0fb2eeab"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/w2_chain_recovery_retry2_20260912/manifest.json",
+      "sha256": "1bec90faf73a24c06b60ad736ce95038272f8915e4180dc65a5bcbac3114ac7b"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/manifest.json",
+      "sha256": "1e10471cdbe81faa367c3fb9f8acfdc8fc7da3bf98055f61cf30ed70c854048c"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_recovery_20260912/manifest.json",
+      "sha256": "1e81d8d90c018fda3caf9e626d120ad050ec3a7e4745a181020591c2a001a612"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/manifest.json",
+      "sha256": "c37be7a059d7251f74fd91e5b4e01e9959b2c844d911eb35d8b0f0ca8d54e947"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/manifest.json",
+      "sha256": "feaf88e7432354cfd342bd7321bb4a0ef75c2e71f9515727a4c0c1aa6b4b8681"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/manifest.json",
+      "sha256": "52cd4db57f3c0d2d0377104d550eefc95ecef313454df1f7833691ff6d6b9f2b"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/manifest.json",
+      "sha256": "7660adf2dcc207801d1abbd3843542ecdf2681cb655600982497bf327bb78b4d"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/manifest.json",
+      "sha256": "eda4bdf60d0bfcf19d34c5a816a11d22355ba8734042d81178bd85738f564f01"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/manifest.json",
+      "sha256": "a8c37cc553a0c38484de3671ac5421db7fd331b3b43715b9784ae57299b46aca"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914_smoke/manifest.json",
+      "sha256": "230f703f755318243c56cf32db1d4c7e7ab5b2c42876bb303cd8f8c1e4fe10e2"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914_smoke_resume_v2/manifest.json",
+      "sha256": "53d946365f8c894f20eb30e28110a8ed98ea3fed02aab0215cf551f7967c16b5"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914_smoke_resume_v3/manifest.json",
+      "sha256": "5000aa56321c23f536fcd0403a737edaf5db88cc33863980f1d8816dc1057d29"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/manifest.json",
+      "sha256": "9a1474bd0396f1ddd7fe4b67b96cc664b6c639cbb225f2e46ca5905278e4b7be"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/manifest.json",
+      "sha256": "1ac2cfa69dc7fced141f1214e0787b35d8ea161910de8ed7fe15fc5b9d0de082"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/manifest.json",
+      "sha256": "27946cc4335d1379e7575e3414227689b9c6439a26ce916f59807dcb5da07f53"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/manifest.json",
+      "sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/manifest.json",
+      "sha256": "1c02bde637bcbc5f57810829b4a5b7576d981986b7f5a3ecab80149daeaa682d"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/manifest.json",
+      "sha256": "05f726731d98dc7763d33d0ad78394a45ada1bbf1c838783f0503291a9c17ead"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/manifest.json",
+      "sha256": "e56250b8405cc5e8576b305bd548d0953be878c5a8e62b2ea50b2efc0c2066c9"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/manifest.json",
+      "sha256": "52e6f048df74f52e96128fe530724ac9adc70ade1e352485cffc0ece4d0be5d1"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_timeout_gates_20260914/manifest.json",
+      "sha256": "2e253d2a6d1e390106761de76c04edd0621ae6ba28d5c37cae8bc1d57d8d0ae1"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/manifest.json",
+      "sha256": "9db78a24cec6c0bdc8e731aa9ddffe79d122d234821500067e846ed42f9f4897"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_timeout_gates_v2_20260914/manifest.json",
+      "sha256": "4c6d3578612d238156fad1cebe535bce87f1ee486da13fb5fcbda6441f480585"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/decomposition_pool_union_20260914/manifest.json",
+      "sha256": "69cf4c1f7c3795ce17ce62adb4bef2dd7d34194a5b95a86684e4920ec27af4c0"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/decomposition_lp_support_union_20260914/manifest.json",
+      "sha256": "dd154f49757657e9d1a309f38a31177bf052a46c9d4363a78da1992fe2cd8630"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/manifest.json",
+      "sha256": "333ce3f646f4ac39897daebdfbec2e4d54c47de835bf98d4e42f5684ff6f6a62"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914_smoke/manifest.json",
+      "sha256": "eecabbb39a5a58bec6988c6f847e6573e7702e8a4b183e5cad94f0b11b087a34"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/manifest.json",
+      "sha256": "953ff6bb61ef51e3654f58ea68f843177b6fdffe3a20683766ab9a59d4add26a"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/capacity_fixed_dual_20260914/manifest.json",
+      "sha256": "fe3eea1b18720f0b6507b632b73bc8640e4e4b5f3690549ce35b2402109c62e9"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/capacity_fixed_dual_retry_20260914/manifest.json",
+      "sha256": "a3f45135a50f502f40fa3ccd0797658a60fc74e85bdee4f0e8c1e86c10a0fa68"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/manifest.json",
+      "sha256": "ad27ba3208ef72f1dce76a3452652542b6ee2fd7612fae797bd6b801d464e50f"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/manifest.json",
+      "sha256": "d92bc280aae0505cb103a0f752485b2395e6ac3bd0d3a1a76283ae49016b672a"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/compact_large_seed_20260914_smoke/manifest.json",
+      "sha256": "f0198f1d97ba41201a4d73b7ff6fd085f59c5a8152a9338b4fdeb7fe7082a40a"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914_smoke/manifest.json",
+      "sha256": "7ffec9b49add8783631bfe66aa18d086c4a1a7e0fdb63772aa9a59ca83445e5b"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/manifest.json",
+      "sha256": "8bf3b35fe4d3175a399456fadecfde08bc38de9b41c0ea15590f7522f7c4052f"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/final_chain_gap_20260915/manifest.json",
+      "sha256": "54e4f22238c0b627b2a11e59592044dabbebc23d51571cf8923cf44d429a8cd9"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gap_20260915/manifest.json",
+      "sha256": "b2a165b86fa23636a8b7edecaa32565241de298020b061882cb543554ed53ace"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/chain_extension_20260915/manifest.json",
+      "sha256": "c4cb5a25da20088354b312efdfbe1daa4c4d943c1e0d1feeae9b5576e7328d97"
+    }
+  ],
+  "exact_donor_status_reference_hits": [],
+  "interpretation": "Exact target donor references detect existing consumers regardless of campaign name. Source-generation manifests refer to their ancestors, not their unpublished own target status."
+}

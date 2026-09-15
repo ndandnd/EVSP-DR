@@ -1,0 +1,425 @@
+{
+  "checked_utc": "2026-09-15T10:40:02.026923+00:00",
+  "counts_excluding_held_537227": {
+    "PENDING": 29,
+    "RUNNING": 30
+  },
+  "production_counts": {
+    "RUNNING": 12
+  },
+  "rows": [
+    {
+      "job": "224651",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w6_k30_cg",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224649",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w6_k29_cg",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224647",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w5_k30_cg",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224645",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w5_k29_cg",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224643",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w4_k30_cg",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224641",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w4_k29_cg",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224639",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w3_k30_cg",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224637",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w3_k29_cg",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224635",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w2_k30_cg",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224633",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w2_k29_cg",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224631",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w1_k30_cg",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224629",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w1_k29_cg",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "187972",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w1_k28_cg",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224652",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w6_k30_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224650",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w6_k29_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224648",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w5_k30_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224646",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w5_k29_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224644",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w4_k30_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224642",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w4_k29_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224640",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w3_k30_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224638",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w3_k29_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224636",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w2_k30_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224634",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w2_k29_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224632",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w1_k30_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "224630",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w1_k29_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "187997",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w5_k28_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "187991",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w4_k28_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "187979",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w2_k28_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "187973",
+      "state": "PENDING",
+      "partition": "default_partition",
+      "name": "drX_w1_k28_mip",
+      "reason": "(Dependency)"
+    },
+    {
+      "job": "189917",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drGraphGate_w1_k28",
+      "reason": "unicorn-cpu-73"
+    },
+    {
+      "job": "187990",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_w4_k28_cg",
+      "reason": "unicorn-cpu-75"
+    },
+    {
+      "job": "187996",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_w5_k28_cg",
+      "reason": "unicorn-cpu-74"
+    },
+    {
+      "job": "187978",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_w2_k28_cg",
+      "reason": "unicorn-cpu-73"
+    },
+    {
+      "job": "227325",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "cu15_c1_k15_union",
+      "reason": "unicorn-cpu-01"
+    },
+    {
+      "job": "227328",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "cu15_c2_k20_control",
+      "reason": "unicorn-cpu-75"
+    },
+    {
+      "job": "227329",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "cu15_c2_k20_union",
+      "reason": "sonic-cpu-01"
+    },
+    {
+      "job": "227330",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "cu15_c2_k25_control",
+      "reason": "sonic-cpu-01"
+    },
+    {
+      "job": "227331",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "cu15_c2_k25_union",
+      "reason": "sonic-cpu-02"
+    },
+    {
+      "job": "227332",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "cu15_c3_k20_control",
+      "reason": "sonic-cpu-02"
+    },
+    {
+      "job": "227333",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "cu15_c3_k20_union",
+      "reason": "totient-cpu-01"
+    },
+    {
+      "job": "227334",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "cu15_c4_k25_union",
+      "reason": "totient-cpu-02"
+    },
+    {
+      "job": "227335",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "cu15_c5_k20_control",
+      "reason": "totient-cpu-03"
+    },
+    {
+      "job": "227336",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "cu15_c5_k20_union",
+      "reason": "totient-cpu-04"
+    },
+    {
+      "job": "227337",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "cu15_c5_k25_union",
+      "reason": "totient-cpu-05"
+    },
+    {
+      "job": "227327",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "cu15_c1_k20_union",
+      "reason": "unicorn-cpu-74"
+    },
+    {
+      "job": "187971",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_w1_k27_mip",
+      "reason": "unicorn-cpu-01"
+    },
+    {
+      "job": "224628_0",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_graphs",
+      "reason": "unicorn-cpu-01"
+    },
+    {
+      "job": "224628_1",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_graphs",
+      "reason": "unicorn-cpu-73"
+    },
+    {
+      "job": "224628_2",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_graphs",
+      "reason": "unicorn-cpu-73"
+    },
+    {
+      "job": "224628_3",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_graphs",
+      "reason": "unicorn-cpu-73"
+    },
+    {
+      "job": "224628_4",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_graphs",
+      "reason": "sonic-cpu-01"
+    },
+    {
+      "job": "224628_5",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_graphs",
+      "reason": "sonic-cpu-02"
+    },
+    {
+      "job": "224628_6",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_graphs",
+      "reason": "unicorn-cpu-76"
+    },
+    {
+      "job": "224628_7",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_graphs",
+      "reason": "unicorn-cpu-76"
+    },
+    {
+      "job": "224628_8",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_graphs",
+      "reason": "unicorn-cpu-76"
+    },
+    {
+      "job": "224628_9",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_graphs",
+      "reason": "garg-cpu-02"
+    },
+    {
+      "job": "224628_10",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_graphs",
+      "reason": "garg-cpu-02"
+    },
+    {
+      "job": "224628_11",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drX_graphs",
+      "reason": "garg-cpu-02"
+    },
+    {
+      "job": "222757",
+      "state": "RUNNING",
+      "partition": "default_partition",
+      "name": "drP_w3_k28_longmip",
+      "reason": "scaglione-cpu-01"
+    }
+  ]
+}

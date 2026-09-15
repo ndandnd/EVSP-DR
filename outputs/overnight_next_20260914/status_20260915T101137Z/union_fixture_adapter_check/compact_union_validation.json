@@ -1,0 +1,26 @@
+{
+  "snapshot_sha256": "97f28872b6bd541a28e488ab3007634af8aa1d556b29036c8817592ffa17e3b5",
+  "checks": [
+    {
+      "case_id": "c1_k15_union",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": true
+    },
+    {
+      "case_id": "c2_k20_union",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": true
+    },
+    {
+      "case_id": "c2_k20_control",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": true
+    }
+  ],
+  "errors": [],
+  "include_validation": true,
+  "note": "Donor upper bound is separate from the new solver incumbent. Construction creates no CG certificate."
+}

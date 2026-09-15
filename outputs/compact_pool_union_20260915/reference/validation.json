@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "manifest_sha256": "4008d1dd2f5f5eb04e9222729170cdb6dc2c70588aa42a9cb6792c73b320c9e9",
+  "checks": [
+    {
+      "case_id": "c1_k08",
+      "status": "passed",
+      "source_cases": 3,
+      "source_physical_audits": "zero rejected and repaired",
+      "journal_rehash_scope": "compute construction before/after merge; nativeMIP before solve"
+    },
+    {
+      "case_id": "c2_k08",
+      "status": "passed",
+      "source_cases": 3,
+      "source_physical_audits": "zero rejected and repaired",
+      "journal_rehash_scope": "compute construction before/after merge; nativeMIP before solve"
+    },
+    {
+      "case_id": "c4_k08",
+      "status": "passed",
+      "source_cases": 3,
+      "source_physical_audits": "zero rejected and repaired",
+      "journal_rehash_scope": "compute construction before/after merge; nativeMIP before solve"
+    },
+    {
+      "case_id": "c5_k08",
+      "status": "passed",
+      "source_cases": 3,
+      "source_physical_audits": "zero rejected and repaired",
+      "journal_rehash_scope": "compute construction before/after merge; nativeMIP before solve"
+    },
+    {
+      "case_id": "c5_k10",
+      "status": "passed",
+      "source_cases": 3,
+      "source_physical_audits": "zero rejected and repaired",
+      "journal_rehash_scope": "compute construction before/after merge; nativeMIP before solve"
+    },
+    {
+      "case_id": "c6_k10",
+      "status": "passed",
+      "source_cases": 3,
+      "source_physical_audits": "zero rejected and repaired",
+      "journal_rehash_scope": "compute construction before/after merge; nativeMIP before solve"
+    }
+  ],
+  "unit_tests": 3,
+  "source_mip_admission_bindings": 18,
+  "native_full_union_replay": "Mandatory execution gate before everyMIP; not claimed to have run at preparation"
+}

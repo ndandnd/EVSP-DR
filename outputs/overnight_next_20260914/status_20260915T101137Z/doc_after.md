@@ -54,7 +54,7 @@ Why did converged CG miss useful routes? Of the 15 routes in the known 15-bus so
 
 ### **Larger tests: actual buses used**
 
-Each cell is an integer bus count. Compare the two starting pools for the same chain and target.
+Each cell is an integer bus count. Only 3 of the 24 CGs converged; 21 hit four hours. Each MIP allowed up to three hours for fleet search and 3.5 hours total.
 
 | Chain | Target 20: core | Target 20: expanded | Target 25: core | Target 25: expanded |
 | ----- | ----- | ----- | ----- | ----- |
@@ -79,16 +79,17 @@ A bound can rule out the target without proving the exact fleet minimum. Chain 2
 
 ## **Overnight tests: results and remaining work**
 
-**Queue in the 06:11–06:19 EDT collection:** 18 jobs running; 29 waiting for required inputs. No pending job in that check was blocked by an array throttle.
+**Live queue at 06:40 EDT:** 30 jobs running; 29 waiting for required inputs. No pending job in that check was blocked by an array throttle.
 
 | Experiment | Current result or next answer |
 | ----- | ----- |
 | Chain continuation through k28 | Chain 6 matches 28, with the saved-pool fleet minimum proved after 25.1 minutes of fleet search. Its CG hit four hours. Chain 3 at the same target still has 29 buses and bound 28; its longer search is running. |
-| Smaller starts at k20 and k25 | Complete: 8 of 24 target matches, 8 pools whose bounds rule out the target, and 8 unresolved misses. The full bus-count table is above. Only 3 CGs converged; 21 hit four hours. MIPs allow up to three hours for fleet search and 3.5 hours total. |
 | Which added columns repair a pool? — complete | All 13 paired tests still miss target by one bus: 9 for target 8, or 11 for target 10\. Adding routes used by a donor LP ties with adding the same number of unused donor routes. Neither rule restores a target fleet here. |
 | Longer searches at k25 and k28 | Chain 5, k25 now finds and proves 25 in the original pool after 17.9 fleet-search minutes; charging still reaches the total time limit. All 25 original k16–25 misses are now recovered in separate searches. Chain 3, k28 is still running after its original 29-bus result. These use new search trees with unchanged columns and settings. The 17.9-minute fleet result is below the earlier 30-minute allowance, so extra time alone does not explain the improvement. |
 
 Extension through k29–30: all 12 graph jobs in array 224628 are running, with the frozen random order and model settings unchanged. Each CG waits for its graph and the previous k’s columns; its MIP follows.
+
+New comparison, launched 06:37 EDT: eight MIPs combine the core and expanded pools for the same case; four controls search unchanged expanded pools again. All 12 are running. This tests whether the two sets of columns complement each other. No new CG is run; the same native greedy initialization policy is used.
 
 The monitor checks hourly, investigates failures or blocked dependencies, and verifies results before updating this page.
 

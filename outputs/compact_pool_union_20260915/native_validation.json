@@ -1,0 +1,199 @@
+{
+  "status": "passed",
+  "utc": "2026-09-15T10:34:38.984521+00:00",
+  "production_manifest_sha256": "55dfecb336ca90000f4e3fd8c1d84886e3f0e13dec4b9f6583afc393ff3abb75",
+  "fixture_manifest_sha256": "fb5b484a72533f95ac0de896bb5a0872737bfda1f571e681a8b891983f06c2fb",
+  "actual_fixture_cases": 5,
+  "actual_fixture_builds": 2,
+  "actual_fixture_mips": 3,
+  "fixture_inherited_production_count_fields": "The fixture manifest retains campaign-level independent_construction_cases=8 and independent_mip_cases=12 as parent design metadata; its actual cases mapping contains2builds/3MIPs.",
+  "fixture_is_production_result": false,
+  "rows": [
+    {
+      "case_id": "c1_k15_build",
+      "kind": "pool_construction",
+      "job_id": "227214",
+      "result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/cases/c1_k15_build/attempts/227214_r0/pool.json",
+      "result_sha256": "07d25f90d60a7581af0a5b6a35d06a7dac765add6a778683c0c32c4fc97f73f1",
+      "construction_sha256": "e2be4015eb75fa555def2b8b7a5334b57e56e303bbe8baef023186138d7c0a7e",
+      "source_columns": [
+        53878,
+        48243
+      ],
+      "union_columns": 100861,
+      "shared_incidence_count": 1260,
+      "constructor_wall_s": 61.64771710662171,
+      "constructor_peak_rss_native_kib": 148644,
+      "source_record_counts": [
+        53878,
+        48243
+      ],
+      "union_pool_set": {
+        "native_unique_columns": 100861,
+        "incidence_set_sha256": "47c1def1ee95d5d9f365728d1a5f3f0c040aa03800ae9eaf37e9461dfa1406d8",
+        "incidence_cost_set_sha256": "42827519bd4343fc594b62f84d640d1e8fbcb8db5b815d8972ed6e9c699e90e0",
+        "recorded_route_set_sha256": "cc44ef311e2b5472a21e794a45fd52cbbf38f20d03374172d462604966ac6bc0"
+      },
+      "donor_membership_passed": true,
+      "source_physics_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+      "donor_buses": [
+        16,
+        16
+      ]
+    },
+    {
+      "case_id": "c2_k20_build",
+      "kind": "pool_construction",
+      "job_id": "227215",
+      "result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/cases/c2_k20_build/attempts/227215_r0/pool.json",
+      "result_sha256": "dda5fe3b963da03c95cc174766b813b613f7f7ad5024b95d729396432d9e5fb2",
+      "construction_sha256": "437308ece6d417ecb7566aeaf0c24a37461671f76a5948279296ea9a875e95bd",
+      "source_columns": [
+        51786,
+        54090
+      ],
+      "union_columns": 105042,
+      "shared_incidence_count": 834,
+      "constructor_wall_s": 62.42841269494966,
+      "constructor_peak_rss_native_kib": 139348,
+      "source_record_counts": [
+        51786,
+        54090
+      ],
+      "union_pool_set": {
+        "native_unique_columns": 105042,
+        "incidence_set_sha256": "5821b7c98c155a7137941538c6be59b44f38fb480aee691f367e58ce03b50ed8",
+        "incidence_cost_set_sha256": "17e29c09f7217805c19bc595f23c4e851576158b417bf11e574d193818c33648",
+        "recorded_route_set_sha256": "af69f81de0beb10f2aba90781340de7a6182c4de013a648d43030b3dedff430f"
+      },
+      "donor_membership_passed": true,
+      "source_physics_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+      "donor_buses": [
+        22,
+        21
+      ]
+    },
+    {
+      "case_id": "c1_k15_union",
+      "kind": "mip",
+      "job_id": "227216",
+      "result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/cases/c1_k15_union/attempts/227216_r0/result.json",
+      "result_sha256": "e62f93b53de233cbdb7b36c6e5029d5a1ee7ee452fdd5876fd6a7b180fd33b2c",
+      "source_result_sha256": "07d25f90d60a7581af0a5b6a35d06a7dac765add6a778683c0c32c4fc97f73f1",
+      "source_journal_sha256": "74eba68adf28cb552fd98d1021b16fa6c0309c5889a1b8e4031e9d0b8c4bf33a",
+      "native_pool_columns": 100861,
+      "native_pool_ordered_sha256": "38660b56f6ffa3a0a64d0da9f887f406de09234d665de6e686e483b0daa751b6",
+      "native_added_columns": 0,
+      "native_greedy_start": {
+        "assigned_variable_count": 100861,
+        "assignment_complete": true,
+        "expected_full_objective": 11900614.855999999,
+        "kind": "greedy_pool_partition",
+        "selected_variable_count": 119,
+        "solver_acceptance": {
+          "accepted": true,
+          "messages": [
+            "Loaded user MIP start with objective 119"
+          ],
+          "rejection_observed": false,
+          "status": "accepted"
+        },
+        "source": null,
+        "source_sha256": null,
+        "validated": true,
+        "validated_bus_count": 119
+      },
+      "buses": 95,
+      "fleet_bound": 15.000000000000002,
+      "fleet_proven": false,
+      "physical_replay_validated": true,
+      "full_size_license_passed": true,
+      "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "solver_budget_s": 30,
+      "stage1_s": 20
+    },
+    {
+      "case_id": "c2_k20_control",
+      "kind": "mip",
+      "job_id": "227217",
+      "result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/cases/c2_k20_control/attempts/227217_r0/result.json",
+      "result_sha256": "badcdc68913f05f2aed589d2b60fdf6659b7a5dfd09cb9ff841a73b59f010771",
+      "source_result_sha256": "1ddbc14e586ca27e83d8efbc3d66ef5b174d8f94f6c10a7ce979b9e65a8b2e18",
+      "source_journal_sha256": "a29b436bfe3cac1702100d75a39aaf092b14da3a34dcc916adace12a9f403d6d",
+      "native_pool_columns": 54090,
+      "native_pool_ordered_sha256": "135e98f0d433a9607dac6cb3d598644fd041bbc2120712540842c6906cf32382",
+      "native_added_columns": 0,
+      "native_greedy_start": {
+        "assigned_variable_count": 54090,
+        "assignment_complete": true,
+        "expected_full_objective": 20200752.552,
+        "kind": "greedy_pool_partition",
+        "selected_variable_count": 202,
+        "solver_acceptance": {
+          "accepted": true,
+          "messages": [
+            "Loaded user MIP start with objective 202"
+          ],
+          "rejection_observed": false,
+          "status": "accepted"
+        },
+        "source": null,
+        "source_sha256": null,
+        "validated": true,
+        "validated_bus_count": 202
+      },
+      "buses": 30,
+      "fleet_bound": 20.000000000000025,
+      "fleet_proven": false,
+      "physical_replay_validated": true,
+      "full_size_license_passed": true,
+      "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "solver_budget_s": 30,
+      "stage1_s": 20
+    },
+    {
+      "case_id": "c2_k20_union",
+      "kind": "mip",
+      "job_id": "227218",
+      "result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/cases/c2_k20_union/attempts/227218_r0/result.json",
+      "result_sha256": "7a21abc18f3256769dc8bb81b699361c64decc812653cef7a858ea7fbffdc1cb",
+      "source_result_sha256": "dda5fe3b963da03c95cc174766b813b613f7f7ad5024b95d729396432d9e5fb2",
+      "source_journal_sha256": "c6c0e7c399dbe565452cafc67e2f803f5f3682f5d1b273ec27ea6baa8c7cc032",
+      "native_pool_columns": 105042,
+      "native_pool_ordered_sha256": "77ffaa20a8ba298d754d8219f16d25aebb189daa2cc58caa3e3981c8a08e45c7",
+      "native_added_columns": 0,
+      "native_greedy_start": {
+        "assigned_variable_count": 105042,
+        "assignment_complete": true,
+        "expected_full_objective": 18400777.104,
+        "kind": "greedy_pool_partition",
+        "selected_variable_count": 184,
+        "solver_acceptance": {
+          "accepted": true,
+          "messages": [
+            "Loaded user MIP start with objective 184"
+          ],
+          "rejection_observed": false,
+          "status": "accepted"
+        },
+        "source": null,
+        "source_sha256": null,
+        "validated": true,
+        "validated_bus_count": 184
+      },
+      "buses": 184,
+      "fleet_bound": 20.0,
+      "fleet_proven": false,
+      "physical_replay_validated": true,
+      "full_size_license_passed": true,
+      "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "solver_budget_s": 30,
+      "stage1_s": 20
+    }
+  ],
+  "all_effective_resources_verified": true,
+  "all_required_dependencies_verified": true,
+  "production_submitted": false,
+  "accounting_sha256": "a861a54f6ad14eb1538c5d421a4b33ea275e14adb5793aae58b612707592583e",
+  "limitations": "Real full pools tested for C1k15(e091) and C2k20(a0e0); remaining6production constructions retain strict gates.30s MIP results validate native compatibility only; they are not production scientific comparisons."
+}

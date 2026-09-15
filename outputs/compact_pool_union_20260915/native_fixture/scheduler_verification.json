@@ -1,0 +1,148 @@
+{
+  "status": "passed",
+  "manifest_sha256": "fb5b484a72533f95ac0de896bb5a0872737bfda1f571e681a8b891983f06c2fb",
+  "rows": [
+    {
+      "case_id": "c1_k15_build",
+      "job_id": "227214",
+      "kind": "pool_construction",
+      "dependencies": [],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=2",
+        "--mem=8G",
+        "--time=0:30:00",
+        "--no-requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=cuFix_c1_k15_build",
+        "--output=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/%x_%j.err",
+        "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/worker.sub",
+        "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture",
+        "c1_k15_build",
+        "pool_construction"
+      ],
+      "submitted_utc": "2026-09-15T10:25:25.077832+00:00",
+      "effective_scontrol_at_submission": "JobId=227214 JobName=cuFix_c1_k15_build UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14549 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A SubmitTime=2026-09-15T06:25:25 EligibleTime=2026-09-15T06:25:25 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-15T06:25:25 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3429741 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=8G,node=1,billing=2 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=8G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/cuFix_c1_k15_build_227214.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/cuFix_c1_k15_build_227214.out KillOInInvalidDependent=Yes TresPerTask=cpu=2 \n"
+    },
+    {
+      "case_id": "c2_k20_build",
+      "job_id": "227215",
+      "kind": "pool_construction",
+      "dependencies": [],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=2",
+        "--mem=8G",
+        "--time=0:30:00",
+        "--no-requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=cuFix_c2_k20_build",
+        "--output=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/%x_%j.err",
+        "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/worker.sub",
+        "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture",
+        "c2_k20_build",
+        "pool_construction"
+      ],
+      "submitted_utc": "2026-09-15T10:25:25.292999+00:00",
+      "effective_scontrol_at_submission": "JobId=227215 JobName=cuFix_c2_k20_build UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14549 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A SubmitTime=2026-09-15T06:25:25 EligibleTime=2026-09-15T06:25:25 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-15T06:25:25 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3429741 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=8G,node=1,billing=2 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=8G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/cuFix_c2_k20_build_227215.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/cuFix_c2_k20_build_227215.out KillOInInvalidDependent=Yes TresPerTask=cpu=2 \n"
+    },
+    {
+      "case_id": "c1_k15_union",
+      "job_id": "227216",
+      "kind": "mip",
+      "dependencies": [
+        "227214"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=0:30:00",
+        "--no-requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=cuFix_c1_k15_union",
+        "--output=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/%x_%j.err",
+        "--dependency=afterok:227214",
+        "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/worker.sub",
+        "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture",
+        "c1_k15_union",
+        "mip"
+      ],
+      "submitted_utc": "2026-09-15T10:25:25.499825+00:00",
+      "effective_scontrol_at_submission": "JobId=227216 JobName=cuFix_c1_k15_union UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14550 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:227214(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A SubmitTime=2026-09-15T06:25:25 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-15T06:25:25 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3429741 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/cuFix_c1_k15_union_227216.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/cuFix_c1_k15_union_227216.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "c2_k20_control",
+      "job_id": "227217",
+      "kind": "mip",
+      "dependencies": [
+        "227215"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=0:30:00",
+        "--no-requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=cuFix_c2_k20_control",
+        "--output=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/%x_%j.err",
+        "--dependency=afterok:227215",
+        "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/worker.sub",
+        "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture",
+        "c2_k20_control",
+        "mip"
+      ],
+      "submitted_utc": "2026-09-15T10:25:25.705225+00:00",
+      "effective_scontrol_at_submission": "JobId=227217 JobName=cuFix_c2_k20_control UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14550 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:227215(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A SubmitTime=2026-09-15T06:25:25 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-15T06:25:25 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3429741 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/cuFix_c2_k20_control_227217.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/cuFix_c2_k20_control_227217.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "c2_k20_union",
+      "job_id": "227218",
+      "kind": "mip",
+      "dependencies": [
+        "227215"
+      ],
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=0:30:00",
+        "--no-requeue",
+        "--kill-on-invalid-dep=yes",
+        "--job-name=cuFix_c2_k20_union",
+        "--output=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/%x_%j.err",
+        "--dependency=afterok:227215",
+        "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/worker.sub",
+        "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture",
+        "c2_k20_union",
+        "mip"
+      ],
+      "submitted_utc": "2026-09-15T10:25:25.925848+00:00",
+      "effective_scontrol_at_submission": "JobId=227218 JobName=cuFix_c2_k20_union UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14550 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:227215(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A SubmitTime=2026-09-15T06:25:25 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-15T06:25:25 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3429741 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/cuFix_c2_k20_union_227218.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/logs/cuFix_c2_k20_union_227218.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+    }
+  ],
+  "utc": "2026-09-15T10:25:26.036679+00:00",
+  "all_exclude_reserved_compute01": true,
+  "independent_jobs_have_no_throttle": true
+}

@@ -1,0 +1,863 @@
+{
+  "schema": "evsp-parallel-pool-unions-v1",
+  "prepared_utc": "2026-09-14T12:54:32.832805+00:00",
+  "cases": {
+    "c1_k08_union_build": {
+      "id": "c1_k08_union_build",
+      "kind": "pool_construction",
+      "chain": 1,
+      "target_k": 8,
+      "target_duties": 8,
+      "original_case": "c1_k08",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+      "data_dir": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+      "input_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+      "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "sources": [
+        {
+          "arm": "original",
+          "status_path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c1_k08/base/135593_r0/cg.json",
+          "status_sha256": "c024cc4e235234ed4244abaa1e7738f3600c264a2ffe4c05c5026198b69d56b0",
+          "journal_path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k08/base/135593_r0/cg.json.columns.jsonl",
+          "journal_sha256": "2e75b32ab3f2c11e7677892844b33c9fe8c0351529927d08980370c113d2845c",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c1_k08/mip_base/135595_r0/result.json",
+          "mip_evidence_sha256": "c9dc2e96492adc127590ad89b0d2bfbb13394f358dc49f64438380093245a631",
+          "source_mip_ordered_pool_sha256": "0bd60e44a073a52cd1b9e3109c3d1719b7a33266096a87b3deec04f6de9bd1d2"
+        },
+        {
+          "arm": "c200",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c1_k08_c200/attempts/156634_r0/cg.json",
+          "status_sha256": "8432842da2ab9b641f4a38c02d64cadcb103a2a5c02f9328f0c852b9d93e427a",
+          "journal_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c1_k08_c200/attempts/156634_r0/cg.json.columns.jsonl",
+          "journal_sha256": "66c12dc4c86f2f97984bd0e15fb24d554bed61b908d7efe20e177da11b475382",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c1_k08_c200_mip/attempts/156696_r0/result.json",
+          "mip_evidence_sha256": "7bc3d11199ab2a38066b5979d9a5fde91a5161ba87ed61c93bdb12290052c499",
+          "source_mip_ordered_pool_sha256": "5c2092603a0fc545f12d10967e729eea125ad948e16bcc6ef9b772d1792d5296"
+        },
+        {
+          "arm": "complementary",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c1_k08_complementary/attempts/156635_r0/cg.json",
+          "status_sha256": "f43685c6095da2aaed183554e501f897af26cda2ff1a6830572429d4cb048378",
+          "journal_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c1_k08_complementary/attempts/156635_r0/cg.json.columns.jsonl",
+          "journal_sha256": "283a83f533e9fbe7ef4b79024c5492bb7d0cbc38de0d1cf8145dc9f4fe559a33",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c1_k08_complementary_mip/attempts/156697_r0/result.json",
+          "mip_evidence_sha256": "fc9e06b1d21cc9c33513d322ea877058037c980f35581f2dc776f8f59915d46e",
+          "source_mip_ordered_pool_sha256": "10a91f0c81e5c57bf46c826e481318616100c3a5815ba27796e8954d71e5af97"
+        }
+      ],
+      "static_hashes": {
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/src/config.py": "afda984ccfc503f51dfc042f68d28716947ff9f78bf835038f9c20b9c2e62b06"
+      },
+      "watchdog_s": 3300,
+      "resources": {
+        "cpus": 2,
+        "mem": "8G",
+        "allocation_s": 3600
+      },
+      "baseline_scope": {
+        "shared_station_capacity": false,
+        "terminal_soc_floor": false,
+        "bus_coefficient": 100000,
+        "charge_start_fee": 5,
+        "configuration_bound_by": "e091a4dba549510238507ef5e5367abea958bd30"
+      },
+      "treatment": "deterministic_union_of_existing_columns",
+      "optimization_run": false
+    },
+    "c1_k08_union_mip": {
+      "id": "c1_k08_union_mip",
+      "kind": "mip",
+      "chain": 1,
+      "target_k": 8,
+      "target_duties": 8,
+      "treatment": "three_way_existing_column_union",
+      "source_code": "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "data_dir": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+      "input_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+      "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "static_hashes": {
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+      },
+      "solver_budget_s": 12600,
+      "stage1_budget_s": 10800,
+      "watchdog_s": 15300,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "argv": [
+        "/home/nc437/evsp_env/bin/python",
+        "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb/src/run_exact_pool_mip.py",
+        "--result",
+        "{source_status}",
+        "--data-dir",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+        "--reference-data-dir",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+        "--cover",
+        "--two-stage",
+        "--timelimit",
+        "12600",
+        "--stage1-timelimit",
+        "10800",
+        "--threads",
+        "8",
+        "--mipgap",
+        "0.0001",
+        "--gurobi-log",
+        "{attempt_dir}/gurobi.log",
+        "--out",
+        "{out}"
+      ],
+      "original_case": "c1_k08",
+      "source_case": "c1_k08_union_build",
+      "source_artifact_kind": "finite_pool_union",
+      "interpretation": "Finite-pool union of identical-input original/c200/complementary columns, not a CG endpoint. Same12600/10800MIPbudget as individual-treatment long controls. Native full-pool replay must have no rejected/repaired columns before publishing union equivalence."
+    },
+    "c2_k08_union_build": {
+      "id": "c2_k08_union_build",
+      "kind": "pool_construction",
+      "chain": 2,
+      "target_k": 8,
+      "target_duties": 8,
+      "original_case": "c2_k08",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p02_20260908.csv",
+      "data_dir": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+      "input_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p02_20260908.csv",
+      "input_sha256": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+      "sources": [
+        {
+          "arm": "original",
+          "status_path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c2_k08/base/135613_r0/cg.json",
+          "status_sha256": "f9544e307dc64585034133ef0e440657e737eb29f94e690646f822a7ad1c8352",
+          "journal_path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c2_k08/base/135613_r0/cg.json.columns.jsonl",
+          "journal_sha256": "9336b5d5b6b70c57dfb9033aeda33f14888a44eb33c1ebfb12acce694360d8f4",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c2_k08/mip_base/135615_r0/result.json",
+          "mip_evidence_sha256": "f82b4e049c973036cb00a53c5bd5a3925206c6d8333fc32b2b4a704dfe00c3e4",
+          "source_mip_ordered_pool_sha256": "74c434e0862661c3a27f8b063937e5b3e2ed4a17be371a3d5c817107f043c4e7"
+        },
+        {
+          "arm": "c200",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c2_k08_c200/attempts/156642_r0/cg.json",
+          "status_sha256": "facde2be1fc30948ab804e4b22e781dee6a1c0e67eafd87dfb65a971844a9139",
+          "journal_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c2_k08_c200/attempts/156642_r0/cg.json.columns.jsonl",
+          "journal_sha256": "ec7e7a1703a39685011dd7bd0b05ab8761cf92351647b0a8a85a7ecbe6afb4e1",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c2_k08_c200_mip/attempts/156702_r0/result.json",
+          "mip_evidence_sha256": "5d176b26b47eb7f5ced24604bd18f13959c54fcb8d3c14ea8ad2a87a7145da2b",
+          "source_mip_ordered_pool_sha256": "71fb6b0d32724241c45b3576581f0e1869b6477a0677e7aecf66e113d5ccb1f1"
+        },
+        {
+          "arm": "complementary",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c2_k08_complementary/attempts/156643_r0/cg.json",
+          "status_sha256": "c71af03e0bc8ca7abd2954032e2f31a9cbfcd680028f75fa0c45264efec36c04",
+          "journal_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c2_k08_complementary/attempts/156643_r0/cg.json.columns.jsonl",
+          "journal_sha256": "8397fe9ea39bea9ffc5ee46b847e53b7abb4cb054ff5e8aacf15058b1992b3c2",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c2_k08_complementary_mip/attempts/156703_r0/result.json",
+          "mip_evidence_sha256": "81a25d1bf330dce7c32cc0e04a6bc888d000c1bb54d26daae4c97d4390fcd978",
+          "source_mip_ordered_pool_sha256": "746e0059626b7d7d69833c2a4c7d12d3122ba7f9e1a3cabcb1dfc56545392236"
+        }
+      ],
+      "static_hashes": {
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/src/config.py": "afda984ccfc503f51dfc042f68d28716947ff9f78bf835038f9c20b9c2e62b06"
+      },
+      "watchdog_s": 3300,
+      "resources": {
+        "cpus": 2,
+        "mem": "8G",
+        "allocation_s": 3600
+      },
+      "baseline_scope": {
+        "shared_station_capacity": false,
+        "terminal_soc_floor": false,
+        "bus_coefficient": 100000,
+        "charge_start_fee": 5,
+        "configuration_bound_by": "e091a4dba549510238507ef5e5367abea958bd30"
+      },
+      "treatment": "deterministic_union_of_existing_columns",
+      "optimization_run": false
+    },
+    "c2_k08_union_mip": {
+      "id": "c2_k08_union_mip",
+      "kind": "mip",
+      "chain": 2,
+      "target_k": 8,
+      "target_duties": 8,
+      "treatment": "three_way_existing_column_union",
+      "source_code": "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "data_dir": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p02_20260908.csv",
+      "input_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p02_20260908.csv",
+      "input_sha256": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+      "static_hashes": {
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+      },
+      "solver_budget_s": 12600,
+      "stage1_budget_s": 10800,
+      "watchdog_s": 15300,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "argv": [
+        "/home/nc437/evsp_env/bin/python",
+        "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb/src/run_exact_pool_mip.py",
+        "--result",
+        "{source_status}",
+        "--data-dir",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+        "--reference-data-dir",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+        "--cover",
+        "--two-stage",
+        "--timelimit",
+        "12600",
+        "--stage1-timelimit",
+        "10800",
+        "--threads",
+        "8",
+        "--mipgap",
+        "0.0001",
+        "--gurobi-log",
+        "{attempt_dir}/gurobi.log",
+        "--out",
+        "{out}"
+      ],
+      "original_case": "c2_k08",
+      "source_case": "c2_k08_union_build",
+      "source_artifact_kind": "finite_pool_union",
+      "interpretation": "Finite-pool union of identical-input original/c200/complementary columns, not a CG endpoint. Same12600/10800MIPbudget as individual-treatment long controls. Native full-pool replay must have no rejected/repaired columns before publishing union equivalence."
+    },
+    "c4_k08_union_build": {
+      "id": "c4_k08_union_build",
+      "kind": "pool_construction",
+      "chain": 4,
+      "target_k": 8,
+      "target_duties": 8,
+      "original_case": "c4_k08",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p04_20260908.csv",
+      "data_dir": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+      "input_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p04_20260908.csv",
+      "input_sha256": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+      "sources": [
+        {
+          "arm": "original",
+          "status_path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c4_k08/base/135653_r0/cg.json",
+          "status_sha256": "6d64febeeb1d25cc7245e38133c17ea696b76b4419f385d4219f3a17e5a63d4c",
+          "journal_path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c4_k08/base/135653_r0/cg.json.columns.jsonl",
+          "journal_sha256": "c73aa81245a59305a48173a072d450a3b5faee7e4fd906d613c4eca97cd6bc64",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c4_k08/mip_base/135655_r0/result.json",
+          "mip_evidence_sha256": "7d5fdb4e6a73f4b6dbb6df9aace22ea50f60d30e96c25cdc518547c7df7da0be",
+          "source_mip_ordered_pool_sha256": "8087ffdbd3cacbeeaeff113e217d447d637b8f4123bc825d8bc38c78b91ce379"
+        },
+        {
+          "arm": "c200",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c4_k08_c200/attempts/156660_r0/cg.json",
+          "status_sha256": "a2f729dc2111a1c1538e8bec5eba8d24b7d6e0a36b3f5c410b82b9f221544cec",
+          "journal_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c4_k08_c200/attempts/156660_r0/cg.json.columns.jsonl",
+          "journal_sha256": "8b27d8a1c48b4caca522fe7be72fa1add650f1d43c4a240ba93e72c84c97e92c",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c4_k08_c200_mip/attempts/156714_r0/result.json",
+          "mip_evidence_sha256": "5d6bdc56b0cf6120e06f527e58415b435fce7f996f44de1413735845e21d19ba",
+          "source_mip_ordered_pool_sha256": "42355cfacb3f0fdf7f18dfa6042a88387922fac50639f240610c9304df473001"
+        },
+        {
+          "arm": "complementary",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c4_k08_complementary/attempts/156661_r0/cg.json",
+          "status_sha256": "446dfb2cb4d6554fbf238bbfe8937d89cef126e1b532b0b45d90c9831191d9ab",
+          "journal_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c4_k08_complementary/attempts/156661_r0/cg.json.columns.jsonl",
+          "journal_sha256": "5ff9393793039f029c99de7e6d25d1c1efb15d258e759a9643fa980dfc92b01a",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c4_k08_complementary_mip/attempts/156715_r0/result.json",
+          "mip_evidence_sha256": "3fc1de8b3ff6993f187611d8d0e6430176e37450473cd530f77db922c63faba7",
+          "source_mip_ordered_pool_sha256": "f30c936b093052fe252447856564db97ee6504e1a5829fcad18f9f270a52f4c5"
+        }
+      ],
+      "static_hashes": {
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/src/config.py": "afda984ccfc503f51dfc042f68d28716947ff9f78bf835038f9c20b9c2e62b06"
+      },
+      "watchdog_s": 3300,
+      "resources": {
+        "cpus": 2,
+        "mem": "8G",
+        "allocation_s": 3600
+      },
+      "baseline_scope": {
+        "shared_station_capacity": false,
+        "terminal_soc_floor": false,
+        "bus_coefficient": 100000,
+        "charge_start_fee": 5,
+        "configuration_bound_by": "e091a4dba549510238507ef5e5367abea958bd30"
+      },
+      "treatment": "deterministic_union_of_existing_columns",
+      "optimization_run": false
+    },
+    "c4_k08_union_mip": {
+      "id": "c4_k08_union_mip",
+      "kind": "mip",
+      "chain": 4,
+      "target_k": 8,
+      "target_duties": 8,
+      "treatment": "three_way_existing_column_union",
+      "source_code": "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "data_dir": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p04_20260908.csv",
+      "input_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p04_20260908.csv",
+      "input_sha256": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+      "static_hashes": {
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+      },
+      "solver_budget_s": 12600,
+      "stage1_budget_s": 10800,
+      "watchdog_s": 15300,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "argv": [
+        "/home/nc437/evsp_env/bin/python",
+        "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb/src/run_exact_pool_mip.py",
+        "--result",
+        "{source_status}",
+        "--data-dir",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+        "--reference-data-dir",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+        "--cover",
+        "--two-stage",
+        "--timelimit",
+        "12600",
+        "--stage1-timelimit",
+        "10800",
+        "--threads",
+        "8",
+        "--mipgap",
+        "0.0001",
+        "--gurobi-log",
+        "{attempt_dir}/gurobi.log",
+        "--out",
+        "{out}"
+      ],
+      "original_case": "c4_k08",
+      "source_case": "c4_k08_union_build",
+      "source_artifact_kind": "finite_pool_union",
+      "interpretation": "Finite-pool union of identical-input original/c200/complementary columns, not a CG endpoint. Same12600/10800MIPbudget as individual-treatment long controls. Native full-pool replay must have no rejected/repaired columns before publishing union equivalence."
+    },
+    "c5_k08_union_build": {
+      "id": "c5_k08_union_build",
+      "kind": "pool_construction",
+      "chain": 5,
+      "target_k": 8,
+      "target_duties": 8,
+      "original_case": "c5_k08",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p05_20260908.csv",
+      "data_dir": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+      "input_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p05_20260908.csv",
+      "input_sha256": "85aa4a37119b2604a41aa83f46c8b8987bb95c8165c4adfb0a58ce65dbeee05b",
+      "sources": [
+        {
+          "arm": "original",
+          "status_path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c5_k08/base/135675_r0/cg.json",
+          "status_sha256": "364c6a6505bf510678634a2922b51a8185febbbbf276e7e1e7d755db04cd9e2f",
+          "journal_path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c5_k08/base/135675_r0/cg.json.columns.jsonl",
+          "journal_sha256": "9ab51e03bfa1f350834fe96b24942ab42f5bf319222cc111b38b40806420a11c",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c5_k08/mip_base/135677_r0/result.json",
+          "mip_evidence_sha256": "7e0c12ec4fd898f5038f10ca06e6d320e32b3e5c109e465a252a158bd0e66910",
+          "source_mip_ordered_pool_sha256": "84a0cee325a44275083c6c99978a49055c43229eafca4fa122af4a362c39a710"
+        },
+        {
+          "arm": "c200",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c5_k08_c200/attempts/156670_r0/cg.json",
+          "status_sha256": "86217aaefc523a92e98c56be7c0c421f33a592e09871d007c41a556e490e33fd",
+          "journal_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k08_c200/attempts/156670_r0/cg.json.columns.jsonl",
+          "journal_sha256": "a9fd6c342789dc82e05d2701249511644a495e63b8ed9dbacc31f9ed4cc1c0b6",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c5_k08_c200_mip/attempts/156723_r0/result.json",
+          "mip_evidence_sha256": "bd0de29637ea83ffa866d8b9b74cc3d80a1fed32446a9c5e69fa2a2f9a6468c7",
+          "source_mip_ordered_pool_sha256": "2cdaf8c981db1d6c16ff2a191a312b887269cfdb38cc9c01771c0249cf0af64c"
+        },
+        {
+          "arm": "complementary",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c5_k08_complementary/attempts/156671_r0/cg.json",
+          "status_sha256": "ca30019e54a452ec4b15cfdc824239b2068786abf8f5cdf7613d6d7c83436251",
+          "journal_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k08_complementary/attempts/156671_r0/cg.json.columns.jsonl",
+          "journal_sha256": "c9128f050c4235abdc2debaa410cae90a9e1af54e4fe14de4f2de08a245f339a",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c5_k08_complementary_mip/attempts/156724_r0/result.json",
+          "mip_evidence_sha256": "b7d7e4b129cd13ef5576e62ac20067632c4d19da53d6fed1e4a1e15973377d93",
+          "source_mip_ordered_pool_sha256": "c670f31aea0bf6766c765ebcaba168e5dd6c2897e7f348b242063a38fb4d729a"
+        }
+      ],
+      "static_hashes": {
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/src/config.py": "afda984ccfc503f51dfc042f68d28716947ff9f78bf835038f9c20b9c2e62b06"
+      },
+      "watchdog_s": 3300,
+      "resources": {
+        "cpus": 2,
+        "mem": "8G",
+        "allocation_s": 3600
+      },
+      "baseline_scope": {
+        "shared_station_capacity": false,
+        "terminal_soc_floor": false,
+        "bus_coefficient": 100000,
+        "charge_start_fee": 5,
+        "configuration_bound_by": "e091a4dba549510238507ef5e5367abea958bd30"
+      },
+      "treatment": "deterministic_union_of_existing_columns",
+      "optimization_run": false
+    },
+    "c5_k08_union_mip": {
+      "id": "c5_k08_union_mip",
+      "kind": "mip",
+      "chain": 5,
+      "target_k": 8,
+      "target_duties": 8,
+      "treatment": "three_way_existing_column_union",
+      "source_code": "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "data_dir": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p05_20260908.csv",
+      "input_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p05_20260908.csv",
+      "input_sha256": "85aa4a37119b2604a41aa83f46c8b8987bb95c8165c4adfb0a58ce65dbeee05b",
+      "static_hashes": {
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+      },
+      "solver_budget_s": 12600,
+      "stage1_budget_s": 10800,
+      "watchdog_s": 15300,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "argv": [
+        "/home/nc437/evsp_env/bin/python",
+        "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb/src/run_exact_pool_mip.py",
+        "--result",
+        "{source_status}",
+        "--data-dir",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+        "--reference-data-dir",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+        "--cover",
+        "--two-stage",
+        "--timelimit",
+        "12600",
+        "--stage1-timelimit",
+        "10800",
+        "--threads",
+        "8",
+        "--mipgap",
+        "0.0001",
+        "--gurobi-log",
+        "{attempt_dir}/gurobi.log",
+        "--out",
+        "{out}"
+      ],
+      "original_case": "c5_k08",
+      "source_case": "c5_k08_union_build",
+      "source_artifact_kind": "finite_pool_union",
+      "interpretation": "Finite-pool union of identical-input original/c200/complementary columns, not a CG endpoint. Same12600/10800MIPbudget as individual-treatment long controls. Native full-pool replay must have no rejected/repaired columns before publishing union equivalence."
+    },
+    "c5_k10_union_build": {
+      "id": "c5_k10_union_build",
+      "kind": "pool_construction",
+      "chain": 5,
+      "target_k": 10,
+      "target_duties": 10,
+      "original_case": "c5_k10",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p05_20260908.csv",
+      "data_dir": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+      "input_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p05_20260908.csv",
+      "input_sha256": "b2fa6d6ca7c5deda4877c8f22d726dc49e6bddb72a921fee1da34ec1c3ef86f8",
+      "sources": [
+        {
+          "arm": "original",
+          "status_path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c5_k10/base/135680_r0/cg.json",
+          "status_sha256": "4795bf7b04a776533055d1c9359631eda385e96af76fb3a76cca08b6467260ee",
+          "journal_path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c5_k10/base/135680_r0/cg.json.columns.jsonl",
+          "journal_sha256": "9a24b041dd36ea66eb0d8a1f84bb6a7599a94b99e3b9cc2c24bcf51414d4eb96",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c5_k10/mip_base/135682_r0/result.json",
+          "mip_evidence_sha256": "db16ef1735444a8c6cc8da16d5f8a2bd884b302a0fce13abd27e6a931547acdf",
+          "source_mip_ordered_pool_sha256": "2c9829b275daa17aaead97d42a2a453d19d799871d51f3a17a482a8965018612"
+        },
+        {
+          "arm": "c200",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c5_k10_c200/attempts/156672_r0/cg.json",
+          "status_sha256": "8e44f44c95c409d1f6173630f5b07fd9bfe29ae6ed11d07be79ebb8f38c5a718",
+          "journal_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k10_c200/attempts/156672_r0/cg.json.columns.jsonl",
+          "journal_sha256": "a355e2868c68b58244a9d0c5d76fa90c47d9154540e627e4d1cab7f36d968f5c",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c5_k10_c200_mip/attempts/156725_r0/result.json",
+          "mip_evidence_sha256": "c6c828b15599e46f16490e4616b6ad53085fe6b50c7f5d19f9fd6f0f9b01a49e",
+          "source_mip_ordered_pool_sha256": "a4fb4ce5b9695a70ec05ef01dc57620ea6c01cb6d94d961669968440f2a94bbc"
+        },
+        {
+          "arm": "complementary",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c5_k10_complementary/attempts/156673_r0/cg.json",
+          "status_sha256": "22f1eb659b1369da2dca07805b8c48b74c46ff6e0c6f13ee8aca06c1ece27e9b",
+          "journal_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k10_complementary/attempts/156673_r0/cg.json.columns.jsonl",
+          "journal_sha256": "8463ffa7f922ce7cdeb8e75c3c4db57101a3952107d21daa700c1b052936b00a",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c5_k10_complementary_mip/attempts/156726_r0/result.json",
+          "mip_evidence_sha256": "3896d6b57b230292e23939def889f19fe0092ae71735865f160682f4c5bb8c93",
+          "source_mip_ordered_pool_sha256": "9153d75c349c6ec7f05ea1807f93731ce4fd995dde7d338af972a0dfad6948fb"
+        }
+      ],
+      "static_hashes": {
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/src/config.py": "afda984ccfc503f51dfc042f68d28716947ff9f78bf835038f9c20b9c2e62b06"
+      },
+      "watchdog_s": 3300,
+      "resources": {
+        "cpus": 2,
+        "mem": "8G",
+        "allocation_s": 3600
+      },
+      "baseline_scope": {
+        "shared_station_capacity": false,
+        "terminal_soc_floor": false,
+        "bus_coefficient": 100000,
+        "charge_start_fee": 5,
+        "configuration_bound_by": "e091a4dba549510238507ef5e5367abea958bd30"
+      },
+      "treatment": "deterministic_union_of_existing_columns",
+      "optimization_run": false
+    },
+    "c5_k10_union_mip": {
+      "id": "c5_k10_union_mip",
+      "kind": "mip",
+      "chain": 5,
+      "target_k": 10,
+      "target_duties": 10,
+      "treatment": "three_way_existing_column_union",
+      "source_code": "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "data_dir": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p05_20260908.csv",
+      "input_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p05_20260908.csv",
+      "input_sha256": "b2fa6d6ca7c5deda4877c8f22d726dc49e6bddb72a921fee1da34ec1c3ef86f8",
+      "static_hashes": {
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+      },
+      "solver_budget_s": 12600,
+      "stage1_budget_s": 10800,
+      "watchdog_s": 15300,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "argv": [
+        "/home/nc437/evsp_env/bin/python",
+        "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb/src/run_exact_pool_mip.py",
+        "--result",
+        "{source_status}",
+        "--data-dir",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+        "--reference-data-dir",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+        "--cover",
+        "--two-stage",
+        "--timelimit",
+        "12600",
+        "--stage1-timelimit",
+        "10800",
+        "--threads",
+        "8",
+        "--mipgap",
+        "0.0001",
+        "--gurobi-log",
+        "{attempt_dir}/gurobi.log",
+        "--out",
+        "{out}"
+      ],
+      "original_case": "c5_k10",
+      "source_case": "c5_k10_union_build",
+      "source_artifact_kind": "finite_pool_union",
+      "interpretation": "Finite-pool union of identical-input original/c200/complementary columns, not a CG endpoint. Same12600/10800MIPbudget as individual-treatment long controls. Native full-pool replay must have no rejected/repaired columns before publishing union equivalence."
+    },
+    "c6_k10_union_build": {
+      "id": "c6_k10_union_build",
+      "kind": "pool_construction",
+      "chain": 6,
+      "target_k": 10,
+      "target_duties": 10,
+      "original_case": "c6_k10",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p06_20260908.csv",
+      "data_dir": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+      "input_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p06_20260908.csv",
+      "input_sha256": "b6b8abf3c83ef5e8d3167d6a785b8403fb20c8927e25c409193e1c744174ffc0",
+      "sources": [
+        {
+          "arm": "original",
+          "status_path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c6_k10/base/135701_r0/cg.json",
+          "status_sha256": "c4157d441b3fd00c90a491710d3855d0b648bfc58d507fb0c067c6fcb7dd922d",
+          "journal_path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c6_k10/base/135701_r0/cg.json.columns.jsonl",
+          "journal_sha256": "60e9f8ab3039caf56ebd4137b9ae824566dfa311a1e0b457847f3bcfe79a4d63",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c6_k10/mip_base/135703_r0/result.json",
+          "mip_evidence_sha256": "8a312f1c7c75342a84de16915c731e92496c9e796b7155779219cfb39cc9fe9d",
+          "source_mip_ordered_pool_sha256": "f629b8967ed1d1a7d979e4f6aac81e1385b989ea944c0a1939af5ac046e9fde5"
+        },
+        {
+          "arm": "c200",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c6_k10_c200/attempts/156678_r0/cg.json",
+          "status_sha256": "b3717e129b6a491d7d2cec062ae9ddf13e738a608d1855d9bdaf101da7cef4b5",
+          "journal_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c6_k10_c200/attempts/156678_r0/cg.json.columns.jsonl",
+          "journal_sha256": "c519a0f6e8d08ded470743611ec746d01c115f4ea39f5635be600202c8009955",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c6_k10_c200_mip/attempts/156729_r0/result.json",
+          "mip_evidence_sha256": "3c544f48e2a465e5be80137c39d5442fce1abbfcf93705d17ec77553e4e7aed1",
+          "source_mip_ordered_pool_sha256": "6e8d7ec978e642dfce04c604debdeba8f77555b9d493e66d52876669439dc0bf"
+        },
+        {
+          "arm": "complementary",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c6_k10_complementary/attempts/156680_r0/cg.json",
+          "status_sha256": "c4b34479a5720b99150a0f786f391be68da4b8bde7b7caf810fa8f3a05356bb8",
+          "journal_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c6_k10_complementary/attempts/156680_r0/cg.json.columns.jsonl",
+          "journal_sha256": "5f6b28a4318cb91e9200288684539866207f4f733a47046d3059658d459136af",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_diagnostics_20260914/cases/c6_k10_complementary_mip/attempts/156730_r0/result.json",
+          "mip_evidence_sha256": "b94153c8f45d6b9a6c34cf93f789c9f16c7fdba0c1ab73f1a5598e68e8f849af",
+          "source_mip_ordered_pool_sha256": "3072153bbdd3f4fc2d03ba29b4deb09a8fe7a57354cd645a7bbfb639a4c39c8a"
+        }
+      ],
+      "static_hashes": {
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/src/config.py": "afda984ccfc503f51dfc042f68d28716947ff9f78bf835038f9c20b9c2e62b06"
+      },
+      "watchdog_s": 3300,
+      "resources": {
+        "cpus": 2,
+        "mem": "8G",
+        "allocation_s": 3600
+      },
+      "baseline_scope": {
+        "shared_station_capacity": false,
+        "terminal_soc_floor": false,
+        "bus_coefficient": 100000,
+        "charge_start_fee": 5,
+        "configuration_bound_by": "e091a4dba549510238507ef5e5367abea958bd30"
+      },
+      "treatment": "deterministic_union_of_existing_columns",
+      "optimization_run": false
+    },
+    "c6_k10_union_mip": {
+      "id": "c6_k10_union_mip",
+      "kind": "mip",
+      "chain": 6,
+      "target_k": 10,
+      "target_duties": 10,
+      "treatment": "three_way_existing_column_union",
+      "source_code": "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "data_dir": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p06_20260908.csv",
+      "input_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p06_20260908.csv",
+      "input_sha256": "b6b8abf3c83ef5e8d3167d6a785b8403fb20c8927e25c409193e1c744174ffc0",
+      "static_hashes": {
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+      },
+      "solver_budget_s": 12600,
+      "stage1_budget_s": 10800,
+      "watchdog_s": 15300,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "argv": [
+        "/home/nc437/evsp_env/bin/python",
+        "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb/src/run_exact_pool_mip.py",
+        "--result",
+        "{source_status}",
+        "--data-dir",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+        "--reference-data-dir",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+        "--cover",
+        "--two-stage",
+        "--timelimit",
+        "12600",
+        "--stage1-timelimit",
+        "10800",
+        "--threads",
+        "8",
+        "--mipgap",
+        "0.0001",
+        "--gurobi-log",
+        "{attempt_dir}/gurobi.log",
+        "--out",
+        "{out}"
+      ],
+      "original_case": "c6_k10",
+      "source_case": "c6_k10_union_build",
+      "source_artifact_kind": "finite_pool_union",
+      "interpretation": "Finite-pool union of identical-input original/c200/complementary columns, not a CG endpoint. Same12600/10800MIPbudget as individual-treatment long controls. Native full-pool replay must have no rejected/repaired columns before publishing union equivalence."
+    }
+  },
+  "selection": {
+    "snapshot": "outputs/post_meeting_20260910/monitor/20260914T122906Z.json",
+    "snapshot_sha256": "194368c9c5b3d0daecfb58ea1e6d74f6acc0e0bbed820e68c833e3464288280a",
+    "union_inputs": [
+      "c1_k08",
+      "c2_k08",
+      "c4_k08",
+      "c5_k08",
+      "c5_k10",
+      "c6_k10"
+    ],
+    "proved_treatment_pools": [
+      "c1_k08_complementary",
+      "c5_k08_complementary"
+    ],
+    "new_extension_gaps": [
+      "w2_k25",
+      "w4_k22",
+      "w6_k23"
+    ],
+    "source_treatment_audits": {
+      "c1_k08_c200_mip": {
+        "source_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c1_k08_c200_mip/mip_result.json",
+        "source_sha256": "7bc3d11199ab2a38066b5979d9a5fde91a5161ba87ed61c93bdb12290052c499",
+        "rejected": 0,
+        "repaired": 0,
+        "ordered_pool_sha256": "5c2092603a0fc545f12d10967e729eea125ad948e16bcc6ef9b772d1792d5296"
+      },
+      "c1_k08_complementary_mip": {
+        "source_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c1_k08_complementary_mip/mip_result.json",
+        "source_sha256": "fc9e06b1d21cc9c33513d322ea877058037c980f35581f2dc776f8f59915d46e",
+        "rejected": 0,
+        "repaired": 0,
+        "ordered_pool_sha256": "10a91f0c81e5c57bf46c826e481318616100c3a5815ba27796e8954d71e5af97"
+      },
+      "c2_k08_c200_mip": {
+        "source_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c2_k08_c200_mip/mip_result.json",
+        "source_sha256": "5d176b26b47eb7f5ced24604bd18f13959c54fcb8d3c14ea8ad2a87a7145da2b",
+        "rejected": 0,
+        "repaired": 0,
+        "ordered_pool_sha256": "71fb6b0d32724241c45b3576581f0e1869b6477a0677e7aecf66e113d5ccb1f1"
+      },
+      "c2_k08_complementary_mip": {
+        "source_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c2_k08_complementary_mip/mip_result.json",
+        "source_sha256": "81a25d1bf330dce7c32cc0e04a6bc888d000c1bb54d26daae4c97d4390fcd978",
+        "rejected": 0,
+        "repaired": 0,
+        "ordered_pool_sha256": "746e0059626b7d7d69833c2a4c7d12d3122ba7f9e1a3cabcb1dfc56545392236"
+      },
+      "c4_k08_c200_mip": {
+        "source_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c4_k08_c200_mip/mip_result.json",
+        "source_sha256": "5d6bdc56b0cf6120e06f527e58415b435fce7f996f44de1413735845e21d19ba",
+        "rejected": 0,
+        "repaired": 0,
+        "ordered_pool_sha256": "42355cfacb3f0fdf7f18dfa6042a88387922fac50639f240610c9304df473001"
+      },
+      "c4_k08_complementary_mip": {
+        "source_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c4_k08_complementary_mip/mip_result.json",
+        "source_sha256": "3fc1de8b3ff6993f187611d8d0e6430176e37450473cd530f77db922c63faba7",
+        "rejected": 0,
+        "repaired": 0,
+        "ordered_pool_sha256": "f30c936b093052fe252447856564db97ee6504e1a5829fcad18f9f270a52f4c5"
+      },
+      "c5_k08_c200_mip": {
+        "source_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k08_c200_mip/mip_result.json",
+        "source_sha256": "bd0de29637ea83ffa866d8b9b74cc3d80a1fed32446a9c5e69fa2a2f9a6468c7",
+        "rejected": 0,
+        "repaired": 0,
+        "ordered_pool_sha256": "2cdaf8c981db1d6c16ff2a191a312b887269cfdb38cc9c01771c0249cf0af64c"
+      },
+      "c5_k08_complementary_mip": {
+        "source_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k08_complementary_mip/mip_result.json",
+        "source_sha256": "b7d7e4b129cd13ef5576e62ac20067632c4d19da53d6fed1e4a1e15973377d93",
+        "rejected": 0,
+        "repaired": 0,
+        "ordered_pool_sha256": "c670f31aea0bf6766c765ebcaba168e5dd6c2897e7f348b242063a38fb4d729a"
+      },
+      "c5_k10_c200_mip": {
+        "source_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k10_c200_mip/mip_result.json",
+        "source_sha256": "c6c828b15599e46f16490e4616b6ad53085fe6b50c7f5d19f9fd6f0f9b01a49e",
+        "rejected": 0,
+        "repaired": 0,
+        "ordered_pool_sha256": "a4fb4ce5b9695a70ec05ef01dc57620ea6c01cb6d94d961669968440f2a94bbc"
+      },
+      "c5_k10_complementary_mip": {
+        "source_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k10_complementary_mip/mip_result.json",
+        "source_sha256": "3896d6b57b230292e23939def889f19fe0092ae71735865f160682f4c5bb8c93",
+        "rejected": 0,
+        "repaired": 0,
+        "ordered_pool_sha256": "9153d75c349c6ec7f05ea1807f93731ce4fd995dde7d338af972a0dfad6948fb"
+      },
+      "c6_k10_c200_mip": {
+        "source_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c6_k10_c200_mip/mip_result.json",
+        "source_sha256": "3c544f48e2a465e5be80137c39d5442fce1abbfcf93705d17ec77553e4e7aed1",
+        "rejected": 0,
+        "repaired": 0,
+        "ordered_pool_sha256": "6e8d7ec978e642dfce04c604debdeba8f77555b9d493e66d52876669439dc0bf"
+      },
+      "c6_k10_complementary_mip": {
+        "source_path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c6_k10_complementary_mip/mip_result.json",
+        "source_sha256": "b94153c8f45d6b9a6c34cf93f789c9f16c7fdba0c1ab73f1a5598e68e8f849af",
+        "rejected": 0,
+        "repaired": 0,
+        "ordered_pool_sha256": "3072153bbdd3f4fc2d03ba29b4deb09a8fe7a57354cd645a7bbfb639a4c39c8a"
+      }
+    },
+    "allocation_counts": {
+      "existing_treatment_pools": 10,
+      "new_extension_gaps": 3,
+      "continued_pool": 1,
+      "union_pools": 6
+    },
+    "deferred_union_reason": "Preparation process exited255 without traceback during second union; no confirmed resource diagnosis. First complete construction retained, remaining6union preparations deferred to compute allocations."
+  },
+  "selection_sha256": "868ef24b784b50b260352c2d5ae554a25bc0f2070172a16e44740141bccb9302",
+  "tooling_sha256": {
+    "union_logic.py": "e3a5941aff946ad8b0d5503c83c7e9f41a3e9480f4fe7075a5f6039af2b94bea",
+    "union_worker.py": "e1c203e956f531116a26eee3f6c39dc577793fc2a005d764620398f1b1e479ba",
+    "worker.py": "83cec3969cee73b142155c468636d4df53635dca9969a085a854759da305e301",
+    "worker.sub": "cf430b50383dc0b4b2dd62c52ab8918a3f23ce33b811225ada9b02c2d6076554"
+  },
+  "storage_root": "/share/scaglione/nc437/evsp-dr/parallel_pool_unions_20260914",
+  "baseline_scope": {
+    "shared_station_capacity": false,
+    "terminal_soc_floor": false,
+    "bus_coefficient": 100000,
+    "charge_start_fee": 5,
+    "configuration_bound_by": "e091a4dba549510238507ef5e5367abea958bd30"
+  },
+  "execution_budgets": {
+    "build_watchdog_s": 3300,
+    "build_allocation_s": 3600,
+    "mip_total_s": 12600,
+    "mip_fleet_s": 10800
+  },
+  "policy_sha256": "49954b0300305f108e5e0c47bbbde43f0c5159140a95c839c4c3fad30f158867",
+  "interpretation": "Six independent pool-construction allocations; eachMIP depends only on itsown successful construction. Constructions are notCG/LPresults; no pricing certificate is generated. Allsource and actualunionMIP physicaladmission gates required."
+}

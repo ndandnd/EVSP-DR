@@ -1,0 +1,1108 @@
+{
+  "scope": "Native CG wall for both current-k donors plus unique shared upstream statuses through previous k. Upstream paid once per pair. Across-campaign total deduplicates statuses by SHA; scheduler CPU and graph build expenditure remain separate in source audit. Excludes unreferenced failed attempts. Not a same-computation performance comparison.",
+  "pairs": [
+    {
+      "pair_id": "c1_k15",
+      "shared_upstream_cg_native_wall_s": 47757.65906053316,
+      "both_donor_cg_native_wall_s": 18962.784604927525,
+      "prior_cg_native_wall_s_total": 66720.44366546068,
+      "shared_upstream_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p1/cg/M__k02_p1__warm_cover__event_2p5_event5.json",
+          "sha256": "bfd5a71b9dd1d94aa308480ac970492d7fba51bad3fa0a6c9e203dd11c2ebdec",
+          "native_wall_s": 224.07726934645325,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p1/cg/M__k03_p1__warm_cover__event_2p5_event5.json",
+          "sha256": "ea76d53966144824082c480532e23fd7e0d07ccf147dc5ecd8a04e9ee3e329ca",
+          "native_wall_s": 2898.5579931447282,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p1/cg/M__k04_p1__warm_cover__event_2p5_event5.json",
+          "sha256": "30d280cb6e7bb918c2ab3278ceb7ed1d2dd5cb6a77a8a258a80b0348d07d3e01",
+          "native_wall_s": 3686.0148324384354,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p1/cg/M__k05_p1__warm_cover__event_2p5_event5.json",
+          "sha256": "3e3fbc72b91ed0996cc49c8bc0c474f96705f372a4755f281ac9d6f03999a31a",
+          "native_wall_s": 5384.567268814659,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p1/cg/M__k06_p1__warm_cover__event_2p5_event5.json",
+          "sha256": "bfd994b413343d221ae460f1e7fce65585e689aeb9dccbf1bce82a55ca8a2da5",
+          "native_wall_s": 15608.143821182894,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k07/cg.json",
+          "sha256": "1e5d47126933cbf3119e95fbccd105746c3ddd676ba03491523977ac7b222801",
+          "native_wall_s": 2948.747791697271,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/cg.json",
+          "sha256": "1513ea906b23b9866083c4ecb57df48685e8ce8f87e22b6774c70213c2c7e72b",
+          "native_wall_s": 1438.3497030697763,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k09/cg.json",
+          "sha256": "0b1b0427508439462918993d5e3fcc4b6c50f24cbcd3b42cbb5b5acd8d3bc6a9",
+          "native_wall_s": 1603.3133918647654,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k10/cg.json",
+          "sha256": "f3a339519c8b113c35ae7e2c5910ae82b42d53332283f93ed3bf389acfc54e8e",
+          "native_wall_s": 1057.8973731799051,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k11/cg.json",
+          "sha256": "5b7e90166ccf0fe53361e04b7c97da8371c128277f37fa9f46da0a22edde565a",
+          "native_wall_s": 2561.7733842572197,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k12/cg.json",
+          "sha256": "e8578032df25a913f6f8634b64a2f9ddbf6d45fa02fe46b39714d28a20015fbf",
+          "native_wall_s": 1610.8087197276764,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k13/cg.json",
+          "sha256": "106435a1dd667e33625bca05926fd88d4da3bb6580e7a77cd92b782d434639ca",
+          "native_wall_s": 4233.990130100399,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k14/cg.json",
+          "sha256": "a863d186f7d990f26ffba427799916c8c08f3dd4fb19d258f740908a4b1fc97d",
+          "native_wall_s": 4501.417381708976,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        }
+      ],
+      "donor_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k15_core/attempts/201442_r0/cg.json",
+          "sha256": "155311ab0f230ff7c877235f7485d9b2c01684a9f2f32d6ab3e80862734c817c",
+          "native_wall_s": 10105.882868810091,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k15_core512/attempts/201443_r0/cg.json",
+          "sha256": "1df6fa7b855410bd40195a7f726598b4a1c3b11bd808976f0b00fb3816e27b1b",
+          "native_wall_s": 8856.901736117434,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        }
+      ]
+    },
+    {
+      "pair_id": "c1_k20",
+      "shared_upstream_cg_native_wall_s": 93411.79533268255,
+      "both_donor_cg_native_wall_s": 28706.091652345844,
+      "prior_cg_native_wall_s_total": 122117.8869850284,
+      "shared_upstream_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p1/cg/M__k02_p1__warm_cover__event_2p5_event5.json",
+          "sha256": "bfd5a71b9dd1d94aa308480ac970492d7fba51bad3fa0a6c9e203dd11c2ebdec",
+          "native_wall_s": 224.07726934645325,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p1/cg/M__k03_p1__warm_cover__event_2p5_event5.json",
+          "sha256": "ea76d53966144824082c480532e23fd7e0d07ccf147dc5ecd8a04e9ee3e329ca",
+          "native_wall_s": 2898.5579931447282,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p1/cg/M__k04_p1__warm_cover__event_2p5_event5.json",
+          "sha256": "30d280cb6e7bb918c2ab3278ceb7ed1d2dd5cb6a77a8a258a80b0348d07d3e01",
+          "native_wall_s": 3686.0148324384354,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p1/cg/M__k05_p1__warm_cover__event_2p5_event5.json",
+          "sha256": "3e3fbc72b91ed0996cc49c8bc0c474f96705f372a4755f281ac9d6f03999a31a",
+          "native_wall_s": 5384.567268814659,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p1/cg/M__k06_p1__warm_cover__event_2p5_event5.json",
+          "sha256": "bfd994b413343d221ae460f1e7fce65585e689aeb9dccbf1bce82a55ca8a2da5",
+          "native_wall_s": 15608.143821182894,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k07/cg.json",
+          "sha256": "1e5d47126933cbf3119e95fbccd105746c3ddd676ba03491523977ac7b222801",
+          "native_wall_s": 2948.747791697271,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/cg.json",
+          "sha256": "1513ea906b23b9866083c4ecb57df48685e8ce8f87e22b6774c70213c2c7e72b",
+          "native_wall_s": 1438.3497030697763,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k09/cg.json",
+          "sha256": "0b1b0427508439462918993d5e3fcc4b6c50f24cbcd3b42cbb5b5acd8d3bc6a9",
+          "native_wall_s": 1603.3133918647654,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k10/cg.json",
+          "sha256": "f3a339519c8b113c35ae7e2c5910ae82b42d53332283f93ed3bf389acfc54e8e",
+          "native_wall_s": 1057.8973731799051,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k11/cg.json",
+          "sha256": "5b7e90166ccf0fe53361e04b7c97da8371c128277f37fa9f46da0a22edde565a",
+          "native_wall_s": 2561.7733842572197,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k12/cg.json",
+          "sha256": "e8578032df25a913f6f8634b64a2f9ddbf6d45fa02fe46b39714d28a20015fbf",
+          "native_wall_s": 1610.8087197276764,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k13/cg.json",
+          "sha256": "106435a1dd667e33625bca05926fd88d4da3bb6580e7a77cd92b782d434639ca",
+          "native_wall_s": 4233.990130100399,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k14/cg.json",
+          "sha256": "a863d186f7d990f26ffba427799916c8c08f3dd4fb19d258f740908a4b1fc97d",
+          "native_wall_s": 4501.417381708976,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k15/cg.json",
+          "sha256": "a84c91e12c33e6e59d5842673bb5cebaf65fc659817fa63f0bc1110053794eca",
+          "native_wall_s": 9378.150217539398,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w1_k16/cg/133909_r0/cg.json",
+          "sha256": "5a934f9d29f006f70a093391ef49c2e8aa7da561f31aa1ac9ef86291f3499171",
+          "native_wall_s": 2861.8965857797302,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w1_k17/cg/133911_r0/cg.json",
+          "sha256": "1d0846ed2e86e9e016b860f9d3d41d50bfeee0fe5495c58e1b0a28dd483a5100",
+          "native_wall_s": 4995.679188836366,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w1_k18/cg/133913_r0/cg.json",
+          "sha256": "0298642a4b2cff27104a4b9756431b884673d9cfb51cf06c40c7e60e209ba51a",
+          "native_wall_s": 14059.400760543998,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w1_k19/cg/133915_r0/cg.json",
+          "sha256": "e084c169a395bc3318cae0625ff8030d826404c9e05ee6a65e8c4d0063fde9e2",
+          "native_wall_s": 14359.0095194499,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        }
+      ],
+      "donor_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c1_k20_core/attempts/207647_r0/cg.json",
+          "sha256": "0fb61966cf082170ac2f64e9c1667d1ab87cc3019d3b8ca744af5d3fa2023a31",
+          "native_wall_s": 14348.281413605902,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c1_k20_core512/attempts/207648_r0/cg.json",
+          "sha256": "8f683f9c25f879bb6f515118a59a67e35301130c2eb4079e94dfc116402f1efb",
+          "native_wall_s": 14357.810238739941,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        }
+      ]
+    },
+    {
+      "pair_id": "c2_k20",
+      "shared_upstream_cg_native_wall_s": 79859.09341022442,
+      "both_donor_cg_native_wall_s": 24627.365829966264,
+      "prior_cg_native_wall_s_total": 104486.45924019068,
+      "shared_upstream_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k02_p2__warm_cover__event_2p5_event5.json",
+          "sha256": "7b93eeb9836f66d563b3f602c9faf15ef9135c31fc142b6ec5e48372ca02a303",
+          "native_wall_s": 3.252933607203886,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k03_p2__warm_cover__event_2p5_event5.json",
+          "sha256": "f972a87dd4590cddab4ceaa0f8c5e7d076274d276fc8176747c3d131e5eafc8a",
+          "native_wall_s": 126.12169145909138,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k04_p2__warm_cover__event_2p5_event5.json",
+          "sha256": "525c1345f01d9864f78c2f0959da760a61c0e8265c4daec9a21dd67048b734c9",
+          "native_wall_s": 210.16943897446617,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k05_p2__warm_cover__event_2p5_event5.json",
+          "sha256": "e99b3549d81e8013e4d0131f51d74532dfa19d2c1f4de03d947c6f2ab04526c2",
+          "native_wall_s": 1708.5646265079267,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k06_p2__warm_cover__event_2p5_event5.json",
+          "sha256": "78113598a28ea94e35ce761d4fa61526523fb4f3853f94b82dc3f975d599e085",
+          "native_wall_s": 7517.725489603123,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k07_p2__warm_cover__event_2p5_event5.json",
+          "sha256": "609ec98232e94b41a8d61552b6fe48ad96c134e6d542f9ee0570ad52b1980f10",
+          "native_wall_s": 9875.912569502369,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k08_p2__warm_cover__event_2p5_event5.json",
+          "sha256": "1b41a5335fa1651103ee949099d20edd5a86b29dd627f94ee73164c093cdff80",
+          "native_wall_s": 17121.019985195715,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k09/cg.json",
+          "sha256": "b6ee50f30ad2e98086766ac2c51517ddb04a34559bde8d2975a40615d5e56478",
+          "native_wall_s": 1948.583448210964,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k10/cg.json",
+          "sha256": "7ec1af8340ee56dd14f4acde27c0ca463d269768fe88930dd8fe330783730d5c",
+          "native_wall_s": 983.4054638377856,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k11/cg.json",
+          "sha256": "0adb066249564c8604df0502b80775d9d2154a3d92e8d2370ee2a9975393709a",
+          "native_wall_s": 721.2385088950396,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k12/cg.json",
+          "sha256": "772db607eae48bbd5f3af91bcd945eb6fa84f1a516b72a4c9631235bd4da76ac",
+          "native_wall_s": 2934.751500891056,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k13/cg.json",
+          "sha256": "ffbea56a57dd61987388957843cf13903122721492005959ff51b5d9fe4ede2b",
+          "native_wall_s": 2051.028735597618,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k14/cg.json",
+          "sha256": "eee78917a2c8c64a3b3b1122f6e80b8a2c7e5c2148cea97194e1debd60eb02b5",
+          "native_wall_s": 5364.730133648962,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k15/cg.json",
+          "sha256": "e0f52be4e6ef301c3d557b84ab4d084159d3b2918be6dbdd59bee7b3f6e6b0d1",
+          "native_wall_s": 7360.592460704036,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k16/cg/133929_r0/cg.json",
+          "sha256": "04e82d62b69783d8fa4f526e32575c61cfdbdced43a6a7abe20ad0dd7b6df95b",
+          "native_wall_s": 2657.0906611045357,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k17/cg/133931_r0/cg.json",
+          "sha256": "30311ddb8ac29652324ce92b0110077c1414d3b7ccff211764a32cf59a980512",
+          "native_wall_s": 6144.139327573124,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k18/cg/133933_r0/cg.json",
+          "sha256": "a88a85e1c3a04cdc0e1d9d6ec9eac4e61c95bf4154803eda4cd8c00b01add102",
+          "native_wall_s": 7388.8971749253105,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k19/cg/133935_r0/cg.json",
+          "sha256": "3e9ab72d4c30871449639bf50f90e82e8102d494a61bad7610bae811a9069594",
+          "native_wall_s": 5741.869259986095,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        }
+      ],
+      "donor_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c2_k20_core/attempts/207651_r0/cg.json",
+          "sha256": "7aa33c9f707a66ca94b2bf333525bdacd3a5f4f3a3098d7d00a42458f311bf54",
+          "native_wall_s": 14344.280467298348,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c2_k20_core512/attempts/207652_r0/cg.json",
+          "sha256": "1ddbc14e586ca27e83d8efbc3d66ef5b174d8f94f6c10a7ce979b9e65a8b2e18",
+          "native_wall_s": 10283.085362667916,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        }
+      ]
+    },
+    {
+      "pair_id": "c2_k25",
+      "shared_upstream_cg_native_wall_s": 110676.9823701682,
+      "both_donor_cg_native_wall_s": 28697.293573232833,
+      "prior_cg_native_wall_s_total": 139374.27594340104,
+      "shared_upstream_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k02_p2__warm_cover__event_2p5_event5.json",
+          "sha256": "7b93eeb9836f66d563b3f602c9faf15ef9135c31fc142b6ec5e48372ca02a303",
+          "native_wall_s": 3.252933607203886,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k03_p2__warm_cover__event_2p5_event5.json",
+          "sha256": "f972a87dd4590cddab4ceaa0f8c5e7d076274d276fc8176747c3d131e5eafc8a",
+          "native_wall_s": 126.12169145909138,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k04_p2__warm_cover__event_2p5_event5.json",
+          "sha256": "525c1345f01d9864f78c2f0959da760a61c0e8265c4daec9a21dd67048b734c9",
+          "native_wall_s": 210.16943897446617,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k05_p2__warm_cover__event_2p5_event5.json",
+          "sha256": "e99b3549d81e8013e4d0131f51d74532dfa19d2c1f4de03d947c6f2ab04526c2",
+          "native_wall_s": 1708.5646265079267,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k06_p2__warm_cover__event_2p5_event5.json",
+          "sha256": "78113598a28ea94e35ce761d4fa61526523fb4f3853f94b82dc3f975d599e085",
+          "native_wall_s": 7517.725489603123,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k07_p2__warm_cover__event_2p5_event5.json",
+          "sha256": "609ec98232e94b41a8d61552b6fe48ad96c134e6d542f9ee0570ad52b1980f10",
+          "native_wall_s": 9875.912569502369,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k08_p2__warm_cover__event_2p5_event5.json",
+          "sha256": "1b41a5335fa1651103ee949099d20edd5a86b29dd627f94ee73164c093cdff80",
+          "native_wall_s": 17121.019985195715,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k09/cg.json",
+          "sha256": "b6ee50f30ad2e98086766ac2c51517ddb04a34559bde8d2975a40615d5e56478",
+          "native_wall_s": 1948.583448210964,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k10/cg.json",
+          "sha256": "7ec1af8340ee56dd14f4acde27c0ca463d269768fe88930dd8fe330783730d5c",
+          "native_wall_s": 983.4054638377856,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k11/cg.json",
+          "sha256": "0adb066249564c8604df0502b80775d9d2154a3d92e8d2370ee2a9975393709a",
+          "native_wall_s": 721.2385088950396,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k12/cg.json",
+          "sha256": "772db607eae48bbd5f3af91bcd945eb6fa84f1a516b72a4c9631235bd4da76ac",
+          "native_wall_s": 2934.751500891056,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k13/cg.json",
+          "sha256": "ffbea56a57dd61987388957843cf13903122721492005959ff51b5d9fe4ede2b",
+          "native_wall_s": 2051.028735597618,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k14/cg.json",
+          "sha256": "eee78917a2c8c64a3b3b1122f6e80b8a2c7e5c2148cea97194e1debd60eb02b5",
+          "native_wall_s": 5364.730133648962,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k15/cg.json",
+          "sha256": "e0f52be4e6ef301c3d557b84ab4d084159d3b2918be6dbdd59bee7b3f6e6b0d1",
+          "native_wall_s": 7360.592460704036,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k16/cg/133929_r0/cg.json",
+          "sha256": "04e82d62b69783d8fa4f526e32575c61cfdbdced43a6a7abe20ad0dd7b6df95b",
+          "native_wall_s": 2657.0906611045357,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k17/cg/133931_r0/cg.json",
+          "sha256": "30311ddb8ac29652324ce92b0110077c1414d3b7ccff211764a32cf59a980512",
+          "native_wall_s": 6144.139327573124,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k18/cg/133933_r0/cg.json",
+          "sha256": "a88a85e1c3a04cdc0e1d9d6ec9eac4e61c95bf4154803eda4cd8c00b01add102",
+          "native_wall_s": 7388.8971749253105,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k19/cg/133935_r0/cg.json",
+          "sha256": "3e9ab72d4c30871449639bf50f90e82e8102d494a61bad7610bae811a9069594",
+          "native_wall_s": 5741.869259986095,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k20/cg/133937_r0/cg.json",
+          "sha256": "7cfc68cb6ec7ebafb86e391c7d547fad96ef0cc28fa7c7f5af85f07996e18ab0",
+          "native_wall_s": 4068.6614505825564,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k21/cg/133939_r0/cg.json",
+          "sha256": "5a399798c1eefc486327847a42c4b2ccd2c4e93bcd57649a68d74ef4674b7747",
+          "native_wall_s": 4782.7803541277535,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k22/cg/133941_r0/cg.json",
+          "sha256": "c85b1c2c6949e779cd94fca1ec0698edf5760792f2421abac865978238215714",
+          "native_wall_s": 5175.758605009876,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k23/cg/133943_r0/cg.json",
+          "sha256": "f3d094363a8347fc5ae4d9e1b8217206cbfb94879b1a9754fdf2b0eae14f7489",
+          "native_wall_s": 12756.482811107766,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k24/cg/133945_r0/cg.json",
+          "sha256": "c09e56a318448bd1aab1fd9dc90070f7f30e64e6969ad0f599f8155bd72b16e7",
+          "native_wall_s": 4034.2057391158305,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        }
+      ],
+      "donor_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c2_k25_core/attempts/207653_r0/cg.json",
+          "sha256": "1f46a75736429f9545d234ce7a6cb9810b87e289807f790af968f8194524102a",
+          "native_wall_s": 14348.983538409695,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c2_k25_core512/attempts/207654_r0/cg.json",
+          "sha256": "0128b19b5f75c6ec4540f44d52c628b2b2b4bf2fb3e66fd9b0f79926def9094a",
+          "native_wall_s": 14348.310034823138,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        }
+      ]
+    },
+    {
+      "pair_id": "c3_k20",
+      "shared_upstream_cg_native_wall_s": 72334.55614246102,
+      "both_donor_cg_native_wall_s": 12804.321357097942,
+      "prior_cg_native_wall_s_total": 85138.87749955896,
+      "shared_upstream_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k02_p3__warm_cover__event_2p5_event5.json",
+          "sha256": "5ebdfbd5cbe001a7680f9da82517420c893125bc62e0e54451d0c26daf92ba0a",
+          "native_wall_s": 104.10017575137317,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k03_p3__warm_cover__event_2p5_event5.json",
+          "sha256": "d45f61776ba37dd28e71f5a6cfa31fa68ba7d18a671ab7d9d2253933fd92c071",
+          "native_wall_s": 350.9478078701068,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k04_p3__warm_cover__event_2p5_event5.json",
+          "sha256": "981f195ada8ee8c8869ab0328ac104b25559259d5b6d5ad0d31856cf139415d6",
+          "native_wall_s": 660.3770807585679,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k05_p3__warm_cover__event_2p5_event5.json",
+          "sha256": "cb67e103e5f65e3c79c0bbeed466cc8a4386206ae5ca7cf7e637f14e9a461dd1",
+          "native_wall_s": 1942.227026421344,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k06_p3__warm_cover__event_2p5_event5.json",
+          "sha256": "1d329a3d0fd00a71d2cb0fb932520b1275a3ed4cfa8deb0179e8513ca0784668",
+          "native_wall_s": 4882.315794197377,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k07_p3__warm_cover__event_2p5_event5.json",
+          "sha256": "4dd0df15c6b93d5b2a1b9351507d970856d659b567bec4593182fa2d52d3ea91",
+          "native_wall_s": 6512.44465207099,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k08_p3__warm_cover__event_2p5_event5.json",
+          "sha256": "49635299c5e437f25ee4a6858d09e3582fc21f97ed632d6a916666112a7bf362",
+          "native_wall_s": 8223.854015989462,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k09_p3__warm_cover__event_2p5_event5.json",
+          "sha256": "29dd9e02cc32eddafc300f04ed787a8b19ff205aa50a12feea2de17bbbe187b0",
+          "native_wall_s": 12941.364746395499,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k10_p3__warm_cover__event_2p5_event5.json",
+          "sha256": "3b9d794ebca3bdae5e7cd9a49ff37729d6195eb7b2cb3ef47c0addaee43af61e",
+          "native_wall_s": 17554.311637018574,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k11/cg.json",
+          "sha256": "7da72ddae9c4b39d88efc7bbc2b31d248f2ee44819ab830e997a4599741262c8",
+          "native_wall_s": 935.9606467308477,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k12/cg.json",
+          "sha256": "76a01a3a38469c7011a1fbd977aacda73cfd0ca47370a6289b897680cd9198ac",
+          "native_wall_s": 788.8096744399518,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k13/cg.json",
+          "sha256": "f1bbbeb1a2e760d723bdadf47567cbfec19e53c37fc15f0f248543afebd3bfb4",
+          "native_wall_s": 1481.168237645179,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k14/cg.json",
+          "sha256": "babede1b4325368db1a44e7c6eee2ced0dab249fec4f0a5b2b3cb4644a3464a1",
+          "native_wall_s": 1376.7738106162287,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k15/cg.json",
+          "sha256": "7f93b3b1ab378cbd6587028bf7337520533a78e80bb9fbef1aa3762c40701ebf",
+          "native_wall_s": 1985.241991530871,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w3_k16/cg/133949_r0/cg.json",
+          "sha256": "433fed006c70499a69d5a60acfb82beece6036161b37e4f5f04f8b758dcde7c9",
+          "native_wall_s": 2827.1189521229826,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w3_k17/cg/133951_r0/cg.json",
+          "sha256": "b8463be2527d6fc8a8ea257bb35d7d82fa828a4ee0cd3dbdbe9b8a1cab67d3b1",
+          "native_wall_s": 1920.87212969549,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w3_k18/cg/133953_r0/cg.json",
+          "sha256": "e96792ee18e653abe9ce9d38c6231b51ea6a61406922f8290b86512165c16ed4",
+          "native_wall_s": 2889.0148600866087,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w3_k19/cg/133955_r0/cg.json",
+          "sha256": "07408b6bf57ff9e6d0c60049acc745bab4564d55a9e2344cc2158ca9f6cd01a4",
+          "native_wall_s": 4957.652903119568,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        }
+      ],
+      "donor_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c3_k20_core/attempts/207655_r0/cg.json",
+          "sha256": "03205b4a9060233842d9a24864671a41107b34229640be6482bb88d399e29bff",
+          "native_wall_s": 6644.645090963226,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c3_k20_core512/attempts/207656_r0/cg.json",
+          "sha256": "4e4f288997551533b31b593c69a02a649077ad06bfbff57e8714f02c14b8bee1",
+          "native_wall_s": 6159.676266134717,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        }
+      ]
+    },
+    {
+      "pair_id": "c4_k25",
+      "shared_upstream_cg_native_wall_s": 135585.72012575832,
+      "both_donor_cg_native_wall_s": 28695.236777159385,
+      "prior_cg_native_wall_s_total": 164280.9569029177,
+      "shared_upstream_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p4/cg/M__k02_p4__warm_cover__event_2p5_event5.json",
+          "sha256": "9b93358a59f3a70ffd261231be13be02efb815be7f56fc78dcb6679e23fb6d53",
+          "native_wall_s": 20.295273661147803,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p4/cg/M__k03_p4__warm_cover__event_2p5_event5.json",
+          "sha256": "bb99e76518a99bff8e508fadbf45bdcd9c3a115e199473f28f41061a93fd0253",
+          "native_wall_s": 172.47231258754618,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p4/cg/M__k04_p4__warm_cover__event_2p5_event5.json",
+          "sha256": "3daf0f0897e489aa93cf0aaae2daf7e0e2676d82f3707183e3435f320bf701bf",
+          "native_wall_s": 125.63910134742036,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p4/cg/M__k05_p4__warm_cover__event_2p5_event5.json",
+          "sha256": "56b2414dbb4f5a1bb3b420802438ad34e3f8875737fa895dc690bbd39ca1ea8b",
+          "native_wall_s": 891.0911890240386,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p4/cg/M__k06_p4__warm_cover__event_2p5_event5.json",
+          "sha256": "24b070403df28a15396300a479cd919cef160162accec03473287dcaf3f9ddf5",
+          "native_wall_s": 2978.1722243982367,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p4/cg/M__k07_p4__warm_cover__event_2p5_event5.json",
+          "sha256": "86b1a906975d5076f7874413e5e7c34033be596c44e6a6a6bcc0515b87454121",
+          "native_wall_s": 6815.507260242244,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p4/cg/M__k08_p4__warm_cover__event_2p5_event5.json",
+          "sha256": "abaad912868de2ba23be45fcb7ecf44247290931faa742d20a7e7de7c5e7e870",
+          "native_wall_s": 12217.33497453481,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p4/cg/M__k09_p4__warm_cover__event_2p5_event5.json",
+          "sha256": "4cb8815524abb8c8bff6a6dbaf78e2ce71f585a769fe32026d7013d8dbd5123f",
+          "native_wall_s": 18631.957116049016,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k10/cg.json",
+          "sha256": "c999c6c0b189819389e40f3c22df8caf7d1284461340115b92e4784db588c12b",
+          "native_wall_s": 1130.097290577367,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k11/cg.json",
+          "sha256": "6c325225101932defe09f5f0d9c5bf96b632bf508e104ed3f7c5eee7463e6f92",
+          "native_wall_s": 1580.3985827937722,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k12/cg.json",
+          "sha256": "1ad84a895bddaffc222d090efa588b57c41195b81d9653931e757f5eda237176",
+          "native_wall_s": 388.0537971018348,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k13/cg.json",
+          "sha256": "1790a05e8c2a5937ea7d25820c22e1be012494e3e62ebffd9aada086645c9d73",
+          "native_wall_s": 2561.309930072166,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k14/cg.json",
+          "sha256": "c08ee7d0cb76e7fb8964830a26195832caca0f2aca8f4d71022c0ea5c9ecc159",
+          "native_wall_s": 3552.4867195624392,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k15/cg.json",
+          "sha256": "a5a394c525974e4a5918b40d0006a23d4639b71a2c1725360d52713dbabc1441",
+          "native_wall_s": 3865.508409834467,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w4_k16/cg/133969_r0/cg.json",
+          "sha256": "0c55ca50d60f5990ad392aa14f25fcab67086c4070140b27a7e47fc01afab396",
+          "native_wall_s": 6153.280189800309,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w4_k17/cg/133971_r0/cg.json",
+          "sha256": "cb3e66c6569420104c3d8d4dd60fcdb7902b4ba41274e834af04f9a48f7e2469",
+          "native_wall_s": 4663.02986661531,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w4_k18/cg/133973_r0/cg.json",
+          "sha256": "fbed554b9d74ea7b2a2604103f8c38daa6493b095b630df215d2e3c135c0b732",
+          "native_wall_s": 4136.238176560495,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w4_k19/cg/133975_r0/cg.json",
+          "sha256": "b8f878d363ff49c4a509ecf0af758a5a16f8fd6d8042182738e36fc726978712",
+          "native_wall_s": 14348.809863523347,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w4_k20/cg/133977_r0/cg.json",
+          "sha256": "4a2a8c59fbaf26da73de7ecf655b31b9273b2f4fbd2cfb8a07823c46a0e87145",
+          "native_wall_s": 4761.9516559005715,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w4_k21/cg/133979_r0/cg.json",
+          "sha256": "531bc84b1489a47d60c5146f1aba13c1ba747430bc1f95c4cd88814a757a68af",
+          "native_wall_s": 14362.18474602187,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w4_k22/cg/133981_r0/cg.json",
+          "sha256": "f5513d389753472fb95b9dd18a0972dcce597d53268368f74e6cfe15656320b9",
+          "native_wall_s": 8399.042749869637,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w4_k23/cg/133983_r0/cg.json",
+          "sha256": "5973a570d7bdd4d70ad26ca85ed4c0686b072543f9ec8745c2b16801516588e2",
+          "native_wall_s": 13178.250476214103,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w4_k24/cg/133985_r0/cg.json",
+          "sha256": "1ba18ba6cb294698b9c5e035c3b34d3d1cafa227cc59f6a0e2d36cdea40c696f",
+          "native_wall_s": 10652.608219466172,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        }
+      ],
+      "donor_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c4_k25_core/attempts/207661_r0/cg.json",
+          "sha256": "f7fcdfe520dcb7077f7b0fe37e9028285d54d99e49eb3e8943741a1b02936140",
+          "native_wall_s": 14344.832225557417,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c4_k25_core512/attempts/207662_r0/cg.json",
+          "sha256": "7520eb1cdc95621472613a5e375b04acf310bf76a8ad276846b13f550c77a0b5",
+          "native_wall_s": 14350.404551601969,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        }
+      ]
+    },
+    {
+      "pair_id": "c5_k20",
+      "shared_upstream_cg_native_wall_s": 110161.79818425141,
+      "both_donor_cg_native_wall_s": 28687.32631965354,
+      "prior_cg_native_wall_s_total": 138849.12450390495,
+      "shared_upstream_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k02_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "e915057459322416273318c9c141772f2a361d2ee6b16521616eb449774b2f94",
+          "native_wall_s": 100.11502752522938,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k03_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "b7a2066d9fb1447c25f6a0588145b9c7d8bbdc621b70faf93ba4fab613ee2de0",
+          "native_wall_s": 479.0091682523489,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k04_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "a08133d1b8d90781eab52e1ea77b62e9bc52dfa02eee9c8300eb57bee81b19dc",
+          "native_wall_s": 2293.8141249089967,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k05_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "305ff055a8902573c51bfb000c27810632348ba79a46975189763b80e6b5ef52",
+          "native_wall_s": 3727.983835014282,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k06_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "a43d156ac5880ef089cf6a37c86d196f233870d57fa3e12c704077854a0a9e69",
+          "native_wall_s": 6108.46411649487,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k07_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "9fe82066d0a0f72af06f4f1c7e30071645de85cbd4b3a6fa51a83c86cdafa53e",
+          "native_wall_s": 12233.696026766673,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k08_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "f15c681b63bcd66a77932258e981f0cfd07b55d2589afa199b196fb0a29f7b2d",
+          "native_wall_s": 12881.41278322204,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k09_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "2d827d39a28ac90be71b1d18e356701cd9eb4fbe24a5ad8520541de196455224",
+          "native_wall_s": 14249.819808664499,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k10_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "8812619897b8b60e81b048938578ca1369e463c1331afe883dda5b81500f7695",
+          "native_wall_s": 20514.580202228623,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k11/cg.json",
+          "sha256": "b97a011c6f3ba94b9c20229b29d8b8ec7238a730990f9d70880f48530de85b2d",
+          "native_wall_s": 2536.268280895427,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k12/cg.json",
+          "sha256": "1ea2ddd2fd30107b0747c65e542c365c60f3dd2521e2a3064e40281b9b6dea7a",
+          "native_wall_s": 1299.3213985655457,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k13/cg.json",
+          "sha256": "edfa3ffbab4ad75c41daa189a6e7a952b025ca4274fb183e0e068b91a57a53ca",
+          "native_wall_s": 1557.6199093004689,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k14/cg.json",
+          "sha256": "1e1674ae4623f8a107b5ace439fb9b39f52c87056f34430028e2fb08536e32c8",
+          "native_wall_s": 2198.7950021764264,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k15/cg.json",
+          "sha256": "6ef139f5c12c6abdf4b64efba2554eaad04471ad9b52000a94894a596a6c8c53",
+          "native_wall_s": 3140.1926934032235,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w5_k16/cg/133989_r0/cg.json",
+          "sha256": "c3dbd4a1e3055e07e5504f48b5b3a2d53f580afe7c5c941cd15fcf0d72f928ba",
+          "native_wall_s": 4629.082265011501,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w5_k17/cg/133991_r0/cg.json",
+          "sha256": "6e78ca39840fceae94f8dcc7713d7ec953ecc694ded6b489d41072cc48a63d79",
+          "native_wall_s": 4823.186912736855,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w5_k18/cg/133993_r0/cg.json",
+          "sha256": "01463b5742a2776ed309932700dbe77ebb35e12de1b15904793c851d8972196c",
+          "native_wall_s": 3027.989942297805,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w5_k19/cg/133995_r0/cg.json",
+          "sha256": "056e63afee24ec3f2202edf11f4ad8fa5ca1a62a350e1643b478a909ebffe7a7",
+          "native_wall_s": 14360.4466867866,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        }
+      ],
+      "donor_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c5_k20_core/attempts/207663_r0/cg.json",
+          "sha256": "e3e2cc793e74461bc135060a719d2fb7a75ccc2fa6a38bb94fa0c63151069c7e",
+          "native_wall_s": 14343.140489412937,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c5_k20_core512/attempts/207664_r0/cg.json",
+          "sha256": "572f50624bffb8f4c8eb54cc61e52fd03905ca7d8f2dfa6b2e0677ed37683345",
+          "native_wall_s": 14344.185830240604,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        }
+      ]
+    },
+    {
+      "pair_id": "c5_k25",
+      "shared_upstream_cg_native_wall_s": 177489.68051359616,
+      "both_donor_cg_native_wall_s": 28706.246493666433,
+      "prior_cg_native_wall_s_total": 206195.9270072626,
+      "shared_upstream_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k02_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "e915057459322416273318c9c141772f2a361d2ee6b16521616eb449774b2f94",
+          "native_wall_s": 100.11502752522938,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k03_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "b7a2066d9fb1447c25f6a0588145b9c7d8bbdc621b70faf93ba4fab613ee2de0",
+          "native_wall_s": 479.0091682523489,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k04_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "a08133d1b8d90781eab52e1ea77b62e9bc52dfa02eee9c8300eb57bee81b19dc",
+          "native_wall_s": 2293.8141249089967,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k05_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "305ff055a8902573c51bfb000c27810632348ba79a46975189763b80e6b5ef52",
+          "native_wall_s": 3727.983835014282,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k06_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "a43d156ac5880ef089cf6a37c86d196f233870d57fa3e12c704077854a0a9e69",
+          "native_wall_s": 6108.46411649487,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k07_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "9fe82066d0a0f72af06f4f1c7e30071645de85cbd4b3a6fa51a83c86cdafa53e",
+          "native_wall_s": 12233.696026766673,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k08_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "f15c681b63bcd66a77932258e981f0cfd07b55d2589afa199b196fb0a29f7b2d",
+          "native_wall_s": 12881.41278322204,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k09_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "2d827d39a28ac90be71b1d18e356701cd9eb4fbe24a5ad8520541de196455224",
+          "native_wall_s": 14249.819808664499,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k10_p5__warm_cover__event_2p5_event5.json",
+          "sha256": "8812619897b8b60e81b048938578ca1369e463c1331afe883dda5b81500f7695",
+          "native_wall_s": 20514.580202228623,
+          "execution_commit": "ecb60c154a9a5db385e3a573949ec9fd0a737af3"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k11/cg.json",
+          "sha256": "b97a011c6f3ba94b9c20229b29d8b8ec7238a730990f9d70880f48530de85b2d",
+          "native_wall_s": 2536.268280895427,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k12/cg.json",
+          "sha256": "1ea2ddd2fd30107b0747c65e542c365c60f3dd2521e2a3064e40281b9b6dea7a",
+          "native_wall_s": 1299.3213985655457,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k13/cg.json",
+          "sha256": "edfa3ffbab4ad75c41daa189a6e7a952b025ca4274fb183e0e068b91a57a53ca",
+          "native_wall_s": 1557.6199093004689,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k14/cg.json",
+          "sha256": "1e1674ae4623f8a107b5ace439fb9b39f52c87056f34430028e2fb08536e32c8",
+          "native_wall_s": 2198.7950021764264,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k15/cg.json",
+          "sha256": "6ef139f5c12c6abdf4b64efba2554eaad04471ad9b52000a94894a596a6c8c53",
+          "native_wall_s": 3140.1926934032235,
+          "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w5_k16/cg/133989_r0/cg.json",
+          "sha256": "c3dbd4a1e3055e07e5504f48b5b3a2d53f580afe7c5c941cd15fcf0d72f928ba",
+          "native_wall_s": 4629.082265011501,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w5_k17/cg/133991_r0/cg.json",
+          "sha256": "6e78ca39840fceae94f8dcc7713d7ec953ecc694ded6b489d41072cc48a63d79",
+          "native_wall_s": 4823.186912736855,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w5_k18/cg/133993_r0/cg.json",
+          "sha256": "01463b5742a2776ed309932700dbe77ebb35e12de1b15904793c851d8972196c",
+          "native_wall_s": 3027.989942297805,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w5_k19/cg/133995_r0/cg.json",
+          "sha256": "056e63afee24ec3f2202edf11f4ad8fa5ca1a62a350e1643b478a909ebffe7a7",
+          "native_wall_s": 14360.4466867866,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w5_k20/cg/133997_r0/cg.json",
+          "sha256": "d1d8472e2429a0d5d7fd3154c5a0bce814c7b0de763f4cf4c5a7503baefa1842",
+          "native_wall_s": 13060.985543868504,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w5_k21/cg/134051_r0/cg.json",
+          "sha256": "7bec34b423737eb853e29867a43c5fb67f7da647e16095b90bec0c4730f05921",
+          "native_wall_s": 14376.125631761737,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w5_k22/cg/134053_r0/cg.json",
+          "sha256": "9382dee7b131bbe1ba0df1e5c6ddcee8023bea839af3239370e1fd77acabd7ef",
+          "native_wall_s": 14364.222203275654,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w5_k23/cg/134055_r0/cg.json",
+          "sha256": "c6a7aa4fee083efa9aa4adb587d84868e1f29e415163d507681d3e1be37c6d6f",
+          "native_wall_s": 11152.002329173032,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w5_k24/cg/134057_r1/cg.json",
+          "sha256": "ec3549d35146941ecafca5ff88454c818d95e0312f4b77715b1b4a157d006c72",
+          "native_wall_s": 14374.546621265821,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        }
+      ],
+      "donor_sources": [
+        {
+          "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c5_k25_core/attempts/207665_r0/cg.json",
+          "sha256": "86b21b925b887d8b6b2ffb5d23547dc11d4f338a3bf434b73c57800ea185af86",
+          "native_wall_s": 14352.695117784198,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/cases/c5_k25_core512/attempts/207666_r0/cg.json",
+          "sha256": "212eb26430cddcbf40bd87dc6ebce10dff4b7d3290e23b2bed20dd7052b2e11f",
+          "native_wall_s": 14353.551375882234,
+          "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+        }
+      ]
+    }
+  ],
+  "unique_status_count": 121,
+  "unique_prior_cg_native_wall_s": 789385.401092716,
+  "cumulative_manifest_sha256": "eda4bdf60d0bfcf19d34c5a816a11d22355ba8734042d81178bd85738f564f01"
+}

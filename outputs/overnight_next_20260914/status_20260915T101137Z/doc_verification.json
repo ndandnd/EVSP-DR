@@ -10,11 +10,15 @@
     "historical_link_preserved": true,
     "source_link_current": true,
     "extra_time_not_causal": true,
-    "no_empty_heading": true
+    "no_empty_heading": true,
+    "queue30": true,
+    "production12": true,
+    "cg_limits_near_table": true,
+    "no_duplicate_compact_row": true
   },
   "before_sha256": "5359474e925e21630ac0b21049717098270752ef008e19abd43b2bbdc92f7249",
-  "after_sha256": "74af56c0748519163d79ec16561efa1a5846bb02734c21b6210332e0ed11784c",
+  "after_sha256": "7ff836e2b669694d5c17388a57b9f75029654c2758fdba6988e361f50e98c9de",
   "words_before": 1408,
-  "words_after": 1626,
+  "words_after": 1637,
   "slides_edited": false
 }

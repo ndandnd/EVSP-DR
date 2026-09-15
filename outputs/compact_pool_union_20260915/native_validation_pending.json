@@ -1,0 +1,75 @@
+{
+  "status": "pending",
+  "missing": [
+    "c1_k15_union",
+    "c2_k20_control",
+    "c2_k20_union"
+  ],
+  "verified": [
+    {
+      "case_id": "c1_k15_build",
+      "kind": "pool_construction",
+      "job_id": "227214",
+      "result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/cases/c1_k15_build/attempts/227214_r0/pool.json",
+      "result_sha256": "07d25f90d60a7581af0a5b6a35d06a7dac765add6a778683c0c32c4fc97f73f1",
+      "construction_sha256": "e2be4015eb75fa555def2b8b7a5334b57e56e303bbe8baef023186138d7c0a7e",
+      "source_columns": [
+        53878,
+        48243
+      ],
+      "union_columns": 100861,
+      "shared_incidence_count": 1260,
+      "constructor_wall_s": 61.64771710662171,
+      "constructor_peak_rss_native_kib": 148644,
+      "source_record_counts": [
+        53878,
+        48243
+      ],
+      "union_pool_set": {
+        "native_unique_columns": 100861,
+        "incidence_set_sha256": "47c1def1ee95d5d9f365728d1a5f3f0c040aa03800ae9eaf37e9461dfa1406d8",
+        "incidence_cost_set_sha256": "42827519bd4343fc594b62f84d640d1e8fbcb8db5b815d8972ed6e9c699e90e0",
+        "recorded_route_set_sha256": "cc44ef311e2b5472a21e794a45fd52cbbf38f20d03374172d462604966ac6bc0"
+      },
+      "donor_membership_passed": true,
+      "source_physics_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+      "donor_buses": [
+        16,
+        16
+      ]
+    },
+    {
+      "case_id": "c2_k20_build",
+      "kind": "pool_construction",
+      "job_id": "227215",
+      "result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/native_fixture/cases/c2_k20_build/attempts/227215_r0/pool.json",
+      "result_sha256": "dda5fe3b963da03c95cc174766b813b613f7f7ad5024b95d729396432d9e5fb2",
+      "construction_sha256": "437308ece6d417ecb7566aeaf0c24a37461671f76a5948279296ea9a875e95bd",
+      "source_columns": [
+        51786,
+        54090
+      ],
+      "union_columns": 105042,
+      "shared_incidence_count": 834,
+      "constructor_wall_s": 62.42841269494966,
+      "constructor_peak_rss_native_kib": 139348,
+      "source_record_counts": [
+        51786,
+        54090
+      ],
+      "union_pool_set": {
+        "native_unique_columns": 105042,
+        "incidence_set_sha256": "5821b7c98c155a7137941538c6be59b44f38fb480aee691f367e58ce03b50ed8",
+        "incidence_cost_set_sha256": "17e29c09f7217805c19bc595f23c4e851576158b417bf11e574d193818c33648",
+        "recorded_route_set_sha256": "af69f81de0beb10f2aba90781340de7a6182c4de013a648d43030b3dedff430f"
+      },
+      "donor_membership_passed": true,
+      "source_physics_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+      "donor_buses": [
+        22,
+        21
+      ]
+    }
+  ],
+  "utc": "2026-09-15T10:33:08.158382+00:00"
+}

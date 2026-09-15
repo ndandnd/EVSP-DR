@@ -229,7 +229,10 @@ class Register:
                 # Explicit aliases for this frozen manifest; do not infer a
                 # constructed pool's target from its ancestry paths.
                 for case in self.diagnostic_cases[campaign_id].values():
-                    case.update(csv=case["input_path"], target_duties=case["target_k"])
+                    case.update(
+                        csv=str(Path(case["input_path"]).relative_to(case["data_dir"])),
+                        target_duties=case["target_k"],
+                    )
             metadata_extension = diagnostic_workflow.get("case_metadata.json", {}).get("case_metadata", {})
             if metadata_extension:
                 if not diagnostic_workflow.get("case_metadata_verification", {}).get("verified"):
