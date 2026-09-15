@@ -1,0 +1,20 @@
+{
+  "state": "lost",
+  "checked_utc": "2026-09-15T22:22:38.667236+00:00",
+  "notified_user": true,
+  "ssh_control_socket_exists": false,
+  "ssh_exit_code": 255,
+  "error": "Permission denied (publickey,password).",
+  "last_successful_snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T191846Z.json",
+  "failed_collection": {
+    "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T203151Z.json",
+    "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T191846Z.json",
+    "started_utc": "2026-09-15T20:31:51.297583+00:00",
+    "returncode": 255,
+    "elapsed_s": 5034.316436290741,
+    "stderr_path": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T203151Z_stderr.txt",
+    "finished_utc": "2026-09-15T21:55:45.617378+00:00"
+  },
+  "scientific_outputs_changed": false,
+  "mirror_pending": true
+}

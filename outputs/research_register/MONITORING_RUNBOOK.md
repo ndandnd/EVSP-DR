@@ -1,3 +1,7 @@
+## 15 September22:21UTC — access lost, user notified
+
+Collection203151 failed255, emptyfile, processreported5034secondselapsed. Directprobe confirmed Permission denied(publickey,password); controlsocketmissing. Exactlosstime/causeunknown. Lastsuccess191846 preserved; do not normalize failedsnapshot. connection_status.json persists notifiedlost state. Nextheartbeat shortprobeonlywhilelost; notifyonceonrestoration, then collectfullfreshdata and audit accumulated transitions. Doc/workbook unchanged, nojobmutations. Mirrorpendingrestoredaccess.
+
 ## 15 September15:28EDT — no new scientific endpoint
 
 Snapshot191846 completed559.953s. Fourgraphsfinished(C1k29,C3k30,C4k29,C4k30); C1/C4k29CGsstarted.23running44true dependencies,982attempts,no failure/preemption/invaliddependency/throttle. Newgaps4root included, in-memorynormalizationpassed. No submissions/cancellations/requeues; existing ready work progresses automatically. Doc/workbook unchanged; lastnormalizedscience181736. Preserve previous-k links; do not repeat completed targettests. See status_20260915T191846Z.

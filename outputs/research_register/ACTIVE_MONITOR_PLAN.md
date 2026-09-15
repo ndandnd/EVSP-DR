@@ -2,6 +2,10 @@
 
 User authorization: continue productive Unicorn experiments and hourly monitoring, fix demonstrated execution problems, and maintain one understandable current Google Doc. Existing heartbeat `unicorn-connection-and-research-progress` is ACTIVE. Root handles routine checks without subagents. Notify only on meaningful findings, failures, access changes or a needed decision; quiet checks need no browser update or repeated briefing.
 
+## Access interruption — highest priority
+
+Unicorn authentication failed at22:21UTC15September; control socket missing. User notified. See connection_status.json and status_20260915T203151Z. First probe SSH with BatchMode/ConnectTimeout8. If still lost, do not repeat notification or collect/normalize empty output. On restoration notify once and resume full checks against last successful191846snapshot. Cluster mirror pending. No jobs changed.
+
 ## Latest verified state
 
 Latest operational collection `20260915T191846Z` completed15:28EDT in559.953s: no changed scientific endpoint,23running/44true dependencies,982attempts. C1/C4k29CGs started; C3/C4k30 graphs ready but retain previous-k dependencies.18graphs,4CGs and longerC1k28MIP active. Newgaps4root collected/normalizationpassed. Last normalized scientific snapshot remains181736:3349records/78groups,78CG/78MIP; Doc/workbook unchanged. Combinedmax27/28/28/28/26/28. [Operational report](../overnight_next_20260914/status_20260915T191846Z/README.md).
