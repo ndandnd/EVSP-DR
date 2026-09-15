@@ -234,21 +234,21 @@
     "accounting_missing_task_ids": [],
     "attempts": 90,
     "started": 77,
-    "ended_started_attempts": 75,
+    "ended_started_attempts": 76,
     "confirmed_preemptions": 0,
     "preemption_fraction_among_ended": 0.0,
     "descriptive_wilson95": [
-      3.469446951953614e-18,
-      0.04872384248280587
+      0,
+      0.048113585065137326
     ],
     "state_counts": {
-      "COMPLETED": 75,
+      "COMPLETED": 76,
       "PENDING": 13,
-      "RUNNING": 2
+      "RUNNING": 1
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 289562
+    "allocation_exposure_seconds": 296713
   },
   "default_compact_large_seed_20260914": {
     "registered_tasks": 24,
@@ -283,7 +283,7 @@
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 74065
+    "allocation_exposure_seconds": 118249
   },
   "default_compact_seed_support_20260914": {
     "registered_tasks": 36,
@@ -418,7 +418,7 @@
     },
     "confirmed_preempted_allocation_seconds": 7451,
     "confirmed_preempted_allocated_cpu_seconds": 59608,
-    "allocation_exposure_seconds": 1699444
+    "allocation_exposure_seconds": 1706808
   },
   "default_overnight_extension_3600": {
     "registered_tasks": 87,

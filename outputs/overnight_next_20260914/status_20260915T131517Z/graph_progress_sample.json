@@ -1,0 +1,50 @@
+{
+  "sampled_utc": "2026-09-15T13:23:22.006549+00:00",
+  "rows": [
+    {
+      "case_id": "w1_k29",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260915/cases/w1_k29/cache/224653_r0/progress.jsonl",
+      "last_record": {
+        "elapsed_s": 17744.53374744486,
+        "event": "progress",
+        "finished_sources": 19248,
+        "peak_rss_kib": 14849772,
+        "phase": "_build_arcs",
+        "pid": 41687,
+        "source": 19248,
+        "stored_arcs": 613490811,
+        "total_sources": 60740
+      }
+    },
+    {
+      "case_id": "w3_k29",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260915/cases/w3_k29/cache/224657_r0/progress.jsonl",
+      "last_record": {
+        "elapsed_s": 17744.97166040493,
+        "event": "progress",
+        "finished_sources": 19954,
+        "peak_rss_kib": 14253748,
+        "phase": "_build_arcs",
+        "pid": 2674036,
+        "source": 19954,
+        "stored_arcs": 567128736,
+        "total_sources": 55766
+      }
+    },
+    {
+      "case_id": "w5_k29",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260915/cases/w5_k29/cache/224661_r0/progress.jsonl",
+      "last_record": {
+        "elapsed_s": 17733.667847969104,
+        "event": "progress",
+        "finished_sources": 22539,
+        "peak_rss_kib": 17119836,
+        "phase": "_build_arcs",
+        "pid": 448367,
+        "source": 22539,
+        "stored_arcs": 696231376,
+        "total_sources": 60811
+      }
+    }
+  ]
+}

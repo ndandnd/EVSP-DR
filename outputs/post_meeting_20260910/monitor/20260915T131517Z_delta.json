@@ -1,0 +1,92 @@
+{
+  "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T121336Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T131517Z.json",
+  "timestamp_utc": "2026-09-15T13:15:17.994515+00:00",
+  "changed_results": [
+    {
+      "campaign": "graph_timeout_gates_v2_20260914",
+      "stage": "operational_graph_recovery",
+      "path": "w1_k28",
+      "new_path": false,
+      "summary": {
+        "final": {},
+        "case_id": "w1_k28",
+        "completion_status": "recovered",
+        "graph_rebuilt": true,
+        "manifest_matches": true,
+        "attempts": [
+          {
+            "attempt": "189917_r0",
+            "status": "finished"
+          }
+        ],
+        "proof_scope": "Operational graph preparation; no optimization endpoint inferred."
+      },
+      "sha256": null,
+      "payload_sha256": "1517bc9d8e0af789a0019dd6c94b7780079b924ab1db20b48c61c1bcdf9ed38f"
+    },
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w4_k28/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "wall_s": 14395.159258786123,
+        "final": {
+          "iter": 217,
+          "attempt_iter": 217,
+          "lp_obj": 2801157.3176628263,
+          "route_weight": 27.999999999999822,
+          "artificials": 0.0,
+          "min_rc": -0.021669466562004747,
+          "max_row_violation": 6.127320872906239e-13,
+          "max_bound_violation": 3.300276718576356e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "85668488bdcd3e9acf8b74897c76e1f6b7beae4d5aec39e1f639b604d4d452e3"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "187997",
+      "case_id": "w5_k28",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "187972",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-73"
+      }
+    },
+    {
+      "job": "187997",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "189917",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-73"
+      },
+      "after": null
+    }
+  ]
+}

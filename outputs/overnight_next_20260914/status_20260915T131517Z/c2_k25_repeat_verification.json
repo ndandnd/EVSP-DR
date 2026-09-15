@@ -1,0 +1,15 @@
+{
+  "buses": 25,
+  "pool_fleet_bound": 25.0,
+  "target_excluded_in_saved_pool": false,
+  "fleet_proved": true,
+  "pool_columns": 170528,
+  "total_mip_minutes": 210.09942533175152,
+  "fleet_search_minutes": 87.16094781557719,
+  "charging_status": "TIME_LIMIT",
+  "individual_route_replay": true,
+  "duplicate_removal_validated": false,
+  "shared_capacity_validated": false,
+  "mip_path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/w2_k25_longmip/mip_result.json",
+  "mip_sha256": "87c52d4a7855a94650a481f19af8a6bf445bcd4ea800ae98555a0601a849d175"
+}
