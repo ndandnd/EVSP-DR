@@ -4,18 +4,17 @@ The user requests continued overnight monitoring, productive parallel use of Uni
 
 ## Current state and priorities
 
-Last full verified collection: `outputs/post_meeting_20260910/monitor/20260915T050815Z.json`, completed at01:16EDT. [Source report](../overnight_next_20260914/status_20260915T050815Z/README.md). Queue in the collection: **59 running jobs /36 true input dependencies**, no array throttle or invalid dependency. Scientific endpoints and late scheduler-only publications have separate timestamps in the report.
+Last full verified collection: `outputs/post_meeting_20260910/monitor/20260915T060910Z.json`, completed at 02:17 EDT. [Source report](../overnight_next_20260914/status_20260915T060910Z/README.md). Queue in the collection: **29 running jobs / 17 true input dependencies**, no array throttle or invalid dependency. Scientific endpoints and separately dated launches have distinct timestamps.
 
-The running work already answers useful questions:
-
-| Registered work | Question | What to check next |
+| Registered work | Current result | What to check next |
 |---|---|---|
-| `chain_extension_20260914` | Can inherited-column solving reach k28? | Actual previous-k outputs and graph readiness; CG certificates and MIP targets separately. |
-| `compact_seed_support_20260914` | Do the smaller starts work at k15? | Five unpublished MIPs at the last full collection. C3 core had 17 buses / bound15, so its pool limitation is not proved. |
-| `compact_large_seed_20260914` | Do core and 512-sequence starts work at k20/k25? | 24 CG/MIP pairs. Three CG certificates: C3 k20 both methods and C2 k20 expanded; MIPs were pending. Keep a0e0 code distinct from the smaller e091 cohort. |
-| `lp_support_pool_diagnostic_20260914` | Which added columns repair inadequate pools? | Finish 13 matched positive-LP/zero-LP-weight addition pairs. Zero weight does not mean zero reduced cost. |
+| `chain_extension_20260914` | Largest one-hour target matches by chain: 25/26/27/26/26/27. C3 k28 finds 29 with bound 28; CG also time-capped. | Remaining genuine chain dependencies; consider a matched longer C3 k28 pool search if queue thins, after duplicate checks. An open gap is not a proved pool limitation. |
+| `compact_seed_support_20260914` | Complete: 36 certified CGs, 36 MIPs, 33 targets. C1 k15 both smaller pools prove 16; matched earlier full pool supports 15. C3 core has 17/bound15, still open. | Do not relaunch completed arms. Any repair study must target a demonstrated pool deficit with matched sources. |
+| `compact_large_seed_20260914` | 20 CG endpoints: 3 certified, 17 time-capped; first 3 MIPs match 25/25/20 with pool fleet/cost proofs. | Remaining 21 MIPs / 4 CG endpoints. Early completion is selected; do not report 3/3 as overall success. Keep a0e0 distinct from smaller e091 cohort. |
+| `lp_support_pool_diagnostic_20260914` | Complete: 13 matched addition pairs all tie above target; 25/26 arms prove above-target minimum. C2 k8 zero-weight arm has 9/bound8. Nine support-only controls also above target. | No winner between these selection rules on this selected population. Zero LP weight is not zero reduced cost. Constructed pools have no new CG certificate. |
+| `final_chain_gap_20260915` | Job220545 submitted at 02:13, running at 02:14 EDT; unchanged original C5 k25 pool with 207717 columns, previous26/bound25. | Full-size license passed. Collect next hour: campaign registration was added after current full collection began. Preserve 12600-second total /10800-second maximum fleet budget; new search tree, not checkpoint continuation. |
 
-The reserve screen, nine remaining-gap MIPs and four corrected fixed-state pricing calls are complete. Do not relaunch them or call them newly completed. The original k16–25 batch has 60 original MIPs:35 targets,25 misses; separate longer searches recover24 misses. C5 k25 remains unresolved. Broader recoveries do not alter the original fixed-budget control table.
+The reserve screen, nine previous remaining-gap MIPs and four corrected fixed-state pricing calls are complete. Do not relaunch them. Original k16–25: 60 original MIPs, 35 targets and 25 misses; separate longer searches recover 24 misses. The new C5 k25 job addresses the last unresolved miss. Keep original fixed-budget results separate. Source launch audit: `outputs/final_chain_gap_20260915/README.md`; worker remains byte-identical to its frozen source, so the preemption registry cohort remains `default_overnight_diagnostics_20260914` while root and case identify this campaign.
 
 When the queue thins, inspect existing launch plans and pending artifacts first. Launch ready authorized work and repair demonstrated execution problems without a new approval request. A further controlled experiment should address a specific unresolved finding, have matched settings and provenance, and be checked against prior attempts before submission. Do not launch arbitrary repetitions simply to maintain a numerical job count. If no justified independent work remains, record that fact and report batch completion.
 

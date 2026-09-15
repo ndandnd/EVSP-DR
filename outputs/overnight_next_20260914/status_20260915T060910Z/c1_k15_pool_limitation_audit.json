@@ -1,0 +1,61 @@
+{
+  "checked": [
+    {
+      "case": "c1_k15_core",
+      "matched_cg_fields": [
+        "csv",
+        "soc_step",
+        "block_min",
+        "g_kwh",
+        "charge_kw",
+        "min_soc_frac",
+        "master_sense",
+        "time_model",
+        "columns_per_iter",
+        "column_selection",
+        "column_diversity_weight",
+        "column_candidate_multiplier"
+      ],
+      "same_cg_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+      "input_sha256": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+      "weighted_lp_objective": 1500717.3733260883,
+      "difference_from_full_pool_lp": -4.284083843231201e-08,
+      "compact_buses": 16,
+      "compact_pool_bound": 16.0,
+      "compact_mip_sha256": "dc2620dab854cf18f4a62f1b67e92fc58cd1ce466a1c0ce2bd9d86012d1b7545",
+      "full_pool_buses": 15,
+      "full_pool_mip_sha256": "09872dfb4720d683e77b1110a6baad67047af9abe2255394380cdd3f0dee0a7d",
+      "full_pool_mip_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k15/mip/41592_r0/result.json",
+      "compact_mip_path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k15_core_mip/mip_result.json"
+    },
+    {
+      "case": "c1_k15_core512",
+      "matched_cg_fields": [
+        "csv",
+        "soc_step",
+        "block_min",
+        "g_kwh",
+        "charge_kw",
+        "min_soc_frac",
+        "master_sense",
+        "time_model",
+        "columns_per_iter",
+        "column_selection",
+        "column_diversity_weight",
+        "column_candidate_multiplier"
+      ],
+      "same_cg_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+      "input_sha256": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+      "weighted_lp_objective": 1500717.3733263535,
+      "difference_from_full_pool_lp": 2.223532646894455e-07,
+      "compact_buses": 16,
+      "compact_pool_bound": 16.0,
+      "compact_mip_sha256": "42c2a38c4deb00a55cc86ab935199df3c90885cf678fe8a5bcc5925d8a6913e9",
+      "full_pool_buses": 15,
+      "full_pool_mip_sha256": "09872dfb4720d683e77b1110a6baad67047af9abe2255394380cdd3f0dee0a7d",
+      "full_pool_mip_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k15/mip/41592_r0/result.json",
+      "compact_mip_path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k15_core512_mip/mip_result.json"
+    }
+  ],
+  "scope": "Recorded source bindings and individual-route replay; shared capacity and duplicate-removal validation remain absent. CG certificate is for the discretized weighted model."
+}

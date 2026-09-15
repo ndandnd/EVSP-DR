@@ -6,6 +6,20 @@ Follow [ACTIVE_MONITOR_PLAN.md](ACTIVE_MONITOR_PLAN.md) for the current overnigh
 
 Use the durable path in `outputs/research_register/publication_workspace_path.txt`: `/Users/nadan/Documents/projects/demandresponse/.codex-work/research-register-20260915`, branch `codex/research-register-20260915`. Push its reviewed allowlist to `HEAD:codex/parallel-research-20260911`. Do not use `/private/tmp/evsp-research-register-20260910`: its .git link and older checkout files were missing. The cause is unverified. A fresh worktree was created from remote-verified commit dac40058; the current changes were reapplied there. No cluster access loss or research-job change occurred. [Recovery record](publication_recovery_20260915.json). The main checkout remains dirty and must not be wholesale committed.
 
+## 15 September, 02:17 EDT — compact pool deficit proved; useful final-gap search launched
+
+Snapshot20260915T060910Z completed06:17:46.997UTC in516.613s, SHA1c5ab22bbd62596df1cdc48d2b5aadf92beb294faaa2d82cdcc31b47d163a9ef. Queue29 running/17 genuine dependencies; held33 excluded. No new execution failure, confirmed preemption or invalid dependency. Preemption924 attempts; SSH available. Delta51 scientific endpoints.
+
+Compact starts complete:36 certifiedCG/36MIP/33targets. k8/k10 all24match; k15 core versus512 by chain:16/16,15/15,17/15,15/15,15/15,15/15. C1 both prove16; matched earlier full-pool run supports15. Input/static hashes, recorded CG revision and model/pricing settings match; all weighted LP values agree within1e-6 at1500717.373326. This isolates inadequate integer column combinations despite CG convergence. C3core17/bound15 remains open. Preserve that distinction.
+
+LP additions complete:13 pairs all tie at target+1;25/26 arms prove above-target pool minima, C2k8 zero-weight arm9/bound8 open. Nine donor-support-only controls also above target. No selector winner on these selected difficult recipients. Larger compact:20CG (3cert/17cap),3MIPs with target/pool fleet and charging proofs: C1k25core/51225 in5.7/6.2totalMIPmin; C4k20core20 in11.9min. Early completions are selected. Different large/small CG revisions remain explicit.
+
+Continuation C4/C5k26 both26/proved; C3k28=29/bound28 open. TheirCGs cap4h and charging proof remains open; individual replay passes, duplicate assignment removal unvalidated. Largest one-hour matches25/26/27/26/26/27.
+
+Launched ONLY new job220545 (`final_chain_gap_20260915`, w5_k25_longmip) after policy/duplicate/source checks. Original207717-column C5k25 pool, previous26/bound25; all non-time settings matched to frozen871d057e. New limits12600total/10800fleet, default8CPU24GB4.5h, requeue, compute01excluded, no dependencies because sourcecomplete. Running02:14:23EDT; full-size license passed. ManifestSHA54e4f22238c0b627b2a11e59592044dabbebc23d51571cf8923cf44d429a8cd9. Newtree, not resumed search. Campaign registered for next full collection (current collection already in progress). No held/V2G mutation or cancellation.
+
+Register3205/70groups, exact6 supplements; marker once,16workbookviews/zeroformulaerrors. Checked321core,169evening and58large/pooldiagnostic endpoints. Current dashboard replaces date/tables/explanations in place, retaining stricter-model section and figure/history links. [Source and audit files](../overnight_next_20260914/status_20260915T060910Z/README.md). Continue hourly and consolidate around09:00EDT; do not relaunch complete comparisons.
+
 ## 15 September, 01:16 EDT — C6 reaches27; compact C4 core reaches15
 
 Snapshot20260915T050815Z completed05:16:48UTC in512.2s, SHA5c34246ee11c96d3697aad6dfb11ad313a3fb0162d9b85b7947f352e7b5c020f. Preemption study906 attempts. Queue59 running/36 genuine dependencies; held33 excluded. No new execution failure, confirmed preemption, invalid dependency, submission or retry. SSH available.
