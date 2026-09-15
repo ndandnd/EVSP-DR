@@ -1,0 +1,11 @@
+{
+  "before_words": 1580,
+  "after_words": 730,
+  "editable_tables": [
+    "| Largest target matched | C1 | C2 | C3 | C4 | C5 | C6 |\n| ----- | ----- | ----- | ----- | ----- | ----- | ----- |\n| Original one-hour MIP | 26 | 28 | 27 | 27 | 26 | 28 |\n| Including separate longer MIPs | 26 | 28 | 28 | 27 | 26 | 28 |",
+    "| Target k | Warm matches | Fresh matches |\n| ----- | ----- | ----- |\n| 5 | 6/6 | 5/6 |\n| 8 | 6/6 | 1/6 |\n| 10 | 6/6 | 0/6 |\n| 15 | 6/6 | 0/6 |"
+  ],
+  "source_snapshot": "20260915T141509Z",
+  "after_sha256": "afb20ddd3a4459a53d4e8906092002c6045b62f326709727633772f3f72eea47",
+  "verified": "Two tables match source counts; tariff costs match verified continuous replay; fixed/joint pool scope explicit; original figure and history tabs untouched; no Slides edits."
+}
