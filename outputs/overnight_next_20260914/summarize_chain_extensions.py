@@ -1,4 +1,4 @@
-"""One source-bound table for the original k16–30 chain searches.
+"""One source-bound table for the original k16–32 chain searches.
 
 Keep separate longer MIPs out of this fixed-budget table. Never promote an
 operational checkpoint or scheduler completion to a scientific endpoint.
@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 
 
-CAMPAIGNS = tuple(f"chain_extension_{day}" for day in (20260913, 20260914, 20260915))
+CAMPAIGNS = tuple(f"chain_extension_{day}" for day in (20260913, 20260914, 20260915)) + ("chain_extension_31_32_20260915",)
 
 
 def sha(value):

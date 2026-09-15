@@ -1,0 +1,19 @@
+--- native871d057
++++ target_adapter
+@@ -2043,6 +2043,7 @@
+         help="Opt-in directory for atomic observational convergence "
+              "checkpoints (not a Gurobi tree restart).",
+     )
++    parser.add_argument("--target-cap", type=int, required=True)
+     args = parser.parse_args(argv)
+     if (
+         args.verified_expanded_initial_partition
+@@ -2481,6 +2482,8 @@
+             m.addConstr(expr >= 1, name=f"cov_{t}")
+         else:
+             m.addConstr(expr == 1, name=f"part_{t}")
++
++    return target_solve(locals(), globals())
+ 
+     def progress_observer(
+         stage, fixed_fleet=None, fleet_cap_proven=False,

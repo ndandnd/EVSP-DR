@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "utc": "2026-09-15T14:35:31.525489+00:00",
+  "manifest_sha256": "b85fa3b0e801a455fc4313dfd22263c089f21dae4d87aa61a6498ef0c8bb9b82",
+  "helper_sha256": {
+    "collect_status.py": "b4bbbc6d3a91b61909a69afc55b721ae90a31ff9af7c6ef8a35f82e80991bb2b",
+    "register_attempts.py": "c582e9b4f31149f8c45f4986690ac37d859fb728df1ed6861a13c0acd2ed8673",
+    "helper_validation.py": "8798c3e8eefab99f1de8b67feae85f1949927e2c68f4654b55369701dd3bff11"
+  },
+  "checks": [
+    "7production_and2validation_separate_all_started_full_license_probe",
+    "validation_feasible_reject_proof_classification",
+    "validation_feasible_reject_target_cap",
+    "validation_feasible_reject_source_result_sha256",
+    "validation_infeasible_reject_proof_classification",
+    "validation_infeasible_reject_target_cap",
+    "validation_infeasible_reject_source_result_sha256",
+    "registry9added_then0_idempotent"
+  ],
+  "production_job_ids": [
+    "228654",
+    "228655",
+    "228656",
+    "228657",
+    "228658",
+    "228659",
+    "228660"
+  ],
+  "validation_job_ids": [
+    "228618",
+    "228619"
+  ],
+  "no_job_mutations": true,
+  "scope": "Live artifact collection and metadata merge; no new native solve and no production proof inferred from startup"
+}

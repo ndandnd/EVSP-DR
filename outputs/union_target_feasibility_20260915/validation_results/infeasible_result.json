@@ -1,0 +1,126 @@
+{
+ "buses": null,
+ "case_id": "validation_infeasible",
+ "coverage_counts": {},
+ "end_to_end_wall_s": 126.83896227180958,
+ "final_native_execution_identity": {
+  "branch": "",
+  "detached": true,
+  "enforced": true,
+  "expected_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "observed_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "tracked_clean": true
+ },
+ "independent_donor_bound_is_solver_incumbent": false,
+ "is_validation": true,
+ "mip_start": {
+  "assigned_variable_count": 62122,
+  "assignment_complete": true,
+  "expected_full_objective": 21800810.416,
+  "kind": "greedy_pool_partition",
+  "selected_variable_count": 218,
+  "source": null,
+  "source_sha256": null,
+  "validated": true,
+  "validated_bus_count": 218
+ },
+ "mip_start_acceptance": {
+  "accepted": false,
+  "messages": [
+   "User MIP start did not produce a new incumbent solution",
+   "User MIP start violates constraint target_fleet_cap by 217.000000000"
+  ],
+  "rejection_observed": true,
+  "status": "rejected_infeasible"
+ },
+ "model": {
+  "augmentation": false,
+  "charging_optimality_proven": false,
+  "duplicate_removal_validated": false,
+  "fleet_constraint": "sum_binary_x_at_most_target",
+  "fleet_minimum_proven": false,
+  "master_sense": "cover",
+  "objective": "constant_zero",
+  "shared_capacity": false
+ },
+ "model_sha256": "c7ba4a3e307b52c954fcb856cb9993df98a00eee1523082c6a1cd5ad754efcb4",
+ "native_execution_identity": {
+  "branch": "",
+  "detached": true,
+  "enforced": true,
+  "expected_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "observed_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "tracked_clean": true
+ },
+ "node_count": 0.0,
+ "numerically_rejected_covers": 0,
+ "optimize_wall_s": 3.3195986850187182,
+ "parameters": {
+  "MIPGap": 0.0001,
+  "Seed": 0,
+  "Threads": 8,
+  "TimeLimit": 60
+ },
+ "physical_pool_audit": {
+  "accepted_columns": 62122,
+  "added_giro_route_count": 0,
+  "added_giro_route_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "assigned_mip_start_route_count": 218,
+  "augmented_pool_column_count": 62122,
+  "augmented_pool_ordered_sha256": "22dcaac9f0038f5ca23d1c6063f3ab7fadd0da0d197d76f99d19376f55556a69",
+  "base_pool_column_count": 62122,
+  "base_pool_ordered_sha256": "22dcaac9f0038f5ca23d1c6063f3ab7fadd0da0d197d76f99d19376f55556a69",
+  "continuous_cost_pricing_certified": false,
+  "deterministically_repaired": 0,
+  "input_hashes": {
+   "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+   "instance_sha256": "81dccf8079752af8b04f5044655e4c8c039e43c513493d7a539cdeaec61e32dc",
+   "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+  },
+  "master_cost_semantics": "expanded_grid_cost_unchanged",
+  "master_sense": "cover",
+  "mip_ordered_pool_sha256": "22dcaac9f0038f5ca23d1c6063f3ab7fadd0da0d197d76f99d19376f55556a69",
+  "mip_unique_accepted_columns": 62122,
+  "persisted_charging_block_count": 203776,
+  "persisted_charging_block_payload_bytes": 41174286,
+  "post_augmentation_columns": 62122,
+  "post_augmentation_master_cost_semantics": "expanded_grid_cost",
+  "preparation_wall_s": 117.60962181026116,
+  "pricing_certificate_scope": "not_certified",
+  "rejected_columns": 0,
+  "rejected_samples": [],
+  "rejected_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "repaired_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "schema": "evsp-dr-strict-pool-physical-gate-v1",
+  "source_pricing_certified": false,
+  "source_reference_hashes_bound": true,
+  "total_columns": 62122,
+  "valid_as_recorded": 62122,
+  "valid_set_sha256": "120c69338c5e4e62cc0f4657ecbebe63e3e62f9785fd161473ac48e5df8c10ef"
+ },
+ "physical_replay_validated": false,
+ "proof_classification": "target_infeasible_in_validated_finite_pool",
+ "schema": "evsp-dr-target-feasibility-v1",
+ "selected_route_indices": [],
+ "selected_routes": [],
+ "solution_count": 0,
+ "solver_runtime_s": 3.2016518115997314,
+ "solver_status": "INFEASIBLE",
+ "solver_status_code": 3,
+ "source_journal_sha256": "73c9ae895cbe9df21afbe1fd677d9d0f631cc41fbb767eed10c4263073b629b5",
+ "source_result_sha256": "672f71c87793748bd7d1e2549bbf8dd4ac9e923d3c41c64e3c58d3f6f5284726",
+ "source_union_pool_set": {
+  "incidence_cost_set_sha256": "870b465fcf6b01f6d129ce4b11babf7cb8d6877c83cddb8451d3e577bcbe7118",
+  "incidence_set_sha256": "96242ff8f30913d6fb936819ea50acf39053de0d701f3b534975ff86a095d2ae",
+  "native_unique_columns": 62122,
+  "recorded_route_set_sha256": "120c69338c5e4e62cc0f4657ecbebe63e3e62f9785fd161473ac48e5df8c10ef"
+ },
+ "target_cap": 1,
+ "tooling_sha256": {
+  "common.py": "b3eba589679e0f81ac48773aae5e79e65adbeb1c89d3a67c2ed4db13b8e273de",
+  "target_solver.py": "9e87df1a957d5c4bf1329939159bf29ad872b9201bcad9285eb0d747fe57caac",
+  "worker.py": "546d85a87b4ede1717cdf0b584c5bf17b907c23d661dbdf514053a0808afb759",
+  "worker.sub": "15d5e01e16601bb36207ff4772d2a9be26891d2d55cf0cf83a5ce43f9d096364"
+ }
+}

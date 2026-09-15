@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "manifest_sha256": "c05a9337f232d9b21acdeafeb5e9311630b28d88674c9b312ff97d7165f2e735",
+  "checks": [
+    "scientific settings and resource requests equal k29-30",
+    "execution commits, CG source and static data hashes equal parent",
+    "clean detached source trees and all recorded solver source hashes unchanged",
+    "all campaign functions except preparation metadata and prelaunch duplicate gate are AST-identical",
+    "tool hashes match staged manifest and production records absent",
+    "exactly twelve k31-32 cases with six k30 producers",
+    "native fixture passes all8checks; every copied artifact hash verified",
+    "exact25-call36-task plan verified including all node exclusions, graph throttle and true producer dependencies"
+  ],
+  "validation_sha256": "d8b78d9dea20672003dc806dba4d9d3b685047ab4c540fcbf4759794727aa954",
+  "submission_plan_sha256": "2e9f6c920687d7cc6aa76c6fdd1aae71412338e9112fbd0ac15e0a4629970833"
+}

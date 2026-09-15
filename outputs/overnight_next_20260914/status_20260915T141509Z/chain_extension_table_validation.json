@@ -1,0 +1,802 @@
+{
+  "snapshot_sha256": "3b438e528d6f2a1364951686cd45e36fc77b79bbb361492ea84b978002574da2",
+  "registered_cases": 90,
+  "cg_results": 77,
+  "mip_results": 77,
+  "identical_scientific_settings": {
+    "battery_kwh": 240,
+    "initial_soc_kwh": 240,
+    "charge_kw": 240,
+    "reserve_kwh": 0,
+    "terminal_floor": null,
+    "shared_station_capacity": false,
+    "master_sense": "cover",
+    "objective": "100000 + electricity + 5 per charge start",
+    "tariff": "flat",
+    "soc_step_kwh": 2.5,
+    "block_min": 5,
+    "columns_per_iter": 30,
+    "rc_epsilon": 0.0001,
+    "inherit_max_columns": 0,
+    "inherit_time_limit_s": 0,
+    "inherit_workers": 8,
+    "fixed_sequence_index": true,
+    "skip_gurobi_incidence": false,
+    "mip_seconds": 3600,
+    "stage1_seconds": 1800,
+    "stage2_fleet_constraint": "<= validated incumbent"
+  },
+  "checks": [
+    {
+      "case": "w1_k16",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w1_k16",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w1_k17",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w1_k17",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w1_k18",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w1_k18",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w1_k19",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w1_k19",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w1_k20",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w1_k20",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w1_k21",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w1_k21",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w1_k22",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w1_k22",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w1_k23",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w1_k23",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w1_k24",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w1_k24",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w1_k25",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w1_k25",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w2_k16",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w2_k16",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w2_k17",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w2_k17",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w2_k18",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w2_k18",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w2_k19",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w2_k19",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w2_k20",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w2_k20",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w2_k21",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w2_k21",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w2_k22",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w2_k22",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w2_k23",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w2_k23",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w2_k24",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w2_k24",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w2_k25",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w2_k25",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w3_k16",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w3_k16",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w3_k17",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w3_k17",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w3_k18",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w3_k18",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w3_k19",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w3_k19",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w3_k20",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w3_k20",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w3_k21",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w3_k21",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w3_k22",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w3_k22",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w3_k23",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w3_k23",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w3_k24",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w3_k24",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w3_k25",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w3_k25",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w4_k16",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w4_k16",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w4_k17",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w4_k17",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w4_k18",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w4_k18",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w4_k19",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w4_k19",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w4_k20",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w4_k20",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w4_k21",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w4_k21",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w4_k22",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w4_k22",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w4_k23",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w4_k23",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w4_k24",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w4_k24",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w4_k25",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w4_k25",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w5_k16",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w5_k16",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w5_k17",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w5_k17",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w5_k18",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w5_k18",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w5_k19",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w5_k19",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w5_k20",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w5_k20",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w5_k21",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w5_k21",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w5_k22",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w5_k22",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w5_k23",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w5_k23",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w5_k24",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w5_k24",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w5_k25",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w5_k25",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w6_k16",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w6_k16",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w6_k17",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w6_k17",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w6_k18",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w6_k18",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w6_k19",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w6_k19",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w6_k20",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w6_k20",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w6_k21",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w6_k21",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w6_k22",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w6_k22",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w6_k23",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w6_k23",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w6_k24",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w6_k24",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w6_k25",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w6_k25",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w1_k26",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w1_k26",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w1_k27",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w1_k27",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w2_k26",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w2_k26",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w2_k27",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w2_k27",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w2_k28",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w2_k28",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w3_k26",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w3_k26",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w3_k27",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w3_k27",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w3_k28",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w3_k28",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w4_k26",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w4_k26",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w4_k27",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w4_k27",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w4_k28",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w4_k28",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w5_k26",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w5_k26",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w5_k27",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w5_k27",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w5_k28",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w5_k28",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w6_k26",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w6_k26",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w6_k27",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w6_k27",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    },
+    {
+      "case": "w6_k28",
+      "stage": "cg",
+      "input_and_commit_match": true
+    },
+    {
+      "case": "w6_k28",
+      "stage": "mip",
+      "input_and_fleet_cap_match": true
+    }
+  ],
+  "errors": []
+}

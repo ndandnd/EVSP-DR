@@ -1,3 +1,5 @@
+**Latest:** [15September10:34EDT—completedpoolunions, chain32 and directtargettests](status_20260915T141509Z/README.md).
+
 **Current verified update:** [15 September 09:24 EDT morning summary](status_20260915T131517Z/README.md) · [All original chain counts](status_20260915T131517Z/CHAIN_TABLES.md). Earlier dated summaries below are historical.
 
 **Results through 00:16 EDT, 15 September:** [New chain matches, compact-start gap and paired pricing results](status_20260915T040735Z/README.md). The launch record below retains its original timestamp.

@@ -208,7 +208,7 @@ class Register:
                 }
         self.extension_cases = {}
         self.extension_jobs = {}
-        for campaign_id in ("chain_extension_20260913", "chain_extension_20260914", "chain_extension_20260915"):
+        for campaign_id in ("chain_extension_20260913", "chain_extension_20260914", "chain_extension_20260915", "chain_extension_31_32_20260915"):
             extension = snapshot.get("campaigns", {}).get(campaign_id, {})
             extension_workflow = extension.get("workflow", {}) or {}
             self.extension_cases[campaign_id] = {
@@ -218,7 +218,7 @@ class Register:
             self.extension_jobs[campaign_id] = extension_workflow.get("case_jobs.json", {}) or {}
         self.diagnostic_cases = {}
         self.diagnostic_jobs = {}
-        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914", "compact_seed_support_20260914", "compact_large_seed_20260914", "compact_pool_union_20260915", "lp_support_pool_diagnostic_20260914", "remaining_chain_gaps_20260914", "final_chain_gap_20260915", "continuation_gap_20260915", "continuation_gaps2_20260915", "retrospective_prefix_controls_20260914", "decomposition_pool_union_20260914", "decomposition_lp_support_union_20260914"):
+        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914", "compact_seed_support_20260914", "compact_large_seed_20260914", "compact_pool_union_20260915", "lp_support_pool_diagnostic_20260914", "remaining_chain_gaps_20260914", "final_chain_gap_20260915", "continuation_gap_20260915", "continuation_gaps2_20260915", "continuation_gaps3_20260915", "retrospective_prefix_controls_20260914", "decomposition_pool_union_20260914", "decomposition_lp_support_union_20260914"):
             diagnostic = snapshot.get("campaigns", {}).get(campaign_id, {})
             diagnostic_workflow = diagnostic.get("workflow", {}) or {}
             self.diagnostic_cases[campaign_id] = {
@@ -784,6 +784,42 @@ class Register:
                       if campaign_id == "giro_zero_start_fee_20260913"
                       else "production_or_historical")
             self.campaign(campaign_id, root, family)
+            if 'target_feasibility' in campaign:
+                detail = campaign['target_feasibility']
+                if detail['schema'] != 'union-target-feasibility-collection-v1':
+                    raise ValueError('Unknown target-feasibility schema')
+                cases = campaign['workflow']['manifest.json']['cases']
+                for group in ('production', 'validation'):
+                    for item in detail[group]:
+                        case = cases[item['case_id']]
+                        assert case['is_validation'] == (group == 'validation')
+                        for attempt in item['attempts']:
+                            verified = attempt['result_identity_verified']
+                            classification = attempt['proof_classification']
+                            assert classification in ('unresolved', 'target_feasible_in_validated_finite_pool',
+                                                      'target_infeasible_in_validated_finite_pool')
+                            assert verified or classification == 'unresolved'
+                            self.add(campaign_id, root, 'target_feasibility', 'target_feasibility',
+                                attempt, source_path=attempt['result']['path'],
+                                source_sha256=attempt['result'].get('sha256'),
+                                case_id=item['case_id'], substage=attempt['attempt_tag'],
+                                authority_role='validation_only' if group == 'validation' else 'current',
+                                artifact_status='result' if verified else 'workflow_record',
+                                overrides={
+                                    'job_ids': [item['job_id']], 'target_k': item['target_cap'],
+                                    'input_path': case['input_path'], 'input_sha256': case['input_sha256'],
+                                    'code_commit': case['execution_commit'], 'master_sense': 'cover',
+                                    'initialization': 'native greedy; no supplied incumbent',
+                                    'workflow_state': attempt['worker_status'],
+                                    'mip_incumbent_fleet': attempt.get('buses'),
+                                    'mip_status': attempt.get('solver_status'),
+                                    'mip_bound_fleet': None, 'fleet_proven': False,
+                                    'full_model_lp_certified': False, 'weighted_lp_objective': None,
+                                    'runtime_s': attempt.get('solver_runtime_s'),
+                                    'physical_selected_validated': attempt.get('physical_replay_validated'),
+                                    'proof_scope': classification,
+                                    'optimal_scope': 'target cap in this finite pool only',
+                                    'notes': 'min 0 with fleet <= target; OPTIMAL proves existence, not minimum fleet or charging cost. Frozen commit plus separately hashed adapter; validation cases are not research outcomes.'})
             if (campaign_id == "giro_zero_start_fee_20260913"
                     and campaign.get("schema")
                     != "evsp-dr-terminal-energy-fee-comparison-collection-v1"):

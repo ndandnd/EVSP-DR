@@ -1,3 +1,9 @@
+## 15 September10:34EDT — completed union tests, chain32 and direct target tests
+
+Follow ACTIVE_MONITOR_PLAN.md for live priorities. Snapshot141509:14newMIPs,12union/control +C4k28=29/bound28,C5k28=34/bound27;allreplaypass. Unions0/8improve,controls4/4tie;onlyC1k20targetexcluded,7open. Newgaps3jobs228579/580, chain31–32graph228593andCG/MIP228594–617, directtarget228654–660 allsubmitted/rootreviewed. Queue36running49true dependencies at14:34UTC. Exactdefault/exclusion/resources/dependencieschecked; noheld/V2Gmutation. Nativefeasibilityfixtures228618/619 are validationonly. Targettestmin0+fleet<=k is notfleetminimization; preserve classification. Newcollector/normalizer/delta support and9exactattempt registrations are prepared for nextsnapshot; runbothregistryrefreshers beforecollection.
+
+CurrentDoctablesupdated:7editabletables/1579words, newcombinedpoolcomparison, counts/explanations/links;4unchangedscientifictables exact, figures/history/Slidespreserved. Source status_20260915T141509Z. Register3308/75groups/exact6supplements,321core187evening83pool154chain12unionchecks;960preemptionattempts. Workbook8views/noformulaerrors; changedMIPviewsinspected. Newlaunchcollections separatefromearlierfullsnapshot. See linkedcurrentreport for manifests/nativefixture/source hashes. Routinehourlymonitoringcontinueswithoutsubagents.
+
 ## 15 September 09:24 EDT — morning dashboard consolidated
 
 Snapshot20260915T131517Z SHA324342c29de68900e2ce2cb8ade6607fb4d5020c548a44cc26fb03b26d78cf3f,549.0s. New C4k28CG239.92min,weight28,weighted2801157.317663,lastRC−0.0216695,wallcap/no certificate. C1k28graph recovery finished, manifestmatches; ownCG187972running. C5k28MIP187997completed after campaign scan; retain latepath/hash, verify next hour. No new publishedMIP in this scientific scan. 77CG/75MIP/90submitted originalcases. New continuationgaps2 root nowregistered2cases/0endpoints.

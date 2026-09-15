@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "checks": [
+    "immutable CG/MIP sources, borrowed object stores and independent frozen previous-input gate checked",
+    "six frozen k30 inputs and published parent gates checked",
+    "12 frozen case inputs match manifest",
+    "24 production CG/cache command lines pass actual parser",
+    "2001-variable native Gurobi optimization passes size-unrestricted license",
+    "instrumented/uninstrumented four-trip graphs have identical pickle SHA256",
+    "native cache-required CG and full-pool inheritance both return usable LPs",
+    "two-stage MIP with source hashes and physical replay passes"
+  ],
+  "slurm_job_id": "228576",
+  "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "tooling_sha256": {
+    "campaign.py": "fe9d4ec9fc3d098c699e84bf046e18d0e038c69273fd3f3cdb644faaf808e39f",
+    "graph_entry.py": "463973a0aff2dfb59979f9a5f40baeac29ee2e31d25a63a5844e9e08647c43ee",
+    "worker.sub": "aaa468be8b4988af92ebe3ce0150580144937835120c596d679470ad66023e02",
+    "duplicate_gate.py": "43e91ff9829db60817469524feb15975d2a8b1d4b17d7901db13d46212643c90"
+  },
+  "validator_sha256": "05594546b5d46ba44fb6a39e00e5d6808699ca6c73402e5a632268cfcee98203",
+  "manifest_sha256": "c05a9337f232d9b21acdeafeb5e9311630b28d88674c9b312ff97d7165f2e735",
+  "input_validation_sha256": "08f0b5ac6f9f0d63eb122e676800a54eca17f5a9e063a6e3db13a28ce734d2ce",
+  "artifact_directory": "/home/nc437/ladder-lite/chain_extension_31_32_20260915/validation/job_228576",
+  "artifacts": {
+    "parser.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "cache_plain.log": "5e65d1fddfc51aa675bf9db80c467fd8a61c44b1ef8e9c658ed9acc55f0a3c7a",
+    "plain.pkl": "8177c881f79a28aa1045d01bd4814e8ee54667d4f5a14f3100c769cd22d6c7ee",
+    "plain.pkl.manifest.json": "065751d41ffc0ef305ab8f24798c15382b353307c45086a021acacd2b7e92291",
+    "cache_instrumented.log": "61bf57161a2e5d6e58eb997fbf41d43a6a4e0afd168c1f13355a22945e52824d",
+    "progress.jsonl": "5b8f2694c3a2ddea3bd7be9488b206e5a71e344b7dcb5d8f33136151fffe8e70",
+    "instrumented.pkl": "8177c881f79a28aa1045d01bd4814e8ee54667d4f5a14f3100c769cd22d6c7ee",
+    "instrumented.pkl.manifest.json": "eb38eeb437d2e373e360d13d7171237f3c32465e13e6309de7fbf311f46363aa",
+    "cg_parent.log": "bba55f7fc033129f69196dab2f0cf0d5e9d1571ef5a8aa3303a78e9abf4198ad",
+    "parent.json.phase-telemetry.jsonl": "ab6da36aa66ca8377253860c4fe3fe0c358b0be55c5519f7a16e34e075a3dda2",
+    "parent.json": "0244cd5607f40cd151c663cddde0a77eb3772b7c86b49c87dfce53b977357d53",
+    "parent.json.columns.jsonl": "2d0a4cf7f337aa76a426e064272cc54e57cd78f0785d9e6b1a5810eafc19e667",
+    "parent.json.gurobi.log": "134ffef418d7c75a3970f951e254a8d56ae4656ef7891842536257af507b5e76",
+    "cg_child.log": "ee5e4bc17e0f323312ebae550d57cb3b397d91ea4aa8bd230c14f901f0f2846a",
+    "child.json.phase-telemetry.jsonl": "8596a2a49aab3fc1566196b2de246ec885f55212d401347232855627bddd37f8",
+    "child.json": "a3961a7832bed7bdd3f8c121f135e351fa9ac2ffc8ee368b1f52ae533d6deb3a",
+    "child.json.columns.jsonl": "4e18c80948bf9beff1db121fd2c3acff6c48aa04c69a0a27c5b3dcc08c28e08e",
+    "child.json.gurobi.log": "1dc84346823361b65d8353f31eb921e2695fbae9bff5a2e8cebb82c2585300e1",
+    "mip.log": "9b5d885aeba2701fd204a9402ef0e80526c414a3cb8c52880aec001d6f5624a8",
+    "mip.gurobi.log": "c6637b356f19e1ffde81b13c327753a3179367eaa547a826099eb637a1665e24",
+    "mip.json": "41eec72fdef6dc1624f8be7c7f22787f14a171b0423f7713c0530c3cbb29a3d0"
+  }
+}

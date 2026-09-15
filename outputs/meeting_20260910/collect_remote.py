@@ -318,6 +318,8 @@ roots = {
     'final_chain_gap_20260915': home / 'final_chain_gap_20260915',
     'continuation_gap_20260915': home / 'continuation_gap_20260915',
     'continuation_gaps2_20260915': home / 'continuation_gaps2_20260915',
+    'continuation_gaps3_20260915': home / 'continuation_gaps3_20260915',
+    'union_target_feasibility_20260915': home / 'union_target_feasibility_20260915',
     'compact_seed_support_20260914': home / 'compact_seed_support_20260914',
     'decomposition_lp_support_union_20260914': home / 'decomposition_lp_support_union_20260914',
     'decomposition_pool_union_20260914': home / 'decomposition_pool_union_20260914',
@@ -327,6 +329,7 @@ roots = {
     'parallel_pool_unions_20260914': home / 'parallel_pool_unions_20260914',
     'chain_extension_20260914': home / 'chain_extension_20260914',
     'chain_extension_20260915': home / 'chain_extension_20260915',
+    'chain_extension_31_32_20260915': home / 'chain_extension_31_32_20260915',
     'parallel_pool_followup_20260914': home / 'parallel_pool_followup_20260914',
     'mip_repeatability_20260914': home / 'mip_repeatability_20260914',
     'overnight_diagnostics_20260914': home / 'overnight_diagnostics_20260914',
@@ -364,13 +367,25 @@ roots = {
 }
 out = {'timestamp_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'campaigns': {}}
 for name, root in roots.items():
+    if name == 'union_target_feasibility_20260915':
+        helper = root / 'collect_status.py'
+        if file_sha256(helper) != 'b4bbbc6d3a91b61909a69afc55b721ae90a31ff9af7c6ef8a35f82e80991bb2b':
+            raise ValueError('target-feasibility collector changed; review before use')
+        detail = json.loads(subprocess.check_output([
+            '/home/nc437/evsp_env/bin/python', str(helper), '--json'], text=True))
+        out['campaigns'][name] = {
+            'root': str(root), 'mip': [], 'cg': [], 'phases': [],
+            'target_feasibility': detail,
+            'workflow': {'manifest.json': json.loads((root / 'manifest.json').read_bytes()),
+                         'production_jobs.json': json.loads((root / 'production_jobs.json').read_bytes())}}
+        continue
     rows = []
     diagnostic = name in ('overnight_diagnostics_20260914', 'mip_repeatability_20260914', 'parallel_pool_followup_20260914', 'parallel_pool_unions_20260914', 'overnight_parallel_20260914', 'compact_seed_support_20260914', 'compact_large_seed_20260914', 'lp_support_pool_diagnostic_20260914', 'remaining_chain_gaps_20260914', 'final_chain_gap_20260915', 'continuation_gap_20260915', 'retrospective_prefix_controls_20260914', 'decomposition_pool_union_20260914', 'decomposition_lp_support_union_20260914')
-    diagnostic = diagnostic or name in ('compact_pool_union_20260915', 'continuation_gaps2_20260915')
+    diagnostic = diagnostic or name in ('compact_pool_union_20260915', 'continuation_gaps2_20260915', 'continuation_gaps3_20260915')
     diagnostic_manifest_sha = hashlib.sha256((root/'manifest.json').read_bytes()).hexdigest() if diagnostic and (root/'manifest.json').exists() else None
     published_mips = set(root.glob('cases/*/mip_result.json')) if diagnostic else set()
     for p in sorted(set(root.rglob('*mip8h.json')) | set(root.rglob('*mip_budgeted.json')) | set(root.glob('*/mip.json')) | set((root/'results').glob('*60m.json')) | set((root/'mip').glob('*1h2stage.json')) | set(root.glob('p*/mip/*__1h2stage.json')) | set((root/'mip_attempts').glob('**/result.json')) | {p for p in root.glob('cases/*/mip/*/result.json') if 'smoke' not in p.parts} | published_mips):
-        if name in ('chain_extension_20260913', 'chain_extension_20260914', 'chain_extension_20260915') and 'validation' in p.relative_to(root).parts:
+        if name in ('chain_extension_20260913', 'chain_extension_20260914', 'chain_extension_20260915', 'chain_extension_31_32_20260915') and 'validation' in p.relative_to(root).parts:
             continue
         raw = p.read_bytes()
         d = json.loads(raw)
@@ -413,7 +428,7 @@ for name, root in roots.items():
             except Exception: continue
             row={k:v for k,v in d.items() if k not in ['routes','columns','selected_routes','iterations','history','iteration_log'] and not isinstance(v,list)}
             row['path']=str(p)
-            if name in ('chain_extension_20260913', 'chain_extension_20260914', 'chain_extension_20260915') or diagnostic:
+            if name in ('chain_extension_20260913', 'chain_extension_20260914', 'chain_extension_20260915', 'chain_extension_31_32_20260915') or diagnostic:
                 for key in ('route_values', 'trip_duals', 'capacity_duals'):
                     row.pop(key, None)
                 row['resolved_source_path'] = str(p.resolve())
@@ -443,7 +458,7 @@ for name, root in roots.items():
             cg.append(row)
     phases=[]
     phase_paths=set((root/'cg').glob('*.phase-telemetry.jsonl')) | set(root.glob('p*/cg/*.phase-telemetry.jsonl')) | set(root.glob('*/cg.phase-telemetry.jsonl')) | {p for p in root.glob('cases/*/*.phase-telemetry.jsonl') if 'smoke' not in p.parts}
-    if name in ('chain_extension_20260913', 'chain_extension_20260914', 'chain_extension_20260915'):
+    if name in ('chain_extension_20260913', 'chain_extension_20260914', 'chain_extension_20260915', 'chain_extension_31_32_20260915'):
         phase_paths.update(root.glob('cases/*/cg/*/*.phase-telemetry.jsonl'))
     if diagnostic:
         phase_paths.update(root.glob('cases/*/attempts/*/*.phase*.jsonl'))
@@ -473,7 +488,7 @@ for name, root in roots.items():
         spec.loader.exec_module(adapter)
         # Metadata only: graph construction is not a CG or integer-solve result.
         out['campaigns'][name]['workflow']['operational_graph_recovery'] = adapter.collect_graph_timeout_gates(root)
-    if name in ('chain_extension_20260913', 'chain_extension_20260914', 'chain_extension_20260915'):
+    if name in ('chain_extension_20260913', 'chain_extension_20260914', 'chain_extension_20260915', 'chain_extension_31_32_20260915'):
         out['campaigns'][name]['workflow']['attempt_progress'] = chain_extension_progress(root)
     if diagnostic:
         progress = []

@@ -234,21 +234,20 @@
     "accounting_missing_task_ids": [],
     "attempts": 90,
     "started": 77,
-    "ended_started_attempts": 76,
+    "ended_started_attempts": 77,
     "confirmed_preemptions": 0,
     "preemption_fraction_among_ended": 0.0,
     "descriptive_wilson95": [
       0,
-      0.048113585065137326
+      0.04751842528243408
     ],
     "state_counts": {
-      "COMPLETED": 76,
-      "PENDING": 13,
-      "RUNNING": 1
+      "COMPLETED": 77,
+      "PENDING": 13
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 296713
+    "allocation_exposure_seconds": 296838
   },
   "default_compact_large_seed_20260914": {
     "registered_tasks": 24,
@@ -274,16 +273,19 @@
     "accounting_missing_task_ids": [],
     "attempts": 12,
     "started": 12,
-    "ended_started_attempts": 0,
+    "ended_started_attempts": 12,
     "confirmed_preemptions": 0,
-    "preemption_fraction_among_ended": null,
-    "descriptive_wilson95": null,
+    "preemption_fraction_among_ended": 0.0,
+    "descriptive_wilson95": [
+      2.7755575615628914e-17,
+      0.24249400665524085
+    ],
     "state_counts": {
-      "RUNNING": 12
+      "COMPLETED": 12
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 118249
+    "allocation_exposure_seconds": 152783
   },
   "default_compact_seed_support_20260914": {
     "registered_tasks": 36,
@@ -400,10 +402,10 @@
     "allocation_exposure_seconds": 137482
   },
   "default_overnight_diagnostics_20260914": {
-    "registered_tasks": 199,
+    "registered_tasks": 201,
     "accounting_missing_task_ids": [],
-    "attempts": 199,
-    "started": 199,
+    "attempts": 201,
+    "started": 201,
     "ended_started_attempts": 197,
     "confirmed_preemptions": 1,
     "preemption_fraction_among_ended": 0.005076142131979695,
@@ -414,11 +416,11 @@
     "state_counts": {
       "COMPLETED": 196,
       "PREEMPTED": 1,
-      "RUNNING": 2
+      "RUNNING": 4
     },
     "confirmed_preempted_allocation_seconds": 7451,
     "confirmed_preempted_allocated_cpu_seconds": 59608,
-    "allocation_exposure_seconds": 1706808
+    "allocation_exposure_seconds": 1714318
   },
   "default_overnight_extension_3600": {
     "registered_tasks": 87,

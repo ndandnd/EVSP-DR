@@ -1,0 +1,8 @@
+{
+  "approved": true,
+  "utc": "2026-09-15T14:31:17.952815+00:00",
+  "manifest_sha256": "b85fa3b0e801a455fc4313dfd22263c089f21dae4d87aa61a6498ef0c8bb9b82",
+  "native_validation_sha256": "be01a05332e9b5e5be423547faac575d6421abcd80c0ed95828e0a787ee5d75a",
+  "adapter_diff_sha256": "6d676e6068722e53d792f8beb8115c35520d300e53ad434dbc9ec1a84ef5d659",
+  "review": "Root inspected exact two native-source insertions, target solver, worker, native fixtures and six negative identity gates. Native column loading, physical admission, greedy initialization, binary coverage and source checks preserved; objective0 plus fleet<=k is the sole scientific change. Seven open union pools; C1k20 excluded. Feasible validates existence only; infeasible finite-pool cap only; timeout unknown. No charging stage or new columns. Default8CPU24G2h,3600s solver,requeue,compute01excluded; no production already submitted."
+}

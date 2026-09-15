@@ -1,0 +1,31 @@
+{
+  "snapshot_sha256": "4d5700b7060305fdffc212f986a9e819facd161970821684536901cbfac5cedf",
+  "registered_cases": 12,
+  "cg_results": 0,
+  "mip_results": 0,
+  "identical_scientific_settings": {
+    "battery_kwh": 240,
+    "initial_soc_kwh": 240,
+    "charge_kw": 240,
+    "reserve_kwh": 0,
+    "terminal_floor": null,
+    "shared_station_capacity": false,
+    "master_sense": "cover",
+    "objective": "100000 + electricity + 5 per charge start",
+    "tariff": "flat",
+    "soc_step_kwh": 2.5,
+    "block_min": 5,
+    "columns_per_iter": 30,
+    "rc_epsilon": 0.0001,
+    "inherit_max_columns": 0,
+    "inherit_time_limit_s": 0,
+    "inherit_workers": 8,
+    "fixed_sequence_index": true,
+    "skip_gurobi_incidence": false,
+    "mip_seconds": 3600,
+    "stage1_seconds": 1800,
+    "stage2_fleet_constraint": "<= validated incumbent"
+  },
+  "checks": [],
+  "errors": []
+}

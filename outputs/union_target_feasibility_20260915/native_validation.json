@@ -1,0 +1,91 @@
+{
+  "status": "passed",
+  "missing": [],
+  "utc": "2026-09-15T14:28:43.312558+00:00",
+  "manifest_sha256": "b85fa3b0e801a455fc4313dfd22263c089f21dae4d87aa61a6498ef0c8bb9b82",
+  "rows": [
+    {
+      "case_id": "validation_feasible",
+      "target_cap": 119,
+      "solver_status": "OPTIMAL",
+      "solution_count": 1,
+      "proof_classification": "target_feasible_in_validated_finite_pool",
+      "buses": 119,
+      "physical_replay_validated": true,
+      "numerically_rejected_covers": 0,
+      "solver_runtime_s": 0.14431381225585938,
+      "end_to_end_wall_s": 284.78488331404515,
+      "parameters": {
+        "MIPGap": 0.0001,
+        "Seed": 0,
+        "Threads": 8,
+        "TimeLimit": 60
+      },
+      "source_result_sha256": "cf2ffc64e9ae2ccce6cc62a29609dba7c6d2ef48a962e7de051331ad97dff2e7",
+      "source_journal_sha256": "74eba68adf28cb552fd98d1021b16fa6c0309c5889a1b8e4031e9d0b8c4bf33a",
+      "source_union_pool_set": {
+        "incidence_cost_set_sha256": "42827519bd4343fc594b62f84d640d1e8fbcb8db5b815d8972ed6e9c699e90e0",
+        "incidence_set_sha256": "47c1def1ee95d5d9f365728d1a5f3f0c040aa03800ae9eaf37e9461dfa1406d8",
+        "native_unique_columns": 100861,
+        "recorded_route_set_sha256": "cc44ef311e2b5472a21e794a45fd52cbbf38f20d03374172d462604966ac6bc0"
+      },
+      "mip_start_acceptance": {
+        "accepted": true,
+        "messages": [
+          "Loaded user MIP start with objective 0"
+        ],
+        "rejection_observed": false,
+        "status": "accepted"
+      },
+      "job_id": "228618",
+      "result_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_feasible/attempts/228618_r0/result.json",
+      "result_sha256": "5e6c736d0a52e99036c81004b295a1fbacc1f11c83817c965bf84f70174362d6",
+      "native_pool_ordered_sha256": "38660b56f6ffa3a0a64d0da9f887f406de09234d665de6e686e483b0daa751b6",
+      "native_pool_columns": 100861
+    },
+    {
+      "case_id": "validation_infeasible",
+      "target_cap": 1,
+      "solver_status": "INFEASIBLE",
+      "solution_count": 0,
+      "proof_classification": "target_infeasible_in_validated_finite_pool",
+      "buses": null,
+      "physical_replay_validated": false,
+      "numerically_rejected_covers": 0,
+      "solver_runtime_s": 3.2016518115997314,
+      "end_to_end_wall_s": 126.83896227180958,
+      "parameters": {
+        "MIPGap": 0.0001,
+        "Seed": 0,
+        "Threads": 8,
+        "TimeLimit": 60
+      },
+      "source_result_sha256": "672f71c87793748bd7d1e2549bbf8dd4ac9e923d3c41c64e3c58d3f6f5284726",
+      "source_journal_sha256": "73c9ae895cbe9df21afbe1fd677d9d0f631cc41fbb767eed10c4263073b629b5",
+      "source_union_pool_set": {
+        "incidence_cost_set_sha256": "870b465fcf6b01f6d129ce4b11babf7cb8d6877c83cddb8451d3e577bcbe7118",
+        "incidence_set_sha256": "96242ff8f30913d6fb936819ea50acf39053de0d701f3b534975ff86a095d2ae",
+        "native_unique_columns": 62122,
+        "recorded_route_set_sha256": "120c69338c5e4e62cc0f4657ecbebe63e3e62f9785fd161473ac48e5df8c10ef"
+      },
+      "mip_start_acceptance": {
+        "accepted": false,
+        "messages": [
+          "User MIP start did not produce a new incumbent solution",
+          "User MIP start violates constraint target_fleet_cap by 217.000000000"
+        ],
+        "rejection_observed": true,
+        "status": "rejected_infeasible"
+      },
+      "job_id": "228619",
+      "result_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_infeasible/attempts/228619_r0/result.json",
+      "result_sha256": "108dbb09f5c59e27a3f0ea1406a266ce6ed3d17bcd079a24c8539608a8729bc5",
+      "native_pool_ordered_sha256": "22dcaac9f0038f5ca23d1c6063f3ab7fadd0da0d197d76f99d19376f55556a69",
+      "native_pool_columns": 62122
+    }
+  ],
+  "negative_validation_sha256": "ef815681e3549989c64268e5328663ec6a858989b7a1d3bd0fcb79106f44ae5a",
+  "accounting_sha256": "e7ec4877ac9d0d6c0e81d66d13a9a7eee6ff95e21b2f4072c65e58523fcadd0e",
+  "production_submitted": false,
+  "limitations": "Easy classification fixtures on two full production pools; no evidence of target recovery or speedup, no fleet or charging optimum proof."
+}

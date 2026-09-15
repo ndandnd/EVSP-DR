@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "manifest_sha256": "669a5300b1ef7507eab1fc22efb3da23f5c37bcfcefd813e50c55332528224c4",
+  "checks": [
+    {
+      "case_id": "w4_k28_longmip",
+      "status": "passed",
+      "source_status_sha256": "c2c8db963e3a9c6ce1181015134c88b02b55c22b023e77ae0c47346e189a3aa8",
+      "source_journal_sha256": "edec9c5ff1eb0a34bfc8c106959fd1a4e6dae5cd18dd5dfd7161edab55579c4c"
+    },
+    {
+      "case_id": "w5_k28_longmip",
+      "status": "passed",
+      "source_status_sha256": "62bcf0993b6d0bd71e1c5066563c95b6ffb97e0b3c3b5ff070b9e593b64a738e",
+      "source_journal_sha256": "6605e4b14d1ac51a70ebee402857266534d9b1e4401f4c2668c74ecfa515f0ee"
+    }
+  ],
+  "native_runner": "Exact previously native-validated worker and871 runner unchanged; every attempt performs large-license check and source pool physical replay."
+}

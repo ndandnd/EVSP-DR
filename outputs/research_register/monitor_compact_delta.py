@@ -16,6 +16,13 @@ def flatten(d):
    out[campaign,'diagnostic_collection_error',r.get('case_id',str(i))]=r
   for r in c.get('workflow',{}).get('operational_graph_recovery',{}).get('cases',[]):
    out[campaign,'operational_graph_recovery',r['case_id']]=r
+  for r in c.get('target_feasibility',{}).get('production',[]):
+   for attempt in r['attempts']:
+    if attempt['result_identity_verified']:
+     out[campaign,'target_feasibility',attempt['result']['path']]={
+      'sha256':attempt['result']['sha256'],
+      **{k:attempt.get(k) for k in ('buses','solver_status','proof_classification',
+          'physical_replay_validated','solver_runtime_s')}}
  return out
 def digest(v):return v.get('sha256') or hashlib.sha256(json.dumps(v,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 a,b=flatten(old),flatten(new);changed=[]
@@ -26,6 +33,9 @@ for key,r in b.items():
   s['final']={k:v for k,v in (d.get('final')or{}).items() if not isinstance(v,(list,dict))}
   if key[1]=='pricing_calls':
    s.update(case_id=d.get('case_id'),selector=d.get('selector'),pricing_call=d.get('pricing_call'),proof_scope=d.get('proof_scope'))
+  if key[1]=='target_feasibility':
+   s.update(solver_status=d.get('solver_status'),proof_classification=d.get('proof_classification'),
+            solver_runtime_s=d.get('solver_runtime_s'))
   if key[1]=='operational_graph_recovery':
    completion=(d.get('completion') or {}).get('value') or {}
    s.update(case_id=d['case_id'],completion_status=completion.get('status'),

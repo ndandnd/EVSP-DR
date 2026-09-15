@@ -1,0 +1,71 @@
+{
+  "utc": "2026-09-15T14:21:02.991330+00:00",
+  "rows": [
+    {
+      "case_id": "w4_k28_longmip",
+      "job_id": "228579",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "snavely-cpu-01",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/continuation_gaps3_20260915/cases/w4_k28_longmip/attempts/228579_r0"
+      ]
+    },
+    {
+      "case_id": "w5_k28_longmip",
+      "job_id": "228580",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "snavely-cpu-13",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/continuation_gaps3_20260915/cases/w5_k28_longmip/attempts/228580_r0"
+      ]
+    }
+  ],
+  "registry_entries": [
+    {
+      "job_id": "228579",
+      "case_id": "w4_k28_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/continuation_gaps3_20260915/cases/w4_k28_longmip/attempts/228579_r0/result.json",
+      "attempt_tag": "228579_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T14:20:34.974631+00:00"
+    },
+    {
+      "job_id": "228580",
+      "case_id": "w5_k28_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/continuation_gaps3_20260915/cases/w5_k28_longmip/attempts/228580_r0/result.json",
+      "attempt_tag": "228580_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T14:20:36.699754+00:00"
+    }
+  ],
+  "registry_unique": true,
+  "counts": {
+    "RUNNING": 2
+  }
+}
