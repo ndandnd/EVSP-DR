@@ -1,0 +1,83 @@
+[
+  {
+    "case": "w1_k20",
+    "same_execution_commit": true,
+    "same_arguments_except_total_time": true,
+    "same_gurobi_parameters_except_total_time": true,
+    "same_initializer_summary": true,
+    "original_fleet_allowance_s": 1800.0,
+    "rerun_fleet_allowance_s": 10800.0
+  },
+  {
+    "case": "w1_k22",
+    "same_execution_commit": true,
+    "same_arguments_except_total_time": true,
+    "same_gurobi_parameters_except_total_time": true,
+    "same_initializer_summary": true,
+    "original_fleet_allowance_s": 1800.0,
+    "rerun_fleet_allowance_s": 10800.0
+  },
+  {
+    "case": "w2_k23",
+    "same_execution_commit": true,
+    "same_arguments_except_total_time": true,
+    "same_gurobi_parameters_except_total_time": true,
+    "same_initializer_summary": true,
+    "original_fleet_allowance_s": 1800.0,
+    "rerun_fleet_allowance_s": 10800.0
+  },
+  {
+    "case": "w2_k24",
+    "same_execution_commit": true,
+    "same_arguments_except_total_time": true,
+    "same_gurobi_parameters_except_total_time": true,
+    "same_initializer_summary": true,
+    "original_fleet_allowance_s": 1800.0,
+    "rerun_fleet_allowance_s": 10800.0
+  },
+  {
+    "case": "w3_k25",
+    "same_execution_commit": true,
+    "same_arguments_except_total_time": true,
+    "same_gurobi_parameters_except_total_time": true,
+    "same_initializer_summary": true,
+    "original_fleet_allowance_s": 1800.0,
+    "rerun_fleet_allowance_s": 10800.0
+  },
+  {
+    "case": "w4_k21",
+    "same_execution_commit": true,
+    "same_arguments_except_total_time": true,
+    "same_gurobi_parameters_except_total_time": true,
+    "same_initializer_summary": true,
+    "original_fleet_allowance_s": 1800.0,
+    "rerun_fleet_allowance_s": 10800.0
+  },
+  {
+    "case": "w4_k24",
+    "same_execution_commit": true,
+    "same_arguments_except_total_time": true,
+    "same_gurobi_parameters_except_total_time": true,
+    "same_initializer_summary": true,
+    "original_fleet_allowance_s": 1800.0,
+    "rerun_fleet_allowance_s": 10800.0
+  },
+  {
+    "case": "w4_k25",
+    "same_execution_commit": true,
+    "same_arguments_except_total_time": true,
+    "same_gurobi_parameters_except_total_time": true,
+    "same_initializer_summary": true,
+    "original_fleet_allowance_s": 1800.0,
+    "rerun_fleet_allowance_s": 10800.0
+  },
+  {
+    "case": "w6_k25",
+    "same_execution_commit": true,
+    "same_arguments_except_total_time": true,
+    "same_gurobi_parameters_except_total_time": true,
+    "same_initializer_summary": true,
+    "original_fleet_allowance_s": 1800.0,
+    "rerun_fleet_allowance_s": 10800.0
+  }
+]

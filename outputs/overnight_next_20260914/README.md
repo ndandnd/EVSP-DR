@@ -1,4 +1,4 @@
-**Results through 22:13 EDT:** [Updated chain, seed and reserve tables](status_20260915T020532Z/README.md). The launch record below retains its original timestamp.
+**Results through 23:14 EDT:** [Nine fleet recoveries, completed reserve tests and pricing evidence](status_20260915T030644Z/README.md). The launch record below retains its original timestamp.
 
 # Overnight additions — 14 September 2026
 

@@ -1,0 +1,94 @@
+[
+  {
+    "actual_pricing_raw_dual_vector_sha256": "209385fcd0d3140bfe67a98b3183bd7fb6ae5833218e2ab91bb895fbec180736",
+    "artifact_hashes": {
+      "cg.json": {
+        "bytes": 3529,
+        "path": "/home/nc437/ladder-lite/capacity_fixed_dual_20260914/results/k2_240r0_i5_reference/202364_r0/cg.json",
+        "sha256": "c3ce971b23c498a6702f5e77ea9602a3a0719d1c0f0f28c4f87e9972910d5fc0"
+      },
+      "diagnostic.json": {
+        "bytes": 2432,
+        "path": "/home/nc437/ladder-lite/capacity_fixed_dual_20260914/results/k2_240r0_i5_reference/202364_r0/diagnostic.json",
+        "sha256": "e85ae82071e37e70b530093c1ee5d1c47fc5dedeafde427254347f49bd87062a"
+      },
+      "pool.jsonl": {
+        "bytes": 69065,
+        "path": "/home/nc437/ladder-lite/capacity_fixed_dual_20260914/results/k2_240r0_i5_reference/202364_r0/pool.jsonl",
+        "sha256": "fca611ff26f40ad04491e36cc5e949cb2f3afd146c4ab5e03e1618fae433de7b"
+      },
+      "pricing_call.json": {
+        "bytes": 919,
+        "path": "/home/nc437/ladder-lite/capacity_fixed_dual_20260914/results/k2_240r0_i5_reference/202364_r0/pricing_call.json",
+        "sha256": "8276bbaa911e229060eea851a18364ec8f4aa67e1b244fbf9830d28acf008a54"
+      },
+      "starting_state.json": {
+        "bytes": 3507,
+        "path": "/home/nc437/ladder-lite/capacity_fixed_dual_20260914/results/k2_240r0_i5_reference/202364_r0/starting_state.json",
+        "sha256": "f0e005b6be95c175d5d1fc27105c02567a70505f35417097a94998689e1ea0f6"
+      }
+    },
+    "attempt_id": "202364_r0",
+    "case_id": "k2_240r0_i5_reference",
+    "driver_endpoint": {
+      "certified_rc_optimal": false,
+      "final": {
+        "artificial_total": 0.0,
+        "objective": 300094.976,
+        "pool_columns": 28,
+        "route_weight": 3.0
+      },
+      "network_build_s": 116.1223020919133,
+      "result_pool_sha256": "fca611ff26f40ad04491e36cc5e949cb2f3afd146c4ab5e03e1618fae433de7b",
+      "runtime_s": 11606.789247105131,
+      "status": "incomplete",
+      "stop_reason": "max_iters",
+      "terminal_exact_min_reduced_cost": null
+    },
+    "dual_stats": {
+      "capacity_dual_l1": 1399911.016,
+      "capacity_dual_max": -599947.76,
+      "capacity_dual_min": -799963.256,
+      "nonzero_capacity_dual_count": 2,
+      "trip_dual_count": 23
+    },
+    "job_id": "202364",
+    "pair_id": "k2_240r0_i5",
+    "pricing_call": {
+      "attempted_calls": 1,
+      "candidate_payload_sha256": "1c8437e2358058b5d55629f62143222dea955da1a9370b55c3c323134d33dc8c",
+      "candidate_route_key_sha256": "46bdae173c4b8864e1fa5d43d52f9a4296ce82bea29ea6ff63a19d8c7d614242",
+      "candidate_trip_count": 9,
+      "capacity_selector": "reference",
+      "case_id": "k2_240r0_i5_reference",
+      "completed_calls": 1,
+      "elapsed_s": 11490.380642127013,
+      "ended_utc": "2026-09-15T02:57:42.572671+00:00",
+      "min_reduced_cost": -799976.896,
+      "nonzero_capacity_dual_count": 2,
+      "normalized_9dp_dual_vector_sha256": "a2a01bd3b46feb20aa61a3c3c5a7fe5a34353fdde8548a8e96be373182a8bc29",
+      "pair_id": "k2_240r0_i5",
+      "raw_dual_vector_sha256": "209385fcd0d3140bfe67a98b3183bd7fb6ae5833218e2ab91bb895fbec180736",
+      "schema": "evsp-dr-fixed-capacity-pricing-call-v1",
+      "started_utc": "2026-09-14T23:46:12.192017+00:00",
+      "status": "complete",
+      "stop_reason": null,
+      "trip_dual_count": 23
+    },
+    "proof_scope": "One exact pricing call at a hash-bound fixed RMP dual vector. This is not a complete CG run or a full-model certificate unless the driver itself returns exact_nonnegative_reduced_cost.",
+    "rmp": {
+      "artificial_total": 0.0,
+      "columns": 50,
+      "nonzeros": 249,
+      "objective": 300094.976,
+      "observed_solve_wall_s": 0.024078194983303547,
+      "reported_solve_s": 0.0050536650232970715,
+      "route_weight": 3.0,
+      "rows": 7823
+    },
+    "selector": "reference",
+    "source_pool_sha256": "2a649b1f9b059f36c44a73143a242f704dc3800f1e30505c1cccce1c810496ea",
+    "starting_dual_vector_sha256": "a2a01bd3b46feb20aa61a3c3c5a7fe5a34353fdde8548a8e96be373182a8bc29",
+    "starting_raw_dual_vector_sha256": "209385fcd0d3140bfe67a98b3183bd7fb6ae5833218e2ab91bb895fbec180736"
+  }
+]

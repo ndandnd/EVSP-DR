@@ -1,0 +1,101 @@
+[
+  {
+    "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k08_support_only/mip_result.json",
+    "sha256": "9a519042614ab2fbbfcf24ce499da7b6867b60889b724fb92206d1a78171630a",
+    "buses": 9,
+    "fleet_bound": 9.0,
+    "fleet_proven": true,
+    "publication_manifest_sha256": "d92bc280aae0505cb103a0f752485b2395e6ac3bd0d3a1a76283ae49016b672a",
+    "source_status_sha256": "6fa1bfe466cd220e2e5cf1deea18e14109e075003b8373981c30d20ce2d5179d"
+  },
+  {
+    "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k10_support_only/mip_result.json",
+    "sha256": "c6f51dee25a36803b7576a0083e116b0ec5bdb650e6b5a34ed30f9d5bca930ab",
+    "buses": 12,
+    "fleet_bound": 12.0,
+    "fleet_proven": true,
+    "publication_manifest_sha256": "d92bc280aae0505cb103a0f752485b2395e6ac3bd0d3a1a76283ae49016b672a",
+    "source_status_sha256": "4d28ff90d7139f4a5f802279011b7a79e737f69ab183ee368ac42b64498dda45"
+  },
+  {
+    "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c2_k08_support_only/mip_result.json",
+    "sha256": "2bb8f728b9f182631d4f55dd7ee204044a6c0a963283f0e8e81e9f9b01eb0762",
+    "buses": 10,
+    "fleet_bound": 10.0,
+    "fleet_proven": true,
+    "publication_manifest_sha256": "d92bc280aae0505cb103a0f752485b2395e6ac3bd0d3a1a76283ae49016b672a",
+    "source_status_sha256": "14c8a01e2c7b99836c24ea66f622a6a636449b7a1c669dde02ed49d77d7c720d"
+  },
+  {
+    "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c3_k08_support_only/mip_result.json",
+    "sha256": "a52c5162610c631c326527836aaa31b27905caa3bab0b065f82bed27634cb4e5",
+    "buses": 10,
+    "fleet_bound": 10.0,
+    "fleet_proven": true,
+    "publication_manifest_sha256": "d92bc280aae0505cb103a0f752485b2395e6ac3bd0d3a1a76283ae49016b672a",
+    "source_status_sha256": "e6330a495ce93a2966ccbf524cbcaca1309a4842509700a34fb15944dee4691f"
+  },
+  {
+    "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k08_support_only/mip_result.json",
+    "sha256": "eaa227e5c11ccefbbe5ce54a57b61126c6b82a5caceeadd58261f2f834f949da",
+    "buses": 10,
+    "fleet_bound": 10.0,
+    "fleet_proven": true,
+    "publication_manifest_sha256": "d92bc280aae0505cb103a0f752485b2395e6ac3bd0d3a1a76283ae49016b672a",
+    "source_status_sha256": "d3c0012d8421ce41c18cb4eb2f746c4df5f648629211be2f577ca95bb6db1995"
+  },
+  {
+    "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k10_support_only/mip_result.json",
+    "sha256": "c699e33f481699a3902f285bba4dd78c6008528d8bc42751f3aa220a8133db98",
+    "buses": 13,
+    "fleet_bound": 13.0,
+    "fleet_proven": true,
+    "publication_manifest_sha256": "d92bc280aae0505cb103a0f752485b2395e6ac3bd0d3a1a76283ae49016b672a",
+    "source_status_sha256": "33d9b46749527c941026fe3ae22aec65ee28094aa0f508dafcc8ce932af7f162"
+  },
+  {
+    "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k08_lpweight_matched_zero_added/mip_result.json",
+    "sha256": "545bffca4f09d6ba048486d7f7efc785a9c6fa8ddd908f4718a0af168c6c216d",
+    "buses": 9,
+    "fleet_bound": 9.0,
+    "fleet_proven": true,
+    "publication_manifest_sha256": "d92bc280aae0505cb103a0f752485b2395e6ac3bd0d3a1a76283ae49016b672a",
+    "source_status_sha256": "240b1589db5b7cbb2ff0451cb4088fbfb1b7b1009ecc9ca67b0b71f65bad0d9d"
+  },
+  {
+    "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k08_lpweight_positive_added/mip_result.json",
+    "sha256": "c69e9c2d075bee23ead17f5ad266604f8dbea53b31fa274ab926e8733273bdab",
+    "buses": 9,
+    "fleet_bound": 9.0,
+    "fleet_proven": true,
+    "publication_manifest_sha256": "d92bc280aae0505cb103a0f752485b2395e6ac3bd0d3a1a76283ae49016b672a",
+    "source_status_sha256": "46063d12764e60e1e2cb275536be6067a97caaa4a3f62030bb35e6e0be7a3fbd"
+  },
+  {
+    "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k08_support_only/mip_result.json",
+    "sha256": "43521273ed8f41ac286cb0bab1da873e8613790cea042bc0012663e2c14e1b17",
+    "buses": 10,
+    "fleet_bound": 10.0,
+    "fleet_proven": true,
+    "publication_manifest_sha256": "d92bc280aae0505cb103a0f752485b2395e6ac3bd0d3a1a76283ae49016b672a",
+    "source_status_sha256": "31ecbf20f30b233750bc0b6857638077f11ccc0b05219ccc826b187a6a05b9f1"
+  },
+  {
+    "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k10_support_only/mip_result.json",
+    "sha256": "f526607899b1f433359da255282293e259dde0b26e978aa7c64eba61708a4ce9",
+    "buses": 12,
+    "fleet_bound": 12.0,
+    "fleet_proven": true,
+    "publication_manifest_sha256": "d92bc280aae0505cb103a0f752485b2395e6ac3bd0d3a1a76283ae49016b672a",
+    "source_status_sha256": "d070b78b6bef909fec32fcddf8e55c4cbcfbdd92d4d5533f403cdbd329eddcf2"
+  },
+  {
+    "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c6_k10_support_only/mip_result.json",
+    "sha256": "e8f17e45c183bdef06285ffb9c7c353e1f9bb5585dbff07310c6e75b516b179b",
+    "buses": 12,
+    "fleet_bound": 12.0,
+    "fleet_proven": true,
+    "publication_manifest_sha256": "d92bc280aae0505cb103a0f752485b2395e6ac3bd0d3a1a76283ae49016b672a",
+    "source_status_sha256": "f694d2ed4dd874121b96dfa5974897d93f92657cfbd95fdb04217e70f36794f9"
+  }
+]

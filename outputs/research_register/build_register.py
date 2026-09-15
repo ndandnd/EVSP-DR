@@ -1575,7 +1575,7 @@ def write_outputs(register, raw_name, raw_sha, supplemental_sources=None):
         "campaigns": campaigns, "rows": rows,
     }
     (out / "register.json").write_text(json.dumps(
-        payload, sort_keys=True, indent=2, allow_nan=False,
+        payload, sort_keys=True, separators=(",", ":"), allow_nan=False,
     ) + "\n")
     with (out / "register.csv").open("w", newline="") as handle:
         fields = COLUMNS + ["unknown_fields", "details"]

@@ -1,0 +1,101 @@
+[
+  {
+    "case": "w1_k20",
+    "canonical": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w1_k20/mip_result.json",
+    "expected": "15da2a1a44ed1a63b7c4d2ccd17e0c3f7e84386b62f0f7ed6d243e74dee45549",
+    "attempt": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w1_k20/mip/133918_r0/result.json",
+    "attempt_expected": "dae346c7652b65af28220580dea6f7d24722437890e0894576c865a3ed7f04d1",
+    "canonical_hash_matches": true,
+    "attempt_hash_matches": true,
+    "semantic_equal": true,
+    "different_keys": []
+  },
+  {
+    "case": "w1_k22",
+    "canonical": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w1_k22/mip_result.json",
+    "expected": "cd2f63f2b9b32137828f79203548211d17f0b4ab693406e53ae3ed43eedc824e",
+    "attempt": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w1_k22/mip/133922_r0/result.json",
+    "attempt_expected": "25ac6f205c956bd5e8769d654b2a9b9f80236dc86ac78cb311c5e2fdc109b8e7",
+    "canonical_hash_matches": true,
+    "attempt_hash_matches": true,
+    "semantic_equal": true,
+    "different_keys": []
+  },
+  {
+    "case": "w2_k23",
+    "canonical": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k23/mip_result.json",
+    "expected": "4d8c383ff118ef0941f5dda5c9c25eb3b876752eb69e8648142502b0f658cb5b",
+    "attempt": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w2_k23/mip/133944_r0/result.json",
+    "attempt_expected": "43fe976bd8fc5f635ce59b7530c1c379f933c5ad97268cea08c890fdfa4df53c",
+    "canonical_hash_matches": true,
+    "attempt_hash_matches": true,
+    "semantic_equal": true,
+    "different_keys": []
+  },
+  {
+    "case": "w2_k24",
+    "canonical": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w2_k24/mip_result.json",
+    "expected": "6b53a873136e76becc4108ae370626b0aec37fea61fa3e72c00d18af7df7ca96",
+    "attempt": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w2_k24/mip/133946_r0/result.json",
+    "attempt_expected": "c10622daeaee98931e61b37337f259552474a5a5c6ea44f670049fdbe24917ad",
+    "canonical_hash_matches": true,
+    "attempt_hash_matches": true,
+    "semantic_equal": true,
+    "different_keys": []
+  },
+  {
+    "case": "w3_k25",
+    "canonical": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w3_k25/mip_result.json",
+    "expected": "e3db678f239eb93954ed9d1ded50e9b50e6404b428e1a6260450fa6a3ad6f531",
+    "attempt": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w3_k25/mip/133968_r0/result.json",
+    "attempt_expected": "ed2dc3749aff109f27d1f591c2dc5be872ba54d6bd930f9edadae6883ef89461",
+    "canonical_hash_matches": true,
+    "attempt_hash_matches": true,
+    "semantic_equal": true,
+    "different_keys": []
+  },
+  {
+    "case": "w4_k21",
+    "canonical": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w4_k21/mip_result.json",
+    "expected": "6c580b68d44af19d9ec6268444af217627eef3358ca15707687b98fb8fa27ea5",
+    "attempt": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w4_k21/mip/133980_r0/result.json",
+    "attempt_expected": "bc5c4c38964caba46ec2243673bf205a42f51bfad7c429824b112577f1c7c124",
+    "canonical_hash_matches": true,
+    "attempt_hash_matches": true,
+    "semantic_equal": true,
+    "different_keys": []
+  },
+  {
+    "case": "w4_k24",
+    "canonical": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w4_k24/mip_result.json",
+    "expected": "70e8034fa570d3384f6225cd8051a50a351602b7e0c514446711051c6ece4c34",
+    "attempt": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w4_k24/mip/133986_r0/result.json",
+    "attempt_expected": "4d723f0ebced563476f49c0272a1a81159f4a56f90f34cf22c2ca30d8f3d0ec1",
+    "canonical_hash_matches": true,
+    "attempt_hash_matches": true,
+    "semantic_equal": true,
+    "different_keys": []
+  },
+  {
+    "case": "w4_k25",
+    "canonical": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w4_k25/mip_result.json",
+    "expected": "89cedfb6a2bdbc14a5ca8f58f3b6de70d642e6e6919cca83f6b8be280738a7a8",
+    "attempt": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w4_k25/mip/133988_r0/result.json",
+    "attempt_expected": "8544285e1b84010eaaa0f8c65cba2b5bb8fb464cc0346e77f5701728c3e8c2cc",
+    "canonical_hash_matches": true,
+    "attempt_hash_matches": true,
+    "semantic_equal": true,
+    "different_keys": []
+  },
+  {
+    "case": "w6_k25",
+    "canonical": "/share/scaglione/nc437/evsp-dr/chain_extension_20260913/cases/w6_k25/mip_result.json",
+    "expected": "1616b4eff16f5be0a0523e8f0d406c0d4d1f4c27d7a67f096e3459237617cc4b",
+    "attempt": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w6_k25/mip/134080_r0/result.json",
+    "attempt_expected": "bd8ff76553f58743ddf7b137681dd525ff67e1d30a76d11483e621b8213a03f1",
+    "canonical_hash_matches": true,
+    "attempt_hash_matches": true,
+    "semantic_equal": true,
+    "different_keys": []
+  }
+]
