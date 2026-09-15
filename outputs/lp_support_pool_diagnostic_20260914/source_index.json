@@ -1,0 +1,390 @@
+{
+  "schema": "evsp-lp-support-transplant-source-v1",
+  "created_utc": "2026-09-15T01:40:29.731991+00:00",
+  "groups": {
+    "c1_k08": {
+      "donor": {
+        "case_id": "c1_k08_core",
+        "status_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c1_k08_core/attempts/201438_r0/cg.json",
+        "status_sha256": "5933ef1e0cc7879d83943e2ab55c580fb9080c25ca4661d48f233605a59b681e",
+        "journal_path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k08_core/attempts/201438_r0/cg.json.columns.jsonl",
+        "journal_sha256": "3463dd3ee8eed65564da151c270e4dc00bda50f9aa7e6106b6e687029f34ec74",
+        "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c1_k08_core_mip/attempts/201475_r0/result.json",
+        "mip_evidence_sha256": "9275871197b54d20a4bdbd597d6c2dc922c5d20c13fc56543d2684bd81040cf0",
+        "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "buses": 8,
+        "fleet_proven": true,
+        "source_cg_wall_s": 2312.5614493726753,
+        "source_mip_runtime_s": 238.54420232772827,
+        "final_lp_objective": 800383.6879776372
+      },
+      "recipients": [
+        {
+          "case_id": "c1_k08_integer",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c1_k08_integer/attempts/189172_r0/cg.json",
+          "status_sha256": "1c9aebd21f8a2367db04663e1e31b53309cb7e7fd7deb9ab2c41ba3230e5aa48",
+          "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k08_integer/attempts/189172_r0/cg.json.columns.jsonl",
+          "journal_sha256": "d97e259fd1cb7b17c66a29739d5bbc602cfd431e37de8d157d7863e35e072ba8",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c1_k08_integer_mip/attempts/189208_r0/result.json",
+          "mip_evidence_sha256": "9d4bde57f9a7b7e4d1c0a5577da7a1765f0766ee51786c3a2972271a781b8b9f",
+          "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+          "buses": 9,
+          "fleet_proven": true,
+          "source_cg_wall_s": 4442.297191068064,
+          "source_mip_runtime_s": 12601.359658241272,
+          "final_lp_objective": 800383.6879776391
+        },
+        {
+          "case_id": "c1_k08_lpweight",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c1_k08_lpweight/attempts/189173_r0/cg.json",
+          "status_sha256": "bc7ebd80d201678ede124c33a51c98c4cb1ea38a53f6aad1155af9fd1a6350f8",
+          "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k08_lpweight/attempts/189173_r0/cg.json.columns.jsonl",
+          "journal_sha256": "025798ff241e004d261f675b54c5a2d66a275d295b26398669a138badca9e28d",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c1_k08_lpweight_mip/attempts/189209_r0/result.json",
+          "mip_evidence_sha256": "f82e2e500d9c772f7c789b726f2fb86851ccb4223cf0667f3bea1ff5f9b250ee",
+          "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+          "buses": 9,
+          "fleet_proven": true,
+          "source_cg_wall_s": 4449.247581718024,
+          "source_mip_runtime_s": 12603.023507118225,
+          "final_lp_objective": 800383.6879776367
+        }
+      ],
+      "target_k": 8
+    },
+    "c1_k10": {
+      "donor": {
+        "case_id": "c1_k10_core",
+        "status_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c1_k10_core/attempts/201440_r0/cg.json",
+        "status_sha256": "923a48b817c92b783eb7a6b13a493e4d5296dcad1b8c7ef17a19454337072107",
+        "journal_path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c1_k10_core/attempts/201440_r0/cg.json.columns.jsonl",
+        "journal_sha256": "6593ee4fbd5ff621ee1a10e24c8c4f95f771a583d7d8062714d51973cee2a60a",
+        "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c1_k10_core_mip/attempts/201477_r0/result.json",
+        "mip_evidence_sha256": "441b4ef7f404f67101ddec01f2198c090fe34360a2799d48a9bf448830d9dfd7",
+        "input_sha256": "c54f31750af49fb66f0bf21995d02d01a5520e37f13152bc95b4aff17ecef1f3",
+        "buses": 10,
+        "fleet_proven": true,
+        "source_cg_wall_s": 5630.962329933431,
+        "source_mip_runtime_s": 189.48782086372375,
+        "final_lp_objective": 1000511.2045748308
+      },
+      "recipients": [
+        {
+          "case_id": "c1_k10_integer",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c1_k10_integer/attempts/189174_r0/cg.json",
+          "status_sha256": "d196614146b2689f02b695121e53504cc2a282159a30c3d475a1c9133187f562",
+          "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k10_integer/attempts/189174_r0/cg.json.columns.jsonl",
+          "journal_sha256": "01b9bcf48e0a5bc18bb3d31e1f376a6cd100c25261cca5c16161d6d164245271",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c1_k10_integer_mip/attempts/189210_r0/result.json",
+          "mip_evidence_sha256": "eb5ef0f845361dcd4108050c75f0a65b57e028cd94de36f7bb3f077f7afe7ae7",
+          "input_sha256": "c54f31750af49fb66f0bf21995d02d01a5520e37f13152bc95b4aff17ecef1f3",
+          "buses": 11,
+          "fleet_proven": true,
+          "source_cg_wall_s": 6095.405434994493,
+          "source_mip_runtime_s": 12602.937108516693,
+          "final_lp_objective": 1000511.2045748285
+        }
+      ],
+      "target_k": 10
+    },
+    "c2_k08": {
+      "donor": {
+        "case_id": "c2_k08_core",
+        "status_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c2_k08_core/attempts/201444_r0/cg.json",
+        "status_sha256": "90d3050bee1ddcbfe99ec8f07afc7c8001c44429482c1d7b721454eb902d6c2e",
+        "journal_path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c2_k08_core/attempts/201444_r0/cg.json.columns.jsonl",
+        "journal_sha256": "b617dd002cf2b88b7e1e62f257311b7fee4f7944646879a91f7d63c8baac1cc4",
+        "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c2_k08_core_mip/attempts/201481_r0/result.json",
+        "mip_evidence_sha256": "13ccc820bfe41691c0a40012299531e0808fe24e503f03c12207f4d09e0baa29",
+        "input_sha256": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+        "buses": 8,
+        "fleet_proven": true,
+        "source_cg_wall_s": 928.3210946437903,
+        "source_mip_runtime_s": 1234.3294639587402,
+        "final_lp_objective": 800235.9144683575
+      },
+      "recipients": [
+        {
+          "case_id": "c2_k08_lpweight",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c2_k08_lpweight/attempts/189179_r0/cg.json",
+          "status_sha256": "7a4a174a28639b5460ee7e6354f8f299a8b098752f2cb30af67afdc7501bb332",
+          "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k08_lpweight/attempts/189179_r0/cg.json.columns.jsonl",
+          "journal_sha256": "aef7c6f071d9e7a3a21bd7e205acb2a4097ce5d5a4ab7c698f12b50c5ecb60f1",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c2_k08_lpweight_mip/attempts/189215_r0/result.json",
+          "mip_evidence_sha256": "9b9b78ec0865223fd2a52aee74e1ed3a7a46ccb735dea363723c8330064136ea",
+          "input_sha256": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+          "buses": 9,
+          "fleet_proven": true,
+          "source_cg_wall_s": 785.5716815395281,
+          "source_mip_runtime_s": 12600.868263959885,
+          "final_lp_objective": 800235.9144683562
+        }
+      ],
+      "target_k": 8
+    },
+    "c3_k08": {
+      "donor": {
+        "case_id": "c3_k08_core",
+        "status_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c3_k08_core/attempts/201450_r0/cg.json",
+        "status_sha256": "ee9f8aff7b081f75b0921397aca50170f870a4c7d6b7da7be6f8f92f6c5eb2c8",
+        "journal_path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c3_k08_core/attempts/201450_r0/cg.json.columns.jsonl",
+        "journal_sha256": "bb25786df698c1278088b11acddb651c17d8ce264c3d42f7fe8acce4b15278ec",
+        "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c3_k08_core_mip/attempts/201487_r0/result.json",
+        "mip_evidence_sha256": "328eca1007bcc0855344ba48a24743aafecb7d09dec4536efa90ce14259c68de",
+        "input_sha256": "9d1d4ed1ab86dfa3ae09541180d1a67e612d5473d9964db36b08e9ebce72cd2b",
+        "buses": 8,
+        "fleet_proven": true,
+        "source_cg_wall_s": 613.0427130726166,
+        "source_mip_runtime_s": 53.76604461669922,
+        "final_lp_objective": 800212.6874725138
+      },
+      "recipients": [
+        {
+          "case_id": "c3_k08_integer",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c3_k08_integer/attempts/189184_r0/cg.json",
+          "status_sha256": "73de4ee77fddf9a9208c6ac76f19422ad41471475b38db96f8b02e0375a4e45b",
+          "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_integer/attempts/189184_r0/cg.json.columns.jsonl",
+          "journal_sha256": "b92f8d0824f7635370c2e05f19e1b8845163b9e91be07089a73c08040ad9133a",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c3_k08_integer_mip/attempts/189220_r1/result.json",
+          "mip_evidence_sha256": "708351a947b1dd3a0449f052c70e293616e7ebd990d16e245d381f62a9e62993",
+          "input_sha256": "9d1d4ed1ab86dfa3ae09541180d1a67e612d5473d9964db36b08e9ebce72cd2b",
+          "buses": 9,
+          "fleet_proven": true,
+          "source_cg_wall_s": 885.2765587642789,
+          "source_mip_runtime_s": 12602.507173538208,
+          "final_lp_objective": 800212.6874705863
+        },
+        {
+          "case_id": "c3_k08_lpweight",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c3_k08_lpweight/attempts/189185_r0/cg.json",
+          "status_sha256": "6d0e32b519090482aa9222769b99d55ba0945656e2f5b2d5cf39345b0093301d",
+          "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_lpweight/attempts/189185_r0/cg.json.columns.jsonl",
+          "journal_sha256": "fa4516a22232073ac02ee4a2afbbcb529f3879fbef9756f0569d2cb78f5a958e",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c3_k08_lpweight_mip/attempts/189221_r0/result.json",
+          "mip_evidence_sha256": "2a0c0aa542d602955933c38e85a606a4f3b015eee6cd6380e9387f424c159ad5",
+          "input_sha256": "9d1d4ed1ab86dfa3ae09541180d1a67e612d5473d9964db36b08e9ebce72cd2b",
+          "buses": 9,
+          "fleet_proven": true,
+          "source_cg_wall_s": 733.4932946758345,
+          "source_mip_runtime_s": 12601.155617237091,
+          "final_lp_objective": 800212.6874719345
+        }
+      ],
+      "target_k": 8
+    },
+    "c4_k08": {
+      "donor": {
+        "case_id": "c4_k08_core",
+        "status_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c4_k08_core/attempts/201456_r0/cg.json",
+        "status_sha256": "c636bc99bbdad79b3e37e7d3dffc9e52cbc3fed11cff6b1ea03e41b637fa6d0c",
+        "journal_path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k08_core/attempts/201456_r0/cg.json.columns.jsonl",
+        "journal_sha256": "dc0349b708615ccf78f89ba53c72b0c81effb6657fa9bc84a1d667f95b0270bc",
+        "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c4_k08_core_mip/attempts/201493_r0/result.json",
+        "mip_evidence_sha256": "b94a1627a4b583ea67eef4d39de97654b73692aa3e0bed51fd44eb98b696e82e",
+        "input_sha256": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+        "buses": 8,
+        "fleet_proven": true,
+        "source_cg_wall_s": 2880.49236848671,
+        "source_mip_runtime_s": 92.63692903518677,
+        "final_lp_objective": 800359.8182244807
+      },
+      "recipients": [
+        {
+          "case_id": "c4_k08_integer",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c4_k08_integer/attempts/189190_r0/cg.json",
+          "status_sha256": "5292501cd33683758b11e1de8c0e19af8a6f106b6269403ab79cbb872853d902",
+          "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k08_integer/attempts/189190_r0/cg.json.columns.jsonl",
+          "journal_sha256": "fa3f8276212f1279027de3aacdbd80a50b85471c324c091241b6a7d7968bea59",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c4_k08_integer_mip/attempts/189231_r0/result.json",
+          "mip_evidence_sha256": "7f038e38b03ddce388eb9ecd44129386f3aefec9d0589bdc38a3107bf0758248",
+          "input_sha256": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+          "buses": 9,
+          "fleet_proven": true,
+          "source_cg_wall_s": 3153.055352902971,
+          "source_mip_runtime_s": 12601.680711507797,
+          "final_lp_objective": 800359.8182244824
+        },
+        {
+          "case_id": "c4_k08_lpweight",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c4_k08_lpweight/attempts/189191_r0/cg.json",
+          "status_sha256": "0923ab5d62f78d369dad65a05d7fd2d93d4885088cd01450b00a9cc25ba65700",
+          "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k08_lpweight/attempts/189191_r0/cg.json.columns.jsonl",
+          "journal_sha256": "901e528f64b446cebaff87f38c177f4ea6c725dddd4e3595c8271d487ba25a72",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c4_k08_lpweight_mip/attempts/189232_r0/result.json",
+          "mip_evidence_sha256": "29dee90a820b03f1488144562ad7a3fc7ed40c7b70080e7ceac4f83d21128c00",
+          "input_sha256": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+          "buses": 9,
+          "fleet_proven": true,
+          "source_cg_wall_s": 2973.8893242599443,
+          "source_mip_runtime_s": 12603.206780433655,
+          "final_lp_objective": 800359.8182244855
+        }
+      ],
+      "target_k": 8
+    },
+    "c4_k10": {
+      "donor": {
+        "case_id": "c4_k10_core",
+        "status_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c4_k10_core/attempts/201458_r0/cg.json",
+        "status_sha256": "d89dbd674a7995754fdf409a7afec780c5fa38ba0ba454bd5f8e495341305360",
+        "journal_path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c4_k10_core/attempts/201458_r0/cg.json.columns.jsonl",
+        "journal_sha256": "3f7994804ccdff27d9d75df27ca9cacac73b485e2fe4752483157a5992dd7549",
+        "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c4_k10_core_mip/attempts/201495_r0/result.json",
+        "mip_evidence_sha256": "668ea80770feccc36cfa24ed02a569ee691f1a1dccaefc22fc402dfd49af4238",
+        "input_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+        "buses": 10,
+        "fleet_proven": true,
+        "source_cg_wall_s": 2630.1320754485205,
+        "source_mip_runtime_s": 277.4512641429901,
+        "final_lp_objective": 1000426.2710758002
+      },
+      "recipients": [
+        {
+          "case_id": "c4_k10_integer",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c4_k10_integer/attempts/189192_r0/cg.json",
+          "status_sha256": "8f086f02915d0549d5f023e217bca480c3cc6e81826bc232c4de003f42c18de5",
+          "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k10_integer/attempts/189192_r0/cg.json.columns.jsonl",
+          "journal_sha256": "5674ad5b20cc51cd9700ff50fa7c0bf1b9274461f058ed3b92d8e718af2e1dec",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c4_k10_integer_mip/attempts/189233_r0/result.json",
+          "mip_evidence_sha256": "71290209b3abe3ba9c51005795cc7df7960062c9b130dca8560ec00644da9bc9",
+          "input_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+          "buses": 11,
+          "fleet_proven": true,
+          "source_cg_wall_s": 3369.203513553366,
+          "source_mip_runtime_s": 12601.451813220978,
+          "final_lp_objective": 1000426.2710758048
+        },
+        {
+          "case_id": "c4_k10_lpweight",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c4_k10_lpweight/attempts/189193_r0/cg.json",
+          "status_sha256": "48d06b8fd3130a747e98179ced80ee176d901d0da71ed175e3e9b6725da4e901",
+          "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k10_lpweight/attempts/189193_r0/cg.json.columns.jsonl",
+          "journal_sha256": "6b9b84abc2d2b0d10ab396bb12e66fe54959007f6dcd0677e80007d7bee6355f",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c4_k10_lpweight_mip/attempts/189234_r0/result.json",
+          "mip_evidence_sha256": "66350fd64e508022b1740f83f4849add762c246ead5e9fb7731a71c5d9da3d57",
+          "input_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+          "buses": 11,
+          "fleet_proven": true,
+          "source_cg_wall_s": 4048.0087493506726,
+          "source_mip_runtime_s": 12601.420904397964,
+          "final_lp_objective": 1000426.271075802
+        }
+      ],
+      "target_k": 10
+    },
+    "c5_k08": {
+      "donor": {
+        "case_id": "c5_k08_core",
+        "status_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c5_k08_core/attempts/201462_r0/cg.json",
+        "status_sha256": "f95ece0d6b4fe2ffcf187ac83663d8db336fe81501b2626c65aa07f6782f66da",
+        "journal_path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k08_core/attempts/201462_r0/cg.json.columns.jsonl",
+        "journal_sha256": "8361e9e94a07a1d2aeec7b102e44c7e672090df63290017be15e3838c9704753",
+        "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c5_k08_core_mip/attempts/201499_r0/result.json",
+        "mip_evidence_sha256": "c0ef20be3e6967d450720733a5175e9b6a1ab871fe252721106417e5ad3f3040",
+        "input_sha256": "85aa4a37119b2604a41aa83f46c8b8987bb95c8165c4adfb0a58ce65dbeee05b",
+        "buses": 8,
+        "fleet_proven": true,
+        "source_cg_wall_s": 842.0207118438557,
+        "source_mip_runtime_s": 44.748565912246704,
+        "final_lp_objective": 800431.772269616
+      },
+      "recipients": [
+        {
+          "case_id": "c5_k08_lpweight",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c5_k08_lpweight/attempts/189197_r0/cg.json",
+          "status_sha256": "3252b1265ed124438ccfb5c3f7509c1e853c9a6b72cb898d17cc22fc27d11411",
+          "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k08_lpweight/attempts/189197_r0/cg.json.columns.jsonl",
+          "journal_sha256": "c65f8f11c00048c6607c72cd26dfaaec71b7a98a916572ced2b737db46061581",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c5_k08_lpweight_mip/attempts/189238_r0/result.json",
+          "mip_evidence_sha256": "3098c292375ff8af63c2336410a08c1afafdeb7b02ddaf974e0bdfe2b823de1e",
+          "input_sha256": "85aa4a37119b2604a41aa83f46c8b8987bb95c8165c4adfb0a58ce65dbeee05b",
+          "buses": 9,
+          "fleet_proven": true,
+          "source_cg_wall_s": 1580.6064936374314,
+          "source_mip_runtime_s": 2518.025884628296,
+          "final_lp_objective": 800431.7722696139
+        }
+      ],
+      "target_k": 8
+    },
+    "c5_k10": {
+      "donor": {
+        "case_id": "c5_k10_core",
+        "status_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c5_k10_core/attempts/201464_r0/cg.json",
+        "status_sha256": "b4223668da1d366b31cb20291eddc8a1319c59a89d87ddbbec6ea88a150ba1d2",
+        "journal_path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c5_k10_core/attempts/201464_r0/cg.json.columns.jsonl",
+        "journal_sha256": "32462a411f06cb54a6b011c548263747291b6e673cc3ca2838237226ba3d1cb5",
+        "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c5_k10_core_mip/attempts/201501_r0/result.json",
+        "mip_evidence_sha256": "1695be2765760ba1fed9c8b1d9956d92a814f8c4437a4c045c399ed76c12278e",
+        "input_sha256": "b2fa6d6ca7c5deda4877c8f22d726dc49e6bddb72a921fee1da34ec1c3ef86f8",
+        "buses": 10,
+        "fleet_proven": true,
+        "source_cg_wall_s": 1295.5625436077826,
+        "source_mip_runtime_s": 150.18294477462769,
+        "final_lp_objective": 1000456.333924139
+      },
+      "recipients": [
+        {
+          "case_id": "c5_k10_lpweight",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c5_k10_lpweight/attempts/189199_r0/cg.json",
+          "status_sha256": "126ab3ca8064d519452a2f4f7e6fdcd626f070b0abc511ee0b35e005b7727457",
+          "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k10_lpweight/attempts/189199_r0/cg.json.columns.jsonl",
+          "journal_sha256": "f9babd88cc9bd53b78f3283be9b66d9cdbbecc9cc92dcf606de445f5612a43ce",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c5_k10_lpweight_mip/attempts/189240_r0/result.json",
+          "mip_evidence_sha256": "013b13454c7c4a0e1567714075561e38e4a4dcea10c6ed931f1142c462d9147f",
+          "input_sha256": "b2fa6d6ca7c5deda4877c8f22d726dc49e6bddb72a921fee1da34ec1c3ef86f8",
+          "buses": 11,
+          "fleet_proven": true,
+          "source_cg_wall_s": 2399.882360363379,
+          "source_mip_runtime_s": 12600.771433115005,
+          "final_lp_objective": 1000456.3339241385
+        }
+      ],
+      "target_k": 10
+    },
+    "c6_k10": {
+      "donor": {
+        "case_id": "c6_k10_core",
+        "status_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c6_k10_core/attempts/201470_r0/cg.json",
+        "status_sha256": "66636c4cc3b43905037828871670a1f4c4e0dec763d236c6d9c82986e533f213",
+        "journal_path": "/home/nc437/ladder-lite/compact_seed_support_20260914/cases/c6_k10_core/attempts/201470_r0/cg.json.columns.jsonl",
+        "journal_sha256": "e607a61170e045b8dcbb311848989d6d2f3bd48fd979289d4b943c3afaaac76c",
+        "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/compact_seed_support_20260914/cases/c6_k10_core_mip/attempts/201507_r0/result.json",
+        "mip_evidence_sha256": "d91993b0def62fa5df267e511b74290ff082a26a757abe3286b7149f9b761b33",
+        "input_sha256": "b6b8abf3c83ef5e8d3167d6a785b8403fb20c8927e25c409193e1c744174ffc0",
+        "buses": 10,
+        "fleet_proven": true,
+        "source_cg_wall_s": 747.0069268257357,
+        "source_mip_runtime_s": 66.483158826828,
+        "final_lp_objective": 1000377.8715555543
+      },
+      "recipients": [
+        {
+          "case_id": "c6_k10_lpweight",
+          "status_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c6_k10_lpweight/attempts/189205_r0/cg.json",
+          "status_sha256": "15e14e4fc10003dc54daef94403cf8eaef62b928bacec3f9b51ea76ec6fc5e8d",
+          "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k10_lpweight/attempts/189205_r0/cg.json.columns.jsonl",
+          "journal_sha256": "2536e0ff664002c1c13f65103295846c64459caedaf740f8da857e233f1e513c",
+          "mip_evidence_path": "/share/scaglione/nc437/evsp-dr/overnight_parallel_20260914/cases/c6_k10_lpweight_mip/attempts/189246_r0/result.json",
+          "mip_evidence_sha256": "e122f2f19d594ca1ae98946269d3330f5ae91a7a2b05412f91bc7b155633a025",
+          "input_sha256": "b6b8abf3c83ef5e8d3167d6a785b8403fb20c8927e25c409193e1c744174ffc0",
+          "buses": 11,
+          "fleet_proven": true,
+          "source_cg_wall_s": 1320.096027866006,
+          "source_mip_runtime_s": 12601.397124052048,
+          "final_lp_objective": 1000377.8715555517
+        }
+      ],
+      "target_k": 10
+    }
+  },
+  "tooling_sha256": {
+    "worker.py": "83cec3969cee73b142155c468636d4df53635dca9969a085a854759da305e301",
+    "native_union.py": "e3a5941aff946ad8b0d5503c83c7e9f41a3e9480f4fe7075a5f6039af2b94bea",
+    "prepare_index.py": "7c443bb1226e3c2d2303f36ff68291b379fe2b4677afc35ee9b6e021435f215f",
+    "construct.py": "580dc5e36b8f219e6325fc8b3590955ed8b7ef1413040a20be6799ab45336945"
+  },
+  "selection": "13 proved-above-target difficult pools;9 predetermined matching CORE donors. Not a random sample.",
+  "selector": "FinalLPvalue>0; canonical native cheapest-tripset winner. Novel positive additions counted by incidence; equally many novel LP-zero incidences ordered by SHA256 of canonical sorted trip-ID JSON, then key. No MIP selected routes used.",
+  "storage_root": "/share/scaglione/nc437/evsp-dr/lp_support_pool_diagnostic_20260914"
+}

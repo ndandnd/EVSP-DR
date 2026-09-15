@@ -1,0 +1,954 @@
+{
+  "utc": "2026-09-15T01:48:30.513942+00:00",
+  "rows": [
+    {
+      "case_id": "c1_k08_integer_matched_zero_added",
+      "job_id": "207005",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "unicorn-cpu-01",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k08_integer_matched_zero_added/attempts/207005_r0"
+      ]
+    },
+    {
+      "case_id": "c1_k08_integer_positive_added",
+      "job_id": "207006",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "sonic-cpu-01",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k08_integer_positive_added/attempts/207006_r0"
+      ]
+    },
+    {
+      "case_id": "c1_k08_lpweight_matched_zero_added",
+      "job_id": "207007",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "sonic-cpu-02",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k08_lpweight_matched_zero_added/attempts/207007_r0"
+      ]
+    },
+    {
+      "case_id": "c1_k08_lpweight_positive_added",
+      "job_id": "207008",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "unicorn-cpu-87",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k08_lpweight_positive_added/attempts/207008_r0"
+      ]
+    },
+    {
+      "case_id": "c1_k08_support_only",
+      "job_id": "207009",
+      "state": "COMPLETED",
+      "reason": "None",
+      "nodes": "unicorn-cpu-76",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k08_support_only/attempts/207009_r0"
+      ]
+    },
+    {
+      "case_id": "c1_k10_integer_matched_zero_added",
+      "job_id": "207010",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "unicorn-cpu-76",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k10_integer_matched_zero_added/attempts/207010_r0"
+      ]
+    },
+    {
+      "case_id": "c1_k10_integer_positive_added",
+      "job_id": "207011",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "garg-cpu-02",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k10_integer_positive_added/attempts/207011_r0"
+      ]
+    },
+    {
+      "case_id": "c1_k10_support_only",
+      "job_id": "207012",
+      "state": "COMPLETED",
+      "reason": "None",
+      "nodes": "garg-cpu-02",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k10_support_only/attempts/207012_r0"
+      ]
+    },
+    {
+      "case_id": "c2_k08_lpweight_matched_zero_added",
+      "job_id": "207013",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "garg-cpu-02",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c2_k08_lpweight_matched_zero_added/attempts/207013_r0"
+      ]
+    },
+    {
+      "case_id": "c2_k08_lpweight_positive_added",
+      "job_id": "207014",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "sablab-cpu-02",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c2_k08_lpweight_positive_added/attempts/207014_r0"
+      ]
+    },
+    {
+      "case_id": "c2_k08_support_only",
+      "job_id": "207015",
+      "state": "COMPLETED",
+      "reason": "None",
+      "nodes": "jingjie-cpu-19",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c2_k08_support_only/attempts/207015_r0"
+      ]
+    },
+    {
+      "case_id": "c3_k08_integer_matched_zero_added",
+      "job_id": "207016",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-19",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c3_k08_integer_matched_zero_added/attempts/207016_r0"
+      ]
+    },
+    {
+      "case_id": "c3_k08_integer_positive_added",
+      "job_id": "207017",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-20",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c3_k08_integer_positive_added/attempts/207017_r0"
+      ]
+    },
+    {
+      "case_id": "c3_k08_lpweight_matched_zero_added",
+      "job_id": "207018",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-20",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c3_k08_lpweight_matched_zero_added/attempts/207018_r0"
+      ]
+    },
+    {
+      "case_id": "c3_k08_lpweight_positive_added",
+      "job_id": "207019",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-20",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c3_k08_lpweight_positive_added/attempts/207019_r0"
+      ]
+    },
+    {
+      "case_id": "c3_k08_support_only",
+      "job_id": "207020",
+      "state": "COMPLETED",
+      "reason": "None",
+      "nodes": "jingjie-cpu-01",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c3_k08_support_only/attempts/207020_r0"
+      ]
+    },
+    {
+      "case_id": "c4_k08_integer_matched_zero_added",
+      "job_id": "207022",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-01",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k08_integer_matched_zero_added/attempts/207022_r0"
+      ]
+    },
+    {
+      "case_id": "c4_k08_integer_positive_added",
+      "job_id": "207023",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-01",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k08_integer_positive_added/attempts/207023_r0"
+      ]
+    },
+    {
+      "case_id": "c4_k08_lpweight_matched_zero_added",
+      "job_id": "207024",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-08",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k08_lpweight_matched_zero_added/attempts/207024_r0"
+      ]
+    },
+    {
+      "case_id": "c4_k08_lpweight_positive_added",
+      "job_id": "207025",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-08",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k08_lpweight_positive_added/attempts/207025_r0"
+      ]
+    },
+    {
+      "case_id": "c4_k08_support_only",
+      "job_id": "207026",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-08",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k08_support_only/attempts/207026_r0"
+      ]
+    },
+    {
+      "case_id": "c4_k10_integer_matched_zero_added",
+      "job_id": "207027",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-02",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k10_integer_matched_zero_added/attempts/207027_r0"
+      ]
+    },
+    {
+      "case_id": "c4_k10_integer_positive_added",
+      "job_id": "207028",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-02",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k10_integer_positive_added/attempts/207028_r0"
+      ]
+    },
+    {
+      "case_id": "c4_k10_lpweight_matched_zero_added",
+      "job_id": "207029",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-02",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k10_lpweight_matched_zero_added/attempts/207029_r0"
+      ]
+    },
+    {
+      "case_id": "c4_k10_lpweight_positive_added",
+      "job_id": "207030",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-04",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k10_lpweight_positive_added/attempts/207030_r0"
+      ]
+    },
+    {
+      "case_id": "c4_k10_support_only",
+      "job_id": "207031",
+      "state": "COMPLETED",
+      "reason": "None",
+      "nodes": "jingjie-cpu-04",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k10_support_only/attempts/207031_r0"
+      ]
+    },
+    {
+      "case_id": "c5_k08_lpweight_matched_zero_added",
+      "job_id": "207032",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-04",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k08_lpweight_matched_zero_added/attempts/207032_r0"
+      ]
+    },
+    {
+      "case_id": "c5_k08_lpweight_positive_added",
+      "job_id": "207033",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-03",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k08_lpweight_positive_added/attempts/207033_r0"
+      ]
+    },
+    {
+      "case_id": "c5_k08_support_only",
+      "job_id": "207034",
+      "state": "COMPLETED",
+      "reason": "None",
+      "nodes": "jingjie-cpu-03",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k08_support_only/attempts/207034_r0"
+      ]
+    },
+    {
+      "case_id": "c5_k10_lpweight_matched_zero_added",
+      "job_id": "207035",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-03",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k10_lpweight_matched_zero_added/attempts/207035_r0"
+      ]
+    },
+    {
+      "case_id": "c5_k10_lpweight_positive_added",
+      "job_id": "207036",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-03",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k10_lpweight_positive_added/attempts/207036_r0"
+      ]
+    },
+    {
+      "case_id": "c5_k10_support_only",
+      "job_id": "207037",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-03",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k10_support_only/attempts/207037_r0"
+      ]
+    },
+    {
+      "case_id": "c6_k10_lpweight_matched_zero_added",
+      "job_id": "207038",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-05",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c6_k10_lpweight_matched_zero_added/attempts/207038_r0"
+      ]
+    },
+    {
+      "case_id": "c6_k10_lpweight_positive_added",
+      "job_id": "207039",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "jingjie-cpu-05",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c6_k10_lpweight_positive_added/attempts/207039_r0"
+      ]
+    },
+    {
+      "case_id": "c6_k10_support_only",
+      "job_id": "207040",
+      "state": "COMPLETED",
+      "reason": "None",
+      "nodes": "jingjie-cpu-05",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c6_k10_support_only/attempts/207040_r0"
+      ]
+    }
+  ],
+  "registry_entries": [
+    {
+      "job_id": "207006",
+      "case_id": "c1_k08_integer_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k08_integer_positive_added/attempts/207006_r0/result.json",
+      "attempt_tag": "207006_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:09.387326+00:00"
+    },
+    {
+      "job_id": "207007",
+      "case_id": "c1_k08_lpweight_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k08_lpweight_matched_zero_added/attempts/207007_r0/result.json",
+      "attempt_tag": "207007_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:09.703646+00:00"
+    },
+    {
+      "job_id": "207008",
+      "case_id": "c1_k08_lpweight_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k08_lpweight_positive_added/attempts/207008_r0/result.json",
+      "attempt_tag": "207008_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:10.267866+00:00"
+    },
+    {
+      "job_id": "207020",
+      "case_id": "c3_k08_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c3_k08_support_only/attempts/207020_r0/result.json",
+      "attempt_tag": "207020_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:10.758799+00:00"
+    },
+    {
+      "job_id": "207022",
+      "case_id": "c4_k08_integer_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k08_integer_matched_zero_added/attempts/207022_r0/result.json",
+      "attempt_tag": "207022_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:11.310410+00:00"
+    },
+    {
+      "job_id": "207023",
+      "case_id": "c4_k08_integer_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k08_integer_positive_added/attempts/207023_r0/result.json",
+      "attempt_tag": "207023_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:11.386710+00:00"
+    },
+    {
+      "job_id": "207031",
+      "case_id": "c4_k10_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k10_support_only/attempts/207031_r0/result.json",
+      "attempt_tag": "207031_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:11.412554+00:00"
+    },
+    {
+      "job_id": "207014",
+      "case_id": "c2_k08_lpweight_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c2_k08_lpweight_positive_added/attempts/207014_r0/result.json",
+      "attempt_tag": "207014_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:11.794430+00:00"
+    },
+    {
+      "job_id": "207032",
+      "case_id": "c5_k08_lpweight_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k08_lpweight_matched_zero_added/attempts/207032_r0/result.json",
+      "attempt_tag": "207032_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:11.851698+00:00"
+    },
+    {
+      "job_id": "207018",
+      "case_id": "c3_k08_lpweight_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c3_k08_lpweight_matched_zero_added/attempts/207018_r0/result.json",
+      "attempt_tag": "207018_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:11.923420+00:00"
+    },
+    {
+      "job_id": "207019",
+      "case_id": "c3_k08_lpweight_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c3_k08_lpweight_positive_added/attempts/207019_r0/result.json",
+      "attempt_tag": "207019_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:11.965211+00:00"
+    },
+    {
+      "job_id": "207040",
+      "case_id": "c6_k10_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c6_k10_support_only/attempts/207040_r0/result.json",
+      "attempt_tag": "207040_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:12.022247+00:00"
+    },
+    {
+      "job_id": "207030",
+      "case_id": "c4_k10_lpweight_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k10_lpweight_positive_added/attempts/207030_r0/result.json",
+      "attempt_tag": "207030_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:12.222602+00:00"
+    },
+    {
+      "job_id": "207009",
+      "case_id": "c1_k08_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k08_support_only/attempts/207009_r0/result.json",
+      "attempt_tag": "207009_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:12.404712+00:00"
+    },
+    {
+      "job_id": "207015",
+      "case_id": "c2_k08_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c2_k08_support_only/attempts/207015_r0/result.json",
+      "attempt_tag": "207015_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:12.564456+00:00"
+    },
+    {
+      "job_id": "207016",
+      "case_id": "c3_k08_integer_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c3_k08_integer_matched_zero_added/attempts/207016_r0/result.json",
+      "attempt_tag": "207016_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:12.764533+00:00"
+    },
+    {
+      "job_id": "207027",
+      "case_id": "c4_k10_integer_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k10_integer_matched_zero_added/attempts/207027_r0/result.json",
+      "attempt_tag": "207027_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:12.881704+00:00"
+    },
+    {
+      "job_id": "207028",
+      "case_id": "c4_k10_integer_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k10_integer_positive_added/attempts/207028_r0/result.json",
+      "attempt_tag": "207028_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:12.903308+00:00"
+    },
+    {
+      "job_id": "207034",
+      "case_id": "c5_k08_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k08_support_only/attempts/207034_r0/result.json",
+      "attempt_tag": "207034_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:13.013864+00:00"
+    },
+    {
+      "job_id": "207010",
+      "case_id": "c1_k10_integer_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k10_integer_matched_zero_added/attempts/207010_r0/result.json",
+      "attempt_tag": "207010_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:13.141127+00:00"
+    },
+    {
+      "job_id": "207024",
+      "case_id": "c4_k08_lpweight_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c4_k08_lpweight_matched_zero_added/attempts/207024_r0/result.json",
+      "attempt_tag": "207024_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:13.603851+00:00"
+    },
+    {
+      "job_id": "207035",
+      "case_id": "c5_k10_lpweight_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k10_lpweight_matched_zero_added/attempts/207035_r0/result.json",
+      "attempt_tag": "207035_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:13.635341+00:00"
+    },
+    {
+      "job_id": "207036",
+      "case_id": "c5_k10_lpweight_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c5_k10_lpweight_positive_added/attempts/207036_r0/result.json",
+      "attempt_tag": "207036_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:13.680967+00:00"
+    },
+    {
+      "job_id": "207012",
+      "case_id": "c1_k10_support_only",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k10_support_only/attempts/207012_r0/result.json",
+      "attempt_tag": "207012_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:13.877768+00:00"
+    },
+    {
+      "job_id": "207013",
+      "case_id": "c2_k08_lpweight_matched_zero_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c2_k08_lpweight_matched_zero_added/attempts/207013_r0/result.json",
+      "attempt_tag": "207013_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:14.958830+00:00"
+    },
+    {
+      "job_id": "207011",
+      "case_id": "c1_k10_integer_positive_added",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/cases/c1_k10_integer_positive_added/attempts/207011_r0/result.json",
+      "attempt_tag": "207011_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-15T01:48:16.169766+00:00"
+    }
+  ],
+  "registry_unique": true,
+  "counts": {
+    "COMPLETED": 7,
+    "RUNNING": 28
+  }
+}

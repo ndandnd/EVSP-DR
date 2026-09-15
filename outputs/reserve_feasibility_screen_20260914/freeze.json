@@ -1,0 +1,43 @@
+{
+  "case_ids": [
+    "k1_13405_flat_236p44r15_baseline",
+    "k1_13405_flat_236p44r15_parx60",
+    "k1_13406_flat_236p44r15_baseline",
+    "k1_13406_flat_236p44r15_parx60",
+    "k1_13407_flat_236p44r15_baseline",
+    "k1_13407_flat_236p44r15_parx60",
+    "k1_13408_flat_236p44r15_baseline",
+    "k1_13408_flat_236p44r15_parx60",
+    "k1_13408_flat_236p44r15_capacity",
+    "k1_13408_flat_236p44r15_combined"
+  ],
+  "execution_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "frozen_utc": "2026-09-15T01:49:47.313418+00:00",
+  "manifest_sha256": "8bf3b35fe4d3175a399456fadecfde08bc38de9b41c0ea15590f7522f7c4052f",
+  "schema": "evsp-dr-reserve-feasibility-freeze-v1",
+  "source_inputs_sha256": {
+    "deadhead_reference": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "flat": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "k1_duty13405": "2b37f26d202e6fc3ae37155720a5bed4eef9abd84dce4d09aa3d3a46ccd42454",
+    "k1_duty13406": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+    "k1_duty13407": "f3c1fac0d6b94fc66de4e424118ab9d6af086dfbd82e447280d1b43fd5a28ae9",
+    "k1_duty13408": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+    "reference_dictionary": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+  },
+  "source_sha256": {
+    "src/capacity_window_selector.py": "9743c2c53967f09bbfeb2e62ba971761a6b1d30ab6e3b36f3feaca7ede5f0131",
+    "src/event_pricer_network.py": "1dfd43e3cea4e902988d39035675fe0ca875334f65bf79b0f0d8d2e772d01451",
+    "src/run_capacity_speed_event_cg.py": "b87f194cb7e1cc9b95bddcec7c49733cc0f31a4d8befcd7aabb9b0fe536a4ddb"
+  },
+  "superseded_native_validation_attempt": "207021 completed native commands but failed a reporting-schema assertion after outputs were written",
+  "tooling_sha256": {
+    "README.md": "40f040b9fe6ff26c5058278d4466ff36a9acbaeade9a8e83f708c41828291789",
+    "campaign.py": "46316c596e95a997cd055dc38e232f25cab0b5768f0a38f45678681b204076ad",
+    "collect.py": "7fef426ee00312511de5d507e7a3798268b6a3f5c6b8146b19c21c426860cf93",
+    "preflight.py": "7ff4679586302c37e00f1ca6c6d99d2a55234084f3d5bf917b2719b168808e8a",
+    "preflight.sh": "43660934853cf4732ab10a71ad4c80144828cb5ef0a1a3b75155f2b9fcdcba82",
+    "submit.py": "d72d228b4dc5c6fb60c8d213d21fc0868acc5a4a3fcc7387bcefb85ab5c4f368",
+    "test_campaign.py": "18d8e8934546a082ae63079b8b7fa8b105851191dbb43a6a704af8e21cff9124",
+    "worker.sh": "adbd9eb98b5bc2a283f98e8628468db863457cea0b4e5baeb98c5c16320bd244"
+  }
+}

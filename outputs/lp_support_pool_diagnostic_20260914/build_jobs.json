@@ -1,0 +1,173 @@
+[
+  {
+    "case_id": "c1_k08",
+    "job_id": "206945",
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--no-requeue",
+      "--job-name=lpPrep_c1_k08",
+      "--output=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.err",
+      "--wrap",
+      "/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/construct.py c1_k08"
+    ]
+  },
+  {
+    "case_id": "c1_k10",
+    "job_id": "206946",
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--no-requeue",
+      "--job-name=lpPrep_c1_k10",
+      "--output=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.err",
+      "--wrap",
+      "/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/construct.py c1_k10"
+    ]
+  },
+  {
+    "case_id": "c2_k08",
+    "job_id": "206947",
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--no-requeue",
+      "--job-name=lpPrep_c2_k08",
+      "--output=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.err",
+      "--wrap",
+      "/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/construct.py c2_k08"
+    ]
+  },
+  {
+    "case_id": "c3_k08",
+    "job_id": "206948",
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--no-requeue",
+      "--job-name=lpPrep_c3_k08",
+      "--output=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.err",
+      "--wrap",
+      "/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/construct.py c3_k08"
+    ]
+  },
+  {
+    "case_id": "c4_k08",
+    "job_id": "206949",
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--no-requeue",
+      "--job-name=lpPrep_c4_k08",
+      "--output=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.err",
+      "--wrap",
+      "/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/construct.py c4_k08"
+    ]
+  },
+  {
+    "case_id": "c4_k10",
+    "job_id": "206950",
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--no-requeue",
+      "--job-name=lpPrep_c4_k10",
+      "--output=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.err",
+      "--wrap",
+      "/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/construct.py c4_k10"
+    ]
+  },
+  {
+    "case_id": "c5_k08",
+    "job_id": "206951",
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--no-requeue",
+      "--job-name=lpPrep_c5_k08",
+      "--output=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.err",
+      "--wrap",
+      "/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/construct.py c5_k08"
+    ]
+  },
+  {
+    "case_id": "c5_k10",
+    "job_id": "206952",
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--no-requeue",
+      "--job-name=lpPrep_c5_k10",
+      "--output=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.err",
+      "--wrap",
+      "/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/construct.py c5_k10"
+    ]
+  },
+  {
+    "case_id": "c6_k10",
+    "job_id": "206953",
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--no-requeue",
+      "--job-name=lpPrep_c6_k10",
+      "--output=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/logs/%x_%j.err",
+      "--wrap",
+      "/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/construct.py c6_k10"
+    ]
+  }
+]

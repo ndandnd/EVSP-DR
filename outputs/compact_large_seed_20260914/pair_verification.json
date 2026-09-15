@@ -1,0 +1,83 @@
+{
+  "status": "passed",
+  "manifest_sha256": "ad27ba3208ef72f1dce76a3452652542b6ee2fd7612fae797bd6b801d464e50f",
+  "checks": [
+    "All tooling SHA-256",
+    "Identical within-pair scientific argv except seed path",
+    "Equal input code resources budget native cache hash"
+  ],
+  "rows": [
+    {
+      "pair_id": "c1_k20",
+      "core": 373,
+      "filled": 512,
+      "target_graph_build_s": 23883.05267739296
+    },
+    {
+      "pair_id": "c1_k25",
+      "core": 417,
+      "filled": 512,
+      "target_graph_build_s": 29242.40690803528
+    },
+    {
+      "pair_id": "c2_k20",
+      "core": 338,
+      "filled": 512,
+      "target_graph_build_s": 18394.99609518051
+    },
+    {
+      "pair_id": "c2_k25",
+      "core": 434,
+      "filled": 512,
+      "target_graph_build_s": 23620.117331266403
+    },
+    {
+      "pair_id": "c3_k20",
+      "core": 306,
+      "filled": 512,
+      "target_graph_build_s": 17020.54713153839
+    },
+    {
+      "pair_id": "c3_k25",
+      "core": 385,
+      "filled": 512,
+      "target_graph_build_s": 27494.19380044937
+    },
+    {
+      "pair_id": "c4_k20",
+      "core": 356,
+      "filled": 512,
+      "target_graph_build_s": 24191.978236436844
+    },
+    {
+      "pair_id": "c4_k25",
+      "core": 406,
+      "filled": 512,
+      "target_graph_build_s": 38525.241381406784
+    },
+    {
+      "pair_id": "c5_k20",
+      "core": 291,
+      "filled": 512,
+      "target_graph_build_s": 18156.51143193245
+    },
+    {
+      "pair_id": "c5_k25",
+      "core": 452,
+      "filled": 512,
+      "target_graph_build_s": 24435.245842456818
+    },
+    {
+      "pair_id": "c6_k20",
+      "core": 288,
+      "filled": 512,
+      "target_graph_build_s": 12767.875880002975
+    },
+    {
+      "pair_id": "c6_k25",
+      "core": 403,
+      "filled": 512,
+      "target_graph_build_s": 28743.964010953903
+    }
+  ]
+}

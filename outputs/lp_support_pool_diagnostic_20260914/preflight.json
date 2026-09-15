@@ -1,0 +1,216 @@
+{
+  "status": "passed",
+  "manifest_sha256": "d92bc280aae0505cb103a0f752485b2395e6ac3bd0d3a1a76283ae49016b672a",
+  "checks": [
+    {
+      "case_id": "c1_k08_support_only",
+      "status": "passed",
+      "pool_columns": 100,
+      "added_columns": 100
+    },
+    {
+      "case_id": "c1_k08_integer_positive_added",
+      "status": "passed",
+      "pool_columns": 36400,
+      "added_columns": 33
+    },
+    {
+      "case_id": "c1_k08_integer_matched_zero_added",
+      "status": "passed",
+      "pool_columns": 36400,
+      "added_columns": 33
+    },
+    {
+      "case_id": "c1_k08_lpweight_positive_added",
+      "status": "passed",
+      "pool_columns": 36485,
+      "added_columns": 39
+    },
+    {
+      "case_id": "c1_k08_lpweight_matched_zero_added",
+      "status": "passed",
+      "pool_columns": 36485,
+      "added_columns": 39
+    },
+    {
+      "case_id": "c1_k10_support_only",
+      "status": "passed",
+      "pool_columns": 122,
+      "added_columns": 122
+    },
+    {
+      "case_id": "c1_k10_integer_positive_added",
+      "status": "passed",
+      "pool_columns": 49066,
+      "added_columns": 71
+    },
+    {
+      "case_id": "c1_k10_integer_matched_zero_added",
+      "status": "passed",
+      "pool_columns": 49066,
+      "added_columns": 71
+    },
+    {
+      "case_id": "c2_k08_support_only",
+      "status": "passed",
+      "pool_columns": 101,
+      "added_columns": 101
+    },
+    {
+      "case_id": "c2_k08_lpweight_positive_added",
+      "status": "passed",
+      "pool_columns": 20471,
+      "added_columns": 82
+    },
+    {
+      "case_id": "c2_k08_lpweight_matched_zero_added",
+      "status": "passed",
+      "pool_columns": 20471,
+      "added_columns": 82
+    },
+    {
+      "case_id": "c3_k08_support_only",
+      "status": "passed",
+      "pool_columns": 80,
+      "added_columns": 80
+    },
+    {
+      "case_id": "c3_k08_integer_positive_added",
+      "status": "passed",
+      "pool_columns": 18289,
+      "added_columns": 69
+    },
+    {
+      "case_id": "c3_k08_integer_matched_zero_added",
+      "status": "passed",
+      "pool_columns": 18289,
+      "added_columns": 69
+    },
+    {
+      "case_id": "c3_k08_lpweight_positive_added",
+      "status": "passed",
+      "pool_columns": 15580,
+      "added_columns": 69
+    },
+    {
+      "case_id": "c3_k08_lpweight_matched_zero_added",
+      "status": "passed",
+      "pool_columns": 15580,
+      "added_columns": 69
+    },
+    {
+      "case_id": "c4_k08_support_only",
+      "status": "passed",
+      "pool_columns": 94,
+      "added_columns": 94
+    },
+    {
+      "case_id": "c4_k08_integer_positive_added",
+      "status": "passed",
+      "pool_columns": 42257,
+      "added_columns": 66
+    },
+    {
+      "case_id": "c4_k08_integer_matched_zero_added",
+      "status": "passed",
+      "pool_columns": 42257,
+      "added_columns": 66
+    },
+    {
+      "case_id": "c4_k08_lpweight_positive_added",
+      "status": "passed",
+      "pool_columns": 40167,
+      "added_columns": 66
+    },
+    {
+      "case_id": "c4_k08_lpweight_matched_zero_added",
+      "status": "passed",
+      "pool_columns": 40167,
+      "added_columns": 66
+    },
+    {
+      "case_id": "c4_k10_support_only",
+      "status": "passed",
+      "pool_columns": 115,
+      "added_columns": 115
+    },
+    {
+      "case_id": "c4_k10_integer_positive_added",
+      "status": "passed",
+      "pool_columns": 40288,
+      "added_columns": 72
+    },
+    {
+      "case_id": "c4_k10_integer_matched_zero_added",
+      "status": "passed",
+      "pool_columns": 40288,
+      "added_columns": 72
+    },
+    {
+      "case_id": "c4_k10_lpweight_positive_added",
+      "status": "passed",
+      "pool_columns": 45115,
+      "added_columns": 73
+    },
+    {
+      "case_id": "c4_k10_lpweight_matched_zero_added",
+      "status": "passed",
+      "pool_columns": 45115,
+      "added_columns": 73
+    },
+    {
+      "case_id": "c5_k08_support_only",
+      "status": "passed",
+      "pool_columns": 98,
+      "added_columns": 98
+    },
+    {
+      "case_id": "c5_k08_lpweight_positive_added",
+      "status": "passed",
+      "pool_columns": 26340,
+      "added_columns": 51
+    },
+    {
+      "case_id": "c5_k08_lpweight_matched_zero_added",
+      "status": "passed",
+      "pool_columns": 26340,
+      "added_columns": 51
+    },
+    {
+      "case_id": "c5_k10_support_only",
+      "status": "passed",
+      "pool_columns": 120,
+      "added_columns": 120
+    },
+    {
+      "case_id": "c5_k10_lpweight_positive_added",
+      "status": "passed",
+      "pool_columns": 32233,
+      "added_columns": 68
+    },
+    {
+      "case_id": "c5_k10_lpweight_matched_zero_added",
+      "status": "passed",
+      "pool_columns": 32233,
+      "added_columns": 68
+    },
+    {
+      "case_id": "c6_k10_support_only",
+      "status": "passed",
+      "pool_columns": 101,
+      "added_columns": 101
+    },
+    {
+      "case_id": "c6_k10_lpweight_positive_added",
+      "status": "passed",
+      "pool_columns": 26532,
+      "added_columns": 83
+    },
+    {
+      "case_id": "c6_k10_lpweight_matched_zero_added",
+      "status": "passed",
+      "pool_columns": 26532,
+      "added_columns": 83
+    }
+  ]
+}

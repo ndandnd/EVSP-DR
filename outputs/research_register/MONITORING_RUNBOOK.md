@@ -1,3 +1,13 @@
+## Additional authorized campaigns — 21:54 EDT, 14 September
+
+- `compact_large_seed_20260914`:24 independent CGs plus24 own-CG MIPs. Six chains ×k20/k25 ×core/core512. Native a0e0 graph producer/CG;871 MIP.4hCG;12600sMIP/10800sfleet. Existing graph pointers, no compatibility relabeling. Sources48cases in frozen manifest and jobs; preserve own-CG dependencies.
+- `lp_support_pool_diagnostic_20260914`:35 independent MIPs on constructed static pools.13 earlier proved misses ×positive/zero-weight equal-size additions, plus9 donor-support-only controls. Synthetic pool.json is not a CG endpoint. Nine support-only MIPs already prove above-target fleet; their full donors match target. Do not confuse zero LP weight with zero reduced cost. Remaining26 paired MIPs were running.
+- `reserve_feasibility_screen_20260914`:ten independent dedicated capacity-driver allocations at236.44kWh/35.466kWhreserve;baseline/PARX60 on duties13405–8 andcapacity/combined only13408.220minCG+10minMIP; native fixture is validation only. Use strict_capacity_adapter pilot path. No automatic requeue in this screen; preserve interruptions for any explicit retry.
+
+The shared collector and register normalizer recognize all three. [Launch/source evidence and first results](../overnight_next_20260914/README.md). Routine monitoring should collect these registered campaigns without launching speculative follow-ups. These are user-authorized campaigns, not permission to generate arbitrary additional treatments. Held537227 and EVSP–V2G remain untouched.
+
+**New overnight work, 14 September evening:** [Current launch record and first diagnostic results](../overnight_next_20260914/README.md). New source campaigns are `compact_large_seed_20260914`, `lp_support_pool_diagnostic_20260914`, and `reserve_feasibility_screen_20260914`. Launch/early-result collections have their own timestamps; the main workbook remains the 21:05–21:13 full collection.
+
 ## 14 September, 21:13 EDT — all k8/k10 richer-start targets recovered
 
 Snapshot `20260915T010508Z` (previous000359) completed01:13:06 UTC in478.5s; SHA `9fe87b1841e1fb66d121315b5c2ba766677ed378532a402cc5c57f46479a4ee5`. Preemption study857 attempts; no new confirmed preemption or MIP execution failure. Queue32 running/32 solver waits; held33 excluded. No new campaign, submission, cancellation, requeue or solver edit.

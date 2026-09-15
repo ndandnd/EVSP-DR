@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/preflight.py", line 74, in <module>
+    p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);a=p.parse_args();main(a.root.resolve())
+                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/preflight.py", line 61, in main
+    assert mip['duplicate_service_audit']['valid'] is True
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+KeyError: 'valid'

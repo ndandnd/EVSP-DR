@@ -1,0 +1,11 @@
+{
+  "prior_manifest_sha256": "7fdb76fdce4fe6a67e3c38a0f0b71448e8752ce71ed642a18ad632c869955650",
+  "final_manifest_sha256": "ad27ba3208ef72f1dce76a3452652542b6ee2fd7612fae797bd6b801d464e50f",
+  "changes": [
+    "Historical MIP budget removed from physics; actual replay worker count1",
+    "Target graph original build cost separate from source CG/MIP and child wall time",
+    "Updated deterministic preparation script hash"
+  ],
+  "scientific_argv_unchanged": true,
+  "script_sha256": "636e9172ebfa92b78a5426a079e43944ea9abb6e6ccc6beaa2482134f6a2cd41"
+}

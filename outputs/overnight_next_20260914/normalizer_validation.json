@@ -1,0 +1,93 @@
+{
+  "status": "passed",
+  "validation_only": true,
+  "authoritative_register_not_rebuilt": true,
+  "snapshot_sha256": "f28f4ed1ad96f19ed08fbe113ff1a03592912eac6c71ae6106234ac0b9164577",
+  "records": [
+    {
+      "case_id": "c1_k08_support_only",
+      "target_k": 8,
+      "buses": 9,
+      "fleet_proved_in_pool": true,
+      "source_sha256": "9a519042614ab2fbbfcf24ce499da7b6867b60889b724fb92206d1a78171630a",
+      "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "normalized_exactly": true
+    },
+    {
+      "case_id": "c1_k10_support_only",
+      "target_k": 10,
+      "buses": 12,
+      "fleet_proved_in_pool": true,
+      "source_sha256": "c6f51dee25a36803b7576a0083e116b0ec5bdb650e6b5a34ed30f9d5bca930ab",
+      "input_sha256": "c54f31750af49fb66f0bf21995d02d01a5520e37f13152bc95b4aff17ecef1f3",
+      "normalized_exactly": true
+    },
+    {
+      "case_id": "c2_k08_support_only",
+      "target_k": 8,
+      "buses": 10,
+      "fleet_proved_in_pool": true,
+      "source_sha256": "2bb8f728b9f182631d4f55dd7ee204044a6c0a963283f0e8e81e9f9b01eb0762",
+      "input_sha256": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+      "normalized_exactly": true
+    },
+    {
+      "case_id": "c3_k08_support_only",
+      "target_k": 8,
+      "buses": 10,
+      "fleet_proved_in_pool": true,
+      "source_sha256": "a52c5162610c631c326527836aaa31b27905caa3bab0b065f82bed27634cb4e5",
+      "input_sha256": "9d1d4ed1ab86dfa3ae09541180d1a67e612d5473d9964db36b08e9ebce72cd2b",
+      "normalized_exactly": true
+    },
+    {
+      "case_id": "c4_k08_support_only",
+      "target_k": 8,
+      "buses": 10,
+      "fleet_proved_in_pool": true,
+      "source_sha256": "eaa227e5c11ccefbbe5ce54a57b61126c6b82a5caceeadd58261f2f834f949da",
+      "input_sha256": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+      "normalized_exactly": true
+    },
+    {
+      "case_id": "c4_k10_support_only",
+      "target_k": 10,
+      "buses": 13,
+      "fleet_proved_in_pool": true,
+      "source_sha256": "c699e33f481699a3902f285bba4dd78c6008528d8bc42751f3aa220a8133db98",
+      "input_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+      "normalized_exactly": true
+    },
+    {
+      "case_id": "c5_k08_support_only",
+      "target_k": 8,
+      "buses": 10,
+      "fleet_proved_in_pool": true,
+      "source_sha256": "43521273ed8f41ac286cb0bab1da873e8613790cea042bc0012663e2c14e1b17",
+      "input_sha256": "85aa4a37119b2604a41aa83f46c8b8987bb95c8165c4adfb0a58ce65dbeee05b",
+      "normalized_exactly": true
+    },
+    {
+      "case_id": "c5_k10_support_only",
+      "target_k": 10,
+      "buses": 12,
+      "fleet_proved_in_pool": true,
+      "source_sha256": "f526607899b1f433359da255282293e259dde0b26e978aa7c64eba61708a4ce9",
+      "input_sha256": "b2fa6d6ca7c5deda4877c8f22d726dc49e6bddb72a921fee1da34ec1c3ef86f8",
+      "normalized_exactly": true
+    },
+    {
+      "case_id": "c6_k10_support_only",
+      "target_k": 10,
+      "buses": 12,
+      "fleet_proved_in_pool": true,
+      "source_sha256": "e8f17e45c183bdef06285ffb9c7c353e1f9bb5585dbff07310c6e75b516b179b",
+      "input_sha256": "b6b8abf3c83ef5e8d3167d6a785b8403fb20c8927e25c409193e1c744174ffc0",
+      "normalized_exactly": true
+    }
+  ],
+  "reserve_adapter_shape_unit_fixture_records": 2,
+  "raw_unverified_smoke_correctly_rejected": true,
+  "production_reserve_adapter_endpoint_pending": true,
+  "reserve_fixture_not_published_as_production": true
+}

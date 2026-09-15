@@ -1,0 +1,60 @@
+{
+  "case_count": 10,
+  "code_checkout": {
+    "expected_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+    "observed_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+    "root": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code",
+    "tracked_clean": true
+  },
+  "driver_command_validation": {
+    "failures": [],
+    "parsed_command_count": 20,
+    "valid": true
+  },
+  "errors": [],
+  "input_checks": {
+    "deadhead_reference": {
+      "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+      "valid": true
+    },
+    "flat": {
+      "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+      "valid": true
+    },
+    "k1_duty13405": {
+      "expected_sha256": "2b37f26d202e6fc3ae37155720a5bed4eef9abd84dce4d09aa3d3a46ccd42454",
+      "observed_sha256": "2b37f26d202e6fc3ae37155720a5bed4eef9abd84dce4d09aa3d3a46ccd42454",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13405.csv",
+      "valid": true
+    },
+    "k1_duty13406": {
+      "expected_sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "observed_sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13406.csv",
+      "valid": true
+    },
+    "k1_duty13407": {
+      "expected_sha256": "f3c1fac0d6b94fc66de4e424118ab9d6af086dfbd82e447280d1b43fd5a28ae9",
+      "observed_sha256": "f3c1fac0d6b94fc66de4e424118ab9d6af086dfbd82e447280d1b43fd5a28ae9",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13407.csv",
+      "valid": true
+    },
+    "k1_duty13408": {
+      "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+      "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+      "valid": true
+    },
+    "reference_dictionary": {
+      "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+      "valid": true
+    }
+  },
+  "valid": true
+}

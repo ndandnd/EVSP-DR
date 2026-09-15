@@ -1,0 +1,84 @@
+{
+  "manifest_sha256": "d92bc280aae0505cb103a0f752485b2395e6ac3bd0d3a1a76283ae49016b672a",
+  "rows": [
+    {
+      "case_id": "c1_k08_integer",
+      "shared_positive_incidences": 67,
+      "max_shared_cost_difference": 0.24800000002142042,
+      "shared_ordered_trip_paths_differ": 0
+    },
+    {
+      "case_id": "c1_k08_lpweight",
+      "shared_positive_incidences": 61,
+      "max_shared_cost_difference": 0.2479999999923166,
+      "shared_ordered_trip_paths_differ": 0
+    },
+    {
+      "case_id": "c1_k10_integer",
+      "shared_positive_incidences": 51,
+      "max_shared_cost_difference": 4.3655745685100555e-11,
+      "shared_ordered_trip_paths_differ": 0
+    },
+    {
+      "case_id": "c2_k08_lpweight",
+      "shared_positive_incidences": 19,
+      "max_shared_cost_difference": 2.9103830456733704e-11,
+      "shared_ordered_trip_paths_differ": 0
+    },
+    {
+      "case_id": "c3_k08_integer",
+      "shared_positive_incidences": 11,
+      "max_shared_cost_difference": 1.4551915228366852e-11,
+      "shared_ordered_trip_paths_differ": 0
+    },
+    {
+      "case_id": "c3_k08_lpweight",
+      "shared_positive_incidences": 11,
+      "max_shared_cost_difference": 0.4959999999846332,
+      "shared_ordered_trip_paths_differ": 0
+    },
+    {
+      "case_id": "c4_k08_integer",
+      "shared_positive_incidences": 28,
+      "max_shared_cost_difference": 0.24800000002142042,
+      "shared_ordered_trip_paths_differ": 0
+    },
+    {
+      "case_id": "c4_k08_lpweight",
+      "shared_positive_incidences": 28,
+      "max_shared_cost_difference": 0.24800000005052425,
+      "shared_ordered_trip_paths_differ": 0
+    },
+    {
+      "case_id": "c4_k10_integer",
+      "shared_positive_incidences": 43,
+      "max_shared_cost_difference": 2.9103830456733704e-11,
+      "shared_ordered_trip_paths_differ": 0
+    },
+    {
+      "case_id": "c4_k10_lpweight",
+      "shared_positive_incidences": 42,
+      "max_shared_cost_difference": 4.3655745685100555e-11,
+      "shared_ordered_trip_paths_differ": 0
+    },
+    {
+      "case_id": "c5_k08_lpweight",
+      "shared_positive_incidences": 47,
+      "max_shared_cost_difference": 1.0186340659856796e-10,
+      "shared_ordered_trip_paths_differ": 0
+    },
+    {
+      "case_id": "c5_k10_lpweight",
+      "shared_positive_incidences": 52,
+      "max_shared_cost_difference": 4.3655745685100555e-11,
+      "shared_ordered_trip_paths_differ": 0
+    },
+    {
+      "case_id": "c6_k10_lpweight",
+      "shared_positive_incidences": 18,
+      "max_shared_cost_difference": 2.9103830456733704e-11,
+      "shared_ordered_trip_paths_differ": 0
+    }
+  ],
+  "scope": "Audit shared donor positive incidences retained from recipient; added treatments never replace old columns."
+}

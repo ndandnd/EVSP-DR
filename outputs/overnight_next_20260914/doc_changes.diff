@@ -1,0 +1,32 @@
+--- before
++++ after
+@@ -4,7 +4,28 @@
+ 
+ **Reading order:** current chain results and definitions → measured algorithm improvements → charging comparisons → GIRO assumptions, stricter results and next tests. Older tables are under Historical appendix. Figures remain in the two figure tabs.
+ 
+-## **Tonight’s independent work — 14 September evening**
++## **Overnight additions — 14 September, 21:54 EDT**
++
++## The queue now has **89 running jobs and 54 waiting for required inputs**. All new work is on the default partition. No job is blocked by an array limit or an unsatisfiable dependency; the GPU node remains excluded. The 33 held historical tasks are separate.
++
++| New experiment | Submitted work | Question |
++| ----- | ----- | ----- |
++| **Compact inherited pools at k=20 and k=25; all six chains** | **24 independent CGs \+ 24 own-CG MIPs** | **Can a few hundred retained routes preserve the larger chains’ integer performance?** |
++| **Repair 13 pools that proved unable to match target** | **26 independent MIPs** | **Do LP-used routes help more than the same number of other routes?** |
++| **Use only each donor LP’s positive-weight routes** | **9 independent MIPs; all finished** | **Does the fractional solution’s route set contain a target-sized integer solution?** |
++| **Smaller battery and 15% reserve on four duties** | **10 independent CG/MIP allocations** | **Do stricter energy requirements cause difficulty before shared-charger contention?** |
++
++## **Total: 69 independent allocations plus 24 dependent MIPs.** All are submitted and their resources checked. The larger tests reuse completed k19/k24 parents and existing graphs. Each child keeps either the previous integer routes plus all positive-weight LP routes, or that same core expanded to 512\. Both larger arms use the same a0e0 solver revision; the earlier smaller-seed cohort used e091, so comparisons across those cohorts are not a pure size effect.
++
++## **First finding:** all nine LP-support-only pools prove that they need 9–13 buses for targets of 8 or 10, although their full donor pools match target. Some routes with zero weight in the final LP therefore matter for the integer solution. Zero LP weight does not mean zero reduced cost. The 26 paired addition tests are still running.
++
++## Large CGs allow four hours, followed by MIPs allowing 3½ hours total, including up to three hours for fleet search. Stage two limits fleet to no more than the first-stage incumbent and optimizes charging. The reserve screen uses 236.44 kWh batteries and 35.466 kWh reserve, with 220 minutes CG and a ten-minute MIP. It tests constant-rate charging, not the nonlinear GIRO curve, and assumes no 65% terminal target. Prior seed computation is recorded separately.
++
++## [Overnight plan, exact jobs, budgets and source records](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/overnight_next_20260914/README.md) · [Nine completed diagnostic results](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/overnight_next_20260914/FIRST_DIAGNOSTIC_RESULTS.md). These launch and early-result observations supplement the full 21:05–21:13 collection below; the workbook retains that full-collection timestamp.
++
++## **Earlier evening experiments and verified results**
++
++## 
+ 
+ ## **The new batch has 49 independent jobs: 36 CG comparisons, nine longer MIPs and four capacity-pricing calls. All are submitted; the 36 following MIPs wait only for their own CG. Two pricing attempts hit a wrapper import error and were replaced after a native check; the failed attempts remain recorded.**
+ 
