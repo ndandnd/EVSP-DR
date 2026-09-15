@@ -1,0 +1,97 @@
+{
+  "snapshot_sha256": "5c34246ee11c96d3697aad6dfb11ad313a3fb0162d9b85b7947f352e7b5c020f",
+  "checks": [
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c2_k20_core512",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c3_k20_core",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c3_k20_core512",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c1_k08_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c1_k10_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c2_k08_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c3_k08_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c3_k08_integer_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c4_k08_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c4_k10_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c5_k08_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c5_k08_lpweight_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c5_k08_lpweight_matched_zero_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c5_k10_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c6_k10_support_only",
+      "stage": "mip",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "note": "Collector publication and recorded provenance bindings verified; no new physical replay run."
+}

@@ -4,15 +4,15 @@ The user requests continued overnight monitoring, productive parallel use of Uni
 
 ## Current state and priorities
 
-Last full verified collection: `outputs/post_meeting_20260910/monitor/20260915T040735Z.json`, completed at 00:16 EDT. [Source report](../overnight_next_20260914/status_20260915T040735Z/README.md). A separate scheduler check at 00:39 EDT found **61 running jobs / 38 true input dependencies**, with no array throttle. [Queue evidence](overnight_monitor_20260915/queue_check.json). Do not present that queue timestamp as a new scientific collection.
+Last full verified collection: `outputs/post_meeting_20260910/monitor/20260915T050815Z.json`, completed at01:16EDT. [Source report](../overnight_next_20260914/status_20260915T050815Z/README.md). Queue in the collection: **59 running jobs /36 true input dependencies**, no array throttle or invalid dependency. Scientific endpoints and late scheduler-only publications have separate timestamps in the report.
 
 The running work already answers useful questions:
 
 | Registered work | Question | What to check next |
 |---|---|---|
 | `chain_extension_20260914` | Can inherited-column solving reach k28? | Actual previous-k outputs and graph readiness; CG certificates and MIP targets separately. |
-| `compact_seed_support_20260914` | Do the smaller starts work at k15? | Six unpublished MIPs at the last full collection. C3 core had 17 buses / bound15, so its pool limitation is not proved. |
-| `compact_large_seed_20260914` | Do core and 512-sequence starts work at k20/k25? | 24 CG/MIP pairs. First two CG certificates were C3 k20; MIPs were pending. Keep a0e0 code distinct from the smaller e091 cohort. |
+| `compact_seed_support_20260914` | Do the smaller starts work at k15? | Five unpublished MIPs at the last full collection. C3 core had 17 buses / bound15, so its pool limitation is not proved. |
+| `compact_large_seed_20260914` | Do core and 512-sequence starts work at k20/k25? | 24 CG/MIP pairs. Three CG certificates: C3 k20 both methods and C2 k20 expanded; MIPs were pending. Keep a0e0 code distinct from the smaller e091 cohort. |
 | `lp_support_pool_diagnostic_20260914` | Which added columns repair inadequate pools? | Finish 13 matched positive-LP/zero-LP-weight addition pairs. Zero weight does not mean zero reduced cost. |
 
 The reserve screen, nine remaining-gap MIPs and four corrected fixed-state pricing calls are complete. Do not relaunch them or call them newly completed. The original k16–25 batch has 60 original MIPs:35 targets,25 misses; separate longer searches recover24 misses. C5 k25 remains unresolved. Broader recoveries do not alter the original fixed-budget control table.

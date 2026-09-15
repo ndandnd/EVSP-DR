@@ -6,6 +6,18 @@ Follow [ACTIVE_MONITOR_PLAN.md](ACTIVE_MONITOR_PLAN.md) for the current overnigh
 
 Use the durable path in `outputs/research_register/publication_workspace_path.txt`: `/Users/nadan/Documents/projects/demandresponse/.codex-work/research-register-20260915`, branch `codex/research-register-20260915`. Push its reviewed allowlist to `HEAD:codex/parallel-research-20260911`. Do not use `/private/tmp/evsp-research-register-20260910`: its .git link and older checkout files were missing. The cause is unverified. A fresh worktree was created from remote-verified commit dac40058; the current changes were reapplied there. No cluster access loss or research-job change occurred. [Recovery record](publication_recovery_20260915.json). The main checkout remains dirty and must not be wholesale committed.
 
+## 15 September, 01:16 EDT — C6 reaches27; compact C4 core reaches15
+
+Snapshot20260915T050815Z completed05:16:48UTC in512.2s, SHA5c34246ee11c96d3697aad6dfb11ad313a3fb0162d9b85b7947f352e7b5c020f. Preemption study906 attempts. Queue59 running/36 genuine dependencies; held33 excluded. No new execution failure, confirmed preemption, invalid dependency, submission or retry. SSH available.
+
+C6k27:27/bound27/proved,210085columns; fleet proof9.1min,total60.2min; CG239.9min capped; charging unproved; replay passes,53 duplicated assignments unvalidated. Current one-hour maxima25/26/27/23/24/27. Compact C4k15 core:15/proved,64741columns; CG166.5min certified, fleet proof3.5min,total133.8min with charging-related objective849.736 proved in pool. Compact totals36certifiedCG/31MIP/30targets; five unpublished. C3core17/bound15 gap remains open.
+
+New C3k8 integer-positive-addition pool proves9;18289columns,fleet65.0min,total139.4min,charging216.488proved. Matched zero-weight control unfinished; no general selector winner. New large C2k20 core512CGcert171.4min,54090columns; total3CGcerts/no collectedlargeMIP. New continuation C3k28/C4k26CGcapped239.9/239.7min,RC−0.0001716/−0.0636014. No certified full-model LB from their RMPs. Existing MIPs running.
+
+Late scheduler completions187993(C5k26,reported26) and201496(C4k15core512,reported15) arrived after campaign collection. Paths/hashes preserved in late_scheduler_results.json; do not count as fully checked targets until the next full source collection. This discrepancy is temporal, not a failed job.
+
+Register3,203 rows/70groups, exact6supplements; marker once,15workbookviews/zeroformulaerrors. Checked321core endpoints,161evening endpoints and15large/pool-diagnostic bindings. New reusable summarize_pool_experiments.py validates manifest/input/code/seed/source-pool/journal/budget bindings; control13endpoints passes, altered pool/journal/marker rejected. Current dashboard updated in place; seven rows checked; unchanged findings/strict sections byte-identical; figure/history tabs and Slides untouched. [Source report](../overnight_next_20260914/status_20260915T050815Z/README.md). Continue hourly; existing parallel work is sufficient, no extra campaign launched.
+
 ## 15 September, 00:16 EDT — two new chain matches; compact core gap; pricing comparison complete
 
 Snapshot `20260915T040735Z` completed at04:16:33UTC after537.1s. SHA256 `f2c51900c5f254eb57343afecc2f44c8f8b298310fd60256a4db44d8910a6507`; previous `20260915T030644Z`. Preemption refresh905 attempt records. Queue63 running /38 true dependency waits;33 held tasks excluded. No new confirmed preemption, execution failure, invalid dependency, submission, cancellation or requeue. SSH stayed available.
