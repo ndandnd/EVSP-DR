@@ -14,8 +14,8 @@
   "families_and_stages": {
     "capacity_speed_exact_event:cg": 45,
     "capacity_speed_exact_event:mip": 57,
-    "cg_phase_telemetry:telemetry": 656,
-    "column_generation:cg": 718,
+    "cg_phase_telemetry:telemetry": 658,
+    "column_generation:cg": 720,
     "cumulative_budget_case_metadata:audit_result": 24,
     "cumulative_budget_endpoint:cg": 24,
     "cumulative_budget_endpoint:mip": 48,
@@ -23,9 +23,9 @@
     "fixed_dual_pricing_diagnostic:pricing_call": 4,
     "giro_zero_fee_comparison:comparison_arm": 18,
     "matched_tariff_comparison:comparison_arm": 57,
-    "pool_mip:mip": 986,
+    "pool_mip:mip": 987,
     "rejected_mip_output:mip_rejected": 2,
-    "scheduler:queue_state": 67,
+    "scheduler:queue_state": 63,
     "small_reference_cg:cg_arm": 32,
     "small_same_pool_comparison:lp": 64,
     "small_same_pool_comparison:mip": 64,
@@ -39,7 +39,7 @@
     "terminal_energy:mip_failed_preoptimization": 3,
     "terminal_energy_full_cg:cg": 3,
     "terminal_energy_full_cg:mip": 3,
-    "terminal_postprocessing:mip": 5,
+    "terminal_postprocessing:mip": 6,
     "workflow:workflow": 248,
     "workflow:workflow_cg": 45,
     "workflow:workflow_cg_reference": 54,
@@ -47,11 +47,11 @@
     "workflow:workflow_mip": 54
   },
   "rejected_rows": 2,
-  "row_count": 3381,
-  "rows_with_source_sha256": 1679,
+  "row_count": 3383,
+  "rows_with_source_sha256": 1681,
   "rows_without_source_sha256": 1702,
   "schema": "evsp-dr-research-register-validation-v1",
-  "source_snapshot_sha256": "0fdc26465ef29f76b6a808e2878dec53240e622ec8fb6bb5a9e79a92db9e62ce",
+  "source_snapshot_sha256": "f125677b18c18816c1ffe8b6c66d0489fdcf29d38b60137fc7f559cb3c2fabe3",
   "superseded_772031_rows": 1,
-  "unique_row_ids": 3381
+  "unique_row_ids": 3383
 }

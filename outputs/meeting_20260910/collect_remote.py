@@ -322,6 +322,7 @@ roots = {
     'continuation_gaps4_20260915': home / 'continuation_gaps4_20260915',
     'continuation_gaps5_20260916': home / 'continuation_gaps5_20260916',
     'continuation_gaps6_20260916': home / 'continuation_gaps6_20260916',
+    'continuation_gaps7_20260916': home / 'continuation_gaps7_20260916',
     'union_target_feasibility_20260915': home / 'union_target_feasibility_20260915',
     'compact_seed_support_20260914': home / 'compact_seed_support_20260914',
     'decomposition_lp_support_union_20260914': home / 'decomposition_lp_support_union_20260914',
@@ -384,7 +385,7 @@ for name, root in roots.items():
         continue
     rows = []
     diagnostic = name in ('overnight_diagnostics_20260914', 'mip_repeatability_20260914', 'parallel_pool_followup_20260914', 'parallel_pool_unions_20260914', 'overnight_parallel_20260914', 'compact_seed_support_20260914', 'compact_large_seed_20260914', 'lp_support_pool_diagnostic_20260914', 'remaining_chain_gaps_20260914', 'final_chain_gap_20260915', 'continuation_gap_20260915', 'retrospective_prefix_controls_20260914', 'decomposition_pool_union_20260914', 'decomposition_lp_support_union_20260914')
-    diagnostic = diagnostic or name in ('compact_pool_union_20260915', 'continuation_gaps2_20260915', 'continuation_gaps3_20260915', 'continuation_gaps4_20260915', 'continuation_gaps5_20260916', 'continuation_gaps6_20260916')
+    diagnostic = diagnostic or name in ('compact_pool_union_20260915', 'continuation_gaps2_20260915', 'continuation_gaps3_20260915', 'continuation_gaps4_20260915', 'continuation_gaps5_20260916', 'continuation_gaps6_20260916', 'continuation_gaps7_20260916')
     diagnostic_manifest_sha = hashlib.sha256((root/'manifest.json').read_bytes()).hexdigest() if diagnostic and (root/'manifest.json').exists() else None
     published_mips = set(root.glob('cases/*/mip_result.json')) if diagnostic else set()
     for p in sorted(set(root.rglob('*mip8h.json')) | set(root.rglob('*mip_budgeted.json')) | set(root.glob('*/mip.json')) | set((root/'results').glob('*60m.json')) | set((root/'mip').glob('*1h2stage.json')) | set(root.glob('p*/mip/*__1h2stage.json')) | set((root/'mip_attempts').glob('**/result.json')) | {p for p in root.glob('cases/*/mip/*/result.json') if 'smoke' not in p.parts} | published_mips):

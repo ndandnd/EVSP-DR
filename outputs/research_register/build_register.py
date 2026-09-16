@@ -218,7 +218,7 @@ class Register:
             self.extension_jobs[campaign_id] = extension_workflow.get("case_jobs.json", {}) or {}
         self.diagnostic_cases = {}
         self.diagnostic_jobs = {}
-        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914", "compact_seed_support_20260914", "compact_large_seed_20260914", "compact_pool_union_20260915", "lp_support_pool_diagnostic_20260914", "remaining_chain_gaps_20260914", "final_chain_gap_20260915", "continuation_gap_20260915", "continuation_gaps2_20260915", "continuation_gaps3_20260915", "continuation_gaps4_20260915", "continuation_gaps5_20260916", "continuation_gaps6_20260916", "retrospective_prefix_controls_20260914", "decomposition_pool_union_20260914", "decomposition_lp_support_union_20260914"):
+        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914", "compact_seed_support_20260914", "compact_large_seed_20260914", "compact_pool_union_20260915", "lp_support_pool_diagnostic_20260914", "remaining_chain_gaps_20260914", "final_chain_gap_20260915", "continuation_gap_20260915", "continuation_gaps2_20260915", "continuation_gaps3_20260915", "continuation_gaps4_20260915", "continuation_gaps5_20260916", "continuation_gaps6_20260916", "continuation_gaps7_20260916", "retrospective_prefix_controls_20260914", "decomposition_pool_union_20260914", "decomposition_lp_support_union_20260914"):
             diagnostic = snapshot.get("campaigns", {}).get(campaign_id, {})
             diagnostic_workflow = diagnostic.get("workflow", {}) or {}
             self.diagnostic_cases[campaign_id] = {
@@ -840,6 +840,16 @@ class Register:
                         initialization=manifest['change'], full_model_lp_certified=False,
                         mip_incumbent_fleet=result.get('fleet'), mip_bound_fleet=result.get('fleet_bound'),
                         fleet_proven=result.get('fleet_status') == 2,
+                        stage1_incumbent_fleet=result.get('fleet'),
+                        stage1_bound=result.get('fleet_bound'),
+                        stage1_proven=result.get('fleet_status') == 2,
+                        stage2_executed='charging_status' in result,
+                        stage2_status={2: 'OPTIMAL', 3: 'INFEASIBLE', 9: 'TIME_LIMIT'}.get(result.get('charging_status'), UNKNOWN),
+                        stage2_charging_cost=result.get('charging_cost'),
+                        stage2_charging_bound=result.get('charging_bound'),
+                        stage2_gap=((result['charging_cost']-result['charging_bound'])/abs(result['charging_cost'])
+                                    if result.get('charging_cost') and result.get('charging_bound') is not None else None),
+                        pool_size=result.get('repair_columns'),
                         mip_status={2: 'OPTIMAL', 3: 'INFEASIBLE', 9: 'TIME_LIMIT'}.get(status, 'OTHER'),
                         charging_cost_grid=result.get('charging_cost'),
                         charging_cost_continuous=result.get('continuous_charging_cost'),

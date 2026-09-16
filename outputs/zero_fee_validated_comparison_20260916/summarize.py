@@ -51,6 +51,8 @@ for case in manifest['cases']:
                    same_terminal_energy=abs(result['terminal_kwh']-row['fixed_terminal_kwh']) < 1e-5,
                    reduction_percent=100*(1-result['continuous_charging_cost']/row['fixed_continuous']),
                    charging_status=result['charging_status'],
+                   charging_bound_grid=result.get('charging_bound'),
+                   charging_relative_gap=(result['charging_cost']-result['charging_bound'])/abs(result['charging_cost']),
                    summary_path=str(path.relative_to(root)), summary_sha256=sha(path),
                    selected_sha256=sha(chosen_path))
     rows.append(row)
@@ -64,6 +66,7 @@ for r in rows:
     lines.append('| '+r['peak'][4:]+':00 | '+f"{r['fixed_continuous']:.2f}"+' | '+(f"{r['cleanup_continuous']:.2f}" if done else 'Pending')+' | '+(f"{r['reduction_percent']:.2f}%" if done else '—')+' | '+(str(r['same_terminal_energy']) if done else '—')+' |')
 lines += ['', 'These results use 240 kWh batteries, 350 kW charging, no reserve and no shared-station capacity. The common aggregate ending-energy minimum is 280.7833253 kWh; it is not a per-bus SOC requirement. Completed 08:00/12:00 selections and their fixed-duty comparators return with 281.1700005 kWh in total.', '',
           'Full CG reported convergence on its weighted event-graph objective at 15.2, 16.8 and 22.2 minutes (graph construction excluded). Its original covering selections repeat trips. Requiring exact-once coverage using only those unchanged pools rules out five buses at 08:00 and 12:00; 18:00 has a five-bus exact-once selection. This is a pool limitation: deleting duplicated trips and creating new charging variants can produce feasible schedules outside that pool, as the completed cleanups show.', '',
+          'The 08:00 and 12:00 cleanup MIPs prove their grid charging objectives optimal within the cleanup pools. The 18:00 search ends at its one-hour limit: grid incumbent 90.403385, bound 90.280210, a 0.1363% gap. Its feasible improvement is verified; charging optimality remains unproved. All three fixed and cleaned schedules have matching total ending energy (281.1700005 kWh at 08:00/12:00, 282.9 kWh at 18:00).', '',
           'A charging proof in the cleanup pool is not a full-model charging proof. Continuous replayed costs are not the grid objective covered by the solver proof. The results support an improvement over the tested fixed-duty optimizer under these declared assumptions, not universal superiority or full GIRO feasibility.', '',
           'Sources: [comparison and hashes](comparison.json), [full-CG manifest](../zero_fee_full_cg_20260916/manifest.json), [cleanup manifest](../terminal_duplicate_cleanup_20260916/manifest.json), [exact-once pool check](../terminal_exact_once_20260916/manifest.json).']
 (out/'README.md').write_text('\n'.join(lines)+'\n')

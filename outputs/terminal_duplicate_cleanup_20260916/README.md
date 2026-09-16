@@ -1,5 +1,5 @@
-# terminal_duplicate_cleanup_20260916
+# Duplicate removal and charging reoptimization
 
-Array 277834 deletes only repeated trips from selected full-CG duties, reoptimizes charging variants and selects exactly-once coverage. 08:00/12:00 completed; 18:00 pending at the last focused check. See ../zero_fee_validated_comparison_20260916/README.md.
+Array277834 completed all three cases. Each selected schedule covers all62trips exactly once with five buses. The08:00/12:00 grid charging objectives are proved within their cleanup pools;18:00 hit3600seconds with a0.1363% grid gap. See [matched comparison](../zero_fee_validated_comparison_20260916/README.md).
 
-Manifest and worker files freeze inputs, execution revision and resources. CPU jobs use default_partition, exclude scaglione-compute-01, and preserve restart attempts. No held historical or EVSPV2G jobs were changed.
+Only repeated trips are removed from selected fresh-CG duties. Charging alternatives are rebuilt under the same240kWh/350kW,zero-fee,aggregate return-energy model. No shared capacity/reserve is imposed. Manifest/worker/source hashes preserve provenance.
