@@ -1,0 +1,21 @@
+{
+  "utc": "2026-09-16T14:49:23.788366+00:00",
+  "rows": [
+    {
+      "job_id": "307592",
+      "case_id": "w2_k32_longmip",
+      "state": "RUNNING",
+      "native_license_passed": true,
+      "excluded": "scaglione-compute-01",
+      "nodes": "snavely-cpu-12"
+    },
+    {
+      "job_id": "307593",
+      "case_id": "w4_k32_longmip",
+      "state": "RUNNING",
+      "native_license_passed": true,
+      "excluded": "scaglione-compute-01",
+      "nodes": "snavely-cpu-13"
+    }
+  ]
+}

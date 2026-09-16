@@ -337,7 +337,7 @@
     "family": "production_or_historical",
     "report_links": [],
     "root": "/home/nc437/ladder-lite/chain_extension_31_32_20260915",
-    "row_count": 34,
+    "row_count": 40,
     "workflow_job_ids": [
       "224631",
       "224635",
@@ -652,7 +652,7 @@
     "family": "production_or_historical",
     "report_links": [],
     "root": "/home/nc437/ladder-lite/continuation_gaps10_20260916",
-    "row_count": 6,
+    "row_count": 7,
     "workflow_job_ids": [
       "290897"
     ]
@@ -662,7 +662,7 @@
     "family": "production_or_historical",
     "report_links": [],
     "root": "/home/nc437/ladder-lite/continuation_gaps11_20260916",
-    "row_count": 6,
+    "row_count": 7,
     "workflow_job_ids": [
       "294595"
     ]
@@ -672,11 +672,32 @@
     "family": "production_or_historical",
     "report_links": [],
     "root": "/home/nc437/ladder-lite/continuation_gaps12_20260916",
-    "row_count": 6,
+    "row_count": 9,
     "workflow_job_ids": [
       "294800",
       "294801",
       "294802"
+    ]
+  },
+  {
+    "campaign_id": "continuation_gaps13_20260916",
+    "family": "production_or_historical",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/continuation_gaps13_20260916",
+    "row_count": 7,
+    "workflow_job_ids": [
+      "298583"
+    ]
+  },
+  {
+    "campaign_id": "continuation_gaps14_20260916",
+    "family": "production_or_historical",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/continuation_gaps14_20260916",
+    "row_count": 8,
+    "workflow_job_ids": [
+      "307592",
+      "307593"
     ]
   },
   {
@@ -762,7 +783,7 @@
     "family": "production_or_historical",
     "report_links": [],
     "root": "/home/nc437/ladder-lite/continuation_gaps9_20260916",
-    "row_count": 6,
+    "row_count": 7,
     "workflow_job_ids": [
       "288847"
     ]
@@ -2117,20 +2138,9 @@
     "family": "scheduler",
     "report_links": [],
     "root": null,
-    "row_count": 45,
+    "row_count": 34,
     "workflow_job_ids": [
-      "228596",
-      "228597",
-      "228600",
-      "228601",
-      "228608",
-      "228609",
-      "288847",
-      "290897",
-      "294595",
-      "294800",
-      "294801",
-      "294802",
+      "336492",
       "537227"
     ]
   },

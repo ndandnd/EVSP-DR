@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "manifest_sha256": "b6fed854f81a64a1cc4a54f366ebdd0b053c0bffb98638397d7f1fd2b048adb2",
+  "checks": [
+    {
+      "case_id": "w1_k32_longmip",
+      "status": "passed",
+      "source_status_sha256": "c87d517918ec0a404450ae4c0c3c368990ac121e3aa2d8c50c755e9f51488dd8",
+      "source_journal_sha256": "f0736ca3e32d22f5c115bf5a58487264e3c64873219d7b82c1a5277b5809fe26"
+    }
+  ],
+  "native_runner": "Exact previously native-validated worker and871 runner unchanged; every attempt performs large-license check and source pool physical replay."
+}
