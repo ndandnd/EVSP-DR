@@ -1,0 +1,80 @@
+{
+  "units": "GiB; SlurmK divided by1024^2; nativeMiB divided by1024",
+  "rows": [
+    {
+      "chain": 1,
+      "job": "228596",
+      "slurm_MaxRSS_GiB": 232.17576599121094,
+      "solver_process_peak_GiB": 41.315345764160156,
+      "inheritance_workers": 8,
+      "final_resolve_incidence_s": 4.14167772885412,
+      "final_resolve_solver_s": 20.107545947190374,
+      "final_resolve_outcome": "error",
+      "status_sha256": "c87d517918ec0a404450ae4c0c3c368990ac121e3aa2d8c50c755e9f51488dd8",
+      "telemetry_sha256": "0dc00dcc24067a80668d155613d4a449ac2c561d493c7f5f42c928c4611030bb"
+    },
+    {
+      "chain": 2,
+      "job": "228600",
+      "slurm_MaxRSS_GiB": 211.72229385375977,
+      "solver_process_peak_GiB": 39.44695281982422,
+      "inheritance_workers": 8,
+      "final_resolve_incidence_s": 4.774430604185909,
+      "final_resolve_solver_s": 20.121723278891295,
+      "final_resolve_outcome": "error",
+      "status_sha256": "d92a6bd0e716ed5fe0aec1fb54fe431466def8622b64b2e46d573cf34f160085",
+      "telemetry_sha256": "047c86bc3fd32e44cfbb4e3e546bea5d74c8212c46ee1a3d905751ed03e6542a"
+    },
+    {
+      "chain": 3,
+      "job": "228604",
+      "slurm_MaxRSS_GiB": 206.17015075683594,
+      "solver_process_peak_GiB": 39.36656188964844,
+      "inheritance_workers": 8,
+      "final_resolve_incidence_s": 3.0023646210320294,
+      "final_resolve_solver_s": 8.748073648195714,
+      "final_resolve_outcome": "ok",
+      "status_sha256": "5b29dffe10237557e1e49d12fc0855834b84175c19e32e621a4444d8c6d67fac",
+      "telemetry_sha256": "6ec90d774937f9c1dc43efc50a5587e9d3fab46d42c28d793a40009d1bb3bcc9"
+    },
+    {
+      "chain": 4,
+      "job": "228608",
+      "slurm_MaxRSS_GiB": 214.40138626098633,
+      "solver_process_peak_GiB": 38.97496032714844,
+      "inheritance_workers": 8,
+      "final_resolve_incidence_s": 4.072325352113694,
+      "final_resolve_solver_s": 6.678354723844677,
+      "final_resolve_outcome": "ok",
+      "status_sha256": "0c80557ba838a6a159fc5e1187fd763ea0e08cb51e0fd55c1d22e8bde8b1cdb0",
+      "telemetry_sha256": "d0e80ef3c48d3c56ac8c2661d3cc99ce9e3c8d54c3820cccbad1a3c94395f159"
+    },
+    {
+      "chain": 5,
+      "job": "228612",
+      "slurm_MaxRSS_GiB": 206.77704238891602,
+      "solver_process_peak_GiB": 36.78128433227539,
+      "inheritance_workers": 8,
+      "final_resolve_incidence_s": 3.338882287964225,
+      "final_resolve_solver_s": 7.357981823151931,
+      "final_resolve_outcome": "ok",
+      "status_sha256": "ebb0ecdb121d9f9e55e4e7e720eb770fdb9a37dcaec1e47b07edc208a9b8acc5",
+      "telemetry_sha256": "307cf9d73ca5041a107789976ef017beb4e4a3c701affc05987c8b65df1e43f3"
+    },
+    {
+      "chain": 6,
+      "job": "228616",
+      "slurm_MaxRSS_GiB": 228.37562561035156,
+      "solver_process_peak_GiB": 42.335105895996094,
+      "inheritance_workers": 8,
+      "final_resolve_incidence_s": 3.2605401850305498,
+      "final_resolve_solver_s": 3.367677964968607,
+      "final_resolve_outcome": "ok",
+      "status_sha256": "da628c6b14a4a0b82f50dc5eddb486c8b7df1bf3e2f05d36857f188601355b44",
+      "telemetry_sha256": "804ea9a95ca6d3a542a29f104e4e95531d3d4097ad55cd144fb1555b10439f58"
+    }
+  ],
+  "decision": "HOLD; aggregate MaxRSS exceeds120GiB for allsix; do not infer whole-job memory from parentonlyRSS",
+  "caveat": "8inheritanceworkers inwarmk32 vsnoinheritance in fullfresh; process-treeRSS can count shared pages repeatedly; PSS/cgrouppeak not measured here",
+  "shutdown_timing_scope": "ordinary end-of-run final_resolve, not measured SIGTERM at arbitrary earlieriteration"
+}

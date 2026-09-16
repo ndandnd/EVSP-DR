@@ -1,0 +1,21 @@
+{
+  "status": "VERSIONED_FIX_STAGED_NOT_SCHEDULED",
+  "utc": "2026-09-16T23:38:41.326183+00:00",
+  "remote": "/home/nc437/ladder-lite/review_full40_20260916/checkpoint_v2",
+  "verified_files": {
+    "campaign.py": "b58bdcca71e26847ccc2130975a2332e1e8ecb2220529b26983ee19a9a47694b",
+    "checkpoint_recovery.py": "1f4a5af14a881bcdf833d432183f29d092b3ea5da7a3ac40f3128ee991d2a05b",
+    "checkpoint_validator.py": "2ab565931f466f7eeadadbc2a3abf78c2bebce0aac0f64d8da230ff86ee80d06",
+    "worker.sub": "27a1d07a0b16fd844b09348049c3fde33afac685eeadd1bed59ee45a2af54735",
+    "manifest.json": "89a5f34e17d2409ff54fc1bf53409fcb89d68344eb92cbedcafaab990b8308bb"
+  },
+  "held_jobs": [
+    "341405",
+    "341406"
+  ],
+  "original_manifest_and_wrapper_unchanged": true,
+  "graph_job_unchanged": "341404_0",
+  "scientific_code_unchanged": true,
+  "new_submissions": 0,
+  "release_gate": "No valid whole-job memory request<=120G established; old held job still references v1 and must not be released blindly."
+}

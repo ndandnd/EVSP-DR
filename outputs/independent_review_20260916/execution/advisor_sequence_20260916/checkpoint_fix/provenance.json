@@ -1,0 +1,38 @@
+{
+  "created_utc": "2026-09-16T23:37:51.917627+00:00",
+  "solver_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "production_modified": false,
+  "slurm_submissions": 0,
+  "source_wrapper_sha256": "3abed3c1360155305ce787cdd0034bb08b1e2e92e2190ae5f19c6d169846714c",
+  "source_manifest_sha256": "b9d69cedba06edac3cee9871d85b46f9f9514ddd6fc524837bc4825e69715fea",
+  "native_test_count": 11,
+  "native_tests_all_passed": true,
+  "testing_scope": "Native validator/recovery integration and actual native tiny CG resume; versioned campaign routing and unchanged scientific arguments checked statically. No full40 CG launched.",
+  "files_sha256": {
+    "README.md": "a93dd2143c3cf09c357928ad7e9782b81724a5b9ac88fbb74c7aa4d98703d6de",
+    "campaign.diff": "e17c06c144a70766d6661430672897f03335015b3192207408e2eb0835d8baf9",
+    "campaign.py": "b58bdcca71e26847ccc2130975a2332e1e8ecb2220529b26983ee19a9a47694b",
+    "checkpoint_recovery.py": "1f4a5af14a881bcdf833d432183f29d092b3ea5da7a3ac40f3128ee991d2a05b",
+    "checkpoint_validator.py": "2ab565931f466f7eeadadbc2a3abf78c2bebce0aac0f64d8da230ff86ee80d06",
+    "collect_shutdown.py": "44a53de9666f367510aa0631c0640db4320de1b14ff4c4ec304eef7742f0f949",
+    "k32_final_resolve.json": "10d4e83ce12387b6f9de036aa9916caca41e9be5dd2134b052c71b814b36e456",
+    "manifest.json": "89a5f34e17d2409ff54fc1bf53409fcb89d68344eb92cbedcafaab990b8308bb",
+    "native_test_artifacts.tar.gz": "748b1ce2d70c0ef7e7e1474035e9d02b85216145ee0e8ec3dac50d8a36e7c61d",
+    "remote_test_code_path.txt": "fb8882e2dee5a168029eca5d764e3603afb6816e8b1a076bd88857ab3bb5ae2b",
+    "signal_timing.json": "f2b99eec88e63b7798b3e477bfdbb46ce2c3299fffe051796d86ce21d1c1155c",
+    "signal_timing.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "signal_timing_artifacts.tar.gz": "0d42fba39288befb71e8d2fdecd661df00c61c9ee963979e8b21ead36421319a",
+    "signal_timing_remote.py": "20f7fb2119c43fcbe87b08498d05e116103d643a3b4ae89e3a968e681ab9aec9",
+    "static_validation.json": "fd81bbbd9869f8f4c040ca76247c2be2dddde590260aa83b244798080f276a78",
+    "test_recovery_remote.py": "90fecfc8a94199c5e5471c41bd91f6f141e81a3128fba8afbc8e597a64bdc882",
+    "tests.json": "750e162d1e0eec2245d0e6f66ccb05d4b4f416d731b8becd52fd53a6b2670437",
+    "tests.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "worker.sub": "27a1d07a0b16fd844b09348049c3fde33afac685eeadd1bed59ee45a2af54735",
+    "deployment_receipt.json": "2101929e5e034c6f3e865a5bd5db2f983556ab57f01d728231ffb464c5e3aa6e"
+  },
+  "post_test_documentation_update": {
+    "utc": "2026-09-16T23:41:50.749306+00:00",
+    "reason": "Root staged versioned fix and updated README; tested executable hashes unchanged",
+    "previous_readme_sha256": "a133e371b2eaf644df89dc39b369cac0bdd153e5c56a669c2998b33bcbdb4acd"
+  }
+}

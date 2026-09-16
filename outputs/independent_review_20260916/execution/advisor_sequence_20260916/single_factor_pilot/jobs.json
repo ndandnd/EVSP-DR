@@ -1,0 +1,151 @@
+{
+  "pilot_manifest_sha256": "39305975b4ba6d0add2622fa8de607ccac1b0ebd6753507f3f6ded0c8d587f61",
+  "jobs": {
+    "baseline": {
+      "job_id": "342321",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=16G",
+        "--time=01:30:00",
+        "--no-requeue",
+        "--job-name=sfPilot_baseline",
+        "--comment=EVSP_ADVISOR_SINGLE_FACTOR_PILOT_baseline",
+        "--output=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/%j_baseline.out",
+        "--error=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/%j_baseline.err",
+        "--chdir=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot",
+        "--export=ALL",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/worker.sh",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot",
+        "baseline"
+      ],
+      "submitted_epoch": 1789601613.490125,
+      "scontrol_initial": "JobId=342321 JobName=sfPilot_baseline UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14009 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=01:30:00 TimeMin=N/A SubmitTime=2026-09-16T19:33:33 EligibleTime=2026-09-16T19:33:33 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T19:33:33 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2698355 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=16G,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/worker.sh WorkDir=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot Comment=EVSP_ADVISOR_SINGLE_FACTOR_PILOT_baseline  StdErr=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/342321_baseline.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/342321_baseline.out TresPerTask=cpu=1"
+    },
+    "parx60_only": {
+      "job_id": "342380",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=16G",
+        "--time=01:30:00",
+        "--no-requeue",
+        "--job-name=sfPilot_parx60_only",
+        "--comment=EVSP_ADVISOR_SINGLE_FACTOR_PILOT_parx60_only",
+        "--output=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/%j_parx60_only.out",
+        "--error=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/%j_parx60_only.err",
+        "--chdir=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot",
+        "--export=ALL",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/worker.sh",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot",
+        "parx60_only"
+      ],
+      "submitted_epoch": 1789601954.4227302,
+      "scontrol_initial": "JobId=342380 JobName=sfPilot_parx60_only UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14009 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=01:30:00 TimeMin=N/A SubmitTime=2026-09-16T19:39:14 EligibleTime=2026-09-16T19:39:14 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T19:39:14 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2728050 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=16G,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/worker.sh WorkDir=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot Comment=EVSP_ADVISOR_SINGLE_FACTOR_PILOT_parx60_only  StdErr=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/342380_parx60_only.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/342380_parx60_only.out TresPerTask=cpu=1"
+    },
+    "reserve15_only": {
+      "job_id": "342381",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=16G",
+        "--time=01:30:00",
+        "--no-requeue",
+        "--job-name=sfPilot_reserve15_only",
+        "--comment=EVSP_ADVISOR_SINGLE_FACTOR_PILOT_reserve15_only",
+        "--output=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/%j_reserve15_only.out",
+        "--error=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/%j_reserve15_only.err",
+        "--chdir=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot",
+        "--export=ALL",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/worker.sh",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot",
+        "reserve15_only"
+      ],
+      "submitted_epoch": 1789601954.6495078,
+      "scontrol_initial": "JobId=342381 JobName=sfPilot_reserve15_only UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14009 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=01:30:00 TimeMin=N/A SubmitTime=2026-09-16T19:39:14 EligibleTime=2026-09-16T19:39:14 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T19:39:14 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2728050 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=16G,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/worker.sh WorkDir=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot Comment=EVSP_ADVISOR_SINGLE_FACTOR_PILOT_reserve15_only  StdErr=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/342381_reserve15_only.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/342381_reserve15_only.out TresPerTask=cpu=1"
+    },
+    "battery236p44_only": {
+      "job_id": "342382",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=16G",
+        "--time=01:30:00",
+        "--no-requeue",
+        "--job-name=sfPilot_battery236p44_only",
+        "--comment=EVSP_ADVISOR_SINGLE_FACTOR_PILOT_battery236p44_only",
+        "--output=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/%j_battery236p44_only.out",
+        "--error=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/%j_battery236p44_only.err",
+        "--chdir=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot",
+        "--export=ALL",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/worker.sh",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot",
+        "battery236p44_only"
+      ],
+      "submitted_epoch": 1789601954.8765721,
+      "scontrol_initial": "JobId=342382 JobName=sfPilot_battery236p44_only UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14009 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=01:30:00 TimeMin=N/A SubmitTime=2026-09-16T19:39:14 EligibleTime=2026-09-16T19:39:14 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T19:39:14 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2728050 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=16G,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/worker.sh WorkDir=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot Comment=EVSP_ADVISOR_SINGLE_FACTOR_PILOT_battery236p44_only  StdErr=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/342382_battery236p44_only.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/342382_battery236p44_only.out TresPerTask=cpu=1"
+    },
+    "battery239p01_only": {
+      "job_id": "342383",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=16G",
+        "--time=01:30:00",
+        "--no-requeue",
+        "--job-name=sfPilot_battery239p01_only",
+        "--comment=EVSP_ADVISOR_SINGLE_FACTOR_PILOT_battery239p01_only",
+        "--output=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/%j_battery239p01_only.out",
+        "--error=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/%j_battery239p01_only.err",
+        "--chdir=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot",
+        "--export=ALL",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/worker.sh",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot",
+        "battery239p01_only"
+      ],
+      "submitted_epoch": 1789601955.081814,
+      "scontrol_initial": "JobId=342383 JobName=sfPilot_battery239p01_only UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14009 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=01:30:00 TimeMin=N/A SubmitTime=2026-09-16T19:39:15 EligibleTime=2026-09-16T19:39:15 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T19:39:15 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2728050 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=16G,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/worker.sh WorkDir=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot Comment=EVSP_ADVISOR_SINGLE_FACTOR_PILOT_battery239p01_only  StdErr=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/342383_battery239p01_only.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/342383_battery239p01_only.out TresPerTask=cpu=1"
+    },
+    "segregation_only": {
+      "job_id": "342384",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=16G",
+        "--time=01:30:00",
+        "--no-requeue",
+        "--job-name=sfPilot_segregation_only",
+        "--comment=EVSP_ADVISOR_SINGLE_FACTOR_PILOT_segregation_only",
+        "--output=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/%j_segregation_only.out",
+        "--error=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/%j_segregation_only.err",
+        "--chdir=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot",
+        "--export=ALL",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/worker.sh",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot",
+        "segregation_only"
+      ],
+      "submitted_epoch": 1789601955.2889132,
+      "scontrol_initial": "JobId=342384 JobName=sfPilot_segregation_only UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14009 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=01:30:00 TimeMin=N/A SubmitTime=2026-09-16T19:39:15 EligibleTime=2026-09-16T19:39:15 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T19:39:15 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2728050 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=16G,node=1,billing=1 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=1 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/worker.sh WorkDir=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot Comment=EVSP_ADVISOR_SINGLE_FACTOR_PILOT_segregation_only  StdErr=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/342384_segregation_only.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/logs/342384_segregation_only.out TresPerTask=cpu=1"
+    }
+  },
+  "intents": {},
+  "remaining_gate_sha256": "4dcb475b06438784a1acaaa24dc455ebbcadd10376c95c27bb72366638b98c30"
+}

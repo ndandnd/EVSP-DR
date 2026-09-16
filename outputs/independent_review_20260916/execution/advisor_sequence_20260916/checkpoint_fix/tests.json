@@ -1,0 +1,317 @@
+{
+  "tests": [
+    {
+      "test": "corrupt_latest_json_fallback",
+      "passed": true,
+      "selection": {
+        "schema": "evsp-checkpoint-selection-v1",
+        "candidates": [
+          {
+            "source_status": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/corrupt_latest_json_fallback/new/cg.json",
+            "accepted": false,
+            "source_sha256": {
+              "": "80216967918172c414065ee096341fad4d00bcb845dd1aec3488920a24fe3c16",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            },
+            "error": "ValueError: {\"valid\": false, \"error\": \"JSONDecodeError: Expecting value: line 1 column 8 (char 7)\"}\n"
+          },
+          {
+            "source_status": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/corrupt_latest_json_fallback/old/cg.json",
+            "accepted": true,
+            "source_sha256": {
+              "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            },
+            "validation": {
+              "valid": true,
+              "columns": 13,
+              "journal_records": 13,
+              "iteration_rows": 1,
+              "identity_and_pool_checks": "pinned native functions",
+              "solver_executed": false
+            },
+            "published_sha256": {
+              "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            }
+          }
+        ],
+        "selected": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/corrupt_latest_json_fallback/current/resume/cg.json"
+      },
+      "sources_unchanged": true
+    },
+    {
+      "test": "incomplete_latest_journal_fallback",
+      "passed": true,
+      "selection": {
+        "schema": "evsp-checkpoint-selection-v1",
+        "candidates": [
+          {
+            "source_status": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/incomplete_latest_journal_fallback/new/cg.json",
+            "accepted": false,
+            "source_sha256": {
+              "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+              ".columns.jsonl": "c05efe7536ee402ec20321ff87d8020e58397512116ad6e778fabbc0faf6c7dc",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            },
+            "error": "ValueError: {\"valid\": false, \"error\": \"ValueError: pool: saved status records 13 columns but the journal contains only 1 unique incidences; journal does not contain every positive route in final_lp\"}\n"
+          },
+          {
+            "source_status": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/incomplete_latest_journal_fallback/old/cg.json",
+            "accepted": true,
+            "source_sha256": {
+              "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            },
+            "validation": {
+              "valid": true,
+              "columns": 13,
+              "journal_records": 13,
+              "iteration_rows": 1,
+              "identity_and_pool_checks": "pinned native functions",
+              "solver_executed": false
+            },
+            "published_sha256": {
+              "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            }
+          }
+        ],
+        "selected": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/incomplete_latest_journal_fallback/current/resume/cg.json"
+      },
+      "sources_unchanged": true
+    },
+    {
+      "test": "identity_mismatch_fallback",
+      "passed": true,
+      "selection": {
+        "schema": "evsp-checkpoint-selection-v1",
+        "candidates": [
+          {
+            "source_status": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/identity_mismatch_fallback/new/cg.json",
+            "accepted": false,
+            "source_sha256": {
+              "": "518d28f63bcaf3d68dd3d05ca2e6dcbc1fa804708c4dd9d176c9d33ef89a1880",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            },
+            "error": "ValueError: {\"valid\": false, \"error\": \"ValueError: identity: charge_kw differs (saved=241, current=240.0)\"}\n"
+          },
+          {
+            "source_status": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/identity_mismatch_fallback/old/cg.json",
+            "accepted": true,
+            "source_sha256": {
+              "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            },
+            "validation": {
+              "valid": true,
+              "columns": 13,
+              "journal_records": 13,
+              "iteration_rows": 1,
+              "identity_and_pool_checks": "pinned native functions",
+              "solver_executed": false
+            },
+            "published_sha256": {
+              "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            }
+          }
+        ],
+        "selected": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/identity_mismatch_fallback/current/resume/cg.json"
+      },
+      "sources_unchanged": true
+    },
+    {
+      "test": "journal_ahead_status_accepted",
+      "passed": true,
+      "selection": {
+        "schema": "evsp-checkpoint-selection-v1",
+        "candidates": [
+          {
+            "source_status": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/journal_ahead_status_accepted/new/cg.json",
+            "accepted": true,
+            "source_sha256": {
+              "": "0ed038d9e80436e8bb31732b885735cc461209cf7f3877cf193e617d9594f427",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            },
+            "validation": {
+              "valid": true,
+              "columns": 13,
+              "journal_records": 13,
+              "iteration_rows": 1,
+              "identity_and_pool_checks": "pinned native functions",
+              "solver_executed": false
+            },
+            "published_sha256": {
+              "": "0ed038d9e80436e8bb31732b885735cc461209cf7f3877cf193e617d9594f427",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            }
+          }
+        ],
+        "selected": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/journal_ahead_status_accepted/current/resume/cg.json"
+      },
+      "sources_unchanged": true
+    },
+    {
+      "test": "safe_torn_tail_repaired_privately",
+      "passed": true,
+      "selection": {
+        "schema": "evsp-checkpoint-selection-v1",
+        "candidates": [
+          {
+            "source_status": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/safe_torn_tail_repaired_privately/new/cg.json",
+            "accepted": true,
+            "source_sha256": {
+              "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+              ".columns.jsonl": "a6fe7fefa51c796fd8ca4191dcbaa65e82dd41ab7954680375f9317d71174900",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            },
+            "validation": {
+              "valid": true,
+              "columns": 13,
+              "journal_records": 13,
+              "iteration_rows": 1,
+              "identity_and_pool_checks": "pinned native functions",
+              "solver_executed": false
+            },
+            "published_sha256": {
+              "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            }
+          }
+        ],
+        "selected": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/safe_torn_tail_repaired_privately/current/resume/cg.json"
+      },
+      "sources_unchanged": true
+    },
+    {
+      "test": "copy_failure_fallback",
+      "passed": true,
+      "selection": {
+        "schema": "evsp-checkpoint-selection-v1",
+        "candidates": [
+          {
+            "source_status": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/copy_failure_fallback/new/cg.json",
+            "accepted": false,
+            "source_sha256": {
+              "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            },
+            "error": "OSError: injected copy interruption"
+          },
+          {
+            "source_status": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/copy_failure_fallback/old/cg.json",
+            "accepted": true,
+            "source_sha256": {
+              "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            },
+            "validation": {
+              "valid": true,
+              "columns": 13,
+              "journal_records": 13,
+              "iteration_rows": 1,
+              "identity_and_pool_checks": "pinned native functions",
+              "solver_executed": false
+            },
+            "published_sha256": {
+              "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            }
+          }
+        ],
+        "selected": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/copy_failure_fallback/current/resume/cg.json"
+      },
+      "sources_unchanged": true
+    },
+    {
+      "test": "all_invalid_fail_closed",
+      "passed": true,
+      "report": {
+        "schema": "evsp-checkpoint-selection-v1",
+        "candidates": [
+          {
+            "source_status": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/all_invalid/bad/cg.json",
+            "accepted": false,
+            "source_sha256": {
+              "": "80216967918172c414065ee096341fad4d00bcb845dd1aec3488920a24fe3c16",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            },
+            "error": "ValueError: {\"valid\": false, \"error\": \"JSONDecodeError: Expecting value: line 1 column 8 (char 7)\"}\n"
+          }
+        ],
+        "selected": null,
+        "prior_attempts": [
+          "/tmp/evsp-checkpoint-fix-tests-fryynk4h/all_invalid/bad"
+        ]
+      }
+    },
+    {
+      "test": "prior_attempt_without_checkpoint_fail_closed",
+      "passed": true
+    },
+    {
+      "test": "genuine_first_run_allowed",
+      "passed": true
+    },
+    {
+      "test": "hard_kill_during_copy_then_requeue_fallback",
+      "passed": true,
+      "no_partial_checkpoint_published": true,
+      "report": {
+        "schema": "evsp-checkpoint-selection-v1",
+        "candidates": [
+          {
+            "source_status": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/hard_kill/old/cg.json",
+            "accepted": true,
+            "source_sha256": {
+              "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            },
+            "validation": {
+              "valid": true,
+              "columns": 13,
+              "journal_records": 13,
+              "iteration_rows": 1,
+              "identity_and_pool_checks": "pinned native functions",
+              "solver_executed": false
+            },
+            "published_sha256": {
+              "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+              ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+              ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+            }
+          }
+        ],
+        "selected": "/tmp/evsp-checkpoint-fix-tests-fryynk4h/hard_kill/next/resume/cg.json"
+      }
+    },
+    {
+      "test": "native_solver_resumes_published_checkpoint",
+      "passed": true,
+      "columns": 13,
+      "certified_rc_optimal": true,
+      "stop_reason": "certified"
+    }
+  ],
+  "temp_root": "/tmp/evsp-checkpoint-fix-tests-fryynk4h",
+  "slurm_submissions": 0,
+  "production_modified": false,
+  "source_code_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"
+}

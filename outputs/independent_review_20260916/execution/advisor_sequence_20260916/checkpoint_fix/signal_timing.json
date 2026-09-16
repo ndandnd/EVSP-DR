@@ -1,0 +1,44 @@
+{
+  "tests": [
+    {
+      "signal": "SIGTERM",
+      "returncode": 0,
+      "events": [
+        "signal_sent 5547051.828256052",
+        "master_solve_after_signal",
+        "post_signal_master_seconds 0.0005653314292430878"
+      ],
+      "post_signal_to_process_exit_s": 0.2083945283666253,
+      "post_signal_master_solve_s": 0.0005653314292430878,
+      "stop_reason": "external_signal",
+      "termination_signal": "SIGTERM",
+      "columns": 13,
+      "iterations": 1,
+      "final_lp_source": "final_pool_resolve",
+      "native_status_sha256": "9ff11abee5edd409e15fcca7357185139542aa2cbdd5553a014456efaa0e05c4",
+      "native_log_sha256": "7d4c64b401204c74f9d20df58757ab079ab8d65d12d88d46ec9588eb7b6f4aa3"
+    },
+    {
+      "signal": "SIGUSR1",
+      "returncode": 0,
+      "events": [
+        "signal_sent 5547053.603881612",
+        "master_solve_after_signal",
+        "post_signal_master_seconds 0.0004955707117915154"
+      ],
+      "post_signal_to_process_exit_s": 0.20810083579272032,
+      "post_signal_master_solve_s": 0.0004955707117915154,
+      "stop_reason": "external_signal",
+      "termination_signal": "SIGUSR1",
+      "columns": 13,
+      "iterations": 1,
+      "final_lp_source": "final_pool_resolve",
+      "native_status_sha256": "1b8171105b2d5f9c4b3cece54d460c62bbf47e30251e0f1b06c402a51d98157b",
+      "native_log_sha256": "7d4c64b401204c74f9d20df58757ab079ab8d65d12d88d46ec9588eb7b6f4aa3"
+    }
+  ],
+  "instrumentation": "A test-only wrapper sends real OS signal on first pricing entry and records any subsequent master solve. Pinned solver source is unchanged.",
+  "production_modified": false,
+  "slurm_submissions": 0,
+  "temp_root": "/tmp/evsp-checkpoint-audit-lbqv6x8r"
+}

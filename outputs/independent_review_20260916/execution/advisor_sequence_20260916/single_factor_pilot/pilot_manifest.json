@@ -1,0 +1,42 @@
+{
+  "schema": "advisor-single-factor-one-arm-pilot-v1",
+  "finding": "F4",
+  "authorization": "One control-arm timing pilot; remaining five 20-sequence pilots only after control evidence gate passes. No full replay, CG or MIP authorized here.",
+  "remote_root": "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot",
+  "remote_storage": "/share/scaglione/nc437/evsp-dr/advisor_sequence_20260916/single_factor_pilot",
+  "code": "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0",
+  "prepared_manifest_sha256": "3ca9b96d05c256e72707133e2e181cc8146ddeffb1f0f8ae8848f2bd4d3920a9",
+  "control_arm": "baseline",
+  "conditional_arms": [
+    "parx60_only",
+    "reserve15_only",
+    "battery236p44_only",
+    "battery239p01_only",
+    "segregation_only"
+  ],
+  "resource_request": {
+    "partition": "default_partition",
+    "cpus": 1,
+    "memory_gb": 16,
+    "wall_seconds": 5400,
+    "exclude": "scaglione-compute-01",
+    "requeue": false
+  },
+  "control_pass_gate": {
+    "source_pool_count": 254068,
+    "source_pool_hash_verified": true,
+    "pilot_sequences": 20,
+    "all_control_sequences_feasible": true,
+    "all_routes_physically_replayed": true,
+    "unknown_outcomes_allowed": false,
+    "deterministic_pilot_verified": true,
+    "max_stage_rss_kib": 13421772,
+    "max_elapsed_s": 4500
+  },
+  "state": "prepared_for_authorized_control_only",
+  "tooling_sha256": {
+    "worker.py": "9ed88ef0b716159121be7b36533179f022ee7d4267e39228fbfd32291a38a544",
+    "worker.sh": "6e7fe587425c8b0ba7a9355c7e8962c880bb94e37a2eea18e0ba8f83eadd2276",
+    "submit.py": "886cba1628aa1e6fd7ca8ffc5ec4cf683ac1e39afcbd8ff44e0d5ca9f1455b05"
+  }
+}

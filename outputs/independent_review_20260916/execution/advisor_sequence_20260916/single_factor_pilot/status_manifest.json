@@ -1,0 +1,31 @@
+{
+  "schema": "advisor-single-factor-pilot-status-v1",
+  "finding": "F4",
+  "immutable_pilot_manifest_sha256": "39305975b4ba6d0add2622fa8de607ccac1b0ebd6753507f3f6ded0c8d587f61",
+  "control_result": "VERIFIED_20_OF_20_SAMPLED_SEQUENCES_PHYSICALLY_FEASIBLE",
+  "control_job": "342321",
+  "control_scheduler_state": "COMPLETED",
+  "control_elapsed_s": 118.22493790276349,
+  "control_outcome_counts": {
+    "feasible": 20
+  },
+  "control_gate_sha256": "4dcb475b06438784a1acaaa24dc455ebbcadd10376c95c27bb72366638b98c30",
+  "source_pool_sequences": 254068,
+  "pilot_trip_coverage": 347,
+  "full_instance_trip_count": 716,
+  "jobs": {
+    "baseline": "342321",
+    "parx60_only": "342380",
+    "reserve15_only": "342381",
+    "battery236p44_only": "342382",
+    "battery239p01_only": "342383",
+    "segregation_only": "342384"
+  },
+  "remaining_five_status": "SUBMITTED_NOT_YET_COLLECTED",
+  "full_pool_physics_and_fleet_result": "UNRESOLVED",
+  "further_authorized_jobs": 0,
+  "full_replay_cg_mip_authorized": false,
+  "monitor": "MONITORING.md",
+  "latest_snapshot": "snapshots/20260916T234012Z/status.json",
+  "snapshot_correction": "First unfiltered scheduler snapshot retained privately; date/user-filtered collection replaces it. Immutable execution manifest is not rewritten after submission."
+}

@@ -1,5 +1,7 @@
 # Independent review: execution and findings
 
+**Latest sequencing:** [one pilot then five only on success; action2 unsubmitted; fullCG held pending recovery/memory; gated four-result report](advisor_sequence_20260916/README.md). This supersedes the earlier blanket hold only for the named actions.
+
 **Advisor follow-up:** [six k5 F6 jobs launched; further plans held; checkpoint audit and corrected §1a counts](advisor_followup_20260916/README.md). No additional submissions or partition moves without user confirmation after current cluster load.
 
 P0 was executed in the requested order: **3 → 2 → 4 → 1 → 5 → 6**. The table separates findings supported by evidence, claims contradicted by evidence, and hypotheses awaiting experiments. An unresolved hypothesis is not marked refuted merely because a run has not finished.

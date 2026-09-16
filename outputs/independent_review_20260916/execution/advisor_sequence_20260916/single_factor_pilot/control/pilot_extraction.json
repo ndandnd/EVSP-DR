@@ -1,0 +1,14 @@
+{
+  "source_journal": "/home/nc437/ladder-lite/chain_extension_31_32_20260915/cases/w5_k31/cg/228610_r0/cg.json.columns.jsonl",
+  "source_journal_sha256": "396e3d71e2269825785add62aa52a83721be81f875f381b64d62b3962d0a364a",
+  "source_status_sha256": "b438a1cc36981127c83020ddec86f6da14bf1b91dce73caf7c653145f89fda85",
+  "source_ordered_pool_sha256": "a5a44b5c708286f914c6f6eec4680a8a7081c6015ee8e9c6f687e1c8e69eb5c6",
+  "source_columns": 254068,
+  "unique_ordered_sequences": 20,
+  "sequences_sha256": "dfb54ebf25dca8f67085278221d1540ddb11755aadd7b469df6cb1cc5ea114fd",
+  "trip_count": 716,
+  "scope": "pilot_subset_not_full_pool",
+  "definition": "First reconstruct the identical cheapest-per-trip-incidence MIP pool; then deduplicate by chronological route_nodes trip sequence, not frozenset or sorted IDs.",
+  "parent_sequences_sha256": "cdaae9f1f92fee3d2fac216917ca3a99478111e5c5c3a8ea7d9c9d6d843a69a4",
+  "sampling": "20 evenly spaced ranks after sorting by trip count, source charge starts, sequence hash"
+}

@@ -1,0 +1,76 @@
+--- pinned-production/campaign.py
++++ checkpoint_v2/campaign.py
+@@ -12,11 +12,14 @@
+ import sys
+ import time
+ 
++from checkpoint_recovery import recover
++
+ B = Path('/home/nc437/ladder-lite/review_full40_20260916')
+ D = Path('/share/scaglione/nc437/evsp-dr/review_full40_20260916')
+ PARENT = Path('/home/nc437/ladder-lite/full_pool_recovery_20260912')
+ SOURCE = Path('/home/nc437/ladder-lite/graph_recovery_20260912/code')
+ COMMIT = 'a0e0bb7681c8451e3cbbbfa06aef390026d9af4b'
++MANIFEST = Path(os.environ.get('EVSP_CAMPAIGN_MANIFEST', str(B/'manifest.json')))
+ MIP_COMMIT = '871d057e1067411f09581e37d78f7c1ca43f68bb'
+ MIP = Path('/home/nc437/ladder-lite/execution')/MIP_COMMIT
+ PY = '/home/nc437/evsp_env/bin/python'
+@@ -154,7 +157,7 @@
+ 
+ 
+ def worker(mode, cid):
+-    v = read(B/'manifest.json')
++    v = read(MANIFEST)
+     if cid == 'array':
+         cid = sorted(v['cases'])[int(os.environ['SLURM_ARRAY_TASK_ID'])]
+     c = dict(v['cases'][cid]); root = B/'cases'/cid
+@@ -168,7 +171,7 @@
+     for name, digest in v['data_sha256'].items():
+         assert sha(B/'code/data'/name) == digest
+     record = {'case_id': cid, 'mode': mode, 'attempt': attempt, 'started_epoch': time.time(),
+-        'execution_commit': v['execution_commit'], 'manifest_sha256': sha(B/'manifest.json'),
++        'execution_commit': v['execution_commit'], 'manifest_sha256': sha(MANIFEST),
+         'input_sha256': c['input_sha256'], 'resource_request': v['resources'][mode]}
+     if mode == 'cache':
+         if (root/'cache_result.json').exists():
+@@ -181,19 +184,20 @@
+         # Fresh full-instance CG: no previous-k or GIRO columns imported.
+         cache = read(root/'cache_result.json'); assert sha(c['cache']) == cache['cache_sha256']
+         out = a/'cg.json'; args = [PY, str(B/'code/src/exact_pricer_expanded.py'), *cg_argv(v, c, out)]
+-        previous = sorted((p for p in (root/'cg').glob('*/cg.json') if p.parent != a), key=lambda p: p.stat().st_mtime)
+-        for previous_status in reversed(previous):
+-            previous_value = read(previous_status)
+-            journal = Path(str(previous_status)+'.columns.jsonl')
+-            if not journal.is_file():
+-                continue
+-            assert previous_value['provenance']['git_commit'] == v['execution_commit']
+-            assert previous_value['provenance']['instance_sha256'] == c['input_sha256']
+-            record['resume_from'] = {'status': str(previous_status), 'status_sha256': sha(previous_status), 'journal_sha256': sha(journal)}
+-            for suffix in ['', '.columns.jsonl', '.iters.csv']:
+-                old = Path(str(previous_status)+suffix)
+-                if old.exists(): shutil.copy2(old, Path(str(out)+suffix))
+-            args += ['--resume']; break
++        def validate_checkpoint(candidate):
++            request = {'code': str(B/'code'), 'argv': cg_argv(v, c, candidate) + ['--resume']}
++            result = subprocess.run([PY, str(Path(__file__).with_name('checkpoint_validator.py'))],
++                input=json.dumps(request), capture_output=True, text=True,
++                cwd=B/'code', timeout=600)
++            if result.returncode:
++                raise RuntimeError('checkpoint validator failed: '+result.stdout[-4000:]+' '+result.stderr[-2000:])
++            return json.loads(result.stdout)
++        resumed = recover(root/'cg', a, validate_checkpoint)
++        if resumed is not None:
++            out = resumed
++            record['resume_selection'] = str(a/'resume_selection.json')
++            record['resume_from'] = read(a/'resume_selection.json')['candidates'][-1]
++            args = [PY, str(B/'code/src/exact_pricer_expanded.py'), *cg_argv(v, c, out), '--resume']
+         limit = 176400
+     elif mode == 'mip':
+         status = root/'cg.json'; value = read(status); assert usable(value)
+@@ -304,5 +308,5 @@
+     parser = argparse.ArgumentParser(); parser.add_argument('command', choices=['prepare', 'submit', 'worker'])
+     parser.add_argument('mode', nargs='?'); parser.add_argument('case', nargs='?'); args = parser.parse_args()
+     if args.command == 'prepare': raise RuntimeError('Use audited prepare_remote.py; template preparation disabled')
+-    elif args.command == 'submit': submit()
++    elif args.command == 'submit': raise RuntimeError('Versioned wrapper is worker-only; submission requires an explicit audited scheduler action')
+     else: worker(args.mode, args.case)

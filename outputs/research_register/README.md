@@ -1,3 +1,5 @@
+Current authorized sequence: [one-arm pilot, held full-CG recovery fix, conditional MIP plan and four-result gate](../independent_review_20260916/execution/advisor_sequence_20260916/README.md). No general cluster refill is authorized.
+
 Latest advisor follow-up: [six authorized F6 runs, held follow-up plans, checkpoint audit and corrected proof counts](../independent_review_20260916/execution/advisor_followup_20260916/README.md). No further submissions without user confirmation after a load report.
 
 Current independent-review results: [16 September F1–F9 audit and execution ledger](../independent_review_20260916/execution/README.md). This supersedes earlier uncertainty about empty-driving feasibility and adds numerical event-model fleet bounds; historical result tables remain preserved.

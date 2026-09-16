@@ -1,0 +1,1 @@
+This first scheduler snapshot queried recycled job IDs without a campaign date/user filter. It is superseded by 20260916T233859Z. The unfiltered snapshot is retained under ignored private_internal/ and must not be published. Source-pool and scientific control-pilot results are unchanged.

@@ -1,0 +1,79 @@
+{
+  "arm": "baseline",
+  "pass": true,
+  "pilot_manifest_sha256": "39305975b4ba6d0add2622fa8de607ccac1b0ebd6753507f3f6ded0c8d587f61",
+  "source_pool_hash_verified": true,
+  "source_pool_columns": 254068,
+  "deterministic_pilot_verified": true,
+  "pilot_sequences": 20,
+  "pilot_sequences_sha256": "dfb54ebf25dca8f67085278221d1540ddb11755aadd7b469df6cb1cc5ea114fd",
+  "all_control_sequences_feasible": true,
+  "outcome_counts": {
+    "feasible": 20
+  },
+  "unknown_count": 0,
+  "resource_ok": true,
+  "elapsed_s": 118.22493790276349,
+  "stage_resources": [
+    {
+      "stage": "extract",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "-o",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/runs/baseline/342321_r0/extract.time",
+        "/home/nc437/evsp_env/bin/python",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/prepared/extract_sequences.py",
+        "--root",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/prepared",
+        "--code",
+        "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0",
+        "--out",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/runs/baseline/342321_r0/extracted"
+      ],
+      "returncode": 0,
+      "elapsed_s": 70.23950890917331,
+      "max_rss_kib": 4440848,
+      "log_sha256": "a59e63ccbf3d0effe1d68f8a7b7b9bc4338fb3d8104e00ded3ee2425363928d1"
+    },
+    {
+      "stage": "replay",
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "-o",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/runs/baseline/342321_r0/replay.time",
+        "/home/nc437/evsp_env/bin/python",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/prepared/replay_chunk.py",
+        "--root",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/prepared",
+        "--code",
+        "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0",
+        "--sequences",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/runs/baseline/342321_r0/extracted/pilot/sequences.jsonl",
+        "--arm",
+        "baseline",
+        "--offset",
+        "0",
+        "--limit",
+        "20",
+        "--sequence-seconds",
+        "120",
+        "--out",
+        "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/runs/baseline/342321_r0/replay"
+      ],
+      "returncode": 0,
+      "elapsed_s": 43.65973988501355,
+      "max_rss_kib": 192732,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "extracted": "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/runs/baseline/342321_r0/extracted",
+  "replay_path": "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/runs/baseline/342321_r0/replay",
+  "outcomes_sha256": "7f638168abfb8999fb5afd6496014dcc729920935d0222efe0b3303ad674f6e8",
+  "pilot_trip_coverage": 347,
+  "full_instance_trip_count": 716,
+  "coverage_scope": "20 sampled sequences only; not full source pool or full-instance coverage",
+  "full_replay_authorized": false,
+  "cg_mip_authorized": false
+}

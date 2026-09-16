@@ -1,4 +1,12 @@
-## 16 September — submission restriction from the advisor follow-up
+## 16 September — approved sequencing (supersedes the earlier blanket submission hold)
+
+Only these new submissions are authorized: (a) one action3 timing pilot; after it passes source/physical/runtime gates, the remaining five timing-pilot arms. No full replay or downstream CG/MIP rollout is implied. (b) Action2 remains UNsubmitted: plan seed0 with afterok on each item10 CG; seeds1/2 only on valid seed0 target misses. (c) Hold p3_full CG/MIP; implement/test checkpoint fallback. Resubmit fullCG on Scaglione only if evidence supports memory request<=120G; otherwise keep held and report. Preserve graph work already running and all historical held/V2G jobs. (d) Keep Doc labels:67/102 numerical fleet-bound matches and35/102 open fleet gaps. (e) No other submissions until P1 items7/8/9 and action1 have endpoints; then notify with four results: fresh-k15 hits/18; C5k31 12h outcome; constrainedk5 three-arm costs; k32 seed outcomes/variance. Endpoints failing validation are reported separately, never counted as hits. This endpoint gate does not itself authorize action2 submission or an unspecified new campaign.
+
+Details: outputs/independent_review_20260916/execution/advisor_sequence_20260916. Hourly collection remains read-only except for the explicitly gated actions above. No repeat queue-only notices.
+
+Current action3 status: control342321 passed; all five authorized follow-ups342380–342384 are already submitted. Each hourly check also runs `python3 outputs/independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/monitor_pilot.py`. Collect only; do not resubmit or expand. The tested fallback is staged in `review_full40_20260916/checkpoint_v2/`, but held old jobs retain v1 commands and must not be released blindly.
+
+## Historical — earlier submission hold, superseded by the sequencing above
 
 Only the six prepared k=5 F6 solver jobs (three tariffs × fixed-duty/fresh CG) are authorized for new submission. Existing campaigns may continue. Do not submit the item10 MIP follow-ups, item11 single-factor arms, other new jobs, replacement attempts, or partition changes until the user confirms after seeing current cluster load. Read-only collection, auditing, planning, documentation and code preparation may continue. This restriction supersedes older instructions to keep launching ready work. Preserve held jobs and EVSPV2G experiments. See execution/advisor_followup_20260916 for plans and receipts.
 

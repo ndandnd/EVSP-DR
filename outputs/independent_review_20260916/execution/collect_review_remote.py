@@ -30,6 +30,14 @@ def collect(name,b):
  try:
   if name=='p1':
    run([PY,str(b/'summarize.py'),'--root',str(b),'--out',str(OUT/'p1')]);result=read(OUT/'p1/results.json');script=b/'summarize.py'
+   run([PY,str(b/'audit_endpoints.py'),'--root',str(b),'--out',str(OUT/'p1')])
+   audit=read(OUT/'p1/endpoint_audit.json')
+   for cell in audit['checks']:
+    stage=cell.pop('two_stage',{})
+    cell['observed_stage1_limit_s']=stage.get('stage1_time_limit_s')
+    cell['observed_stage2_reserved_s']=stage.get('stage2_reserved_time_s')
+   result['endpoint_audit']=audit
+   result['endpoint_auditor_sha256']=sha(b/'audit_endpoints.py')
   elif name=='dr':
    # Native collector writes SE3-derived results ONLY inside remote OUT.
    run([PY,str(b/'collect.py'),'--root',str(b),'--out',str(OUT/'dr')]);script=b/'collect.py'
@@ -76,6 +84,11 @@ for name,b in ROOTS.items():
     if key in d:row[key]=d[key]
    if d.get('error'):row['worker_error']=str(d['error'])[:1500]
    attempts.append(row)
+# Register the four reused seed-zero jobs even before a result exists.
+for cell in read(ROOTS['p1']/'manifest.json')['reused_cells']:
+ for r in jobrows(read(Path(cell['campaign'])/'jobs.json')):
+  if r.get('case_id')==cell['case']:
+   registry.append({'campaign':'p1','job_id':str(r['job_id']),'case_id':cell['case_id'],'mode':r.get('kind'),'dependencies':r.get('dependencies',[]),'reused':True})
 ids={r['job_id'] for r in registry}
 for a in attempts:
  m=re.search(r'/(\d+)_r\d+/',a['path'])
