@@ -41,7 +41,7 @@ COLUMNS = [
     "terminal_energy_policy", "charge_start_cost", "master_sense", "initialization",
     "column_pool_treatment", "pool_size", "cg_iterations", "stop_reason",
     "runtime_s", "phase_runtime_json", "weighted_lp_objective",
-    "recorded_lp_objective", "lp_objective_kind",
+    "recorded_lp_objective", "lp_objective_kind", "lp_endpoint_source",
     "fractional_fleet", "artificial_total", "min_reduced_cost",
     "full_model_lp_certified", "lp_bound_scope", "fleet_lower_bound",
     "fleet_lower_bound_scope", "mip_incumbent_fleet", "mip_bound_fleet",
@@ -218,7 +218,7 @@ class Register:
             self.extension_jobs[campaign_id] = extension_workflow.get("case_jobs.json", {}) or {}
         self.diagnostic_cases = {}
         self.diagnostic_jobs = {}
-        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914", "compact_seed_support_20260914", "compact_large_seed_20260914", "compact_pool_union_20260915", "lp_support_pool_diagnostic_20260914", "remaining_chain_gaps_20260914", "final_chain_gap_20260915", "continuation_gap_20260915", "continuation_gaps2_20260915", "continuation_gaps3_20260915", "continuation_gaps4_20260915", "continuation_gaps5_20260916", "continuation_gaps6_20260916", "continuation_gaps7_20260916", "continuation_gaps8_20260916", "continuation_gaps9_20260916", "retrospective_prefix_controls_20260914", "decomposition_pool_union_20260914", "decomposition_lp_support_union_20260914"):
+        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914", "compact_seed_support_20260914", "compact_large_seed_20260914", "compact_pool_union_20260915", "lp_support_pool_diagnostic_20260914", "remaining_chain_gaps_20260914", "final_chain_gap_20260915", "continuation_gap_20260915", "continuation_gaps2_20260915", "continuation_gaps3_20260915", "continuation_gaps4_20260915", "continuation_gaps5_20260916", "continuation_gaps6_20260916", "continuation_gaps7_20260916", "continuation_gaps8_20260916", "continuation_gaps9_20260916", "continuation_gaps10_20260916", "retrospective_prefix_controls_20260914", "decomposition_pool_union_20260914", "decomposition_lp_support_union_20260914"):
             diagnostic = snapshot.get("campaigns", {}).get(campaign_id, {})
             diagnostic_workflow = diagnostic.get("workflow", {}) or {}
             self.diagnostic_cases[campaign_id] = {
@@ -457,6 +457,7 @@ class Register:
             "runtime_s": at(payload, "runtime_s", "wall_s"),
             "weighted_lp_objective": None,
             "recorded_lp_objective": weighted_lp,
+            "lp_endpoint_source": final_lp.get("source"),
             "lp_objective_kind": None,
             "fractional_fleet": fractional,
             "artificial_total": at(final_lp, "artificial_total", default=None)

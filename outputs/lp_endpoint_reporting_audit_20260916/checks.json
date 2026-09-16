@@ -1,0 +1,68 @@
+{
+  "status": "passed",
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260916T094206Z.json",
+  "snapshot_sha256": "cbd44800054fb601a904a76f9208890e9ac7ec2101217ccb54407859b2115613",
+  "fallback_cases": [
+    {
+      "case": "w1_k21",
+      "source": "last solved iteration; final re-solve did not finish",
+      "lp_pool_columns": 203610,
+      "certified": false
+    },
+    {
+      "case": "w1_k26",
+      "source": "last solved iteration; final re-solve did not finish",
+      "lp_pool_columns": 246346,
+      "certified": false
+    },
+    {
+      "case": "w4_k27",
+      "source": "last solved iteration; final re-solve did not finish",
+      "lp_pool_columns": 215068,
+      "certified": false
+    },
+    {
+      "case": "w6_k27",
+      "source": "last solved iteration; final re-solve did not finish",
+      "lp_pool_columns": 210055,
+      "certified": false
+    },
+    {
+      "case": "w3_k28",
+      "source": "last solved iteration; final re-solve did not finish",
+      "lp_pool_columns": 166022,
+      "certified": false
+    },
+    {
+      "case": "w4_k28",
+      "source": "last solved iteration; final re-solve did not finish",
+      "lp_pool_columns": 221594,
+      "certified": false
+    },
+    {
+      "case": "w4_k29",
+      "source": "last solved iteration; final re-solve did not finish",
+      "lp_pool_columns": 228996,
+      "certified": false
+    },
+    {
+      "case": "w5_k29",
+      "source": "last solved iteration; final re-solve did not finish",
+      "lp_pool_columns": 237934,
+      "certified": false
+    },
+    {
+      "case": "w1_k30",
+      "source": "last solved iteration; final re-solve did not finish",
+      "lp_pool_columns": 269889,
+      "certified": false
+    },
+    {
+      "case": "w2_k31",
+      "source": "last solved iteration; final re-solve did not finish",
+      "lp_pool_columns": 217870,
+      "certified": false
+    }
+  ],
+  "certified_cases_use_final_resolve": true
+}

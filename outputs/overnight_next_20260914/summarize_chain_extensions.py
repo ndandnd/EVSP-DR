@@ -61,14 +61,15 @@ def summarize(source):
                 assert item["provenance"]["git_commit"] == manifest["execution_commit"]
                 assert item["master_sense"] == "cover"
                 final = item.get("final_lp") or {}
-                assert final.get("objective") is not None, "Final pool re-solve missing"
+                assert final.get("objective") is not None, "Recorded LP endpoint missing"
                 assert final.get("route_weight") is not None
                 row.update(cg_minutes=item["wall_s"] / 60,
                            cg_pricing_certificate=bool(item["certified_rc_optimal"]),
                            cg_stop_reason=item["stop_reason"],
                            weighted_lp_objective=final["objective"],
                            fractional_route_weight=final["route_weight"],
-                           lp_endpoint_source="final_lp pool re-solve",
+                           lp_endpoint_source={"final_pool_resolve": "final pool re-solve", "last_good_iterate": "last solved iteration; final re-solve did not finish"}.get(final.get("source"), "source not recorded"),
+                           lp_endpoint_pool_columns=final.get("pool_columns"),
                            last_pricing_reduced_cost=item["final"].get("min_rc"),
                            cg_path=item["path"], cg_canonical_payload_sha256=sha(item))
                 checks.append(dict(case=cid, stage="cg", input_and_commit_match=True))
@@ -132,7 +133,7 @@ def main():
             f"{row['fractional_route_weight']:.6f}", str(row.get("integer_buses", "—")),
             f"{bound:.6f}" if bound is not None else "—",
             "yes" if proof else "no" if proof is False else "—"]) + " |")
-    text += ["", "CG minutes include import and CG at this k; graph preparation, earlier k values and MIP are separate. The weighted LP objective and fractional route weight come from the final pool re-solve. An uncertified restricted-master objective is not a full-model lower bound. A saved-pool fleet proof concerns only those columns; charging proof is separate.", "",
+    text += ["", "CG minutes include import and CG at this k; graph preparation, earlier k values and MIP are separate. The LP endpoint source is recorded in the CSV: either the final pool re-solve or the last solved iteration when the final re-solve did not finish. The latter may precede the final column additions. An uncertified restricted-master objective is not a full-model lower bound. A saved-pool fleet proof concerns only those columns; charging proof is separate.", "",
              "These are baseline covering runs: inherited full pools, 240 kWh/240 kW, no reserve, shared-capacity constraint or ending-SOC floor, and a fee of 5 per charging start. Individual-route replay and duplicate-removal validation have separate columns in the source CSV.", "",
              "[All values, units, proof flags, job IDs and source hashes](all_chain_extension_results.csv)."]
     (out / "CHAIN_TABLES.md").write_text("\n".join(text) + "\n")

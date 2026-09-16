@@ -1,6 +1,6 @@
 {
   "authoritative_772009_rows": 1,
-  "campaign_count": 86,
+  "campaign_count": 87,
   "checks": [
     "all stable row IDs unique",
     "all retained SHA-256 fields are 64 lowercase hexadecimal characters",
@@ -15,7 +15,7 @@
     "capacity_speed_exact_event:cg": 45,
     "capacity_speed_exact_event:mip": 57,
     "cg_phase_telemetry:telemetry": 662,
-    "column_generation:cg": 724,
+    "column_generation:cg": 726,
     "cumulative_budget_case_metadata:audit_result": 24,
     "cumulative_budget_endpoint:cg": 24,
     "cumulative_budget_endpoint:mip": 48,
@@ -23,9 +23,9 @@
     "fixed_dual_pricing_diagnostic:pricing_call": 4,
     "giro_zero_fee_comparison:comparison_arm": 18,
     "matched_tariff_comparison:comparison_arm": 57,
-    "pool_mip:mip": 998,
+    "pool_mip:mip": 1001,
     "rejected_mip_output:mip_rejected": 2,
-    "scheduler:queue_state": 51,
+    "scheduler:queue_state": 47,
     "small_reference_cg:cg_arm": 32,
     "small_same_pool_comparison:lp": 64,
     "small_same_pool_comparison:mip": 64,
@@ -40,18 +40,18 @@
     "terminal_energy_full_cg:cg": 3,
     "terminal_energy_full_cg:mip": 3,
     "terminal_postprocessing:mip": 6,
-    "workflow:workflow": 260,
+    "workflow:workflow": 266,
     "workflow:workflow_cg": 45,
     "workflow:workflow_cg_reference": 54,
     "workflow:workflow_freeze": 54,
     "workflow:workflow_mip": 54
   },
   "rejected_rows": 2,
-  "row_count": 3402,
-  "rows_with_source_sha256": 1692,
-  "rows_without_source_sha256": 1710,
+  "row_count": 3409,
+  "rows_with_source_sha256": 1695,
+  "rows_without_source_sha256": 1714,
   "schema": "evsp-dr-research-register-validation-v1",
-  "source_snapshot_sha256": "cbd44800054fb601a904a76f9208890e9ac7ec2101217ccb54407859b2115613",
+  "source_snapshot_sha256": "3ed4faede9399554c9ad58ae771d214b0032785ce605b45b7285e659e7e0d1a4",
   "superseded_772031_rows": 1,
-  "unique_row_ids": 3402
+  "unique_row_ids": 3409
 }
