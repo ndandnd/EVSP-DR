@@ -1,0 +1,470 @@
+{
+  "previous": "20260916T221824Z",
+  "changes": [
+    {
+      "campaign": "strict",
+      "case": "w5_k01_18E1",
+      "changes": {
+        "cg": {
+          "before": {
+            "status": "no_canonical_result"
+          },
+          "after": {
+            "path": "/home/nc437/ladder-lite/review_strict_c5_20260916/cases/w5_k01_18E1/cg.json",
+            "sha256": "4a54d97618bdeabec5a943590ac3d422925ed8fbaa605e380e4d49a541ce24c1",
+            "provenance": {
+              "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "git_commit": "50ceb6c095a580f79f87b53bef536cac31f81963",
+              "git_tracked_dirty": false,
+              "gurobi_version": "12.0.3",
+              "host": "jingjie-cpu-18.mae.cornell.edu",
+              "instance": "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k01_18E1.csv",
+              "instance_sha256": "34d69400efcc95144d698ee659e5266a888fd3ad74aba9111d127998468fbe25",
+              "prices": "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0/data/hourly_prices_flat.csv",
+              "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "reference_data_dir": "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0/data",
+              "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "slurm_array_task_id": null,
+              "slurm_job_id": "341259"
+            },
+            "status": "complete",
+            "stop_reason": "exact_nonnegative_reduced_cost",
+            "certified_rc_optimal": true,
+            "terminal_exact_min_reduced_cost": -1.4317436125566019e-11,
+            "final": {
+              "artificial_total": 0.0,
+              "objective": 100095.304,
+              "pool_columns": 82,
+              "route_weight": 1.0
+            },
+            "runtime_s": 811.9084571769927,
+            "network_build_s": 29.071766030043364,
+            "physics": {
+              "battery_kwh": 236.44,
+              "capacity_enforced": false,
+              "charger_counts": {},
+              "event_block_min": 5,
+              "initial_soc_kwh": 236.44,
+              "max_station_wait_min": 1560.0,
+              "non_parx_kw": 240.0,
+              "parx_capacity": "unlimited",
+              "parx_kw": 60.0,
+              "reserve_kwh": 35.466,
+              "soc_step_kwh": 2.5,
+              "terminal_soc_constraint": "reserve_only"
+            },
+            "inheritance": null,
+            "pool_sha256": "024b888e2ad52049703a9410057d6c01d6b78be463fa216c495695c67d791c69",
+            "iterations": 66,
+            "total_pricing_s": 782.1707543914672,
+            "total_iteration_lp_s": 0.03944593435153365
+          }
+        },
+        "mip": {
+          "before": {
+            "status": "no_canonical_result"
+          },
+          "after": {
+            "path": "/home/nc437/ladder-lite/review_strict_c5_20260916/cases/w5_k01_18E1/mip.json",
+            "sha256": "bda1685c891c92ea8aa7758c3d9e95cfa7be48da48d8944cc2a3a2312c91b46a",
+            "provenance": {
+              "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "git_commit": "50ceb6c095a580f79f87b53bef536cac31f81963",
+              "git_tracked_dirty": false,
+              "gurobi_version": "12.0.3",
+              "host": "totient-cpu-03.cs.cornell.edu",
+              "instance": "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k01_18E1.csv",
+              "instance_sha256": "34d69400efcc95144d698ee659e5266a888fd3ad74aba9111d127998468fbe25",
+              "prices": "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0/data/hourly_prices_flat.csv",
+              "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "reference_data_dir": "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0/data",
+              "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "slurm_array_task_id": null,
+              "slurm_job_id": "341260"
+            },
+            "result": {
+              "charging_related_cost": 95.30400000000373,
+              "fleet": 1,
+              "has_solution": true,
+              "method": "two_stage_fleet_then_charging_cost",
+              "reconstructed_weighted_cost": 100095.304,
+              "stage1": {
+                "fleet_bound_raw": 1.0,
+                "fleet_integer_lower_bound": 1,
+                "fleet_proven": true,
+                "has_solution": true,
+                "incumbent_fleet": 1,
+                "incumbent_validation_scope": "covering rows plus cross-route station-capacity sweep; individual exact-event route feasibility is by construction",
+                "mip_gap": 0.0,
+                "node_count": 0.0,
+                "runtime_s": 0.017174997832626104,
+                "selected_indices": [
+                  17
+                ],
+                "status": "OPTIMAL",
+                "status_code": 2,
+                "time_limit_s": 1800.0,
+                "validated_incumbent": true
+              },
+              "stage2": {
+                "charging_cost": 95.30400000000373,
+                "charging_cost_bound": 95.30400000000373,
+                "charging_cost_gap": 0.0,
+                "executed": true,
+                "fleet_cap": {
+                  "rhs": 1,
+                  "sense": "<=",
+                  "source": "best_validated_stage1_incumbent",
+                  "source_fleet_proven": true
+                },
+                "has_solution": true,
+                "incumbent_fleet": 1,
+                "node_count": 0.0,
+                "runtime_s": 0.0023356392048299313,
+                "selected_indices": [
+                  17
+                ],
+                "skip_reason": null,
+                "status": "OPTIMAL",
+                "status_code": 2,
+                "time_limit_s": 3599.9821692509577
+              },
+              "status": "OPTIMAL",
+              "total_budget_s": 3600.0
+            },
+            "duplicate_service_audit": {
+              "all_trips_covered": true,
+              "extra_trip_assignments": 0,
+              "overcovered_trip_count": 0,
+              "overcovered_trips": {}
+            },
+            "capacity_enforced_in_mip": false
+          }
+        }
+      }
+    },
+    {
+      "campaign": "random",
+      "case": "r1_s04",
+      "changes": {
+        "mip_attempts_missing_end": {
+          "before": 1,
+          "after": 0
+        },
+        "mip_result_path": {
+          "before": null,
+          "after": "/home/nc437/ladder-lite/random_trip_groups_c1_20260916/cases/r1_s04/mip_result.json"
+        },
+        "mip_result_sha256": {
+          "before": null,
+          "after": "f75bec4524613fba40d4d0e22e4956d4742d63a27d6ba635f2c1b39b49481fc3"
+        },
+        "integer_buses": {
+          "before": null,
+          "after": 7
+        },
+        "finite_pool_fleet_bound": {
+          "before": null,
+          "after": 7.0
+        },
+        "fleet_proved_in_pool": {
+          "before": null,
+          "after": true
+        },
+        "individual_route_replay": {
+          "before": null,
+          "after": true
+        },
+        "duplicate_removal_validated": {
+          "before": null,
+          "after": false
+        },
+        "shared_capacity_validated": {
+          "before": null,
+          "after": false
+        }
+      }
+    },
+    {
+      "campaign": "random",
+      "case": "r1_s05",
+      "changes": {
+        "cg_result_path": {
+          "before": null,
+          "after": "/home/nc437/ladder-lite/random_trip_groups_c1_20260916/cases/r1_s05/cg.json"
+        },
+        "cg_result_sha256": {
+          "before": null,
+          "after": "5a078b39a01cb2137d69884f446854836e6ae2456503fa9a104d68ae6371fb0b"
+        },
+        "cg_solver_reported_wall_s": {
+          "before": null,
+          "after": 190.77611854020506
+        },
+        "cg_stop_reason": {
+          "before": null,
+          "after": "certified"
+        },
+        "cg_pricing_certificate": {
+          "before": null,
+          "after": true
+        },
+        "cg_iterations": {
+          "before": null,
+          "after": 116
+        },
+        "cg_fractional_route_weight": {
+          "before": null,
+          "after": 8.0
+        },
+        "cg_weighted_objective": {
+          "before": null,
+          "after": 800209.7880000001
+        },
+        "inherited_pool_audit": {
+          "before": null,
+          "after": {
+            "schema": "evsp-dr-inherited-event-pool-audit-v1",
+            "source_status": "/share/scaglione/nc437/evsp-dr/random_trip_groups_c1_20260916/cases/r1_s04/cg/341357_r0/cg.json",
+            "source_status_sha256": "41f2f5555393b3577f09762fc1ba7dcb43c490de91637136cbd4696eb2e869ea",
+            "source_journal": "/share/scaglione/nc437/evsp-dr/random_trip_groups_c1_20260916/cases/r1_s04/cg/341357_r0/cg.json.columns.jsonl",
+            "source_journal_sha256": "a480c3e2c576776499d775ebc72c6a5400d8bf57bab9b2d3d1f0fa01f145cf90",
+            "source_raw_records": 7763,
+            "source_unique_columns": 7762,
+            "source_replayable_sequences": 7762,
+            "selected_for_replay": 7762,
+            "bounded_max_columns": 0,
+            "import_time_limit_s": 0.0,
+            "import_deadline_reached": false,
+            "import_cancelled": false,
+            "deadline_scope": "replay_result_wait_after_selection",
+            "preparation_s": 0.9193128109909594,
+            "replay_s": 40.66050009382889,
+            "cleanup_s": 0.02614757791161537,
+            "total_import_s": 41.6107966308482,
+            "pool_shutdown": {
+              "worker_pids": [
+                3031546,
+                3031547,
+                3031548,
+                3031549,
+                3031550,
+                3031551,
+                3031552,
+                3031553
+              ],
+              "forced_kill_pids": [],
+              "alive_worker_pids": [],
+              "shutdown_complete": true,
+              "errors": []
+            },
+            "telemetry_errors": [],
+            "replay_completed": 7762,
+            "unprocessed_selected": 0,
+            "attempted_unique_columns": 7762,
+            "accepted_columns": 7762,
+            "rejected_columns": 0,
+            "rejected_reasons": {},
+            "mapping_key": "Ordered_Trip_ID",
+            "child_event_graph_reoptimization": true,
+            "replay_workers": 8,
+            "inherited_duals": false,
+            "inherited_basis": false,
+            "inherited_lp_certificate": false,
+            "added_to_child_pool": 7762,
+            "replaced_child_columns": 0,
+            "already_present_or_not_cheaper": 0,
+            "import_runtime_s": 42.3330838191323
+          }
+        },
+        "mip_result_path": {
+          "before": null,
+          "after": "/home/nc437/ladder-lite/random_trip_groups_c1_20260916/cases/r1_s05/mip_result.json"
+        },
+        "mip_result_sha256": {
+          "before": null,
+          "after": "18f483e6f3727d2e51b83057cefc06656d5cc2ea6a22875f7ddfd9b2daad7875"
+        },
+        "integer_buses": {
+          "before": null,
+          "after": 8
+        },
+        "finite_pool_fleet_bound": {
+          "before": null,
+          "after": 8.0
+        },
+        "fleet_proved_in_pool": {
+          "before": null,
+          "after": true
+        },
+        "individual_route_replay": {
+          "before": null,
+          "after": true
+        },
+        "duplicate_removal_validated": {
+          "before": null,
+          "after": false
+        },
+        "shared_capacity_validated": {
+          "before": null,
+          "after": false
+        }
+      }
+    },
+    {
+      "campaign": "random",
+      "case": "r1_s06",
+      "changes": {
+        "cache_attempts_missing_end": {
+          "before": 1,
+          "after": 0
+        },
+        "cg_attempts_missing_end": {
+          "before": 0,
+          "after": 1
+        }
+      }
+    },
+    {
+      "campaign": "frolunda",
+      "case": "fdl_k03",
+      "changes": {
+        "cache_completed": {
+          "before": false,
+          "after": true
+        },
+        "cache_receipt": {
+          "before": null,
+          "after": {
+            "manifest_sha256": "28564b44a0a013fc7711942c214a2d2a8753b1bd7cecedcd17a4b70cd25cc046",
+            "cache": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k03/cache/341413_r0/network.pkl",
+            "output_hashes": {
+              "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k03/cache/341413_r0/network.pkl": "fcaa45095a13e0afcba2f373b2fbe96f138f19c49c286022f3337085e51c4975",
+              "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k03/cache/341413_r0/network.pkl.manifest.json": "c256bde4b95e89408a8e132faa2cee595a7d5bb5bbea6b10fe4bf54a94d4f7d5"
+            }
+          }
+        },
+        "cache_receipt_sha256": {
+          "before": null,
+          "after": "4207255ad953a3d053f6a55509c58a29190c6bbc1874b66141994e6906a14246"
+        },
+        "cg_completed": {
+          "before": false,
+          "after": true
+        },
+        "cg_receipt": {
+          "before": null,
+          "after": {
+            "manifest_sha256": "28564b44a0a013fc7711942c214a2d2a8753b1bd7cecedcd17a4b70cd25cc046",
+            "result": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k03/cg/341413_r0/cg.json",
+            "pricing_certified": true,
+            "stop_reason": "certified",
+            "output_hashes": {
+              "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k03/cg/341413_r0/cg.json": "9e20e150e508722fcfcba74a751229a8982ed756a9445bd41b0e624104f92856",
+              "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k03/cg/341413_r0/cg.json.columns.jsonl": "9ba90f8f2bef09b1144a227a7c49ab58f2cc7baac13852bbaf71143b547c2937"
+            }
+          }
+        },
+        "cg_receipt_sha256": {
+          "before": null,
+          "after": "64efcc936db54c3b2207d0adb2a79cb19a42f3a1721d08fb1cf5b7bda42b0b22"
+        },
+        "cg_result_path": {
+          "before": null,
+          "after": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k03/cg/341413_r0/cg.json"
+        },
+        "cg_result_sha256": {
+          "before": null,
+          "after": "9e20e150e508722fcfcba74a751229a8982ed756a9445bd41b0e624104f92856"
+        },
+        "cg_pricing_certificate": {
+          "before": null,
+          "after": true
+        },
+        "cg_stop_reason": {
+          "before": null,
+          "after": "certified"
+        },
+        "cg_wall_s": {
+          "before": null,
+          "after": 115.39379902323708
+        },
+        "cg_iterations": {
+          "before": null,
+          "after": 199
+        },
+        "cg_final": {
+          "before": null,
+          "after": {
+            "iter": 199,
+            "attempt_iter": 199,
+            "lp_obj": 300154.45119999995,
+            "route_weight": 3.0,
+            "artificials": 0.0,
+            "min_rc": -2.9252245070665595e-10,
+            "max_row_violation": 2.3314683517128287e-15,
+            "max_bound_violation": 0.0
+          }
+        },
+        "cg_final_lp_source": {
+          "before": null,
+          "after": "final_pool_resolve"
+        },
+        "mip_completed": {
+          "before": false,
+          "after": true
+        },
+        "mip_receipt": {
+          "before": null,
+          "after": {
+            "manifest_sha256": "28564b44a0a013fc7711942c214a2d2a8753b1bd7cecedcd17a4b70cd25cc046",
+            "result": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k03/mip/341413_r0/result.json",
+            "source_cg_sha256": "9e20e150e508722fcfcba74a751229a8982ed756a9445bd41b0e624104f92856",
+            "buses": 3,
+            "fleet_bound": 3.0,
+            "fleet_proven": true,
+            "output_hashes": {
+              "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k03/mip/341413_r0/result.json": "7e94336d885f12049c8a2456f89776135e5ab56c001596bdb48c6032b0269c9c"
+            }
+          }
+        },
+        "mip_receipt_sha256": {
+          "before": null,
+          "after": "0d576e68e99c758259c2c813146e4036b0a409638108072cca6a9a38ebd1a647"
+        },
+        "mip_result_path": {
+          "before": null,
+          "after": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k03/mip/341413_r0/result.json"
+        },
+        "mip_result_sha256": {
+          "before": null,
+          "after": "7e94336d885f12049c8a2456f89776135e5ab56c001596bdb48c6032b0269c9c"
+        },
+        "buses": {
+          "before": null,
+          "after": 3
+        },
+        "pool_fleet_bound": {
+          "before": null,
+          "after": 3.0
+        },
+        "fleet_proved_in_pool": {
+          "before": null,
+          "after": true
+        },
+        "individual_route_replay": {
+          "before": null,
+          "after": true
+        },
+        "duplicate_removal_validated": {
+          "before": null,
+          "after": false
+        },
+        "shared_capacity_validated": {
+          "before": null,
+          "after": false
+        }
+      }
+    }
+  ]
+}
