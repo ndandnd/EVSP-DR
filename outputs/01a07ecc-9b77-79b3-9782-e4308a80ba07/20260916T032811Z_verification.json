@@ -1,0 +1,47 @@
+{
+  "mode": "after",
+  "records": 3355,
+  "views": [
+    {
+      "name": "Campaigns",
+      "range": "A1:G14",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A1:G14\",\"rows\":14,\"cols\":7,\"values\":[[null,null,null,null,null,null,null],[\"EVSP–DR experiment register\",null,null,null,null,null,null],[\"Evidence captured 2026-09-16T03:28:13.334830+00:00. Counts below are records, not independent experimental samples.\",null,null,null,null,null,null],[null,null,null,null,null,null,null],[\"Campaign / source group\",\"Family\",\"LP / CG records\",\"MIP records\",\"Charging records\",\"Execution / audit records\",\"Total records\"],[\"capacity_deadline5_retry\",\"production_or_historical\",5,5,0,1,11],[\"capacity_fixed_dual_20260914\",\"production_or_historical\",0,0,0,5,5],[\"capacity_fixed_dual_retry_20260914\",\"production_or_historical\",0,0,0,5,5],[\"capacity_pricing_boundary_20260914\",\"production_or_historical\",7,7,0,3,17],[\"capacity_speed_pilot\",\"controlled_physics_pilot\",10,10,0,2,22],[\"capacity_timeout6_rerun\",\"production_or_historical\",1,1,0,3,5],[\"chain_extension_20260913\",\"production_or_historical\",60,60,0,66,186],[\"chain_extension_20260914\",\"production_or_historical\",18,18,0,22,58],[\"chain_extension_20260915\",\"production_or_historical\",11,7,0,16,34]]}"
+    },
+    {
+      "name": "Campaigns",
+      "range": "A13:H14",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A13:H14\",\"rows\":2,\"cols\":8,\"values\":[[\"chain_extension_20260914\",\"production_or_historical\",18,18,0,22,58,\"/home/nc437/ladder-lite/chain_extension_20260914\"],[\"chain_extension_20260915\",\"production_or_historical\",11,7,0,16,34,\"/home/nc437/ladder-lite/chain_extension_20260915\"]]}"
+    },
+    {
+      "name": "Campaigns",
+      "range": "A21:H22",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A21:H22\",\"rows\":2,\"cols\":8,\"values\":[[\"continuation_gaps3_20260915\",\"production_or_historical\",0,2,0,6,8,\"/home/nc437/ladder-lite/continuation_gaps3_20260915\"],[\"continuation_gaps4_20260915\",\"production_or_historical\",0,1,0,6,7,\"/home/nc437/ladder-lite/continuation_gaps4_20260915\"]]}"
+    },
+    {
+      "name": "CG",
+      "range": "A106:N117",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"CG\",\"address\":\"A106:N117\",\"rows\":12,\"cols\":14,\"values\":[[\"chain_extension_20260914\",\"w6_k28\",\"cg\",null,28,null,2801156.023368558,\"bus_plus_charging\",28.000000000000636,\"no\",\"wall_limit\",315,14392.3921842454,null],[\"chain_extension_20260915\",\"w1_k29\",\"cg\",null,29,null,2901199.407727373,\"bus_plus_charging\",28.999999999999996,\"no\",\"wall_limit\",186,14374.855279233307,null],[\"chain_extension_20260915\",\"w1_k30\",\"cg\",null,30,null,3001214.1093936283,\"bus_plus_charging\",29.99999999999985,\"no\",\"wall_limit\",215,14397.396455698516,null],[\"chain_extension_20260915\",\"w2_k29\",\"cg\",null,29,null,2901181.0742299906,\"bus_plus_charging\",28.99999999999993,\"no\",\"wall_limit\",252,14350.64293270465,null],[\"chain_extension_20260915\",\"w3_k29\",\"cg\",null,29,null,2901164.5923426924,\"bus_plus_charging\",28.999999999999655,\"no\",\"wall_limit\",307,14365.397598891519,null],[\"chain_extension_20260915\",\"w3_k30\",\"cg\",null,30,null,3001212.0357340374,\"bus_plus_charging\",30.00000000000034,\"no\",\"wall_limit\",219,14375.071768854279,null],[\"chain_extension_20260915\",\"w4_k29\",\"cg\",null,29,null,2901181.619144913,\"bus_plus_charging\",29.00000000000086,\"no\",\"wall_limit\",246,14395.226738582074,null],[\"chain_extension_20260915\",\"w4_k30\",\"cg\",null,30,null,2901286.4659678508,\"bus_plus_charging\",29.000000000000092,\"no\",\"wall_limit\",126,14380.826052370016,null],[\"chain_extension_20260915\",\"w5_k29\",\"cg\",null,29,null,2801254.6146085905,\"bus_plus_charging\",28.000000000000465,\"no\",\"wall_limit\",344,14394.58233822789,null],[\"chain_extension_20260915\",\"w5_k30\",\"cg\",null,30,null,2901299.359386698,\"bus_plus_charging\",29.000000000000398,\"no\",\"wall_limit\",315,14374.98546269117,null],[\"chain_extension_20260915\",\"w6_k29\",\"cg\",null,29,null,2901222.0137721775,\"bus_plus_charging\",28.99999999999958,\"yes\",\"certified\",221,5686.091551497579,null],[\"chain_extension_20260915\",\"w6_k30\",\"cg\",null,30,null,3001246.505414593,\"bus_plus_charging\",30.00000000000074,\"no\",\"wall_limit\",297,14379.059985174332,null]]}"
+    },
+    {
+      "name": "MIP",
+      "range": "A106:L113",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"MIP\",\"address\":\"A106:L113\",\"rows\":8,\"cols\":12,\"values\":[[\"chain_extension_20260914\",\"w6_k28\",\"mip\",null,28,null,28,28,\"yes\",0,\"TIME_LIMIT\",219566],[\"chain_extension_20260915\",\"w1_k29\",\"mip\",null,29,null,30,29.000000000000014,\"no\",1,\"TIME_LIMIT\",263453],[\"chain_extension_20260915\",\"w2_k29\",\"mip\",null,29,null,30,29.000000000000018,\"no\",1,\"TIME_LIMIT\",206839],[\"chain_extension_20260915\",\"w3_k29\",\"mip\",null,29,null,29,29,\"yes\",0,\"TIME_LIMIT\",175293],[\"chain_extension_20260915\",\"w3_k30\",\"mip\",null,30,null,30,30,\"yes\",0,\"TIME_LIMIT\",181900],[\"chain_extension_20260915\",\"w4_k29\",\"mip\",null,29,null,29,29,\"yes\",0,\"TIME_LIMIT\",229026],[\"chain_extension_20260915\",\"w5_k29\",\"mip\",null,29,null,35,28.000000000000078,\"no\",6,\"TIME_LIMIT\",237964],[\"chain_extension_20260915\",\"w6_k29\",\"mip\",null,29,null,30,29.000000000000004,\"no\",1,\"TIME_LIMIT\",226183]]}"
+    },
+    {
+      "name": "MIP",
+      "range": "A190:L191",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"MIP\",\"address\":\"A190:L191\",\"rows\":2,\"cols\":12,\"values\":[[\"continuation_gaps3_20260915\",\"w5_k28_longmip\",\"mip\",null,28,null,31,27.00000000000012,\"no\",3,\"TIME_LIMIT\",227627],[\"continuation_gaps4_20260915\",\"w1_k28_longmip\",\"mip\",null,28,null,28,28,\"yes\",0,\"TIME_LIMIT\",257850]]}"
+    },
+    {
+      "name": "Attempts",
+      "range": "A112:H128",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Attempts\",\"address\":\"A112:H128\",\"rows\":17,\"cols\":8,\"values\":[[\"chain_extension_20260914\",\"w6_k28\",\"telemetry\",null,28,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"attempt_progress\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_20260915\",\"case_jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_20260915\",\"jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_20260915\",\"manifest.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_20260915\",\"w1_k29\",\"telemetry\",null,29,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w1_k30\",\"telemetry\",null,30,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w2_k29\",\"telemetry\",null,29,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w2_k30\",\"telemetry\",null,30,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w3_k29\",\"telemetry\",null,29,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w3_k30\",\"telemetry\",null,30,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w4_k29\",\"telemetry\",null,29,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w4_k30\",\"telemetry\",null,30,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w5_k29\",\"telemetry\",null,29,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w5_k30\",\"telemetry\",null,30,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w6_k29\",\"telemetry\",null,29,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w6_k30\",\"telemetry\",null,30,null,\"cg_phase_telemetry\",\"telemetry\"]]}"
+    },
+    {
+      "name": "Attempts",
+      "range": "A235:H241",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Attempts\",\"address\":\"A235:H241\",\"rows\":7,\"cols\":8,\"values\":[[\"continuation_gaps3_20260915\",\"validation.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps4_20260915\",\"attempt_progress\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps4_20260915\",\"case_jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps4_20260915\",\"jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps4_20260915\",\"manifest.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps4_20260915\",\"scheduler_verification.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps4_20260915\",\"validation.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"]]}"
+    }
+  ],
+  "formulaScan": "{\"kind\":\"notice\",\"message\":\"Cell search matched 0 entries.\"}"
+}

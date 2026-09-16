@@ -1,3 +1,7 @@
+## 15 September23:47EDT — restored access; chains3/4 reach30/29
+
+Snapshot032811 completed23:37EDT, compared191846:19changed endpoints,89CG85MIP, no broken dependencies/failures. Original maxima26/28/30/29/26/28; including longer28/28/30/29/26/28. C1k28 samepool31→28, fleetproof14.08min; do not attribute solely to longer time. Doc/workbook3355/79 updated,8views/errorscanpassed. New continuation_gaps5 jobs275867–275870 (C1/C2/C5/C6k29) first longer unchanged-pool searches,12600/10800 budgets,8CPU24G/default/requeue/compute01excluded, noDeps, initiallyPriority. Source/no-duplicate/nativeworker checks passed. Newroot is wired into collector/normalizer/longer summarizer. Zero-fee fullCG275432 remainsactive. Read status_20260916T032811Z and campaignREADME. Access-restored state supersedes old lost notice below.
+
 ## 15 September22:21UTC — access lost, user notified
 
 Collection203151 failed255, emptyfile, processreported5034secondselapsed. Directprobe confirmed Permission denied(publickey,password); controlsocketmissing. Exactlosstime/causeunknown. Lastsuccess191846 preserved; do not normalize failedsnapshot. connection_status.json persists notifiedlost state. Nextheartbeat shortprobeonlywhilelost; notifyonceonrestoration, then collectfullfreshdata and audit accumulated transitions. Doc/workbook unchanged, nojobmutations. Mirrorpendingrestoredaccess.
