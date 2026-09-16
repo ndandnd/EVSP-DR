@@ -128,6 +128,7 @@ def checkpoint_id(args, problem, prov) -> str:
         "capacity_enforced": ARMS[args.arm]["capacity"],
         "charger_counts": CHARGER_COUNTS if ARMS[args.arm]["capacity"] else {},
         "capacity_grid_min": 1,
+        "max_station_wait_min": getattr(args, "max_station_wait_min", 220.0),
         "objective_constants": {
             "bus_cost_kx": BUS_COST_KX,
             "charge_start_cost": CHARGE_START_COST,
@@ -334,6 +335,9 @@ def run_cg(
     )
     identity = checkpoint_id(args, problem, prov)
     keys = set()
+    inheritance = None
+    if resume and getattr(args, "inherit_status", None):
+        raise ValueError("same-instance resume and cross-instance inheritance are mutually exclusive")
     if resume:
         seed_routes = load_resume_pool(
             pool_out,
@@ -349,6 +353,29 @@ def run_cg(
             keys.add(route_key(route))
             master.add_route(route)
     else:
+        if getattr(args, "inherit_status", None):
+            from inherit_capacity_pool import inherit_pool
+            if not args.inherit_pool or not args.inherit_instance:
+                raise ValueError("inheritance requires parent status, pool and instance")
+            inherited, inheritance = inherit_pool(
+                args.inherit_status, args.inherit_pool, args.inherit_instance, args.instance,
+                expected_physics={"battery_kwh": args.battery_kwh,
+                    "reserve_kwh": args.reserve_kwh, "soc_step_kwh": args.soc_step,
+                    "event_block_min": args.block_min, "non_parx_kw": args.non_parx_kw,
+                    "parx_kw": ARMS[args.arm]["parx_kw"],
+                    "capacity_enforced": ARMS[args.arm]["capacity"],
+                    "max_station_wait_min": getattr(args, "max_station_wait_min", 220.0)},
+                child_provenance=prov, new_checkpoint_id=identity,
+                route_validator=lambda route: validate_injected_route(
+                    problem, route, args.battery_kwh, args.non_parx_kw,
+                    args.reserve_kwh, HORIZON_MIN, arrival_grace_min=0.0,
+                    station_charge_kw=station_power(args.arm)),
+            )
+            for route in inherited:
+                key = route_key(route)
+                if key not in keys:
+                    keys.add(key)
+                    master.add_route(route)
         for trip in problem.trips:
             route = network.fixed_sequence_record((trip,))
             if route is None:
@@ -474,6 +501,7 @@ def run_cg(
             "initial_soc_kwh": args.battery_kwh,
             "reserve_kwh": args.reserve_kwh,
             "terminal_soc_constraint": "reserve_only",
+            "max_station_wait_min": getattr(args, "max_station_wait_min", 220.0),
             "soc_step_kwh": args.soc_step,
             "event_block_min": args.block_min,
             "non_parx_kw": args.non_parx_kw,
@@ -482,6 +510,7 @@ def run_cg(
             "charger_counts": CHARGER_COUNTS if ARMS[args.arm]["capacity"] else {},
             "parx_capacity": "unlimited",
         },
+        "inheritance": inheritance,
         "capacity_selector": getattr(args, "capacity_selector", "reference"),
         "network": network.metrics(),
         "network_build_s": network_build_s,
@@ -833,6 +862,10 @@ def parser():
     value.add_argument("--pool-out", type=Path)
     value.add_argument("--pool", type=Path)
     value.add_argument("--cg-status", type=Path)
+    value.add_argument("--inherit-status", type=Path)
+    value.add_argument("--inherit-pool", type=Path)
+    value.add_argument("--inherit-instance", type=Path)
+    value.add_argument("--max-station-wait-min", type=float, default=220.0)
     value.add_argument("--battery-kwh", type=float, default=240.0)
     value.add_argument("--non-parx-kw", type=float, default=240.0)
     value.add_argument("--reserve-kwh", type=float, default=0.0)
@@ -857,12 +890,16 @@ def parser():
 
 def main():
     args = parser().parse_args()
+    inheritance_args = (args.inherit_status, args.inherit_pool, args.inherit_instance)
+    if any(inheritance_args) and not all(inheritance_args):
+        raise ValueError("all three inheritance paths must be supplied together")
     instance = args.instance.expanduser().resolve(strict=True)
     prices_path = args.prices.expanduser().resolve(strict=True)
     reference = args.reference_data_dir.expanduser().resolve(strict=True)
     out = args.out.expanduser().resolve()
     problem = build_problem(
         instance.parent, instance.name, reference_data_dir=reference,
+        max_station_to_trip_wait_min=args.max_station_wait_min,
     )
     prices = load_station_hourly_prices(
         prices_path, sorted({base_station_name(station) for station in STATIONS}),
