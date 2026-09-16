@@ -1,3 +1,17 @@
+## 16 September 16:54 EDT — no new solver endpoints; repeated-trip inventory
+
+Snapshot20260916T204749Z completed20:54:23UTC in394.2seconds, compared with194843. Compact canonical-content delta has no changed optimization results, scheduler changes, failures, preemptions or broken dependencies. SSH available. C1k32 longer job336492 remainsrunning with its12600/10800budgets; held537227/V2G untouched. No duplicate runs submitted. Last verified register/workbook remains the194843scientificsnapshot (3447records/92groups); workbook hash stillmatches published mirror. New collection and preemption study archived separately;1002attemptrows.
+
+New read-only audit outputs/large_chain_cleanup_screen_20260916 inventoriesselectedk32 routes. Chains1–6: buses35/32/33/32/32/32; inputtrips768/751/753/749/731/779; repeatedtripIDs206/161/120/126/114/116; extraserviceoccurrences306/212/147/151/131/142. Selectedroutes have no repeatedIDinternally. Max repeatedtripIDs perroute36/26/22/23/23/23. These counts are not duplicate-removal validation, an infeasibility proof, or a new physicalreplay. Do not change fleetstatusflags.
+
+All six native source files bound to collected sources: exact bytehashesforfive; C1canonical/attempt differonlyserialization and parse to identicalJSON. Explicit independent remoteverification checked sourcehashes and selectedroute/physics/journal/bus/overcoverage equality. Source/inputhashes and scripts retained. This resolves the initial direct filehash mismatch; no source result discrepancy found.
+
+Existing terminal_duplicate_cleanup.py enumeratesdeletion subsets and deliberately rejects routes with>10duplicatedtripIDs. Every selectedlargecase exceeds thatlimit. Do not blindlyraise thelimit or promote a newrepairmethod. Next boundeddesign: assignment/deletion candidates plus fixed-sequence physical/charging replay, preservingphysics/fleetcap; failedheuristic≠infeasibility. No productionrepairjoblaunchedinthischeck. Existing independentlyrunningC1searchretained.
+
+Doc currenttab caveat nowquantifies114–161duplicatedtripIDs in thefourtarget32matches andlinks theaudit. Counts/tables, figures/history, Slides unchanged. Exportandlink/tablechecks passed. Sourcebuilder andregisterentrypoint updated; new audit is a separate evidence artifact, not a newoptimizationendpoint. Handoff outputs/independent_review_20260916/HANDOFF.md is included in publication, frozenatcecc5365checkpoint,without changingits neutralcontent.
+
+Next: collect336492; develop and validate scalablecleanup before claimingexecutableschedules. Broader matchedzero-fee/strictphysics comparisons remainopen. No need to regenerateunchangedfleetfigures/workbook merely because scheduler timeadvanced.
+
 ## 16 September 15:55 EDT — target32 recovered in four chains
 
 Successful snapshot20260916T194843Z completed19:55:34UTC in411.1seconds, compared with144440 (which completed14:52:45UTC). Register3447records/92groups;102CG/102originalMIP endpoints among102continuation cases. Seven scientific summarizers passed;26/26 registered longer searches verified. Preemption study1002attemptrows. No new failures/preemptions/unsatisfiabledependencies. SSH available throughout observed checks. Do not imply continuous active monitoring between14:52 and19:48UTC: intermediate heartbeats were queued and their publication work was not completed then.

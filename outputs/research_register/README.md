@@ -1,3 +1,5 @@
+Current fleet evidence: [16 September 15:55 EDT](../overnight_next_20260914/status_20260916T194843Z/README.md). New read-only check: [large-chain trip-assignment audit](../large_chain_cleanup_screen_20260916/README.md). Earlier dated updates below are historical.
+
 # Latest verified comparison — 16 September
 
 [Zero-fee charging improvements with exact-once trips](../zero_fee_validated_comparison_20260916/README.md) · [Pricing correction scope](../reduced_cost_scope_audit_20260916/README.md) · [Current monitor report](../overnight_next_20260914/status_20260916T074100Z/README.md).
