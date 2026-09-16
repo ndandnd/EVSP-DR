@@ -1,0 +1,58 @@
+{
+  "status": "passed",
+  "collected_utc": "2026-09-16T22:54:55.766744+00:00",
+  "counts": {
+    "PENDING": 6
+  },
+  "rows": [
+    {
+      "case_id": "peak08_cg",
+      "job_id": "341682",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=341682 JobName=f6k5_peak08_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14009 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=06:00:00 TimeMin=N/A SubmitTime=2026-09-16T18:54:53 EligibleTime=2026-09-16T18:54:53 AccrueTime=2026-09-16T18:54:53 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T18:54:53 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2487483 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/logs/f6k5_peak08_cg_341682.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/logs/f6k5_peak08_cg_341682.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "peak08_fixed",
+      "job_id": "341683",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=341683 JobName=f6k5_peak08_fixed UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14009 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=03:00:00 TimeMin=N/A SubmitTime=2026-09-16T18:54:53 EligibleTime=2026-09-16T18:54:53 AccrueTime=2026-09-16T18:54:53 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T18:54:53 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2487483 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/logs/f6k5_peak08_fixed_341683.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/logs/f6k5_peak08_fixed_341683.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "peak12_cg",
+      "job_id": "341684",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=341684 JobName=f6k5_peak12_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14009 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=06:00:00 TimeMin=N/A SubmitTime=2026-09-16T18:54:54 EligibleTime=2026-09-16T18:54:54 AccrueTime=2026-09-16T18:54:54 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T18:54:54 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2487483 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/logs/f6k5_peak12_cg_341684.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/logs/f6k5_peak12_cg_341684.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "peak12_fixed",
+      "job_id": "341685",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=341685 JobName=f6k5_peak12_fixed UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14009 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=03:00:00 TimeMin=N/A SubmitTime=2026-09-16T18:54:54 EligibleTime=2026-09-16T18:54:54 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T18:54:54 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2487483 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/logs/f6k5_peak12_fixed_341685.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/logs/f6k5_peak12_fixed_341685.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "peak18_cg",
+      "job_id": "341686",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=341686 JobName=f6k5_peak18_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14009 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=06:00:00 TimeMin=N/A SubmitTime=2026-09-16T18:54:54 EligibleTime=2026-09-16T18:54:54 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T18:54:54 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2487483 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/logs/f6k5_peak18_cg_341686.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/logs/f6k5_peak18_cg_341686.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "peak18_fixed",
+      "job_id": "341687",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=341687 JobName=f6k5_peak18_fixed UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14009 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=03:00:00 TimeMin=N/A SubmitTime=2026-09-16T18:54:55 EligibleTime=2026-09-16T18:54:55 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T18:54:55 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2487483 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/logs/f6k5_peak18_fixed_341687.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/logs/f6k5_peak18_fixed_341687.out TresPerTask=cpu=8 \n"
+    }
+  ],
+  "all_independent": true
+}

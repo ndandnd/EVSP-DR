@@ -1,0 +1,29 @@
+{
+  "utc": "2026-09-16T22:46:51.668790+00:00",
+  "own_job_state_counts": [
+    {
+      "partition": "default_partition",
+      "state": "PENDING",
+      "tasks": 77
+    },
+    {
+      "partition": "default_partition",
+      "state": "RUNNING",
+      "tasks": 88
+    },
+    {
+      "partition": "scaglione",
+      "state": "PENDING",
+      "tasks": 33
+    }
+  ],
+  "scaglione_node_cpu_states": "scaglione-compute-01|mix-|8/16/0/24|257580|gpu:nvidia_geforce_rtx_3090:5(S:0)\nscaglione-cpu-01|mix|48/8/0/56|128350|(null)\nscaglione-cpu-02|alloc|56/0/0/56|128350|(null)\nscaglione-cpu-03|mix|12/44/0/56|128350|(null)\nscaglione-cpu-04|alloc|56/0/0/56|128350|(null)\nscaglione-cpu-05|alloc|56/0/0/56|128350|(null)\n",
+  "scaglione_job_state_counts": [
+    {
+      "owner_group": "self",
+      "state": "PENDING",
+      "tasks": 33
+    }
+  ],
+  "permission": "read-only load check; no migration or new follow-up submissions authorized"
+}

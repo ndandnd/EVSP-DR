@@ -3,7 +3,7 @@ import concurrent.futures,csv,datetime,hashlib,io,json,re,subprocess,sys,time
 from pathlib import Path
 BASE=Path('/home/nc437/ladder-lite');PY='/home/nc437/evsp_env/bin/python';SLURM=Path('/usr/local/slurm/slurm-25.05.5/bin');STAMP=sys.argv[1];SCRIPT_SHA=sys.argv[2]
 assert re.fullmatch(r'\d{8}T\d{6}Z',STAMP)
-ROOTS={'p1':BASE/'review_p1_mip_20260916','dr':BASE/'review_dr_mincharge_20260916','strict':BASE/'review_strict_c5_20260916','random':BASE/'random_trip_groups_c1_20260916','full40':BASE/'review_full40_20260916','frolunda':BASE/'review_frolunda_20260916'}
+ROOTS={'p1':BASE/'review_p1_mip_20260916','dr':BASE/'review_dr_mincharge_20260916','strict':BASE/'review_strict_c5_20260916','random':BASE/'random_trip_groups_c1_20260916','full40':BASE/'review_full40_20260916','frolunda':BASE/'review_frolunda_20260916','f6_k5':BASE/'advisor_f6_k5_reserve_20260916'}
 OUT=BASE/'review_monitor_20260916'/STAMP;OUT.mkdir(parents=True,exist_ok=False)
 sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def read(p):return json.loads(Path(p).read_text())
@@ -36,6 +36,9 @@ def collect(name,b):
    with (OUT/'dr/synthetic_results.csv').open() as f:rows=list(csv.DictReader(f))
    assert all(r['tariff'] in {'peak08','peak12','peak18'} for r in rows)
    result={'rows':rows,'metadata':read(OUT/'dr/collection.json'),'publication':'Synthetic rows only; internal real-price rows retained on Unicorn and excluded from this transport.'}
+  elif name=='f6_k5':
+   run([PY,str(b/'collect.py'),'--root',str(b),'--out',str(OUT/'f6_k5')]);script=b/'collect.py';result=read(OUT/'f6_k5/comparison.json')
+   assert all(r['peak'] in {'peak08','peak12','peak18'} for r in result['rows'])
   elif name=='full40':result=full_collect(b);script=Path(__file__)
   else:
    script=b/('collect_remote.py' if name=='strict' else 'collect.py');result=json.loads(run([PY,str(script)]))
@@ -48,7 +51,7 @@ def collect(name,b):
   return name,{'collection_ok':False,'error':type(exc).__name__ if name=='dr' else str(exc)}
 
 started=time.monotonic()
-with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:campaigns=dict(pool.map(lambda t:collect(*t),ROOTS.items()))
+with concurrent.futures.ThreadPoolExecutor(max_workers=len(ROOTS)) as pool:campaigns=dict(pool.map(lambda t:collect(*t),ROOTS.items()))
 registry=[];attempts=[]
 def jobrows(value):
  if isinstance(value,dict):

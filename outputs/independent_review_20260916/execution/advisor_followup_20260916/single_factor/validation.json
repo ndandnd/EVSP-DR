@@ -1,0 +1,43 @@
+{
+  "finding": "F4",
+  "claim": "single-factor preparation and tiny implementation checks",
+  "status": "VERIFIED",
+  "scientific_arm_outcomes": "UNRESOLVED_NOT_RUN",
+  "jobs_submitted": 0,
+  "production_sequences_replayed": 0,
+  "tests": [
+    {
+      "script": "test_sequence_replay.py",
+      "exit_code": 0,
+      "elapsed_s": 4.130617292132229,
+      "log": "test_sequence_replay.py.log"
+    },
+    {
+      "script": "test_workflow.py",
+      "exit_code": 0,
+      "elapsed_s": 3.4044117918238044,
+      "log": "test_workflow.py.log"
+    }
+  ],
+  "test_count": 10,
+  "manifest_sha256": "3ca9b96d05c256e72707133e2e181cc8146ddeffb1f0f8ae8848f2bd4d3920a9",
+  "execution_commit": "50ceb6c095a580f79f87b53bef536cac31f81963",
+  "code_and_input_hashes": {
+    "continue_cg.py": "3b7f7114e1fb5908c0a1422e27800607fcc57637545543569d41db68df293fa1",
+    "test_sequence_replay.py": "2770ec1c1cf3f6a8996be766268338c15b8a074eddb9a039442ca06275b67d53",
+    "replay_chunk.py": "c55359ae678c7a76f5ca07fdeb9f03188d45738fa0961f627a2a902d43f461ae",
+    "assemble.py": "bb1bad9166fa4e4a5f4dd25dd63c90a93b6dba43a3d104be9615b6a10fbfc051",
+    "README.md": "16d677038d7d211f077ab6c88f2a5bd97bd6e966e39ac2ea6529f044e4618006",
+    "test_workflow.py": "f98255b655821d93d897e4bd5f3fd9294f012a8457a064b759240c00b4cf1468",
+    "manifest.json": "3ca9b96d05c256e72707133e2e181cc8146ddeffb1f0f8ae8848f2bd4d3920a9",
+    "test_sequence_replay.py.log": "d522617cc9a6754343237966efb8e65a65ef79902dadf704a42b44a6beac961e",
+    "extract_sequences.py": "f65ae7762fec9bdfe476d80efe8567ec295f930faff6b6fc0ecf379eb2cdb0e0",
+    "test_workflow.py.log": "3a6c626bb5abaf5a78afeddcfe1a942f485f8256a994776e86cb358462f4afab",
+    "prepare.py": "e23534cd5feaed4051ba393d0d8702ac36c8d243c3c3384b60df4a614a035bd1",
+    "sequence_replay.py": "b7b6aa7cee5d8ca5326fe5bc5401352b284092043a5878dac0175f45965edfbc",
+    "inputs/18E2.csv": "d7b73e239c3355731bb119221e387fcd1c6be33d4aef409fcc2a4e3679224640",
+    "inputs/18E1.csv": "c8338310e11df605a8404862808e8dfa9fb324acf2bde15387238f0acc1e51e2",
+    "inputs/groups.json": "1e71069ba35296e7cd390e9d531123e0572d271f5d1d82602f89c92a76cbc405",
+    "inputs/w5_k31.csv": "83585a8fbcba73f0262ba2e32e389bd014874c7f2e51aea65183e6dbed6321df"
+  }
+}

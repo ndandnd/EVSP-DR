@@ -30,9 +30,13 @@ Raw CG/MIP JSONs and hashes are retained in `first_endpoint/` and `status_after_
 - Service-trip energy is preserved from `FDL_VehicleDetails.xlsx`. Deadhead duration/distance use the **maximum across both directions and all available time intervals**; deadhead energy assumes **2 kWh/km**. This conservative conversion is declared, not a claim about actual Frölunda consumption. One source row with missing distance/duration was omitted and recorded; no shortest-path imputation was applied.
 - The original constant tariff covered hours 0–24. We explicitly extended the same **0.0992/kWh** price to hour 25 for the 26-hour horizon. Original CSV, hash, extension reason and new hash are retained.
 
+## Recorded-setting correction
+
+The frozen manifest incorrectly labels the station-to-trip window as 220 minutes. Executed CG and native MIP replay explicitly use the 1,560-minute horizon. The independent input and selected-route checks used the stricter 220-minute window and passed. The original manifest and its launch hash are preserved; `manifest_erratum.json` records the correction and pinned code evidence. CG certificate scope uses the executed 1,560-minute setting.
+
 ## Validation before submission
 
-All seven restricted input graphs passed depot-connectivity and input checks with the same default **220-minute station-to-trip window** used by CG. Optimizing charging continuously for the unchanged first full duty produced a physically validated feasible route; this did not alter selection.
+All seven restricted input graphs passed depot-connectivity and input checks with the a stricter **220-minute station-to-trip window** than the **1,560-minute window actually used by CG and native MIP replay**. Optimizing charging continuously for the unchanged first full duty produced a physically validated feasible route; this did not alter selection.
 
 A separate **one-trip** native event-CG smoke run obtained a pricing certificate. Native MIP found and proved one bus and passed physical replay. A second native CG run successfully resumed its saved checkpoint with matching input/code hashes. These validate plumbing and identity; they are not seven-stage research results.
 

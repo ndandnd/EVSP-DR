@@ -1,0 +1,19 @@
+{
+  "type": "descriptive_manifest_erratum_not_execution_change",
+  "preserved_manifest_sha256": "28564b44a0a013fc7711942c214a2d2a8753b1bd7cecedcd17a4b70cd25cc046",
+  "incorrect_field": "scientific_settings.max_station_to_trip_wait_min",
+  "recorded_value": 220,
+  "executed_CG_value": 1560,
+  "executed_native_MIP_replay_value": 1560,
+  "independent_input_and_selected_route_audit_value": 220,
+  "source": {
+    "CG_commit": "daac18d5598902c28baa6c43e58942930fc733bc",
+    "CG_file": "src/exact_pricer_expanded.py",
+    "CG_line": 1641,
+    "CG_file_sha256": "f4310ddc495c70bba6118b0ecd9c546f80a8ce6b7f1b027e2866de9595af8831",
+    "MIP_commit": "0c51b1fa491492212f5d875d1c082b476db0f1c3",
+    "MIP_file": "src/run_exact_pool_mip.py",
+    "MIP_file_sha256": "bcb5a6b76040ff6ddfa932433d296a1f0f72207b28cbba738b1b4dd39f1eaac7"
+  },
+  "effect": "Executed CG and native MIP use horizon1560; selected k1/k2 routes also passed stricter220 input/independent route checks. k2feasiblefleetproofunchanged. CGcertificate scope uses1560. No scientific code,data,job,or original manifest changed."
+}

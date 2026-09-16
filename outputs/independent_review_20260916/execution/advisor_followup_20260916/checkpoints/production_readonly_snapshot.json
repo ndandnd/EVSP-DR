@@ -1,0 +1,12 @@
+{
+  "job": "JobId=341405 JobName=drX_c1_full40_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14011 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:341404_0(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=2-02:00:00 TimeMin=N/A SubmitTime=2026-09-16T18:10:33 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T18:10:33 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2236418 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=128G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=128G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/review_full40_20260916/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/review_full40_20260916/logs/drX_c1_full40_cg_341405_4294967294_341405.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/review_full40_20260916/logs/drX_c1_full40_cg_341405_4294967294_341405.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n",
+  "commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "hashes": {
+    "campaign.py": "3abed3c1360155305ce787cdd0034bb08b1e2e92e2190ae5f19c6d169846714c",
+    "worker.sub": "26eb6de68eeb7bb9b13acb3d497f646d4f56a89d262f2d871883b578c7bd50eb",
+    "manifest.json": "b9d69cedba06edac3cee9871d85b46f9f9514ddd6fc524837bc4825e69715fea",
+    "code/src/exact_pricer_expanded.py": "f4310ddc495c70bba6118b0ecd9c546f80a8ce6b7f1b027e2866de9595af8831",
+    "code/src/durable_io.py": "182afa650d3ff17866eff0ecf86e32e6ad11a486130c70d1b7b0e637901a669b"
+  },
+  "cg_attempt_files": []
+}

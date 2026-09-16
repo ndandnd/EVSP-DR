@@ -1,0 +1,281 @@
+{
+  "peak08": {
+    "source_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/repriced_sources/peak08/fee0/original.json",
+    "source_sha256": "a015a776f9103b3d6e274c60a7b3378e8c8ccfbdee7dfedc5d5ee74391175baa",
+    "physical": {
+      "physical_routes_validated": true,
+      "reserve_kwh": 36,
+      "max_kw": 350,
+      "minimum_active_minutes": 3,
+      "buses": 5,
+      "trip_count": 62,
+      "trip_occurrences": 62,
+      "duplicate_occurrences": 0,
+      "exact_once": true,
+      "aggregate_continuous_ending_kwh": 280.7833253000003,
+      "per_bus": [
+        {
+          "route_index": 0,
+          "duty_id": "13401",
+          "minimum_soc_kwh": 52.62196560000004,
+          "ending_soc_kwh": 52.62196560000004,
+          "active_charge_starts": 10,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 5.0
+        },
+        {
+          "route_index": 1,
+          "duty_id": "13403",
+          "minimum_soc_kwh": 54.04900190000009,
+          "ending_soc_kwh": 54.04900190000009,
+          "active_charge_starts": 12,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 5.0
+        },
+        {
+          "route_index": 2,
+          "duty_id": "13405",
+          "minimum_soc_kwh": 63.82741500000007,
+          "ending_soc_kwh": 63.82741500000007,
+          "active_charge_starts": 12,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 4.0
+        },
+        {
+          "route_index": 3,
+          "duty_id": "13408",
+          "minimum_soc_kwh": 53.926440700000015,
+          "ending_soc_kwh": 53.926440700000015,
+          "active_charge_starts": 9,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 6.0
+        },
+        {
+          "route_index": 4,
+          "duty_id": "13414",
+          "minimum_soc_kwh": 45.51461930000002,
+          "ending_soc_kwh": 56.35850210000005,
+          "active_charge_starts": 9,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 6.0
+        }
+      ]
+    },
+    "invoice": {
+      "charge_events": 52,
+      "charge_start_fee_scope": "modeled_per_start_penalty_not_verified_operator_invoice",
+      "charge_start_fees": 0.0,
+      "charging_cost_exact": null,
+      "charging_cost_lower": 230.28700962629637,
+      "charging_cost_upper": 230.9810746873893,
+      "comparator": "ORIGINAL_GIRO_UNMODIFIED",
+      "cost_errors": [],
+      "destination_charge_start_fee": 0.0,
+      "energy_cost_exact": null,
+      "energy_cost_lower": 230.2870096262964,
+      "energy_cost_upper": 230.98107468738928,
+      "fleet": 5,
+      "matched_physics_comparator_eligible": true,
+      "production_energy_consumed_kwh": 2810.3299844999997,
+      "robust_improvement_rule": "eligible AND optimized_same_fleet_cost < original_charging_cost_lower",
+      "source_charge_start_fee": 5.0,
+      "tariff": "/home/nc437/ladder-lite/execution/a9a9720f471e5d3b30acff6f46208f20c22f18fc/data/tariff_response/peak08_h26.csv",
+      "tariff_sha256": "b461f12cf8ca41ba8a89102b32d46ea16b974566ea05849dd75776a7108f341e",
+      "terminal_energy_credit_price": 0.1,
+      "terminal_energy_credit_scope": "accounting_sensitivity_not_observed_invoice_or_equal_terminal_soc_constraint",
+      "terminal_energy_normalized_charging_cost_lower": 202.20867709629636,
+      "terminal_energy_normalized_charging_cost_upper": 202.9027421573893,
+      "terminal_surplus_total_kwh": 280.7833253000002,
+      "total_charged_kwh": 1891.1133098,
+      "uniform_power_assumption_energy_cost": 230.6427101071482,
+      "uniform_power_assumption_is_observed": false
+    },
+    "scope": "Existence of bounded-power profile within unchanged recorded windows; actual power trace unobserved. Invoice interval retained. All original positive windows>=3min; reserve36 passes."
+  },
+  "peak12": {
+    "source_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/repriced_sources/peak12/fee0/original.json",
+    "source_sha256": "4377548bb9c550d3f8d78b6c4aabb30bbf18a88128c331ac00aa2af3d4fd4b17",
+    "physical": {
+      "physical_routes_validated": true,
+      "reserve_kwh": 36,
+      "max_kw": 350,
+      "minimum_active_minutes": 3,
+      "buses": 5,
+      "trip_count": 62,
+      "trip_occurrences": 62,
+      "duplicate_occurrences": 0,
+      "exact_once": true,
+      "aggregate_continuous_ending_kwh": 280.7833253000003,
+      "per_bus": [
+        {
+          "route_index": 0,
+          "duty_id": "13401",
+          "minimum_soc_kwh": 52.62196560000004,
+          "ending_soc_kwh": 52.62196560000004,
+          "active_charge_starts": 10,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 5.0
+        },
+        {
+          "route_index": 1,
+          "duty_id": "13403",
+          "minimum_soc_kwh": 54.04900190000009,
+          "ending_soc_kwh": 54.04900190000009,
+          "active_charge_starts": 12,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 5.0
+        },
+        {
+          "route_index": 2,
+          "duty_id": "13405",
+          "minimum_soc_kwh": 63.82741500000007,
+          "ending_soc_kwh": 63.82741500000007,
+          "active_charge_starts": 12,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 4.0
+        },
+        {
+          "route_index": 3,
+          "duty_id": "13408",
+          "minimum_soc_kwh": 53.926440700000015,
+          "ending_soc_kwh": 53.926440700000015,
+          "active_charge_starts": 9,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 6.0
+        },
+        {
+          "route_index": 4,
+          "duty_id": "13414",
+          "minimum_soc_kwh": 45.51461930000002,
+          "ending_soc_kwh": 56.35850210000005,
+          "active_charge_starts": 9,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 6.0
+        }
+      ]
+    },
+    "invoice": {
+      "charge_events": 52,
+      "charge_start_fee_scope": "modeled_per_start_penalty_not_verified_operator_invoice",
+      "charge_start_fees": 0.0,
+      "charging_cost_exact": null,
+      "charging_cost_lower": 289.5935355365639,
+      "charging_cost_upper": 290.5965839307596,
+      "comparator": "ORIGINAL_GIRO_UNMODIFIED",
+      "cost_errors": [],
+      "destination_charge_start_fee": 0.0,
+      "energy_cost_exact": null,
+      "energy_cost_lower": 289.5935355365639,
+      "energy_cost_upper": 290.59658393075955,
+      "fleet": 5,
+      "matched_physics_comparator_eligible": true,
+      "production_energy_consumed_kwh": 2810.3299844999997,
+      "robust_improvement_rule": "eligible AND optimized_same_fleet_cost < original_charging_cost_lower",
+      "source_charge_start_fee": 5.0,
+      "tariff": "/home/nc437/ladder-lite/execution/a6e5059688703641db9aa3349b6ab6a9f76c1987/data/tariff_response/peak12_h26.csv",
+      "tariff_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+      "terminal_energy_credit_price": 0.1,
+      "terminal_energy_credit_scope": "accounting_sensitivity_not_observed_invoice_or_equal_terminal_soc_constraint",
+      "terminal_energy_normalized_charging_cost_lower": 261.51520300656387,
+      "terminal_energy_normalized_charging_cost_upper": 262.5182514007596,
+      "terminal_surplus_total_kwh": 280.7833253000002,
+      "total_charged_kwh": 1891.1133098,
+      "uniform_power_assumption_energy_cost": 290.0733353613608,
+      "uniform_power_assumption_is_observed": false
+    },
+    "scope": "Existence of bounded-power profile within unchanged recorded windows; actual power trace unobserved. Invoice interval retained. All original positive windows>=3min; reserve36 passes."
+  },
+  "peak18": {
+    "source_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/repriced_sources/peak18/fee0/original.json",
+    "source_sha256": "7e3ac020d6d6381500335cd36365bc8635fd7068a612241898c4aaf84e874646",
+    "physical": {
+      "physical_routes_validated": true,
+      "reserve_kwh": 36,
+      "max_kw": 350,
+      "minimum_active_minutes": 3,
+      "buses": 5,
+      "trip_count": 62,
+      "trip_occurrences": 62,
+      "duplicate_occurrences": 0,
+      "exact_once": true,
+      "aggregate_continuous_ending_kwh": 280.7833253000003,
+      "per_bus": [
+        {
+          "route_index": 0,
+          "duty_id": "13401",
+          "minimum_soc_kwh": 52.62196560000004,
+          "ending_soc_kwh": 52.62196560000004,
+          "active_charge_starts": 10,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 5.0
+        },
+        {
+          "route_index": 1,
+          "duty_id": "13403",
+          "minimum_soc_kwh": 54.04900190000009,
+          "ending_soc_kwh": 54.04900190000009,
+          "active_charge_starts": 12,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 5.0
+        },
+        {
+          "route_index": 2,
+          "duty_id": "13405",
+          "minimum_soc_kwh": 63.82741500000007,
+          "ending_soc_kwh": 63.82741500000007,
+          "active_charge_starts": 12,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 4.0
+        },
+        {
+          "route_index": 3,
+          "duty_id": "13408",
+          "minimum_soc_kwh": 53.926440700000015,
+          "ending_soc_kwh": 53.926440700000015,
+          "active_charge_starts": 9,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 6.0
+        },
+        {
+          "route_index": 4,
+          "duty_id": "13414",
+          "minimum_soc_kwh": 45.51461930000002,
+          "ending_soc_kwh": 56.35850210000005,
+          "active_charge_starts": 9,
+          "idle_station_visits": 0,
+          "shortest_active_minutes": 6.0
+        }
+      ]
+    },
+    "invoice": {
+      "charge_events": 52,
+      "charge_start_fee_scope": "modeled_per_start_penalty_not_verified_operator_invoice",
+      "charge_start_fees": 0.0,
+      "charging_cost_exact": null,
+      "charging_cost_lower": 223.44729058227836,
+      "charging_cost_upper": 223.7232277426603,
+      "comparator": "ORIGINAL_GIRO_UNMODIFIED",
+      "cost_errors": [],
+      "destination_charge_start_fee": 0.0,
+      "energy_cost_exact": null,
+      "energy_cost_lower": 223.44729058227833,
+      "energy_cost_upper": 223.7232277426603,
+      "fleet": 5,
+      "matched_physics_comparator_eligible": true,
+      "production_energy_consumed_kwh": 2810.3299844999997,
+      "robust_improvement_rule": "eligible AND optimized_same_fleet_cost < original_charging_cost_lower",
+      "source_charge_start_fee": 5.0,
+      "tariff": "/home/nc437/ladder-lite/execution/a6e5059688703641db9aa3349b6ab6a9f76c1987/data/tariff_response/peak18_h26.csv",
+      "tariff_sha256": "d70c3c3f9c15b82f26e1262fb2067f9fcc5e41d63e9ffbe877d33b5fa16563a6",
+      "terminal_energy_credit_price": 0.1,
+      "terminal_energy_credit_scope": "accounting_sensitivity_not_observed_invoice_or_equal_terminal_soc_constraint",
+      "terminal_energy_normalized_charging_cost_lower": 195.36895805227834,
+      "terminal_energy_normalized_charging_cost_upper": 195.6448952126603,
+      "terminal_surplus_total_kwh": 280.7833253000002,
+      "total_charged_kwh": 1891.1133098,
+      "uniform_power_assumption_energy_cost": 223.51743527290188,
+      "uniform_power_assumption_is_observed": false
+    },
+    "scope": "Existence of bounded-power profile within unchanged recorded windows; actual power trace unobserved. Invoice interval retained. All original positive windows>=3min; reserve36 passes."
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "utc": "2026-09-16T22:55:39.812175+00:00",
+  "manifest_sha256": "4a3583b04d0acb1798a322f9ba3da2fe755318cb2e31449266c0196562f8608a",
+  "rows": [
+    {
+      "peak": "peak08",
+      "arm": "original_GIRO",
+      "status": "verified_profile_exists",
+      "buses": 5,
+      "continuous_charging_cost": 230.6427101071482,
+      "cost_lower": 230.28700962629637,
+      "cost_upper": 230.9810746873893,
+      "cost_kind": "interval;uniform-profile estimate is not observed",
+      "minimum_soc_kwh": 45.51461930000002,
+      "active_charge_starts": 52,
+      "minimum_active_minutes": 4.0,
+      "ending_kwh": 280.7833253000003,
+      "duplicate_occurrences": 0,
+      "matched_five_bus_comparison_eligible": true
+    },
+    {
+      "peak": "peak12",
+      "arm": "original_GIRO",
+      "status": "verified_profile_exists",
+      "buses": 5,
+      "continuous_charging_cost": 290.0733353613608,
+      "cost_lower": 289.5935355365639,
+      "cost_upper": 290.5965839307596,
+      "cost_kind": "interval;uniform-profile estimate is not observed",
+      "minimum_soc_kwh": 45.51461930000002,
+      "active_charge_starts": 52,
+      "minimum_active_minutes": 4.0,
+      "ending_kwh": 280.7833253000003,
+      "duplicate_occurrences": 0,
+      "matched_five_bus_comparison_eligible": true
+    },
+    {
+      "peak": "peak18",
+      "arm": "original_GIRO",
+      "status": "verified_profile_exists",
+      "buses": 5,
+      "continuous_charging_cost": 223.51743527290188,
+      "cost_lower": 223.44729058227836,
+      "cost_upper": 223.7232277426603,
+      "cost_kind": "interval;uniform-profile estimate is not observed",
+      "minimum_soc_kwh": 45.51461930000002,
+      "active_charge_starts": 52,
+      "minimum_active_minutes": 4.0,
+      "ending_kwh": 280.7833253000003,
+      "duplicate_occurrences": 0,
+      "matched_five_bus_comparison_eligible": true
+    },
+    {
+      "case_id": "peak08_cg",
+      "peak": "peak08",
+      "arm": "cg",
+      "status": "not_completed",
+      "matched_five_bus_comparison_eligible": false
+    },
+    {
+      "case_id": "peak08_fixed",
+      "peak": "peak08",
+      "arm": "fixed",
+      "status": "not_completed",
+      "matched_five_bus_comparison_eligible": false
+    },
+    {
+      "case_id": "peak12_cg",
+      "peak": "peak12",
+      "arm": "cg",
+      "status": "not_completed",
+      "matched_five_bus_comparison_eligible": false
+    },
+    {
+      "case_id": "peak12_fixed",
+      "peak": "peak12",
+      "arm": "fixed",
+      "status": "not_completed",
+      "matched_five_bus_comparison_eligible": false
+    },
+    {
+      "case_id": "peak18_cg",
+      "peak": "peak18",
+      "arm": "cg",
+      "status": "not_completed",
+      "matched_five_bus_comparison_eligible": false
+    },
+    {
+      "case_id": "peak18_fixed",
+      "peak": "peak18",
+      "arm": "fixed",
+      "status": "not_completed",
+      "matched_five_bus_comparison_eligible": false
+    }
+  ],
+  "comparisons": [
+    {
+      "peak": "peak08",
+      "status": "censored_pending_or_unmatched",
+      "joint_vs_fixed_fractional_cost_reduction": null,
+      "same_achieved_ending_energy": null,
+      "common_ending_minimum_kwh": 280.7833253,
+      "scope": "Continuous modeled costs; no continuous-cost global proof. Covering duplicates retained and separately reported; equal minimum end energy does not force equal achieved end energy."
+    },
+    {
+      "peak": "peak12",
+      "status": "censored_pending_or_unmatched",
+      "joint_vs_fixed_fractional_cost_reduction": null,
+      "same_achieved_ending_energy": null,
+      "common_ending_minimum_kwh": 280.7833253,
+      "scope": "Continuous modeled costs; no continuous-cost global proof. Covering duplicates retained and separately reported; equal minimum end energy does not force equal achieved end energy."
+    },
+    {
+      "peak": "peak18",
+      "status": "censored_pending_or_unmatched",
+      "joint_vs_fixed_fractional_cost_reduction": null,
+      "same_achieved_ending_energy": null,
+      "common_ending_minimum_kwh": 280.7833253,
+      "scope": "Continuous modeled costs; no continuous-cost global proof. Covering duplicates retained and separately reported; equal minimum end energy does not force equal achieved end energy."
+    }
+  ]
+}

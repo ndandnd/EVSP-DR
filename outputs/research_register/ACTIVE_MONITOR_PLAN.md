@@ -1,3 +1,7 @@
+## 16 September — submission restriction from the advisor follow-up
+
+Only the six prepared k=5 F6 solver jobs (three tariffs × fixed-duty/fresh CG) are authorized for new submission. Existing campaigns may continue. Do not submit the item10 MIP follow-ups, item11 single-factor arms, other new jobs, replacement attempts, or partition changes until the user confirms after seeing current cluster load. Read-only collection, auditing, planning, documentation and code preparation may continue. This restriction supersedes older instructions to keep launching ready work. Preserve held jobs and EVSPV2G experiments. See execution/advisor_followup_20260916 for plans and receipts.
+
 ## 16 September — independent-review execution is the current priority
 
 P0 was completed in order 3 → 2 → 4 → 1 → 5 → 6; all P1/P2/P3 campaigns in review §4 are submitted. Follow [the focused review monitoring instructions](../independent_review_20260916/execution/MONITORING.md) and [F-number verdicts / receipts](../independent_review_20260916/execution/README.md). Use the focused collector, rather than repeatedly running the full historical collector, while these campaigns are active. Existing hourly cadence remains appropriate; stay quiet on unchanged state.

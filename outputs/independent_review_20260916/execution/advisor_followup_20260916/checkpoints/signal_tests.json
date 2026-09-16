@@ -1,0 +1,38 @@
+{
+  "tests": [
+    {
+      "signal": "SIGTERM",
+      "returncode": 0,
+      "events": [
+        "signal_sent",
+        "master_solve_after_signal"
+      ],
+      "stop_reason": "external_signal",
+      "termination_signal": "SIGTERM",
+      "columns": 13,
+      "iterations": 1,
+      "final_lp_source": "final_pool_resolve",
+      "native_status_sha256": "40c3a4193a3f28787699ae5426b95528b34280e9f454a4cfb5c64e7ed85905b6",
+      "native_log_sha256": "7d4c64b401204c74f9d20df58757ab079ab8d65d12d88d46ec9588eb7b6f4aa3"
+    },
+    {
+      "signal": "SIGUSR1",
+      "returncode": 0,
+      "events": [
+        "signal_sent",
+        "master_solve_after_signal"
+      ],
+      "stop_reason": "external_signal",
+      "termination_signal": "SIGUSR1",
+      "columns": 13,
+      "iterations": 1,
+      "final_lp_source": "final_pool_resolve",
+      "native_status_sha256": "9f34ac72232d6babd6eeaf431076510ca9a7667c421746e2e12907a7de27cd78",
+      "native_log_sha256": "7d4c64b401204c74f9d20df58757ab079ab8d65d12d88d46ec9588eb7b6f4aa3"
+    }
+  ],
+  "instrumentation": "A test-only wrapper sends real OS signal on first pricing entry and records any subsequent master solve. Pinned solver source is unchanged.",
+  "production_modified": false,
+  "slurm_submissions": 0,
+  "temp_root": "/tmp/evsp-checkpoint-audit-lbqv6x8r"
+}

@@ -1,0 +1,55 @@
+diff --git a/src/run_minimum_charge_fixed.py b/src/run_minimum_charge_fixed.py
+index ab12ad5c..5f0013b4 100644
+--- a/src/run_minimum_charge_fixed.py
++++ b/src/run_minimum_charge_fixed.py
+@@ -11,12 +11,12 @@ from config import CHARGING_STATIONS,BUS_COST_KX
+ from utils_v2 import load_station_hourly_prices
+ 
+ def main():
+- p=argparse.ArgumentParser();p.add_argument('--data-dir',required=True);p.add_argument('--csv',required=True);p.add_argument('--prices',required=True);p.add_argument('--master',required=True);p.add_argument('--target',required=True,type=float);p.add_argument('--fleet-cap',required=True,type=int);p.add_argument('--out',required=True);p.add_argument('--frontier-seconds',type=float,default=14400);p.add_argument('--mip-seconds',type=float,default=3600);a=p.parse_args()
++ p=argparse.ArgumentParser();p.add_argument('--data-dir',required=True);p.add_argument('--csv',required=True);p.add_argument('--prices',required=True);p.add_argument('--master',required=True);p.add_argument('--target',required=True,type=float);p.add_argument('--fleet-cap',required=True,type=int);p.add_argument('--out',required=True);p.add_argument('--frontier-seconds',type=float,default=14400);p.add_argument('--mip-seconds',type=float,default=3600);p.add_argument('--charge-kw',type=float,default=240);p.add_argument('--battery-kwh',type=float,default=240);p.add_argument('--reserve-kwh',type=float,default=0);p.add_argument('--minimum-charge-minutes',type=float,default=3);a=p.parse_args()
+  data=Path(a.data_dir);out=Path(a.out);out.mkdir(parents=True,exist_ok=False)
+  problem=build_problem(data,a.csv,max_station_to_trip_wait_min=HORIZON_MIN)
+  duties=giro_routes_for_instance(Path(a.master),data/a.csv);assert len(duties)==a.fleet_cap
+  prices=load_station_hourly_prices(Path(a.prices),CHARGING_STATIONS)
+- start=time.monotonic();net=MinimumChargeNetwork(problem,prices,soc_step=2.5,block_min=5,g_kwh=240,charge_kw=240,reserve_kwh=0,minimum_charge_minutes=3,fixed_sequence_index=True,strict_tariff_coverage=True,arc_mode='lazy');graph_seconds=time.monotonic()-start
++ start=time.monotonic();net=MinimumChargeNetwork(problem,prices,soc_step=2.5,block_min=5,g_kwh=a.battery_kwh,charge_kw=a.charge_kw,reserve_kwh=a.reserve_kwh,minimum_charge_minutes=a.minimum_charge_minutes,fixed_sequence_index=True,strict_tariff_coverage=True,arc_mode='lazy');graph_seconds=time.monotonic()-start
+  started=time.monotonic();routes=[];progress=[];complete=True
+  for duty in duties:
+   if time.monotonic()-started>a.frontier_seconds:complete=False;break
+@@ -24,7 +24,7 @@ def main():
+   for record in r:record['duty_id']=duty['duty_id']
+   routes.extend(r);progress.append(dict(duty_id=duty['duty_id'],alternatives=len(r),seconds=time.monotonic()-tick));save(out/'frontier_progress.json',progress)
+  save(out/'columns.json',routes)
+- result=dict(graph_seconds=graph_seconds,frontier_seconds=time.monotonic()-started,frontier_complete=complete,duty_count=len(duties),processed_duties=len(progress),infeasible_duties=[x['duty_id'] for x in progress if not x['alternatives']],terminal_target_kwh=a.target,fleet_cap=a.fleet_cap,physics=dict(battery_kwh=240,charge_kw=240,reserve_kwh=0,minimum_charge_minutes=3,charge_start_fee=0,capacity='unconstrained',continuous_power='uniform controllable over full grid window'),input_hashes={str(f):sha(f) for f in [data/a.csv,Path(a.prices),Path(a.master),data/'Ref_dict.csv',data/'par_ref_dhd.csv']},columns_sha256=sha(out/'columns.json'),interpretation='Fixed trip sequences; complete terminal-energy frontiers in same discretized graph as joint CG. Grid-objective finite-pool proof distinct from continuous repriced cost.')
++ result=dict(graph_seconds=graph_seconds,frontier_seconds=time.monotonic()-started,frontier_complete=complete,duty_count=len(duties),processed_duties=len(progress),infeasible_duties=[x['duty_id'] for x in progress if not x['alternatives']],terminal_target_kwh=a.target,fleet_cap=a.fleet_cap,physics=dict(battery_kwh=a.battery_kwh,charge_kw=a.charge_kw,reserve_kwh=a.reserve_kwh,minimum_charge_minutes=a.minimum_charge_minutes,charge_start_fee=0,capacity='unconstrained',continuous_power='uniform controllable over full grid window'),input_hashes={str(f):sha(f) for f in [data/a.csv,Path(a.prices),Path(a.master),data/'Ref_dict.csv',data/'par_ref_dhd.csv']},columns_sha256=sha(out/'columns.json'),interpretation='Fixed trip sequences; complete terminal-energy frontiers in same discretized graph as joint CG. Grid-objective finite-pool proof distinct from continuous repriced cost.')
+  selected=[]
+  if complete and not result['infeasible_duties']:
+   solved,selected=solve(routes,problem.trips,target=a.target,cap=a.fleet_cap,seconds=a.mip_seconds,log_dir=out,threads=8);result.update(solved)
+diff --git a/tests/test_minimum_charge_pricer.py b/tests/test_minimum_charge_pricer.py
+index aa2366be..58570116 100644
+--- a/tests/test_minimum_charge_pricer.py
++++ b/tests/test_minimum_charge_pricer.py
+@@ -30,4 +30,22 @@ class MinimumChargeTest(unittest.TestCase):
+      if e>1e-9:self.assertGreaterEqual(b-a,3-1e-8)
+      self.assertLessEqual(e*60/(b-a),240+1e-6)
+     self.assertAlmostEqual(sum(b['realized_kwh'] for b in r['continuous_realized_charging_blocks']),sum(r['charging_stops']['kwh']),places=6)
++ def test_reserve_changes_both_pricing_and_fixed_frontier(self):
++  for reserve in [0,36]:
++   net=MinimumChargeNetwork(two_trip_problem(145.4),prices(),soc_step=2.5,block_min=5,g_kwh=240,charge_kw=350,reserve_kwh=reserve,arc_mode='lazy',fixed_sequence_index=True,minimum_charge_minutes=3)
++   fixed=frontier(net,[0,1]);self.assertTrue(fixed)
++   chosen=net.terminal_batch({0:100001,1:100001},limit=1)[0]['record']
++   self.assertEqual(chosen['trips'],[0,1])
++   for r in fixed+[chosen]:
++    energy=sum(r['charging_stops']['kwh'])
++    # Toy has zero deadhead,145.4+100kWh trips, initially240kWh.
++    end=240-245.4+energy
++    self.assertGreaterEqual(end,reserve-1e-6)
++    self.assertAlmostEqual(r['continuous_terminal_energy_kwh'] if 'continuous_terminal_energy_kwh' in r else r['continuous_realization']['continuous_terminal_soc_kwh'],end,places=6)
++    for a,z,e in zip(r['charging_stops']['cst'],r['charging_stops']['cet'],r['charging_stops']['kwh']):
++     if e>1e-9:self.assertGreaterEqual(z-a,3-1e-8)
++     self.assertLessEqual(e*60/(z-a),350+1e-6)
++   if reserve==0:zero_cost=chosen['cost']
++   else:self.assertGreater(chosen['cost'],zero_cost)
++
+ if __name__=='__main__':unittest.main()

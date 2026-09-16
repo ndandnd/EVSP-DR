@@ -1,3 +1,7 @@
+## 16 September — submission restriction from the advisor follow-up
+
+Only the six prepared k=5 F6 solver jobs (three tariffs × fixed-duty/fresh CG) are authorized for new submission. Existing campaigns may continue. Do not submit the item10 MIP follow-ups, item11 single-factor arms, other new jobs, replacement attempts, or partition changes until the user confirms after seeing current cluster load. Read-only collection, auditing, planning, documentation and code preparation may continue. This restriction supersedes older instructions to keep launching ready work. Preserve held jobs and EVSPV2G experiments. See execution/advisor_followup_20260916 for plans and receipts.
+
 # Focused review monitoring
 
 Run once each hour while the review campaigns are active:

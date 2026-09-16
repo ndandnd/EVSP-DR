@@ -1,0 +1,28 @@
+{
+  "registered_utc": "2026-09-16T22:56:04.002741+00:00",
+  "campaign_root": "/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916",
+  "local_root": "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/advisor_followup_20260916/f6_k5",
+  "finding": "F6",
+  "job_ids": [
+    "341682",
+    "341683",
+    "341684",
+    "341685",
+    "341686",
+    "341687"
+  ],
+  "collector_command": [
+    "/home/nc437/evsp_env/bin/python",
+    "/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/collect.py",
+    "--root",
+    "/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916",
+    "--out",
+    "/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/snapshots/<UTC timestamp>"
+  ],
+  "collection_scope": "Nine three-arm rows:3originalread-only comparators and6newoptimizedarms. Separate fleet/CGcertificate/poolproof/physicalreserve/duration/coverage/endenergy.",
+  "allowed": "Read scheduler and existing outputs; collect new snapshots; update scientific records after validation.",
+  "forbidden": "No submissions,retries,requeues,partitionmoves,cancellations,ornewexperiments withoutnewuserauthorization.",
+  "notify": "Report completed validated comparison or failure; no completion claim whilequeued/running.",
+  "manifest_sha256": "4a3583b04d0acb1798a322f9ba3da2fe755318cb2e31449266c0196562f8608a",
+  "collector_sha256": "cfad21356126d2f0cf1631803d2f39fc99234f05713b7867e7128a71ff8d56b3"
+}

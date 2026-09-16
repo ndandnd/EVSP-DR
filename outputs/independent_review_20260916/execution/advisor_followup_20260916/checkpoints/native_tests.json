@@ -1,0 +1,233 @@
+{
+  "temp_root": "/tmp/evsp-checkpoint-audit-lbqv6x8r",
+  "code_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "production_artifacts_modified": false,
+  "slurm_submissions": 0,
+  "fixture_sha256": "69497a1f86ff819c9da11687e99ec70254751eee423e6497070b08f57b7735dc",
+  "tests": [
+    {
+      "test": "seed",
+      "returncode": 0,
+      "elapsed_s": 5.138685744255781,
+      "before_sha256": {},
+      "after_sha256": {},
+      "log_sha256": "d0ecf6cc1f0457ec491506d9334de0cb06b8126c406b9e8e4016b06e4e24df91",
+      "log_tail": "Set parameter LicenseID to value 2674428\nSet parameter GURO_PAR_SPECIAL\nSet parameter TokenServer to value \"en-cc-unicorn-data-dirs.coecis.cornell.edu\"\n[EXACT] network: 354 nodes, 13,544 arcs (soc_step=2.5, block=5min) built in 0.5s\n[EXACT] published initial identity before first journal append\n[EXACT] direct-singleton seed: 4/4 trips feasible (4 added to pool)\n[EXACT] DONE: {\"iter\": 1, \"attempt_iter\": 1, \"lp_obj\": 400000.0, \"route_weight\": 4.0, \"artificials\": 0.0, \"min_rc\": -300000.0, \"max_row_violation\": 0.0, \"max_bound_violation\": 0.0} certified=False columns=13 wall=1s\n",
+      "result": {
+        "certified_rc_optimal": false,
+        "stop_reason": "max_iters",
+        "iterations": 1,
+        "attempt_iterations": 1,
+        "columns": 13,
+        "wall_s": 1.4245316982269287,
+        "attempt_wall_s": 1.4245338439941406,
+        "final": {
+          "iter": 1,
+          "attempt_iter": 1,
+          "lp_obj": 400000.0,
+          "route_weight": 4.0,
+          "artificials": 0.0,
+          "min_rc": -300000.0,
+          "max_row_violation": 0.0,
+          "max_bound_violation": 0.0
+        },
+        "final_lp_source": "final_pool_resolve"
+      }
+    },
+    {
+      "test": "resume_clean",
+      "returncode": 0,
+      "elapsed_s": 1.7693491289392114,
+      "before_sha256": {
+        "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+        ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+        ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+      },
+      "after_sha256": {
+        "": "1c036eb0755b9201aa6ba328e7d47b5cc48a19dc9d0a760cec0c764d137c9393",
+        ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+        ".iters.csv": "f8e7af750491990f62e2f7f64ae52d66fea182413b88e1a01044e9061d0351a8"
+      },
+      "log_sha256": "b4c577c36801e5aa3304b6d7494f54d8059ba8458372642445478ce0014c80d2",
+      "log_tail": "Set parameter LicenseID to value 2674428\nSet parameter GURO_PAR_SPECIAL\nSet parameter TokenServer to value \"en-cc-unicorn-data-dirs.coecis.cornell.edu\"\n[EXACT] resumed 13 columns from cg.json.columns.jsonl\n[EXACT] network: 354 nodes, 13,544 arcs (soc_step=2.5, block=5min) built in 0.5s\n[EXACT] published live resume status before extending the journal\n[EXACT] retained compatible prior final LP as a resume fallback\n[EXACT] direct-singleton seed: 4/4 trips feasible (0 added to pool)\n[EXACT] it   2: obj=100,000.00 weight=1.0000 art=0.00 min_rc=0.000\n[EXACT] DONE: {\"iter\": 2, \"attempt_iter\": 1, \"lp_obj\": 100000.0, \"route_weight\": 1.0, \"artificials\": 0.0, \"min_rc\": 0.0, \"max_row_violation\": 0.0, \"max_bound_violation\": 0.0} certified=True columns=13 wall=2s\n",
+      "result": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "iterations": 2,
+        "attempt_iterations": 1,
+        "columns": 13,
+        "wall_s": 2.0794780254364014,
+        "attempt_wall_s": 0.6549484729766846,
+        "final": {
+          "iter": 2,
+          "attempt_iter": 1,
+          "lp_obj": 100000.0,
+          "route_weight": 1.0,
+          "artificials": 0.0,
+          "min_rc": 0.0,
+          "max_row_violation": 0.0,
+          "max_bound_violation": 0.0
+        },
+        "final_lp_source": "final_pool_resolve"
+      }
+    },
+    {
+      "test": "torn_tail",
+      "returncode": 0,
+      "elapsed_s": 1.62650837469846,
+      "before_sha256": {
+        "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+        ".columns.jsonl": "b7ca60e00cd38bf3fd299cef2e1360fe03023c2d55a05238b247e23aad612d02",
+        ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+      },
+      "after_sha256": {
+        "": "5d03a957e0339b1da5929a6fe7b69392ea7aff145ec6fc1eb0e5f7cd347eb689",
+        ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+        ".iters.csv": "250d688a323d9609fabc1f6c6e5d4abf222dd98c50c3611ee895e87fe608029b"
+      },
+      "log_sha256": "b4c577c36801e5aa3304b6d7494f54d8059ba8458372642445478ce0014c80d2",
+      "log_tail": "Set parameter LicenseID to value 2674428\nSet parameter GURO_PAR_SPECIAL\nSet parameter TokenServer to value \"en-cc-unicorn-data-dirs.coecis.cornell.edu\"\n[EXACT] resumed 13 columns from cg.json.columns.jsonl\n[EXACT] network: 354 nodes, 13,544 arcs (soc_step=2.5, block=5min) built in 0.5s\n[EXACT] published live resume status before extending the journal\n[EXACT] retained compatible prior final LP as a resume fallback\n[EXACT] direct-singleton seed: 4/4 trips feasible (0 added to pool)\n[EXACT] it   2: obj=100,000.00 weight=1.0000 art=0.00 min_rc=0.000\n[EXACT] DONE: {\"iter\": 2, \"attempt_iter\": 1, \"lp_obj\": 100000.0, \"route_weight\": 1.0, \"artificials\": 0.0, \"min_rc\": 0.0, \"max_row_violation\": 0.0, \"max_bound_violation\": 0.0} certified=True columns=13 wall=2s\n",
+      "result": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "iterations": 2,
+        "attempt_iterations": 1,
+        "columns": 13,
+        "wall_s": 2.1320888996124268,
+        "attempt_wall_s": 0.7075588703155518,
+        "final": {
+          "iter": 2,
+          "attempt_iter": 1,
+          "lp_obj": 100000.0,
+          "route_weight": 1.0,
+          "artificials": 0.0,
+          "min_rc": 0.0,
+          "max_row_violation": 0.0,
+          "max_bound_violation": 0.0
+        },
+        "final_lp_source": "final_pool_resolve"
+      }
+    },
+    {
+      "test": "interior_corruption",
+      "returncode": 1,
+      "elapsed_s": 1.0672771502286196,
+      "before_sha256": {
+        "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+        ".columns.jsonl": "db2704cb158e12755899e6cc9783199f0c406105e5dde16d6c4fa1bb85fde5bb",
+        ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+      },
+      "after_sha256": {
+        "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+        ".columns.jsonl": "db2704cb158e12755899e6cc9783199f0c406105e5dde16d6c4fa1bb85fde5bb",
+        ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+      },
+      "log_sha256": "e9a068cf2560df2715fc2536f8cf500b0322f386c1de37deca7807df9e0eca30",
+      "log_tail": "          ^^^^^^^^^^^^^^^^\n  File \"/home/nc437/evsp_env/lib/python3.12/json/__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/nc437/evsp_env/lib/python3.12/json/decoder.py\", line 338, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/nc437/evsp_env/lib/python3.12/json/decoder.py\", line 354, in raw_decode\n    obj, end = self.scan_once(s, idx)\n               ^^^^^^^^^^^^^^^^^^^^^^\njson.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/home/nc437/ladder-lite/review_full40_20260916/code/src/exact_pricer_expanded.py\", line 3537, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/home/nc437/ladder-lite/review_full40_20260916/code/src/exact_pricer_expanded.py\", line 3529, in main\n    result = run_cg(args)\n             ^^^^^^^^^^^^\n  File \"/home/nc437/ladder-lite/review_full40_20260916/code/src/exact_pricer_expanded.py\", line 1682, in run_cg\n    journal_records = read_jsonl_records(\n                      ^^^^^^^^^^^^^^^^^^^\n  File \"/home/nc437/ladder-lite/review_full40_20260916/code/src/durable_io.py\", line 248, in read_jsonl_records\n    raise DurableFileError(\ndurable_io.DurableFileError: /tmp/evsp-checkpoint-audit-lbqv6x8r/interior_corruption/cg.json.columns.jsonl has malformed JSONL data before EOF at byte 978; refusing automatic repair\n"
+    },
+    {
+      "test": "identity_mismatch",
+      "returncode": 1,
+      "elapsed_s": 1.0695499759167433,
+      "before_sha256": {
+        "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+        ".columns.jsonl": "b7ca60e00cd38bf3fd299cef2e1360fe03023c2d55a05238b247e23aad612d02",
+        ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+      },
+      "after_sha256": {
+        "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+        ".columns.jsonl": "b7ca60e00cd38bf3fd299cef2e1360fe03023c2d55a05238b247e23aad612d02",
+        ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+      },
+      "log_sha256": "4c275182fa73f16fd5129fd9210509964ed1ca8c6da7e6f3305454a6953cf343",
+      "log_tail": "Set parameter LicenseID to value 2674428\nSet parameter GURO_PAR_SPECIAL\nSet parameter TokenServer to value \"en-cc-unicorn-data-dirs.coecis.cornell.edu\"\nTraceback (most recent call last):\n  File \"/home/nc437/ladder-lite/review_full40_20260916/code/src/exact_pricer_expanded.py\", line 3537, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/home/nc437/ladder-lite/review_full40_20260916/code/src/exact_pricer_expanded.py\", line 3529, in main\n    result = run_cg(args)\n             ^^^^^^^^^^^^\n  File \"/home/nc437/ladder-lite/review_full40_20260916/code/src/exact_pricer_expanded.py\", line 1673, in run_cg\n    raise DurableFileError(\ndurable_io.DurableFileError: refusing --resume for /tmp/evsp-checkpoint-audit-lbqv6x8r/identity_mismatch/cg.json.columns.jsonl before modifying persisted artifacts: charge_kw differs (saved=240.0, current=241.0)\n"
+    },
+    {
+      "test": "journal_ahead",
+      "returncode": 0,
+      "elapsed_s": 1.6187759349122643,
+      "before_sha256": {
+        "": "411bcc2dc96cb42cb6ccc797f6136a87ab606f6d978f4820505b42f38928073e",
+        ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+        ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+      },
+      "after_sha256": {
+        "": "92ea58d3a71ce3852b7e3dac535ac1ab646c10bf4effb941e3001f553028177e",
+        ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+        ".iters.csv": "1335a7282a4ce56de7fb3c9d92e43241587951385028fa9d783a183dcbcb72d9"
+      },
+      "log_sha256": "606bc9399f6b1e4988eb904a6f1e0e4860a2ff94b122db3b7648d9ed0cb7b70a",
+      "log_tail": "Set parameter LicenseID to value 2674428\nSet parameter GURO_PAR_SPECIAL\nSet parameter TokenServer to value \"en-cc-unicorn-data-dirs.coecis.cornell.edu\"\n[EXACT] resumed 13 columns from cg.json.columns.jsonl\n[EXACT] network: 354 nodes, 13,544 arcs (soc_step=2.5, block=5min) built in 0.5s\n[EXACT] published live resume status before extending the journal\n[EXACT] direct-singleton seed: 4/4 trips feasible (0 added to pool)\n[EXACT] it   2: obj=100,000.00 weight=1.0000 art=0.00 min_rc=0.000\n[EXACT] DONE: {\"iter\": 2, \"attempt_iter\": 1, \"lp_obj\": 100000.0, \"route_weight\": 1.0, \"artificials\": 0.0, \"min_rc\": 0.0, \"max_row_violation\": 0.0, \"max_bound_violation\": 0.0} certified=True columns=13 wall=2s\n",
+      "result": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "iterations": 2,
+        "attempt_iterations": 1,
+        "columns": 13,
+        "wall_s": 2.071630640029907,
+        "attempt_wall_s": 0.6516323089599609,
+        "final": {
+          "iter": 2,
+          "attempt_iter": 1,
+          "lp_obj": 100000.0,
+          "route_weight": 1.0,
+          "artificials": 0.0,
+          "min_rc": 0.0,
+          "max_row_violation": 0.0,
+          "max_bound_violation": 0.0
+        },
+        "final_lp_source": "final_pool_resolve"
+      }
+    },
+    {
+      "test": "journal_behind",
+      "returncode": 1,
+      "elapsed_s": 1.0221091713756323,
+      "before_sha256": {
+        "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+        ".columns.jsonl": "c05efe7536ee402ec20321ff87d8020e58397512116ad6e778fabbc0faf6c7dc",
+        ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+      },
+      "after_sha256": {
+        "": "93241d6f5fbd5cdb614d9c26aab4c7884748ac286457f052c296f5b77f8b0456",
+        ".columns.jsonl": "c05efe7536ee402ec20321ff87d8020e58397512116ad6e778fabbc0faf6c7dc",
+        ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+      },
+      "log_sha256": "a517130e1d31bfabd3ad5977b72f2c7d5e3bf0fd05b75757e25e9ad78e6fb2e2",
+      "log_tail": "Set parameter LicenseID to value 2674428\nSet parameter GURO_PAR_SPECIAL\nSet parameter TokenServer to value \"en-cc-unicorn-data-dirs.coecis.cornell.edu\"\n[EXACT] resumed 1 columns from cg.json.columns.jsonl\nTraceback (most recent call last):\n  File \"/home/nc437/ladder-lite/review_full40_20260916/code/src/exact_pricer_expanded.py\", line 3537, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/home/nc437/ladder-lite/review_full40_20260916/code/src/exact_pricer_expanded.py\", line 3529, in main\n    result = run_cg(args)\n             ^^^^^^^^^^^^\n  File \"/home/nc437/ladder-lite/review_full40_20260916/code/src/exact_pricer_expanded.py\", line 1725, in run_cg\n    raise DurableFileError(\ndurable_io.DurableFileError: refusing --resume for /tmp/evsp-checkpoint-audit-lbqv6x8r/journal_behind/cg.json.columns.jsonl: saved status records 13 columns but the journal contains only 1 unique incidences; journal does not contain every positive route in final_lp\n"
+    },
+    {
+      "test": "cumulative_budget",
+      "returncode": 0,
+      "elapsed_s": 1.4688356993719935,
+      "before_sha256": {
+        "": "ae6b593fd47fe4e0c55c8fbff3097ed05342ee22ead828cbf7d9d00f45adc483",
+        ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+        ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+      },
+      "after_sha256": {
+        "": "88c2a77c85bb4c65245f9bbde9e6dda6c50ef77925e438becba67dab977d7799",
+        ".columns.jsonl": "787562d54c8cc123464622cdc1d2b68d4375753e1cba2ccd0509f1942424a04e",
+        ".iters.csv": "7eb199eb3c192aae35fd383e70ca95153797bb35514570b5017a98a58a66ec80"
+      },
+      "log_sha256": "1c2901f14f23e764645caf39aae429b9cd3198094ab403292d97c05fde0a5cf0",
+      "log_tail": "Set parameter LicenseID to value 2674428\nSet parameter GURO_PAR_SPECIAL\nSet parameter TokenServer to value \"en-cc-unicorn-data-dirs.coecis.cornell.edu\"\n[EXACT] resumed 13 columns from cg.json.columns.jsonl\n[EXACT] network: 354 nodes, 13,544 arcs (soc_step=2.5, block=5min) built in 0.5s\n[EXACT] published live resume status before extending the journal\n[EXACT] retained compatible prior final LP as a resume fallback\n[EXACT] direct-singleton seed: 4/4 trips feasible (0 added to pool)\n[EXACT] cumulative wall limit 120s reached (with a 60s serialization margin) \u2014 stopping gracefully (partial result saved)\n[EXACT] final LP re-solve failed with all methods: no application time remains | no application time remains | no application time remains\n[EXACT] DONE: null certified=False columns=13 wall=201s\n",
+      "result": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "iterations": 1,
+        "attempt_iterations": 0,
+        "columns": 13,
+        "wall_s": 200.62431645393372,
+        "attempt_wall_s": 0.6243176460266113,
+        "final": null,
+        "final_lp_source": "compatible_prior_result"
+      }
+    },
+    {
+      "test": "wrapper_latest_corrupt_status",
+      "observed": "JSONDecodeError before reaching older valid checkpoint",
+      "verdict": "automatic fallback absent; reproducible restart robustness gap"
+    }
+  ]
+}

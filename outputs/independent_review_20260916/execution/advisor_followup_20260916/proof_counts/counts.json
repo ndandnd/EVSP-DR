@@ -1,0 +1,24 @@
+{
+  "sources": {
+    "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/audited_chain_results.csv": "7589df0ed25c77002d9da2ff5a68d9deac3d4890c37aa9660d8e3a7ffdce53f9",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/overnight_next_20260914/status_20260916T194843Z/longer_gap_results.csv": "835fd36982f5911472fa7039108756fe023a2000a76f5f54ca964cc089a4708c",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/f1/per_case.csv": "d795802928b4229f18e49df1f7ceede62255c6c74aa35d2eb3a6fd0c328d989c"
+  },
+  "total": 102,
+  "bound_equals_k": 93,
+  "bound_equals_k_minus_one": 9,
+  "original": {
+    "matched_target": 51,
+    "matched_numerical_bound": 51,
+    "open_fleet_gaps": 51,
+    "open_among_bound_k": 42
+  },
+  "including_audited_longer": {
+    "matched_target": 70,
+    "matched_numerical_bound": 67,
+    "open_fleet_gaps": 35,
+    "k_minus_one_cases_reaching_GIRO_k": 3
+  },
+  "numerical_not_exact_arithmetic": true,
+  "scope": "Frozen102original endpoints and26already-audited longer searches; does not include currently running P1 repeats. Event-route model; no shared-capacity proof."
+}

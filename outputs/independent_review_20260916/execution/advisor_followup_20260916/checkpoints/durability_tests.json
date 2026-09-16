@@ -1,0 +1,28 @@
+{
+  "tests": [
+    {
+      "name": "failure_before_atomic_rename",
+      "passed": true,
+      "old_complete_status_preserved": true,
+      "temporary_file_cleaned": true,
+      "observed_io_events": [
+        "file_fsync",
+        "replace_raises"
+      ]
+    },
+    {
+      "name": "atomic_success",
+      "passed": true,
+      "readable_generation": 3
+    },
+    {
+      "name": "exclusive_lock",
+      "passed": true,
+      "blocks_concurrent_writer": true,
+      "reacquire_after_release": true
+    }
+  ],
+  "module_sha256": "182afa650d3ff17866eff0ecf86e32e6ad11a486130c70d1b7b0e637901a669b",
+  "limits": "No filesystem/server crash simulated. Parent-directory fsync is absent in pinned implementation; atomic visibility is not a universal host/storage-crash durability guarantee.",
+  "temp_root": "/var/folders/hk/6g28n39j5_s33j2kn2w4xmp40000gn/T/evsp-json-durability-z88ra0bi"
+}

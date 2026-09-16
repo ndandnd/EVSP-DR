@@ -1,0 +1,35 @@
+{
+  "created_utc": "2026-09-16T22:57:12.020796+00:00",
+  "pinned_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "production_job": "341405",
+  "production_mutated": false,
+  "slurm_submissions": 0,
+  "sources_verified_against_remote_hashes": true,
+  "files_sha256": {
+    "README.md": "180cb2129d63d8c1e6ee8faa771142fb683f89053e224489e0adceab9e266c1a",
+    "durability_tests.json": "ced6aee7afa57b3d43673937bad35ed0f7badcc7d114fb83d2cf72947709eb28",
+    "durability_tests.py": "28c79463f9d5e6aff8c71e0a6f1949254e112e50a47874db908b055b34841865",
+    "iteration_tests.json": "c4b1bdbecb1f316ba2cd8186f3199f3c31ba49a2fbef9d2551a02a473027eaac",
+    "iteration_tests_remote.py": "e6b7ea7129cd1019465114bc5f3a353c649d3522308ef3369a0ab18cd34cc4e5",
+    "native_test_artifacts.tar.gz": "92d62f2ea2e930fc458d98194556fcea5a108c2d3b99e4bb76ddd481461097d0",
+    "native_tests.json": "d669305ca75a72fd58fac381bb98cdbbc366e7173f75618afd10c9cd1bc663c7",
+    "native_tests_remote.py": "d86b840593c510c9584d9a14d34b3f266d4b94310df2b1deb8b78c17bfd50171",
+    "native_tests_stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "production_readonly_snapshot.json": "c8f058438cacc143a27895af422cbb0498fe980a088c892c42112fff4d50f47e",
+    "signal_tests.json": "9dfaea4dd18fe79727750d9fecac1fa062000c4571fda58f7f0d4003bacf7cd7",
+    "signal_tests_remote.py": "1a228dafa7cc841e44a05dbadcef29a52776925e2f14e5a944d14da238255dc1",
+    "signal_tests_stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sources/__pycache__/durable_io.cpython-312.pyc": "ce77f2a4de0c5205a301ae6064e2e36a261a5152dacc76220be905e404a0bece",
+    "sources/durable_io.py": "182afa650d3ff17866eff0ecf86e32e6ad11a486130c70d1b7b0e637901a669b",
+    "sources/exact_pricer_expanded.py": "f4310ddc495c70bba6118b0ecd9c546f80a8ce6b7f1b027e2866de9595af8831",
+    "sources/master_lp_gurobi.py": "7a42f5ba6af7e8685297034fd5cfb1a4c92071b53f8969b93b0bc42544c60812",
+    "sources/production_campaign.py": "3abed3c1360155305ce787cdd0034bb08b1e2e92e2190ae5f19c6d169846714c",
+    "sources/production_manifest.json": "b9d69cedba06edac3cee9871d85b46f9f9514ddd6fc524837bc4825e69715fea",
+    "sources/production_worker.sub": "26eb6de68eeb7bb9b13acb3d497f646d4f56a89d262f2d871883b578c7bd50eb",
+    "tiny_four_trips.csv": "6b6a8b4227d25caa60ead838bb354a324ddd11874d0d20c600d425add102d44b"
+  },
+  "finalized_utc": "2026-09-16T22:59:58.014833+00:00",
+  "external_evidence_sha256": {
+    "../cluster_load.json": "4f247df80c36213225a4f57f6d4dc32840665df1e516265101c86666e6d5a5f6"
+  }
+}

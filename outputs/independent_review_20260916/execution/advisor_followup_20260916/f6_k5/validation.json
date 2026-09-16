@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "utc": "2026-09-16T22:50:42.602553+00:00",
+  "manifest_sha256": "4a3583b04d0acb1798a322f9ba3da2fe755318cb2e31449266c0196562f8608a",
+  "cases": 6,
+  "input_files_verified": 7,
+  "native_tests_sha256": "5a3a685b82df553312a07696cfe069b34d5cac3da94cff9f281ec384ae190c38",
+  "native_smoke_sha256": "7e75dc326c7e3c0e0aa5236713f7edd81f528bf8f0c2663637ca13626721a5f8",
+  "original_revalidation_sha256": "3a82f504d71a0a453046c8c65d5613c4698f693fae19ba912bf23dc500202f6a",
+  "native_physics": "Both optimized arms independently replayed with36kWh floor,350kW maximum and>=3min active charging. Original five-duty schedules likewise pass profile-existence checks."
+}

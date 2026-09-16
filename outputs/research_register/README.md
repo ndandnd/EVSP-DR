@@ -1,3 +1,5 @@
+Latest advisor follow-up: [six authorized F6 runs, held follow-up plans, checkpoint audit and corrected proof counts](../independent_review_20260916/execution/advisor_followup_20260916/README.md). No further submissions without user confirmation after a load report.
+
 Current independent-review results: [16 September F1–F9 audit and execution ledger](../independent_review_20260916/execution/README.md). This supersedes earlier uncertainty about empty-driving feasibility and adds numerical event-model fleet bounds; historical result tables remain preserved.
 
 The workbook predates the 16 September independent-review audit. Use the linked audited CSV for the added lower bounds and empty-driving replay checks; original solver endpoints are preserved.

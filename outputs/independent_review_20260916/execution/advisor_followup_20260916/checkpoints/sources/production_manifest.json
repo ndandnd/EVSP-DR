@@ -1,0 +1,81 @@
+{
+  "schema": "review-full40-v1",
+  "review_item": 13,
+  "finding": "F8",
+  "prepared_utc": "2026-09-16T21:53:36.846889+00:00",
+  "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "mip_execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "cases": {
+    "c1_full40": {
+      "id": "c1_full40",
+      "csv": "review_full40_c1.csv",
+      "input_sha256": "904070ec8919dd11bf431eab62e1396ad4882d95f7d5917bcf83f34d1e20e607",
+      "trip_count": 948,
+      "target_duties": 40,
+      "chain": 1,
+      "cg_seconds": 172800,
+      "cache": "/home/nc437/ladder-lite/review_full40_20260916/cases/c1_full40/network.pkl",
+      "parent_status": null,
+      "input_source": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w1_k40.csv"
+    }
+  },
+  "warm_chains": {
+    "1": [
+      "c1_full40"
+    ]
+  },
+  "initial_parents": {},
+  "scientific_settings": {
+    "battery_kwh": 240,
+    "charge_kw": 240,
+    "reserve_kwh": 0,
+    "terminal_soc": "free",
+    "master_sense": "cover",
+    "objective": "100000 + electricity + 5 per charge start",
+    "tariff": "flat",
+    "shared_capacity": false,
+    "initialization": "fresh singletons; no GIRO or inherited routes",
+    "grid_kwh": 2.5,
+    "event_minutes": 5,
+    "rc_epsilon": 0.0001,
+    "columns_per_iteration": 30,
+    "mip_total_s": 12600,
+    "mip_fleet_s": 10800,
+    "mip_cost_s": 1800
+  },
+  "data_sha256": {
+    "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+  },
+  "tooling_sha256": {
+    "campaign.py": "3abed3c1360155305ce787cdd0034bb08b1e2e92e2190ae5f19c6d169846714c",
+    "graph_entry.py": "463973a0aff2dfb59979f9a5f40baeac29ee2e31d25a63a5844e9e08647c43ee",
+    "worker.sub": "26eb6de68eeb7bb9b13acb3d497f646d4f56a89d262f2d871883b578c7bd50eb"
+  },
+  "graph_seconds": 86400,
+  "resources": {
+    "cache": {
+      "cpus": 2,
+      "mem": "96G",
+      "wall": "25:00:00"
+    },
+    "cg": {
+      "cpus": 8,
+      "mem": "128G",
+      "wall": "50:00:00"
+    },
+    "mip": {
+      "cpus": 8,
+      "mem": "24G",
+      "wall": "04:30:00"
+    }
+  },
+  "resource_basis": "k32 779-trip packed graph22.6GB and build12.4h;948trips needs larger graph.96G graph/128G CG preserves headroom. Three true stages; only one full-instance graph requested. Slurm default MaxTimeUNLIMITED checked20260916.",
+  "graph_array_concurrency": 1,
+  "dependencies": "graph -> fresh CG ->3h-fleet+remaining-cost MIP",
+  "scheduler": "default_partition; exclude scaglione-compute-01; unique restart directories; CG copies native checkpoints, MIP tree restarts",
+  "interpretation": "Full40 base-duty input with frozenC1 service-day variants,948trips. All987 raw regular rows include42 variants and are NOT40 simultaneous duties. No fullGIROconstraints claim.",
+  "pricing_scope": "conservative event-route model; CG48h after separate graph preparation; max100000iterations also recorded",
+  "status": "prepared_not_submitted"
+}

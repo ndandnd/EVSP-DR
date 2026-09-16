@@ -1,0 +1,10 @@
+peak,arm,status,buses,continuous_charging_cost,cost_lower,cost_upper,cost_kind,minimum_soc_kwh,active_charge_starts,minimum_active_minutes,ending_kwh,duplicate_occurrences,matched_five_bus_comparison_eligible,case_id
+peak08,original_GIRO,verified_profile_exists,5,230.6427101071482,230.28700962629637,230.9810746873893,interval;uniform-profile estimate is not observed,45.51461930000002,52,4.0,280.7833253000003,0,True,
+peak12,original_GIRO,verified_profile_exists,5,290.0733353613608,289.5935355365639,290.5965839307596,interval;uniform-profile estimate is not observed,45.51461930000002,52,4.0,280.7833253000003,0,True,
+peak18,original_GIRO,verified_profile_exists,5,223.51743527290188,223.44729058227836,223.7232277426603,interval;uniform-profile estimate is not observed,45.51461930000002,52,4.0,280.7833253000003,0,True,
+peak08,cg,not_completed,,,,,,,,,,,False,peak08_cg
+peak08,fixed,not_completed,,,,,,,,,,,False,peak08_fixed
+peak12,cg,not_completed,,,,,,,,,,,False,peak12_cg
+peak12,fixed,not_completed,,,,,,,,,,,False,peak12_fixed
+peak18,cg,not_completed,,,,,,,,,,,False,peak18_cg
+peak18,fixed,not_completed,,,,,,,,,,,False,peak18_fixed
