@@ -1,0 +1,13 @@
+{
+  "collected_utc": "2026-09-16T21:46:58.467795+00:00",
+  "values": {
+    "PartitionName": "default_partition",
+    "MaxTime": "UNLIMITED",
+    "PreemptMode": "REQUEUE",
+    "State": "UP",
+    "TotalCPUs": "14498",
+    "TotalNodes": "225"
+  },
+  "requested_max_wall": "13:30:00",
+  "within_partition_time_limit": true
+}

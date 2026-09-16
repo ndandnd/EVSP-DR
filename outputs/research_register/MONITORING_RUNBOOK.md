@@ -1,3 +1,9 @@
+## 16 September — independent-review execution is the current priority
+
+P0 was completed in order 3 → 2 → 4 → 1 → 5 → 6; all P1/P2/P3 campaigns in review §4 are submitted. Follow [the focused review monitoring instructions](../independent_review_20260916/execution/MONITORING.md) and [F-number verdicts / receipts](../independent_review_20260916/execution/README.md). Use the focused collector, rather than repeatedly running the full historical collector, while these campaigns are active. Existing hourly cadence remains appropriate; stay quiet on unchanged state.
+
+F1 now validates all 128 baseline dispatches by assigning passengers once and retaining duplicate traversals as empty driving. Earlier “cleanup not validated” notes below are historical; do not overwrite original finite-pool partition-membership or shared-capacity flags. F3 numerical event-model bounds and F4 unchanged-versus-reoptimized replay are in the audited CSV. P2 real SE3 raw AND derived numbers are internal-only. Preserve source artifacts, all figures and Slides. Update the current Doc source at outputs/independent_review_20260916/execution/doc/current.html; the dashboard builder now reads that source, preventing old claims from being regenerated.
+
 ## 16 September 16:54 EDT — no new solver endpoints; repeated-trip inventory
 
 Snapshot20260916T204749Z completed20:54:23UTC in394.2seconds, compared with194843. Compact canonical-content delta has no changed optimization results, scheduler changes, failures, preemptions or broken dependencies. SSH available. C1k32 longer job336492 remainsrunning with its12600/10800budgets; held537227/V2G untouched. No duplicate runs submitted. Last verified register/workbook remains the194843scientificsnapshot (3447records/92groups); workbook hash stillmatches published mirror. New collection and preemption study archived separately;1002attemptrows.

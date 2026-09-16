@@ -1,0 +1,47 @@
+Set parameter Username
+Set parameter LicenseID to value 2777767
+Academic license - for non-commercial use only - expires 2027-02-11
+Set parameter OutputFlag to value 1
+Set parameter Threads to value 1
+Set parameter LogFile to value "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/p2_strict/smoke/parent_final.json.gurobi.log"
+Gurobi Optimizer version 12.0.1 build v12.0.1rc0 (mac64[arm] - Darwin 25.5.0 25F84)
+
+CPU model: Apple M3 Pro
+Thread count: 12 physical cores, 12 logical processors, using up to 1 threads
+
+Non-default parameters:
+Threads  1
+
+Optimize a model with 1 rows, 2 columns and 2 nonzeros
+Model fingerprint: 0x36bb68ae
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 1 rows and 2 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.0000000e+05   0.000000e+00   0.000000e+00      0s
+
+Solved in 0 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  1.000000000e+05
+Gurobi Optimizer version 12.0.1 build v12.0.1rc0 (mac64[arm] - Darwin 25.5.0 25F84)
+
+CPU model: Apple M3 Pro
+Thread count: 12 physical cores, 12 logical processors, using up to 1 threads
+
+Non-default parameters:
+Threads  1
+
+Optimize a model with 1 rows, 2 columns and 2 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+
+Solved in 0 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  1.000000000e+05
+{"arm": "parx60", "mode": "cg", "out": "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/p2_strict/smoke/parent_final.json", "status": "complete"}

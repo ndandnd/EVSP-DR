@@ -1,0 +1,120 @@
+{
+  "arm": "parx60",
+  "capacity_selector": "reference",
+  "certified_rc_optimal": true,
+  "checkpoint": {
+    "atomic_pool_replace": true,
+    "id": "e6c2eeb582131032817266886d65d8027bea5b9c54d49c6edc138a3dd420d08a",
+    "initial_pool_columns": 2,
+    "resumed": false,
+    "schema": "evsp-dr-capacity-speed-cg-checkpoint-v1",
+    "writes_this_attempt": 3
+  },
+  "final": {
+    "artificial_total": 0.0,
+    "objective": 100000.0,
+    "pool_columns": 3,
+    "route_weight": 1.0
+  },
+  "gurobi_log": "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/p2_strict/smoke/c.json.gurobi.log",
+  "inheritance": {
+    "every_inherited_route_replayed": true,
+    "inherited_columns": 1,
+    "parent_instance_sha256": "1e4c1ad45771acfdec5339308a99a1cf34c33577a04bb1d3f9c439899365db39",
+    "parent_pool": "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/p2_strict/smoke/p.pool.jsonl",
+    "parent_pool_sha256": "b781c7e227f830b87ac278a2012f1a2c7a6a4f9ed0ff14b76b14fa434194637f",
+    "parent_status": "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/p2_strict/smoke/p.json",
+    "parent_status_sha256": "bda88e6dbc023d513f47ab25bce0e13290544593d7b63c3f0928d50dec9d6e72",
+    "trip_mapping_sha256": "b6391bed6cddd1875121f0951d90ffdbde0d802ac2ed6c018593e4bf55333017"
+  },
+  "iterations": [
+    {
+      "artificial_total": 0.0,
+      "iteration": 1,
+      "lp_columns": 4,
+      "lp_nonzeros": 4,
+      "lp_objective": 200000.0,
+      "lp_rows": 2,
+      "lp_solve_s": 0.004024708177894354,
+      "min_reduced_cost": -100000.0,
+      "nonzero_capacity_duals": 0,
+      "pool_columns": 2,
+      "priced_trip_count": 2,
+      "pricing_s": 0.0005342080257833004,
+      "route_weight": 2.0
+    },
+    {
+      "artificial_total": 0.0,
+      "iteration": 2,
+      "lp_columns": 5,
+      "lp_nonzeros": 6,
+      "lp_objective": 100000.0,
+      "lp_rows": 2,
+      "lp_solve_s": 0.00028804177418351173,
+      "min_reduced_cost": 0.0,
+      "nonzero_capacity_duals": 0,
+      "pool_columns": 3,
+      "priced_trip_count": 1,
+      "pricing_s": 0.00026804208755493164,
+      "route_weight": 1.0
+    }
+  ],
+  "mode": "cg",
+  "network": {
+    "arc_mode": "explicit",
+    "dag_arcs": 902,
+    "dag_nodes": 129,
+    "event_lattice_sha256": "d335362b14d823b7ff22ea8212f34b779ba6b45816b2127fa8cf41cd933edf19",
+    "materialized_python_arc_objects": 902,
+    "packed_arc_bytes": 0,
+    "station_charge_kw": {
+      "PARX": 60.0
+    },
+    "station_event_times": {
+      "2190L_0": 237,
+      "3127L_0": 28,
+      "4808_0": 244,
+      "7880C_0": 28,
+      "JON_A_0": 28,
+      "PARX_1": 243
+    },
+    "time_model": "event"
+  },
+  "network_build_s": 0.15798620833083987,
+  "physics": {
+    "battery_kwh": 236.44,
+    "capacity_enforced": false,
+    "charger_counts": {},
+    "event_block_min": 5,
+    "initial_soc_kwh": 236.44,
+    "non_parx_kw": 240.0,
+    "parx_capacity": "unlimited",
+    "parx_kw": 60.0,
+    "reserve_kwh": 35.466,
+    "soc_step_kwh": 2.5,
+    "terminal_soc_constraint": "reserve_only"
+  },
+  "pool": "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/p2_strict/smoke/c.pool.jsonl",
+  "pool_sha256": "faa696940737850f3f80b67f108c5660a20fe08192b4aff20fbe0c3a20f30251",
+  "pricing_certificate_scope": "full conservative event-time/SOC covering LP without shared capacity",
+  "provenance": {
+    "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "git_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+    "git_tracked_dirty": true,
+    "gurobi_version": "12.0.1",
+    "host": "Nathans-MacBook-Pro-2.local",
+    "instance": "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/p2_strict/smoke/trips2.csv",
+    "instance_sha256": "172dc170711c96e89f75b81ad970feb0507e154cafaf8af29bf0deb432992574",
+    "prices": "/Users/nadan/Documents/projects/demandresponse/.codex-work/review-strict-chain-20260916/data/hourly_prices_flat.csv",
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference_data_dir": "/Users/nadan/Documents/projects/demandresponse/.codex-work/review-strict-chain-20260916/data",
+    "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "slurm_array_task_id": null,
+    "slurm_job_id": null
+  },
+  "runtime_s": 0.18073458410799503,
+  "schema": "evsp-dr-capacity-speed-exact-event-pilot-v1",
+  "status": "complete",
+  "stop_reason": "exact_nonnegative_reduced_cost",
+  "terminal_exact_min_reduced_cost": 0.0
+}

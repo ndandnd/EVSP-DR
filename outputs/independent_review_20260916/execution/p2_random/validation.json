@@ -1,0 +1,76 @@
+{
+  "status": "passed_prepared_not_submitted",
+  "manifest_sha256": "55a02d8c5abca727c117df8360a6997f77af0a0262a2aa24181af67af92930d7",
+  "cases": 14,
+  "final_trip_count": 364,
+  "parent_edges": [
+    [
+      "r1_s02",
+      "r1_s03"
+    ],
+    [
+      "r1_s03",
+      "r1_s04"
+    ],
+    [
+      "r1_s04",
+      "r1_s05"
+    ],
+    [
+      "r1_s05",
+      "r1_s06"
+    ],
+    [
+      "r1_s06",
+      "r1_s07"
+    ],
+    [
+      "r1_s07",
+      "r1_s08"
+    ],
+    [
+      "r1_s08",
+      "r1_s09"
+    ],
+    [
+      "r1_s09",
+      "r1_s10"
+    ],
+    [
+      "r1_s10",
+      "r1_s11"
+    ],
+    [
+      "r1_s11",
+      "r1_s12"
+    ],
+    [
+      "r1_s12",
+      "r1_s13"
+    ],
+    [
+      "r1_s13",
+      "r1_s14"
+    ],
+    [
+      "r1_s14",
+      "r1_s15"
+    ]
+  ],
+  "all_input_and_tool_hashes_verified": true,
+  "tracked_code_clean": true,
+  "first_stage_fresh_singletons": true,
+  "stage_index_is_not_target": true,
+  "license_smoke_test": {
+    "variables": 2101,
+    "status": 2,
+    "objective": 1.0,
+    "gurobi_version": [
+      12,
+      0,
+      3
+    ],
+    "size_limited_license_excluded": true
+  },
+  "jobs_json_exists": false
+}

@@ -1,0 +1,654 @@
+{
+  "utc": "2026-09-16T22:04:35.513907+00:00",
+  "rows": [
+    {
+      "case_id": "c1_k15_peak08_cg",
+      "job_id": "341152",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "joachims-cpu-01",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c1_k15_peak08_cg/attempts/341152_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c1_k15_peak08_fixed",
+      "job_id": "341153",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "joachims-cpu-02",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c1_k15_peak08_fixed/attempts/341153_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c1_k15_peak12_cg",
+      "job_id": "341154",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "garg-cpu-02",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c1_k15_peak12_cg/attempts/341154_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c1_k15_peak12_fixed",
+      "job_id": "341155",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "garg-cpu-02",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c1_k15_peak12_fixed/attempts/341155_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c1_k15_peak18_cg",
+      "job_id": "341156",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-07",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c1_k15_peak18_cg/attempts/341156_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c1_k15_peak18_fixed",
+      "job_id": "341157",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-03",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c1_k15_peak18_fixed/attempts/341157_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c1_k15_se3_cg",
+      "job_id": "341158",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-03",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c1_k15_se3_cg/attempts/341158_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c1_k15_se3_fixed",
+      "job_id": "341159",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-03",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c1_k15_se3_fixed/attempts/341159_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c2_k15_peak08_cg",
+      "job_id": "341160",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-11",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c2_k15_peak08_cg/attempts/341160_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c2_k15_peak08_fixed",
+      "job_id": "341161",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-11",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c2_k15_peak08_fixed/attempts/341161_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c2_k15_peak12_cg",
+      "job_id": "341162",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-11",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c2_k15_peak12_cg/attempts/341162_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c2_k15_peak12_fixed",
+      "job_id": "341163",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-13",
+      "attempts": []
+    },
+    {
+      "case_id": "c2_k15_peak18_cg",
+      "job_id": "341164",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-13",
+      "attempts": []
+    },
+    {
+      "case_id": "c2_k15_peak18_fixed",
+      "job_id": "341165",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-13",
+      "attempts": []
+    },
+    {
+      "case_id": "c2_k15_se3_cg",
+      "job_id": "341166",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-13",
+      "attempts": []
+    },
+    {
+      "case_id": "c2_k15_se3_fixed",
+      "job_id": "341167",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-12",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c2_k15_se3_fixed/attempts/341167_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c3_k15_peak08_cg",
+      "job_id": "341168",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-12",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c3_k15_peak08_cg/attempts/341168_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c3_k15_peak08_fixed",
+      "job_id": "341169",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-12",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c3_k15_peak08_fixed/attempts/341169_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c3_k15_peak12_cg",
+      "job_id": "341170",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-12",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c3_k15_peak12_cg/attempts/341170_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c3_k15_peak12_fixed",
+      "job_id": "341171",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-12",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c3_k15_peak12_fixed/attempts/341171_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c3_k15_peak18_cg",
+      "job_id": "341172",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-09",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c3_k15_peak18_cg/attempts/341172_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c3_k15_peak18_fixed",
+      "job_id": "341173",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-09",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c3_k15_peak18_fixed/attempts/341173_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c3_k15_se3_cg",
+      "job_id": "341174",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-09",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c3_k15_se3_cg/attempts/341174_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c3_k15_se3_fixed",
+      "job_id": "341175",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-09",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c3_k15_se3_fixed/attempts/341175_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c4_k15_peak08_cg",
+      "job_id": "341176",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-09",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c4_k15_peak08_cg/attempts/341176_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c4_k15_peak08_fixed",
+      "job_id": "341177",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-10",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c4_k15_peak08_fixed/attempts/341177_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c4_k15_peak12_cg",
+      "job_id": "341178",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-10",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c4_k15_peak12_cg/attempts/341178_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c4_k15_peak12_fixed",
+      "job_id": "341179",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-10",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c4_k15_peak12_fixed/attempts/341179_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c4_k15_peak18_cg",
+      "job_id": "341180",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-10",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c4_k15_peak18_cg/attempts/341180_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c4_k15_peak18_fixed",
+      "job_id": "341181",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-10",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c4_k15_peak18_fixed/attempts/341181_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c4_k15_se3_cg",
+      "job_id": "341182",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-15",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c4_k15_se3_cg/attempts/341182_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c4_k15_se3_fixed",
+      "job_id": "341183",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-15",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c4_k15_se3_fixed/attempts/341183_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c5_k15_peak08_cg",
+      "job_id": "341184",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-15",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c5_k15_peak08_cg/attempts/341184_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c5_k15_peak08_fixed",
+      "job_id": "341185",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-18",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c5_k15_peak08_fixed/attempts/341185_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c5_k15_peak12_cg",
+      "job_id": "341186",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-18",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c5_k15_peak12_cg/attempts/341186_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c5_k15_peak12_fixed",
+      "job_id": "341187",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-18",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c5_k15_peak12_fixed/attempts/341187_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c5_k15_peak18_cg",
+      "job_id": "341188",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-18",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c5_k15_peak18_cg/attempts/341188_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c5_k15_peak18_fixed",
+      "job_id": "341189",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-16",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c5_k15_peak18_fixed/attempts/341189_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c5_k15_se3_cg",
+      "job_id": "341190",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-16",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c5_k15_se3_cg/attempts/341190_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c5_k15_se3_fixed",
+      "job_id": "341191",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-16",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c5_k15_se3_fixed/attempts/341191_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c6_k15_peak08_cg",
+      "job_id": "341192",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-16",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c6_k15_peak08_cg/attempts/341192_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c6_k15_peak08_fixed",
+      "job_id": "341193",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-16",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c6_k15_peak08_fixed/attempts/341193_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c6_k15_peak12_cg",
+      "job_id": "341194",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-17",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c6_k15_peak12_cg/attempts/341194_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c6_k15_peak12_fixed",
+      "job_id": "341195",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-17",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c6_k15_peak12_fixed/attempts/341195_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c6_k15_peak18_cg",
+      "job_id": "341196",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-17",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c6_k15_peak18_cg/attempts/341196_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c6_k15_peak18_fixed",
+      "job_id": "341197",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-17",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c6_k15_peak18_fixed/attempts/341197_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c6_k15_se3_cg",
+      "job_id": "341198",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-17",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c6_k15_se3_cg/attempts/341198_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "c6_k15_se3_fixed",
+      "job_id": "341199",
+      "state": "RUNNING",
+      "reason": "None",
+      "node": "jingjie-cpu-19",
+      "attempts": [
+        {
+          "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/cases/c6_k15_se3_fixed/attempts/341199_r0/state.json",
+          "status": "running",
+          "error": null
+        }
+      ]
+    }
+  ],
+  "resource_exclusion_verified": true
+}

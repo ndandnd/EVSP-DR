@@ -1,0 +1,28 @@
+{
+  "module_sha256": {
+    "run_exact_pool_mip.py": "bcb5a6b76040ff6ddfa932433d296a1f0f72207b28cbba738b1b4dd39f1eaac7",
+    "audit_giro_known_columns.py": "690b66ff3047894d5a142caddf7604d8df153b86838aeadac40859f5f5b6762f"
+  },
+  "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "artifacts_sha256": {
+    "README.md": "28c52aa3693b2ec70b92949a8819efce4a4858273d1ee2f38e06e0cccca9003d",
+    "charging_validation.json": "2c11de8e2e87052818d01ed9747f61180e2c305c2dde5cb73afcc4e9d38265f1",
+    "per_case.csv": "d795802928b4229f18e49df1f7ceede62255c6c74aa35d2eb3a6fd0c328d989c",
+    "replay_progress.log": "91201959ccf74eea6dcccbaa5a966e676df8a7c42cd30520d4888b0b505dc98d",
+    "replay_remote.py": "e1d8318cd25dbd1cd0b7fe8b3e17887f198975bb7e8c312c02c6015ef214ef54",
+    "replay_results.json": "751b0881981110c26e92a18c58ef92f71207d0cf60576c8372189b211488a007",
+    "replay_results.json.gz": "1e62e8b14eeec26787c34afbf63fb33c66403676f84b58a0b28b60009c90fcc2",
+    "requests.json": "0867dea41977da67487a011c21d4ec0e48079bee78acf262614b4187f242f044",
+    "run.py": "dbe1206b98ea32c777d07baafd3c7fb8b3ba7891529bb8b65ad05117a8214c73",
+    "run_strict_arrival.py": "b0b208885b65cb16a8f6ac399365bbe0ca27594eb2feb767b39baa845691f6f7",
+    "strict_arrival_progress.log": "91201959ccf74eea6dcccbaa5a966e676df8a7c42cd30520d4888b0b505dc98d",
+    "strict_arrival_replay_remote.py": "d73c9d25a3a114d33c402440e939d42ee10ebe410d3d1369099194c345242cb2",
+    "strict_arrival_replay_results.json": "b6a8ec434fa1a6d0b555af0aff63d0f5debf1c0358f4ae0e2147a42c1ec81540",
+    "strict_arrival_summary.json": "1309b1f67ec9452a4b45b48fc23b4ddf65680c4389efa599cba2383dc8493899",
+    "summarize.py": "472da0e9371e464362723914c87980c9ba907fac9546d42a17ed7efa679d6f57",
+    "summary.json": "24e4e2389b8cfba63cd32820ab1131607c3c4c8406ffcbc7d9ce32c4e0fdd343",
+    "verify_blocks_remote.py": "ee1c1476aec507474d7057c6f749336646c674a5b983af3d15be8f13706e86a9"
+  },
+  "source_validation": "All128 original MIP artifact byte hashes and input hashes rechecked against frozen F2 cohort; replay modules matched recorded pinned871d057e sources.",
+  "scope": "Service-assignment partition with empty traversal preservation. Original saved route columns remain coverings. Baseline physics only. No shared charging capacity validation or optimization."
+}

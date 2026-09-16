@@ -1,0 +1,174 @@
+{
+  "schema": "review-frolunda-ladder-v1",
+  "review_item": 14,
+  "finding": "F8",
+  "prepared_utc": "2026-09-16T22:07:49.394546+00:00",
+  "code": {
+    "cg": {
+      "commit": "daac18d5598902c28baa6c43e58942930fc733bc",
+      "base": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+      "branch": "codex/review-fdl-cg-20260916",
+      "worktree": "/Users/nadan/Documents/projects/demandresponse/.codex-work/review-fdl-cg-20260916"
+    },
+    "mip": {
+      "commit": "0c51b1fa491492212f5d875d1c082b476db0f1c3",
+      "base": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "branch": "codex/review-fdl-mip-20260916",
+      "worktree": "/Users/nadan/Documents/projects/demandresponse/.codex-work/review-fdl-mip-20260916"
+    }
+  },
+  "cases": {
+    "fdl_k01": {
+      "k": 1,
+      "csv": "fdl_k01.csv",
+      "input_sha256": "93acd77670ee25bbe1b0b40d2dc6ca7fe6a0e34e39102914c4cc00495bc3a256",
+      "trip_count": 15,
+      "duties": [
+        "11408"
+      ]
+    },
+    "fdl_k02": {
+      "k": 2,
+      "csv": "fdl_k02.csv",
+      "input_sha256": "61b76e014006e11609e593bfa3060fc85bab72532cac7047c7fa46ecb129c790",
+      "trip_count": 38,
+      "duties": [
+        "11408",
+        "11407"
+      ]
+    },
+    "fdl_k03": {
+      "k": 3,
+      "csv": "fdl_k03.csv",
+      "input_sha256": "c2fd8b46d97a790fe931263a8c69d54cf82248c26e2b4df89fbd917e8d1a1b52",
+      "trip_count": 67,
+      "duties": [
+        "11408",
+        "11407",
+        "11309"
+      ]
+    },
+    "fdl_k05": {
+      "k": 5,
+      "csv": "fdl_k05.csv",
+      "input_sha256": "b0bf8a1e87a4188174fa2987bb5733775c197b0a982a4b19729ed26d8d67d838",
+      "trip_count": 109,
+      "duties": [
+        "11408",
+        "11407",
+        "11309",
+        "11319",
+        "11350"
+      ]
+    },
+    "fdl_k08": {
+      "k": 8,
+      "csv": "fdl_k08.csv",
+      "input_sha256": "443a48af5b3e88c7be893652e2cff9429e6e86b4add19276faffe8814d3cb7c2",
+      "trip_count": 166,
+      "duties": [
+        "11408",
+        "11407",
+        "11309",
+        "11319",
+        "11350",
+        "11321",
+        "11304",
+        "11348"
+      ]
+    },
+    "fdl_k10": {
+      "k": 10,
+      "csv": "fdl_k10.csv",
+      "input_sha256": "8cf3381e7419bc9fd2cfd43692b04b89574afdb9101ab69efd3c311ffe580443",
+      "trip_count": 209,
+      "duties": [
+        "11408",
+        "11407",
+        "11309",
+        "11319",
+        "11350",
+        "11321",
+        "11304",
+        "11348",
+        "11347",
+        "11346"
+      ]
+    },
+    "fdl_k15": {
+      "k": 15,
+      "csv": "fdl_k15.csv",
+      "input_sha256": "50e8bfa53bbefb27de0d3fcc801018fbdcb2f9393b0c1a6fb1f13e6bf745c709",
+      "trip_count": 352,
+      "duties": [
+        "11408",
+        "11407",
+        "11309",
+        "11319",
+        "11350",
+        "11321",
+        "11304",
+        "11348",
+        "11347",
+        "11346",
+        "11308",
+        "11314",
+        "11315",
+        "11334",
+        "11322"
+      ]
+    }
+  },
+  "input_manifest_sha256": "beea8e1a5177405bd8c2b62641021c252a6e3a0af4d6b4fed98bbd7c649f8a40",
+  "data_hashes": {
+    "fdl_k08.csv": "443a48af5b3e88c7be893652e2cff9429e6e86b4add19276faffe8814d3cb7c2",
+    "par_ref_dhd.csv": "66a8b7e513a9634a80bdf0595d63bcc02853402a7dab4a0d73c034d9c647393f",
+    "Ref_dict.csv": "c076fe90d5a1a01e5fdf058e9481c1ec1098decd269e7679026c58540eaa533f",
+    "fdl_k10.csv": "8cf3381e7419bc9fd2cfd43692b04b89574afdb9101ab69efd3c311ffe580443",
+    "fdl_k05.csv": "b0bf8a1e87a4188174fa2987bb5733775c197b0a982a4b19729ed26d8d67d838",
+    "fdl_k01.csv": "93acd77670ee25bbe1b0b40d2dc6ca7fe6a0e34e39102914c4cc00495bc3a256",
+    "fdl_k15.csv": "50e8bfa53bbefb27de0d3fcc801018fbdcb2f9393b0c1a6fb1f13e6bf745c709",
+    "fdl_k02.csv": "61b76e014006e11609e593bfa3060fc85bab72532cac7047c7fa46ecb129c790",
+    "fdl_k03.csv": "c2fd8b46d97a790fe931263a8c69d54cf82248c26e2b4df89fbd917e8d1a1b52",
+    "hourly_prices_flat.csv": "73c74ead0019e0d2803b617377d26664df4abf9e50372cdb791e60f895d1e8df"
+  },
+  "tool_hashes": {
+    "worker.py": "07fa53a0d59a4b6c4c957cdea9d92347e2a5587e565a20bf5566e9f63b405a4c",
+    "worker.sub": "1fefc0cb082e58c4ba25aac759f58e2bff277d9b17b34a9383a624a89ff28631",
+    "fdl_entry.py": "fd6214b84cf3e5bc1f53d6a4dd5a2b763c99c51478fa14f1808effadabfb9aa7",
+    "resume_entry.py": "16a2198ef51dadeb298a8a5ab2638911ba56a8821c1c7b2b5cf3d499c86a1645"
+  },
+  "graph_budget_s": 21600,
+  "cg_budget_s": 14400,
+  "mip_total_s": 3600,
+  "mip_fleet_stage_s": 1800,
+  "resources": {
+    "partition": "default_partition",
+    "cpus": 8,
+    "memory": "64G",
+    "wall": "48:00:00",
+    "exclude": "scaglione-compute-01",
+    "requeue": true
+  },
+  "scientific_settings": {
+    "battery_kwh": 240,
+    "initial_soc_kwh": 240,
+    "charge_kw": 240,
+    "reserve_kwh": 0,
+    "terminal_soc": "free",
+    "shared_station_capacity": false,
+    "master_sense": "cover",
+    "objective": "100000 + electricity +5 per charge start",
+    "tariff": "constant0.0992/kWh; explicit26h coverage",
+    "soc_step_kwh": 2.5,
+    "block_min": 5,
+    "max_station_to_trip_wait_min": 220,
+    "rc_epsilon": 0.0001,
+    "columns_per_iteration": 30,
+    "initialization": "first stage singletons, later stages unlimited inherited columns plus singletons; no GIRO columns",
+    "two_stage_mip": "30min fleet then remaining time charging subject to fleet<=incumbent"
+  },
+  "scope": "FDL exploratory baseline; conservative symmetric max deadheads and2kWh/km deadheadenergy assumption; no fullGIROconstraints claim",
+  "scheduling": "One48h job sequentially executes7 stages. Graph/CG/MIP elapsed and attempt artifacts separate. Each stage6h graph cap+4hCG+1hMIP;48hallocation may end before allstages complete. Requeue skips validated completed stages, CG resumes hashed native checkpoint, MIP restarts tree.",
+  "status": "prepared_not_submitted"
+}

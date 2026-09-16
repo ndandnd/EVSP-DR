@@ -1,0 +1,8 @@
+from pathlib import Path
+import json,subprocess,hashlib,datetime
+B=Path('/home/nc437/ladder-lite/review_frolunda_20260916');S='/usr/local/slurm/slurm-25.05.5/bin/';sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();assert not (B/'jobs.json').exists()
+v=json.loads((B/'manifest.json').read_text());r=json.loads((B/'resume_validation.json').read_text());assert r['status']=='passed' and r['current_manifest_sha256']==sha(B/'manifest.json');assert json.loads((B/'smoke_validation.json').read_text())['mip_physical_replay']
+for f,h in v['tool_hashes'].items():assert sha(B/f)==h
+policy=Path('/home/nc437/ladder-lite/SCAGLIONE_RESOURCE_POLICY.md');print(policy.read_text(),flush=True)
+a=[S+'sbatch','--parsable','--partition=default_partition','--exclude=scaglione-compute-01','--cpus-per-task=8','--mem=64G','--time=48:00:00','--requeue','--job-name=drFDL_review','--output='+str(B/'logs/%x_%j.out'),'--error='+str(B/'logs/%x_%j.err'),str(B/'worker.sub')]
+s=subprocess.check_output(a,text=True).strip();job=s.split(';')[0];assert job.isdigit();receipt={'job_id':job,'argv':a,'submitted_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'manifest_sha256':sha(B/'manifest.json'),'policy_sha256':sha(policy),'stage_count':7,'single_sequential_allocation':True};(B/'jobs.json').write_text(json.dumps(receipt,indent=2)+'\n');state=subprocess.check_output([S+'scontrol','show','job',job,'-o'],text=True);assert 'Partition=default_partition' in state and 'ExcNodeList=scaglione-compute-01' in state and 'Requeue=1' in state;receipt['scontrol']=state;receipt['resource_policy_verified']=True;(B/'jobs.json').write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps(receipt,indent=2),flush=True)

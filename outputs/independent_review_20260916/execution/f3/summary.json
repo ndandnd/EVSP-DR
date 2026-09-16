@@ -1,0 +1,56 @@
+{
+  "cases": 102,
+  "certified_cg": 50,
+  "uncertified_cg": 52,
+  "uncertified_matching_archived_duals": 37,
+  "uncertified_fleet_bound_equals_rounded_route_weight": 52,
+  "all_fleet_bound_equals_rounded_route_weight": 102,
+  "max_qmax": 1044.008,
+  "max_primal_archived_dual_difference": 1.1781230568885803e-07,
+  "k32": [
+    {
+      "case_id": "w1_k32",
+      "integer_buses": "35",
+      "integer_fleet_lower_bound": 32,
+      "priced_duals_archived_and_matched": true,
+      "fleet_relaxation_lower_bound_from_cost_envelope": 31.67978391149498
+    },
+    {
+      "case_id": "w2_k32",
+      "integer_buses": "34",
+      "integer_fleet_lower_bound": 32,
+      "priced_duals_archived_and_matched": true,
+      "fleet_relaxation_lower_bound_from_cost_envelope": 31.686412881215087
+    },
+    {
+      "case_id": "w3_k32",
+      "integer_buses": "33",
+      "integer_fleet_lower_bound": 32,
+      "priced_duals_archived_and_matched": true,
+      "fleet_relaxation_lower_bound_from_cost_envelope": 31.688767279458286
+    },
+    {
+      "case_id": "w4_k32",
+      "integer_buses": "34",
+      "integer_fleet_lower_bound": 31,
+      "priced_duals_archived_and_matched": true,
+      "fleet_relaxation_lower_bound_from_cost_envelope": 30.699304220494202
+    },
+    {
+      "case_id": "w5_k32",
+      "integer_buses": "37",
+      "integer_fleet_lower_bound": 31,
+      "priced_duals_archived_and_matched": true,
+      "fleet_relaxation_lower_bound_from_cost_envelope": 30.69757291845695
+    },
+    {
+      "case_id": "w6_k32",
+      "integer_buses": "33",
+      "integer_fleet_lower_bound": 32,
+      "priced_duals_archived_and_matched": true,
+      "fleet_relaxation_lower_bound_from_cost_envelope": 31.684178263020208
+    }
+  ],
+  "source_table_sha256": "1ecfc3d89832b7444544e78e4ef0d369426b29036b1030cc4f2123e6afac66f7",
+  "source_extract_sha256": "fcaf8abd33110f122b190abc226e928ed596429f5f2220968cfc448111fee506"
+}

@@ -1,0 +1,265 @@
+{
+  "schema": "review-fdl-inputs-v1",
+  "finding": "F8",
+  "review_item": 14,
+  "source_hashes": {
+    "/Users/nadan/Documents/projects/demandresponse/data/FDL_VehicleDetails.xlsx": "fa3bd3e89d73a49ebc600bdd6361c97956539c9ddd07d7df2a64063bd1ca0661",
+    "/Users/nadan/Documents/projects/demandresponse/data/FDL_DHD.xlsm": "0ecba33cdb84b2b3dad12b05a005e93e4c2d5fbe290cffb3c120fc2bc58ebb96"
+  },
+  "regular_trips": 1393,
+  "duty_count": 61,
+  "selection": "seed20260916 random ordering, no feasibility/easiness screening",
+  "duty_order": [
+    "11408",
+    "11407",
+    "11309",
+    "11319",
+    "11350",
+    "11321",
+    "11304",
+    "11348",
+    "11347",
+    "11346",
+    "11308",
+    "11314",
+    "11315",
+    "11334",
+    "11322",
+    "11410",
+    "11301",
+    "11404",
+    "11323",
+    "11331",
+    "11310",
+    "11320",
+    "11326",
+    "11306",
+    "11302",
+    "11345",
+    "11403",
+    "11305",
+    "11313",
+    "11332",
+    "11317",
+    "11409",
+    "11327",
+    "11330",
+    "11341",
+    "11318",
+    "11328",
+    "11312",
+    "11405",
+    "11401",
+    "11335",
+    "11340",
+    "11336",
+    "11402",
+    "11339",
+    "11337",
+    "11411",
+    "11329",
+    "11338",
+    "11349",
+    "11316",
+    "11333",
+    "11324",
+    "11307",
+    "11342",
+    "11406",
+    "11311",
+    "11325",
+    "11344",
+    "11303",
+    "11343"
+  ],
+  "chargers": [
+    "1179",
+    "2350",
+    "2530L",
+    "4290L",
+    "4760L",
+    "KB_B",
+    "KEX"
+  ],
+  "depot": "KEX",
+  "deadhead_conversion": "symmetric maximum of BOTH directions and ALL available time-interval durations/distances; energy=2.0kWh/km; no silent missing arcs or shortest-path imputation",
+  "energy_scope": "service-trip Usage kWh retained exactly; deadhead2.0kWh/km is declared constant-model assumption, not inferred actualFDLtraction",
+  "horizon_minutes": 1560,
+  "cases": {
+    "fdl_k01": {
+      "k": 1,
+      "csv": "fdl_k01.csv",
+      "input_sha256": "93acd77670ee25bbe1b0b40d2dc6ca7fe6a0e34e39102914c4cc00495bc3a256",
+      "trip_count": 15,
+      "duties": [
+        "11408"
+      ]
+    },
+    "fdl_k02": {
+      "k": 2,
+      "csv": "fdl_k02.csv",
+      "input_sha256": "61b76e014006e11609e593bfa3060fc85bab72532cac7047c7fa46ecb129c790",
+      "trip_count": 38,
+      "duties": [
+        "11408",
+        "11407"
+      ]
+    },
+    "fdl_k03": {
+      "k": 3,
+      "csv": "fdl_k03.csv",
+      "input_sha256": "c2fd8b46d97a790fe931263a8c69d54cf82248c26e2b4df89fbd917e8d1a1b52",
+      "trip_count": 67,
+      "duties": [
+        "11408",
+        "11407",
+        "11309"
+      ]
+    },
+    "fdl_k05": {
+      "k": 5,
+      "csv": "fdl_k05.csv",
+      "input_sha256": "b0bf8a1e87a4188174fa2987bb5733775c197b0a982a4b19729ed26d8d67d838",
+      "trip_count": 109,
+      "duties": [
+        "11408",
+        "11407",
+        "11309",
+        "11319",
+        "11350"
+      ]
+    },
+    "fdl_k08": {
+      "k": 8,
+      "csv": "fdl_k08.csv",
+      "input_sha256": "443a48af5b3e88c7be893652e2cff9429e6e86b4add19276faffe8814d3cb7c2",
+      "trip_count": 166,
+      "duties": [
+        "11408",
+        "11407",
+        "11309",
+        "11319",
+        "11350",
+        "11321",
+        "11304",
+        "11348"
+      ]
+    },
+    "fdl_k10": {
+      "k": 10,
+      "csv": "fdl_k10.csv",
+      "input_sha256": "8cf3381e7419bc9fd2cfd43692b04b89574afdb9101ab69efd3c311ffe580443",
+      "trip_count": 209,
+      "duties": [
+        "11408",
+        "11407",
+        "11309",
+        "11319",
+        "11350",
+        "11321",
+        "11304",
+        "11348",
+        "11347",
+        "11346"
+      ]
+    },
+    "fdl_k15": {
+      "k": 15,
+      "csv": "fdl_k15.csv",
+      "input_sha256": "50e8bfa53bbefb27de0d3fcc801018fbdcb2f9393b0c1a6fb1f13e6bf745c709",
+      "trip_count": 352,
+      "duties": [
+        "11408",
+        "11407",
+        "11309",
+        "11319",
+        "11350",
+        "11321",
+        "11304",
+        "11348",
+        "11347",
+        "11346",
+        "11308",
+        "11314",
+        "11315",
+        "11334",
+        "11322"
+      ]
+    }
+  },
+  "derived_hashes": {
+    "fdl_k08.csv": "443a48af5b3e88c7be893652e2cff9429e6e86b4add19276faffe8814d3cb7c2",
+    "par_ref_dhd.csv": "66a8b7e513a9634a80bdf0595d63bcc02853402a7dab4a0d73c034d9c647393f",
+    "Ref_dict.csv": "c076fe90d5a1a01e5fdf058e9481c1ec1098decd269e7679026c58540eaa533f",
+    "fdl_k10.csv": "8cf3381e7419bc9fd2cfd43692b04b89574afdb9101ab69efd3c311ffe580443",
+    "fdl_k05.csv": "b0bf8a1e87a4188174fa2987bb5733775c197b0a982a4b19729ed26d8d67d838",
+    "fdl_k01.csv": "93acd77670ee25bbe1b0b40d2dc6ca7fe6a0e34e39102914c4cc00495bc3a256",
+    "fdl_k15.csv": "50e8bfa53bbefb27de0d3fcc801018fbdcb2f9393b0c1a6fb1f13e6bf745c709",
+    "fdl_k02.csv": "61b76e014006e11609e593bfa3060fc85bab72532cac7047c7fa46ecb129c790",
+    "fdl_k03.csv": "c2fd8b46d97a790fe931263a8c69d54cf82248c26e2b4df89fbd917e8d1a1b52",
+    "hourly_prices_flat.csv": "73c74ead0019e0d2803b617377d26664df4abf9e50372cdb791e60f895d1e8df"
+  },
+  "missing_location_aliases": [],
+  "omitted_deadhead_rows": [
+    {
+      "from": "18110",
+      "to": "5180",
+      "reason": "missing duration or distance; arc omitted, not imputed"
+    },
+    {
+      "from": "5180",
+      "to": "18110",
+      "reason": "missing duration or distance; arc omitted, not imputed"
+    },
+    {
+      "from": "7200",
+      "to": "BGM",
+      "reason": "missing duration or distance; arc omitted, not imputed"
+    },
+    {
+      "from": "BGM",
+      "to": "7200",
+      "reason": "missing duration or distance; arc omitted, not imputed"
+    },
+    {
+      "from": "4290",
+      "to": "K\u00d6_P",
+      "reason": "missing duration or distance; arc omitted, not imputed"
+    },
+    {
+      "from": "4290",
+      "to": "K\u00d6_P",
+      "reason": "missing duration or distance; arc omitted, not imputed"
+    },
+    {
+      "from": "K\u00d6_P",
+      "to": "4290",
+      "reason": "missing duration or distance; arc omitted, not imputed"
+    },
+    {
+      "from": "K\u00d6_P",
+      "to": "4290",
+      "reason": "missing duration or distance; arc omitted, not imputed"
+    },
+    {
+      "from": "K\u00d6_P",
+      "to": "4290",
+      "reason": "missing duration or distance; arc omitted, not imputed"
+    },
+    {
+      "from": "4290",
+      "to": "K\u00d6_P",
+      "reason": "missing duration or distance; arc omitted, not imputed"
+    }
+  ],
+  "status": "inputs_prepared_not_results",
+  "tariff_extension": {
+    "source_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "source_saved_as": "original_hourly_prices_flat.csv",
+    "source_hours": "0..24",
+    "new_hours": "0..25",
+    "price_per_kwh": 0.0992,
+    "reason": "Explicit complete26hour coverage required by continuous optimizer; extend constant tariff by same price, no shape change",
+    "new_sha256": "73c74ead0019e0d2803b617377d26664df4abf9e50372cdb791e60f895d1e8df"
+  }
+}

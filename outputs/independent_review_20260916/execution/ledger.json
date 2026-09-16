@@ -1,0 +1,112 @@
+{
+  "review_sha256": "fb2350decd94760dd478e81a7518c6e19b0ae8626b3483c25bfb2438cc59bc90",
+  "started_utc": "2026-09-16T21:42:22.413645+00:00",
+  "priority_order": [
+    3,
+    2,
+    4,
+    1,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "items": [
+    {
+      "item": 3,
+      "finding": "F4",
+      "status": "completed",
+      "result": "F4 VERIFIED: pinned PARX charging is 240 kW, without a reserve. REFUTED: the old 12/40 screen describes this baseline. Fresh replay finds 0/42 unchanged schedules feasible, but 42/42 fixed trip sequences feasible after continuous charging optimization."
+    },
+    {
+      "item": 2,
+      "finding": "F3",
+      "status": "completed",
+      "result": "F3 VERIFIED: all 52 uncertified endpoints yield useful numerical event-model fleet lower bounds. REFUTED: incumbent fleet alone is a valid route-mass cap for the weighted LP. Use U/100000 and matched LP/pricing iterations; no exact-arithmetic proof is claimed."
+    },
+    {
+      "item": 4,
+      "finding": "F2",
+      "status": "completed",
+      "result": "F2 VERIFIED: mean nearest-duty Jaccard differs, 0.644 versus 0.462. REFUTED: similarity is generally near one. UNRESOLVED: inheritance merely reassembles GIRO, or explains integer difficulty."
+    },
+    {
+      "item": 1,
+      "finding": "F1",
+      "status": "completed",
+      "result": "F1 VERIFIED: all 128 dispatch schedules replay with passengers assigned once and duplicate traversals retained as empty driving. REFUTED: duplicate coverage alone invalidates fleet or electricity costs. Equality-column and capacity claims are separate."
+    },
+    {
+      "item": 5,
+      "finding": "F6",
+      "status": "completed",
+      "result": "F6 VERIFIED: one selected instance, sub-three-minute charges in both optimized arms, and three audited comparators. REFUTED: 46 starts describes every tariff. Larger and stricter-model gains remain UNRESOLVED."
+    },
+    {
+      "item": 6,
+      "finding": "F9",
+      "status": "completed",
+      "result": "F9 VERIFIED and repaired: missing fee/tariff fields in 308 case records. All 3447 stable IDs and existing scientific result fields preserved. Added 102 numerical bound rows and clarified historical subset scope."
+    },
+    {
+      "item": 7,
+      "finding": "F5",
+      "status": "submitted",
+      "result": "Scientific finding UNRESOLVED pendingtimedseedexperiments;27newjobs+4reusedbaselinecells."
+    },
+    {
+      "item": 8,
+      "finding": "F2/F4",
+      "status": "submitted",
+      "result": "Scientific finding UNRESOLVED pendingtimedseedexperiments;27newjobs+4reusedbaselinecells."
+    },
+    {
+      "item": 9,
+      "finding": "F2/F5",
+      "status": "submitted",
+      "result": "Scientific finding UNRESOLVED pendingtimedseedexperiments;27newjobs+4reusedbaselinecells."
+    },
+    {
+      "item": 10,
+      "finding": "F6/F7",
+      "status": "submitted",
+      "result": "48 independent jobs submitted; observed running. New scientific outcomes UNRESOLVED.",
+      "evidence": "p2/dr_mincharge/jobs.json"
+    },
+    {
+      "item": 11,
+      "finding": "F4",
+      "status": "submitted",
+      "result": "31 CG and 31 MIP jobs submitted; two group chains with true previous-CG dependencies. Scientific outcome UNRESOLVED.",
+      "evidence": "p2_strict/jobs.json"
+    },
+    {
+      "item": 12,
+      "finding": "F5",
+      "status": "submitted",
+      "result": "14 graph tasks, 14 CG and 14 MIP tasks submitted. Random intermediate groups; only final stage has GIRO reference 15. Scientific outcome UNRESOLVED.",
+      "evidence": "p2_random/jobs.json"
+    },
+    {
+      "item": 13,
+      "finding": "F8",
+      "status": "submitted",
+      "result": "Full 40-duty / 948-trip graph, 48-hour fresh CG and 3-hour fleet MIP submitted: 341404/341405/341406. Scientific outcome UNRESOLVED.",
+      "evidence": "p3_full/jobs.json"
+    },
+    {
+      "item": 14,
+      "finding": "F8",
+      "status": "submitted",
+      "result": "F8 VERIFIED initial cases: Fr\u00f6lunda k1/k2 have 15/38 trips and 1/2 buses, exactly-once replay, and certified CG in 2.85/51.64 s. Overlapping trips independently prove baseline fleet optimum 2 for k2. Larger ladder and generalization remain UNRESOLVED; job 341413 continues.",
+      "evidence": "p3_frolunda/jobs.json"
+    }
+  ],
+  "updated_utc": "2026-09-16T22:16:17.503973+00:00"
+}

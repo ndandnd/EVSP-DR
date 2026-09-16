@@ -1,0 +1,10 @@
+#!/bin/bash
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+export PYTHONHASHSEED=0 GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+export PYTHON_BIN=/home/nc437/evsp_env/bin/python
+export FDL_ROOT=/home/nc437/ladder-lite/review_frolunda_20260916
+source "$FDL_ROOT/cg_code/scripts/event_uniform_envelope/gurobi_worker_preflight.sh"
+exec "$PYTHON_BIN" -u "$FDL_ROOT/worker.py"

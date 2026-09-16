@@ -1,0 +1,687 @@
+{
+  "job_count": 62,
+  "cg_jobs": 31,
+  "mip_jobs": 31,
+  "all_dependency_graph_checks_pass": true,
+  "all_resource_exclusion_checks_pass": true,
+  "checks": [
+    {
+      "key": "w5_k01_18E1__cg",
+      "job_id": "341259",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k01_18E1__mip",
+      "job_id": "341260",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341259"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k02_18E1__cg",
+      "job_id": "341261",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341259"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k02_18E1__mip",
+      "job_id": "341262",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341261"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k03_18E2__cg",
+      "job_id": "341263",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k03_18E2__mip",
+      "job_id": "341264",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341263"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k04_18E2__cg",
+      "job_id": "341265",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341263"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k04_18E2__mip",
+      "job_id": "341266",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341265"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k05_18E1__cg",
+      "job_id": "341267",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341261"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k05_18E1__mip",
+      "job_id": "341269",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341267"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k06_18E2__cg",
+      "job_id": "341270",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341265"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k06_18E2__mip",
+      "job_id": "341271",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341270"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k07_18E1__cg",
+      "job_id": "341272",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341267"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k07_18E1__mip",
+      "job_id": "341273",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341272"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k08_18E1__cg",
+      "job_id": "341274",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341272"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k08_18E1__mip",
+      "job_id": "341275",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341274"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k09_18E2__cg",
+      "job_id": "341276",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341270"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k09_18E2__mip",
+      "job_id": "341277",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341276"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k10_18E2__cg",
+      "job_id": "341278",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341276"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k10_18E2__mip",
+      "job_id": "341279",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341278"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k11_18E2__cg",
+      "job_id": "341280",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341278"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k11_18E2__mip",
+      "job_id": "341281",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341280"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k12_18E1__cg",
+      "job_id": "341282",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341274"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k12_18E1__mip",
+      "job_id": "341283",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341282"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k13_18E1__cg",
+      "job_id": "341284",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341282"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k13_18E1__mip",
+      "job_id": "341285",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341284"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k14_18E2__cg",
+      "job_id": "341286",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341280"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k14_18E2__mip",
+      "job_id": "341287",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341286"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k15_18E2__cg",
+      "job_id": "341290",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341286"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k15_18E2__mip",
+      "job_id": "341291",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341290"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k16_18E2__cg",
+      "job_id": "341292",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341290"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k16_18E2__mip",
+      "job_id": "341293",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341292"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k17_18E2__cg",
+      "job_id": "341294",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341292"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k17_18E2__mip",
+      "job_id": "341295",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341294"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k18_18E1__cg",
+      "job_id": "341296",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341284"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k18_18E1__mip",
+      "job_id": "341297",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341296"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k19_18E2__cg",
+      "job_id": "341298",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341294"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k19_18E2__mip",
+      "job_id": "341299",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341298"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k20_18E2__cg",
+      "job_id": "341300",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341298"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k20_18E2__mip",
+      "job_id": "341301",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341300"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k21_18E2__cg",
+      "job_id": "341302",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341300"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k21_18E2__mip",
+      "job_id": "341303",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341302"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k22_18E2__cg",
+      "job_id": "341304",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341302"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k22_18E2__mip",
+      "job_id": "341305",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341304"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k23_18E2__cg",
+      "job_id": "341306",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341304"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k23_18E2__mip",
+      "job_id": "341307",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341306"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k24_18E2__cg",
+      "job_id": "341308",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341306"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k24_18E2__mip",
+      "job_id": "341309",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341308"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k25_18E2__cg",
+      "job_id": "341310",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341308"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k25_18E2__mip",
+      "job_id": "341311",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341310"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k26_18E1__cg",
+      "job_id": "341312",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341296"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k26_18E1__mip",
+      "job_id": "341313",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341312"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k27_18E2__cg",
+      "job_id": "341314",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341310"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k27_18E2__mip",
+      "job_id": "341315",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341314"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k28_18E1__cg",
+      "job_id": "341316",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341312"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k28_18E1__mip",
+      "job_id": "341317",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341316"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k29_18E2__cg",
+      "job_id": "341318",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341314"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k29_18E2__mip",
+      "job_id": "341319",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341318"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k30_18E1__cg",
+      "job_id": "341320",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341316"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k30_18E1__mip",
+      "job_id": "341321",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341320"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k31_18E1__cg",
+      "job_id": "341322",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341320"
+      ],
+      "time_limit_ok": true
+    },
+    {
+      "key": "w5_k31_18E1__mip",
+      "job_id": "341323",
+      "excluded": true,
+      "cpu8": true,
+      "default_partition": true,
+      "dependencies": [
+        "341322"
+      ],
+      "time_limit_ok": true
+    }
+  ]
+}

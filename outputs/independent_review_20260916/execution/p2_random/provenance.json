@@ -1,0 +1,48 @@
+{
+  "status": "submitted",
+  "files_sha256": {
+    "README.md": "01e6e4a1f7973e3ac49dd30216e3f5110d74cd2285682d1668cde9451ec833e9",
+    "campaign.py": "86a7fae6b49ecdfb4f9e35c819f0b1c3125deabef01f2bf6f99234b40060c447",
+    "case_jobs.json": "5e8ab6ee9b0f237cfb23d7935fae7ea74a1d03afd1d966a6d549dfbca2c87ee1",
+    "collect.py": "efdc252cae8210f5fbf0961bbc285932c92fee6e440023d07ca52fc71248b7e0",
+    "graph_entry.py": "463973a0aff2dfb59979f9a5f40baeac29ee2e31d25a63a5844e9e08647c43ee",
+    "inputs/manifest.json": "e4851bf41203059b7628540d48279d84bf05e265854161691206daef8e9e6b5e",
+    "inputs/r1_s02.csv": "7999c9fbf3d421ec9a9dfcb06fa5a69c938fa3413e280402ff92118c4c7eaee8",
+    "inputs/r1_s03.csv": "3ca67e57ec21168b358be9532fc299097d60f6f45d01f99d61fe26723ed564a2",
+    "inputs/r1_s04.csv": "38c6f4c4a19bd3f397075d5aed0d97dc8191b782634b4882827c0dfbccb54403",
+    "inputs/r1_s05.csv": "bfaaeecd1c6a8e604196d931d617f48e36e7c3b88b1b1e305902bfd60c6847dd",
+    "inputs/r1_s06.csv": "cca1f368bd3d0b3888266cd97d8025a76d9062601ffaf2598a070c5a65c35a6e",
+    "inputs/r1_s07.csv": "3473a85c6977683421033067834bad61c249475716229221f630b5ab374da5f5",
+    "inputs/r1_s08.csv": "923e0bd5e9149239563c34d387dca504f0b2606d3ea0508e815a5c9bc4ab68f4",
+    "inputs/r1_s09.csv": "a1928eb650c3c6db63d346223fbb31fbf5953eb67de41ac8bc1c7fef78bc1293",
+    "inputs/r1_s10.csv": "a6f2f16f2f465665f7c9a5484370025905cf59905d88e1dc82620571981f1c5d",
+    "inputs/r1_s11.csv": "3423208966c3b396090335536b141c0ff94d8a7df48560c7ffea9a2067c25763",
+    "inputs/r1_s12.csv": "5f36b511fa3322a46da213ee00b79fe572b0178cb0f27f5c5ccb5ef130e26f5e",
+    "inputs/r1_s13.csv": "d37b69e25de442863df7b2b31b631a5fe73458616850b642c8526f61d307dba7",
+    "inputs/r1_s14.csv": "81e25ea03b4eed3d0f07f2a7d8bf6fa4aece71ccf263a18bafbba84da21be003",
+    "inputs/r1_s15.csv": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+    "jobs.json": "8e50d6bed75499458a991411d4dc84c9e5c5cefd100e612136de499d5433c96e",
+    "manifest.json": "55a02d8c5abca727c117df8360a6997f77af0a0262a2aa24181af67af92930d7",
+    "policy_receipt.json": "74c6df337ea9233835d63f3b517669059b7f2ba734092643c46762167606ea9d",
+    "prepare_inputs.py": "c5de1b37035d708811b40c8926ba2b60c8868d5f935d026947b866241a64dccb",
+    "remote_validation.log": "652c7c4cd85b9d115c33d7981ed8d58e7d495984ac1d9d6099ee3053bf3a1354",
+    "submission.log": "1c4bf5c7abaa6cdc6f9a2105863a8b5b6b26bd5fd7562b6e1ae23cb84375e466",
+    "submission_verification.json": "b928785923752cd0a176cb496c1303fe38cb740d5c680635f8c6dc8ccd9bafd8",
+    "trip_group_assignment.csv": "5267b3dad3dda557d2f4c4f2ac916543d93de3a84a3955104f2aa0076fa7eb93",
+    "validate_remote.py": "ecb6df21f7dc7fad48c06d651e7e7931af9ec836536495c968db0ed4a150900e",
+    "validation.json": "652c7c4cd85b9d115c33d7981ed8d58e7d495984ac1d9d6099ee3053bf3a1354",
+    "worker.sub": "b915f24f01724125583122e6477f6ee01a8d5e3a4a5143d17fbd5a818759191b"
+  },
+  "checks": [
+    "14 deterministic nested stage inputs",
+    "final physical attributes equal original C1k15",
+    "stage index never asserted as fleet target",
+    "first-stage no inheritance CLI",
+    "later-stage unlimited pool inheritance CLI",
+    "campaign code compiles"
+  ],
+  "pending": [
+    "results"
+  ],
+  "remote_root": "/home/nc437/ladder-lite/random_trip_groups_c1_20260916"
+}

@@ -1,0 +1,223 @@
+Set parameter LicenseID to value 2674428
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "en-cc-unicorn-data-dirs.coecis.cornell.edu"
+Set parameter Threads to value 1
+Set parameter Method to value 1
+Set parameter LogFile to value "/home/nc437/ladder-lite/review_dr_mincharge_20260916/integration_smoke/cg/cg.gurobi.log"
+Set parameter TimeLimit to value 2.9988813539966941e+01
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2698 v3 @ 2.30GHz, instruction set [SSE2|AVX|AVX2]
+Thread count: 32 physical cores, 32 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  2.9988813539966941e+01
+Method  1
+Threads  1
+
+Optimize a model with 4 rows, 4 columns and 6 nonzeros
+Model fingerprint: 0x25e02004
+Coefficient statistics:
+  Matrix range     [1e+00, 9e+01]
+  Objective range  [4e-03, 1e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 2e+01]
+Presolve removed 4 rows and 4 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.0000000e+00   0.000000e+00   0.000000e+00      0s
+
+Solved in 0 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  1.000000000e+00
+Set parameter TimeLimit to value 2.9905837303027511e+01
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2698 v3 @ 2.30GHz, instruction set [SSE2|AVX|AVX2]
+Thread count: 32 physical cores, 32 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  2.9905837303027511e+01
+Method  1
+Threads  1
+
+Optimize a model with 4 rows, 34 columns and 126 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 9e+01]
+  Objective range  [4e-03, 1e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 2e+01]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -1.5000000e+31   1.986680e+32   1.500000e+01      0s
+       2    0.0000000e+00   0.000000e+00   0.000000e+00      0s
+
+Solved in 2 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  0.000000000e+00
+Set parameter TimeLimit to value 2.9904779825359583e+01
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2698 v3 @ 2.30GHz, instruction set [SSE2|AVX|AVX2]
+Thread count: 32 physical cores, 32 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  2.9904779825359583e+01
+Method  1
+Threads  1
+
+Optimize a model with 4 rows, 34 columns and 126 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 9e+01]
+  Objective range  [1e+05, 1e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 2e+01]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -1.0000203e+35   3.250000e+30   1.000020e+05      0s
+       1    1.0000275e+05   0.000000e+00   0.000000e+00      0s
+
+Solved in 1 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  1.000027500e+05
+Set parameter Threads to value 1
+Set parameter MIPGap to value 0
+Set parameter TimeLimit to value 1
+Set parameter LogFile to value "/home/nc437/ladder-lite/review_dr_mincharge_20260916/integration_smoke/cg/fleet.gurobi.log"
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2698 v3 @ 2.30GHz, instruction set [SSE2|AVX|AVX2]
+Thread count: 32 physical cores, 32 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1
+MIPGap  0
+Method  1
+Threads  1
+
+Optimize a model with 4 rows, 34 columns and 126 nonzeros
+Model fingerprint: 0xeaa3a089
+Variable types: 3 continuous, 31 integer (31 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 9e+01]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 2e+01]
+Found heuristic solution: objective 1.0000000
+Presolve removed 4 rows and 34 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds (0.00 work units)
+Thread count was 1 (of 32 available processors)
+
+Solution count 1: 1 
+
+Optimal solution found (tolerance 0.00e+00)
+Best objective 1.000000000000e+00, best bound 1.000000000000e+00, gap 0.0000%
+Set parameter TimeLimit to value 1.9927265737205744e+00
+Set parameter LogFile to value "/home/nc437/ladder-lite/review_dr_mincharge_20260916/integration_smoke/cg/charging.gurobi.log"
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2698 v3 @ 2.30GHz, instruction set [SSE2|AVX|AVX2]
+Thread count: 32 physical cores, 32 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1.9927265737205744e+00
+MIPGap  0
+Method  1
+Threads  1
+
+Optimize a model with 5 rows, 34 columns and 157 nonzeros
+Model fingerprint: 0xef524c56
+Variable types: 3 continuous, 31 integer (31 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 9e+01]
+  Objective range  [1e+00, 8e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 2e+01]
+
+Loaded user MIP start with objective 5
+MIP start from previous solve did not produce a new incumbent solution
+
+Presolve removed 5 rows and 34 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds (0.00 work units)
+Thread count was 1 (of 32 available processors)
+
+Solution count 2: 2.75 5 
+
+Optimal solution found (tolerance 0.00e+00)
+Best objective 2.750000000000e+00, best bound 2.750000000000e+00, gap 0.0000%
+Set parameter Threads to value 1
+Set parameter MIPGap to value 0
+Set parameter TimeLimit to value 1
+Set parameter LogFile to value "/home/nc437/ladder-lite/review_dr_mincharge_20260916/integration_smoke/fixed/fleet.log"
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2698 v3 @ 2.30GHz, instruction set [SSE2|AVX|AVX2]
+Thread count: 32 physical cores, 32 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1
+MIPGap  0
+Threads  1
+
+Optimize a model with 4 rows, 55 columns and 220 nonzeros
+Model fingerprint: 0x7f3f792d
+Variable types: 0 continuous, 55 integer (55 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+02]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+01]
+Found heuristic solution: objective 1.0000000
+Presolve removed 4 rows and 55 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds (0.00 work units)
+Thread count was 1 (of 32 available processors)
+
+Solution count 1: 1 
+
+Optimal solution found (tolerance 0.00e+00)
+Best objective 1.000000000000e+00, best bound 1.000000000000e+00, gap 0.0000%
+Set parameter TimeLimit to value 1.9979365421459079e+00
+Set parameter LogFile to value "/home/nc437/ladder-lite/review_dr_mincharge_20260916/integration_smoke/fixed/charging.log"
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2698 v3 @ 2.30GHz, instruction set [SSE2|AVX|AVX2]
+Thread count: 32 physical cores, 32 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1.9979365421459079e+00
+MIPGap  0
+Threads  1
+
+Optimize a model with 5 rows, 55 columns and 275 nonzeros
+Model fingerprint: 0xac6d781b
+Variable types: 0 continuous, 55 integer (55 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+02]
+  Objective range  [1e+00, 1e+01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+01]
+
+Loaded user MIP start with objective 8
+MIP start from previous solve did not produce a new incumbent solution
+
+Presolve removed 5 rows and 55 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds (0.00 work units)
+Thread count was 1 (of 32 available processors)
+
+Solution count 2: 2.75 8 
+
+Optimal solution found (tolerance 0.00e+00)
+Best objective 2.750000000000e+00, best bound 2.750000000000e+00, gap 0.0000%
+Integration smoke passed: fresh CG certificate, matched fixed-duty one-bus MIP, identical graph costs, actual active duration>=3min.

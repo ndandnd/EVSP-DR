@@ -1,0 +1,98 @@
+{
+  "case": "fdl_k02",
+  "reference_duties": 2,
+  "input_trips": 38,
+  "input_sha256": "61b76e014006e11609e593bfa3060fc85bab72532cac7047c7fa46ecb129c790",
+  "attempts": [
+    {
+      "stage": "cache",
+      "path": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cache/341413_r0/execution.json",
+      "sha256": "0af665eb92c0494a888b9356ceb477de645745fe56840d8de661a22e87fce06c",
+      "status": "finished",
+      "attempt": "341413_r0",
+      "started_epoch": 1789596758.011953,
+      "ended_epoch": 1789596824.40253,
+      "returncode": 0
+    },
+    {
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cg/341413_r0/execution.json",
+      "sha256": "b4ad31f5e3e5e34bbb7186459eec8bbf19b783bc31c40679bd29332fd4448fdc",
+      "status": "finished",
+      "attempt": "341413_r0",
+      "started_epoch": 1789596824.7358735,
+      "ended_epoch": 1789596878.207366,
+      "returncode": 0
+    },
+    {
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/mip/341413_r0/execution.json",
+      "sha256": "6531237fc0f51da19c6e834e801bf2cdbed025805fdcc8129ce5db8e18c224df",
+      "status": "finished",
+      "attempt": "341413_r0",
+      "started_epoch": 1789596878.3960288,
+      "ended_epoch": 1789596882.4212642,
+      "returncode": 0
+    }
+  ],
+  "cache_completed": true,
+  "cache_receipt": {
+    "manifest_sha256": "28564b44a0a013fc7711942c214a2d2a8753b1bd7cecedcd17a4b70cd25cc046",
+    "cache": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cache/341413_r0/network.pkl",
+    "output_hashes": {
+      "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cache/341413_r0/network.pkl": "4f0819c4e381f38f785dfa4decf605769d9f31033b3c26e102e9f301b1cd7fe7",
+      "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cache/341413_r0/network.pkl.manifest.json": "94176481b3fe59fe0436bef8cf09ddf6bcc72bf38272f4feda7270dc7d97be4e"
+    }
+  },
+  "cache_receipt_sha256": "614169ba58f3d10e0a42ace1ddcf8692b18f888e51242428d706724eb3566bc1",
+  "cg_completed": true,
+  "cg_receipt": {
+    "manifest_sha256": "28564b44a0a013fc7711942c214a2d2a8753b1bd7cecedcd17a4b70cd25cc046",
+    "result": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cg/341413_r0/cg.json",
+    "pricing_certified": true,
+    "stop_reason": "certified",
+    "output_hashes": {
+      "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cg/341413_r0/cg.json": "19c5b7ec861fbed999d5d6ac5f928ba684c29d147280c5b9b926e1c04e906c1f",
+      "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cg/341413_r0/cg.json.columns.jsonl": "09abe60ca081fa859ff55763f89f8de1cb541c2bfe61b05533939636425e390d"
+    }
+  },
+  "cg_receipt_sha256": "b9290fe019ea8c4fdf1c13957267701522af0044c67ed52d7280e18233b4f4f0",
+  "cg_result_path": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cg/341413_r0/cg.json",
+  "cg_result_sha256": "19c5b7ec861fbed999d5d6ac5f928ba684c29d147280c5b9b926e1c04e906c1f",
+  "cg_pricing_certificate": true,
+  "cg_stop_reason": "certified",
+  "cg_wall_s": 51.642016515135765,
+  "cg_iterations": 110,
+  "cg_final": {
+    "iter": 110,
+    "attempt_iter": 110,
+    "lp_obj": 200099.97599999997,
+    "route_weight": 2.0,
+    "artificials": 0.0,
+    "min_rc": -1.390070281104272e-10,
+    "max_row_violation": 0.0,
+    "max_bound_violation": 0.0
+  },
+  "cg_final_lp_source": "final_pool_resolve",
+  "mip_completed": true,
+  "mip_receipt": {
+    "manifest_sha256": "28564b44a0a013fc7711942c214a2d2a8753b1bd7cecedcd17a4b70cd25cc046",
+    "result": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/mip/341413_r0/result.json",
+    "source_cg_sha256": "19c5b7ec861fbed999d5d6ac5f928ba684c29d147280c5b9b926e1c04e906c1f",
+    "buses": 2,
+    "fleet_bound": 2.0,
+    "fleet_proven": true,
+    "output_hashes": {
+      "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/mip/341413_r0/result.json": "e40b32d3b84320f5e28bf554df8636d267dd631c81e6a3f0a060a4cde26d2a86"
+    }
+  },
+  "mip_receipt_sha256": "adbcbebf32056a727bae7ca0e1fc1bf42b697c597a2c86d42e32ded2bc57e2d7",
+  "mip_result_path": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/mip/341413_r0/result.json",
+  "mip_result_sha256": "e40b32d3b84320f5e28bf554df8636d267dd631c81e6a3f0a060a4cde26d2a86",
+  "buses": 2,
+  "pool_fleet_bound": 2.0,
+  "fleet_proved_in_pool": true,
+  "individual_route_replay": true,
+  "duplicate_removal_validated": true,
+  "shared_capacity_validated": false
+}

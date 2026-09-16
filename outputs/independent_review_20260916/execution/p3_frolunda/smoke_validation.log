@@ -1,0 +1,39 @@
+{
+  "status": "passed",
+  "native_cg_certificate": true,
+  "native_cg_final": {
+    "iter": 1,
+    "attempt_iter": 1,
+    "lp_obj": 100000.0,
+    "route_weight": 1.0,
+    "artificials": 0.0,
+    "min_rc": 0.0,
+    "max_row_violation": 0.0,
+    "max_bound_violation": 0.0
+  },
+  "mip_buses": 1,
+  "mip_fleet_proven": true,
+  "mip_physical_replay": true,
+  "smoke_input_sha256": "15a00a0c11c87f7120825beb0f61651cc320e462a4ad42d6ecfa981ad1e65cd1",
+  "code": {
+    "cg": {
+      "commit": "daac18d5598902c28baa6c43e58942930fc733bc",
+      "base": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+      "branch": "codex/review-fdl-cg-20260916",
+      "worktree": "/Users/nadan/Documents/projects/demandresponse/.codex-work/review-fdl-cg-20260916"
+    },
+    "mip": {
+      "commit": "0c51b1fa491492212f5d875d1c082b476db0f1c3",
+      "base": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "branch": "codex/review-fdl-mip-20260916",
+      "worktree": "/Users/nadan/Documents/projects/demandresponse/.codex-work/review-fdl-mip-20260916"
+    }
+  },
+  "files_sha256": {
+    "/home/nc437/ladder-lite/review_frolunda_20260916/smoke/cg.json": "0a9cef183fb141c76c0ce09f201aafa8cc2bfb51c95b9282a7fba567e969653c",
+    "/home/nc437/ladder-lite/review_frolunda_20260916/smoke/mip.json": "99961b12222816fc59bbc6a477e59404a19f0a254210bba380eac90857a90804",
+    "/home/nc437/ladder-lite/review_frolunda_20260916/smoke/cg.log": "5d5bb990a421324678c2811c608d73042fdc4127f29b8a0218b0089d04507d48",
+    "/home/nc437/ladder-lite/review_frolunda_20260916/smoke/mip.log": "d3e5bfc92f07e9b94f77de603daa9cba91f710a5442dddff7af2d5da102927d3"
+  },
+  "no_duty_selection_changed": true
+}

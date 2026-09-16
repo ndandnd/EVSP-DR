@@ -1,3 +1,7 @@
+Current independent-review results: [16 September F1–F9 audit and execution ledger](../independent_review_20260916/execution/README.md). This supersedes earlier uncertainty about empty-driving feasibility and adds numerical event-model fleet bounds; historical result tables remain preserved.
+
+The workbook predates the 16 September independent-review audit. Use the linked audited CSV for the added lower bounds and empty-driving replay checks; original solver endpoints are preserved.
+
 Current fleet evidence: [16 September 15:55 EDT](../overnight_next_20260914/status_20260916T194843Z/README.md). New read-only check: [large-chain trip-assignment audit](../large_chain_cleanup_screen_20260916/README.md). Earlier dated updates below are historical.
 
 # Latest verified comparison — 16 September

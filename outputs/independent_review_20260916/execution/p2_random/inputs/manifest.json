@@ -1,0 +1,308 @@
+{
+  "schema": "evsp-random-trip-groups-input-v1",
+  "prepared_utc": "2026-09-16T21:52:26.911001+00:00",
+  "seed": 20260916,
+  "random_method": "Sort final input by Ordered_Trip_ID, shuffle with Python random.Random(20260916), cut into original C1 duty trip counts; solve cumulative groups2..15.",
+  "source_hashes": {
+    "outputs/chain_extension_20260913/inputs/sources/Practice_Custom_DutyUnion_k15_p01_20260908.csv": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+    "outputs/chain_extension_20260913/inputs/sources/Par_VehicleDetails_Updated.csv": "6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f",
+    "outputs/chain_extension_20260913/inputs/sources/chain_order.csv": "3e96d92e4cefed8e5d1d8e3f26fd2c4c17f1d0022b8c79aff5315a9dbbf3aa70"
+  },
+  "final_instance_sha256": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+  "final_trip_attributes_identical": true,
+  "groups": [
+    {
+      "group": 1,
+      "size": 37,
+      "matched_original_duty": "13313"
+    },
+    {
+      "group": 2,
+      "size": 24,
+      "matched_original_duty": "13310"
+    },
+    {
+      "group": 3,
+      "size": 11,
+      "matched_original_duty": "13408"
+    },
+    {
+      "group": 4,
+      "size": 15,
+      "matched_original_duty": "13413"
+    },
+    {
+      "group": 5,
+      "size": 17,
+      "matched_original_duty": "13324muw"
+    },
+    {
+      "group": 6,
+      "size": 46,
+      "matched_original_duty": "13312"
+    },
+    {
+      "group": 7,
+      "size": 27,
+      "matched_original_duty": "13319"
+    },
+    {
+      "group": 8,
+      "size": 17,
+      "matched_original_duty": "13409"
+    },
+    {
+      "group": 9,
+      "size": 17,
+      "matched_original_duty": "13404"
+    },
+    {
+      "group": 10,
+      "size": 14,
+      "matched_original_duty": "13403"
+    },
+    {
+      "group": 11,
+      "size": 21,
+      "matched_original_duty": "13326"
+    },
+    {
+      "group": 12,
+      "size": 17,
+      "matched_original_duty": "13402"
+    },
+    {
+      "group": 13,
+      "size": 33,
+      "matched_original_duty": "13318"
+    },
+    {
+      "group": 14,
+      "size": 14,
+      "matched_original_duty": "13311"
+    },
+    {
+      "group": 15,
+      "size": 54,
+      "matched_original_duty": "13303"
+    }
+  ],
+  "cases": {
+    "r1_s02": {
+      "id": "r1_s02",
+      "chain": 1,
+      "stage": 2,
+      "trip_count": 61,
+      "added_trips": 61,
+      "reference_original_chain_stage": 2,
+      "target_buses": null,
+      "final_giro_reference_count": null,
+      "input_sha256": "7999c9fbf3d421ec9a9dfcb06fa5a69c938fa3413e280402ff92118c4c7eaee8",
+      "csv": "r1_s02.csv",
+      "previous_case": null,
+      "distinct_original_giro_duties_represented": 12
+    },
+    "r1_s03": {
+      "id": "r1_s03",
+      "chain": 1,
+      "stage": 3,
+      "trip_count": 72,
+      "added_trips": 11,
+      "reference_original_chain_stage": 3,
+      "target_buses": null,
+      "final_giro_reference_count": null,
+      "input_sha256": "3ca67e57ec21168b358be9532fc299097d60f6f45d01f99d61fe26723ed564a2",
+      "csv": "r1_s03.csv",
+      "previous_case": "r1_s02",
+      "distinct_original_giro_duties_represented": 13
+    },
+    "r1_s04": {
+      "id": "r1_s04",
+      "chain": 1,
+      "stage": 4,
+      "trip_count": 87,
+      "added_trips": 15,
+      "reference_original_chain_stage": 4,
+      "target_buses": null,
+      "final_giro_reference_count": null,
+      "input_sha256": "38c6f4c4a19bd3f397075d5aed0d97dc8191b782634b4882827c0dfbccb54403",
+      "csv": "r1_s04.csv",
+      "previous_case": "r1_s03",
+      "distinct_original_giro_duties_represented": 14
+    },
+    "r1_s05": {
+      "id": "r1_s05",
+      "chain": 1,
+      "stage": 5,
+      "trip_count": 104,
+      "added_trips": 17,
+      "reference_original_chain_stage": 5,
+      "target_buses": null,
+      "final_giro_reference_count": null,
+      "input_sha256": "bfaaeecd1c6a8e604196d931d617f48e36e7c3b88b1b1e305902bfd60c6847dd",
+      "csv": "r1_s05.csv",
+      "previous_case": "r1_s04",
+      "distinct_original_giro_duties_represented": 14
+    },
+    "r1_s06": {
+      "id": "r1_s06",
+      "chain": 1,
+      "stage": 6,
+      "trip_count": 150,
+      "added_trips": 46,
+      "reference_original_chain_stage": 6,
+      "target_buses": null,
+      "final_giro_reference_count": null,
+      "input_sha256": "cca1f368bd3d0b3888266cd97d8025a76d9062601ffaf2598a070c5a65c35a6e",
+      "csv": "r1_s06.csv",
+      "previous_case": "r1_s05",
+      "distinct_original_giro_duties_represented": 14
+    },
+    "r1_s07": {
+      "id": "r1_s07",
+      "chain": 1,
+      "stage": 7,
+      "trip_count": 177,
+      "added_trips": 27,
+      "reference_original_chain_stage": 7,
+      "target_buses": null,
+      "final_giro_reference_count": null,
+      "input_sha256": "3473a85c6977683421033067834bad61c249475716229221f630b5ab374da5f5",
+      "csv": "r1_s07.csv",
+      "previous_case": "r1_s06",
+      "distinct_original_giro_duties_represented": 15
+    },
+    "r1_s08": {
+      "id": "r1_s08",
+      "chain": 1,
+      "stage": 8,
+      "trip_count": 194,
+      "added_trips": 17,
+      "reference_original_chain_stage": 8,
+      "target_buses": null,
+      "final_giro_reference_count": null,
+      "input_sha256": "923e0bd5e9149239563c34d387dca504f0b2606d3ea0508e815a5c9bc4ab68f4",
+      "csv": "r1_s08.csv",
+      "previous_case": "r1_s07",
+      "distinct_original_giro_duties_represented": 15
+    },
+    "r1_s09": {
+      "id": "r1_s09",
+      "chain": 1,
+      "stage": 9,
+      "trip_count": 211,
+      "added_trips": 17,
+      "reference_original_chain_stage": 9,
+      "target_buses": null,
+      "final_giro_reference_count": null,
+      "input_sha256": "a1928eb650c3c6db63d346223fbb31fbf5953eb67de41ac8bc1c7fef78bc1293",
+      "csv": "r1_s09.csv",
+      "previous_case": "r1_s08",
+      "distinct_original_giro_duties_represented": 15
+    },
+    "r1_s10": {
+      "id": "r1_s10",
+      "chain": 1,
+      "stage": 10,
+      "trip_count": 225,
+      "added_trips": 14,
+      "reference_original_chain_stage": 10,
+      "target_buses": null,
+      "final_giro_reference_count": null,
+      "input_sha256": "a6f2f16f2f465665f7c9a5484370025905cf59905d88e1dc82620571981f1c5d",
+      "csv": "r1_s10.csv",
+      "previous_case": "r1_s09",
+      "distinct_original_giro_duties_represented": 15
+    },
+    "r1_s11": {
+      "id": "r1_s11",
+      "chain": 1,
+      "stage": 11,
+      "trip_count": 246,
+      "added_trips": 21,
+      "reference_original_chain_stage": 11,
+      "target_buses": null,
+      "final_giro_reference_count": null,
+      "input_sha256": "3423208966c3b396090335536b141c0ff94d8a7df48560c7ffea9a2067c25763",
+      "csv": "r1_s11.csv",
+      "previous_case": "r1_s10",
+      "distinct_original_giro_duties_represented": 15
+    },
+    "r1_s12": {
+      "id": "r1_s12",
+      "chain": 1,
+      "stage": 12,
+      "trip_count": 263,
+      "added_trips": 17,
+      "reference_original_chain_stage": 12,
+      "target_buses": null,
+      "final_giro_reference_count": null,
+      "input_sha256": "5f36b511fa3322a46da213ee00b79fe572b0178cb0f27f5c5ccb5ef130e26f5e",
+      "csv": "r1_s12.csv",
+      "previous_case": "r1_s11",
+      "distinct_original_giro_duties_represented": 15
+    },
+    "r1_s13": {
+      "id": "r1_s13",
+      "chain": 1,
+      "stage": 13,
+      "trip_count": 296,
+      "added_trips": 33,
+      "reference_original_chain_stage": 13,
+      "target_buses": null,
+      "final_giro_reference_count": null,
+      "input_sha256": "d37b69e25de442863df7b2b31b631a5fe73458616850b642c8526f61d307dba7",
+      "csv": "r1_s13.csv",
+      "previous_case": "r1_s12",
+      "distinct_original_giro_duties_represented": 15
+    },
+    "r1_s14": {
+      "id": "r1_s14",
+      "chain": 1,
+      "stage": 14,
+      "trip_count": 310,
+      "added_trips": 14,
+      "reference_original_chain_stage": 14,
+      "target_buses": null,
+      "final_giro_reference_count": null,
+      "input_sha256": "81e25ea03b4eed3d0f07f2a7d8bf6fa4aece71ccf263a18bafbba84da21be003",
+      "csv": "r1_s14.csv",
+      "previous_case": "r1_s13",
+      "distinct_original_giro_duties_represented": 15
+    },
+    "r1_s15": {
+      "id": "r1_s15",
+      "chain": 1,
+      "stage": 15,
+      "trip_count": 364,
+      "added_trips": 54,
+      "reference_original_chain_stage": 15,
+      "target_buses": null,
+      "final_giro_reference_count": 15,
+      "input_sha256": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+      "csv": "r1_s15.csv",
+      "previous_case": "r1_s14",
+      "distinct_original_giro_duties_represented": 15
+    }
+  },
+  "warm_chains": {
+    "1": [
+      "r1_s02",
+      "r1_s03",
+      "r1_s04",
+      "r1_s05",
+      "r1_s06",
+      "r1_s07",
+      "r1_s08",
+      "r1_s09",
+      "r1_s10",
+      "r1_s11",
+      "r1_s12",
+      "r1_s13",
+      "r1_s14",
+      "r1_s15"
+    ]
+  },
+  "interpretation": "stage index is NOT a fleet target; intermediate sets mix trips from many GIRO duties. Only stage15 has the original 15-duty reference.",
+  "prepare_script_sha256": "c5de1b37035d708811b40c8926ba2b60c8868d5f935d026947b866241a64dccb"
+}

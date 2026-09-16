@@ -1,0 +1,131 @@
+{
+  "finding": "F8",
+  "verdict": "VERIFIED: two reference duties/38trips recovered by two physically replay-valid buses, exact-once service",
+  "source_paths": {
+    "cg": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cg/341413_r0/cg.json",
+    "mip": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/mip/341413_r0/result.json"
+  },
+  "source_sha256": {
+    "cg": "19c5b7ec861fbed999d5d6ac5f928ba684c29d147280c5b9b926e1c04e906c1f",
+    "mip": "e40b32d3b84320f5e28bf554df8636d267dd631c81e6a3f0a060a4cde26d2a86"
+  },
+  "input_sha256": "61b76e014006e11609e593bfa3060fc85bab72532cac7047c7fa46ecb129c790",
+  "physics": {
+    "block_min": 5,
+    "charge_kw": 240.0,
+    "g_kwh": 240.0,
+    "min_soc_frac": 0.0,
+    "prices_csv": "hourly_prices_flat.csv",
+    "soc_step": 2.5
+  },
+  "objective": "100000 + electricity +5perchargingstart",
+  "master_sense": "cover",
+  "coverage": {
+    "trips": 38,
+    "occurrences": 38,
+    "exactly_once": true
+  },
+  "routes": [
+    {
+      "route_index": 0,
+      "trip_count": 19,
+      "ordered_trip_ids": [
+        1337,
+        1338,
+        1339,
+        1320,
+        1321,
+        1322,
+        1323,
+        1340,
+        1341,
+        1342,
+        1343,
+        1344,
+        1345,
+        1346,
+        1347,
+        1348,
+        1349,
+        1350,
+        1351
+      ],
+      "zero_arrival_grace_replay": true,
+      "continuous_blocks_start_after_arrival": true,
+      "charging_blocks_cost_verified": true,
+      "continuous_cost": 100051.06653197184,
+      "grid_cost": 100053.728
+    },
+    {
+      "route_index": 1,
+      "trip_count": 19,
+      "ordered_trip_ids": [
+        1314,
+        1315,
+        1316,
+        1317,
+        1318,
+        1319,
+        1324,
+        1325,
+        1326,
+        1327,
+        1328,
+        1329,
+        1330,
+        1331,
+        1332,
+        1333,
+        1334,
+        1335,
+        1336
+      ],
+      "zero_arrival_grace_replay": true,
+      "continuous_blocks_start_after_arrival": true,
+      "charging_blocks_cost_verified": true,
+      "continuous_cost": 100043.98729007167,
+      "grid_cost": 100046.248
+    }
+  ],
+  "cg_native_claim": {
+    "certificate": true,
+    "iterations": 110,
+    "wall_s": 51.642016515135765,
+    "final": {
+      "iter": 110,
+      "attempt_iter": 110,
+      "lp_obj": 200099.97599999997,
+      "route_weight": 2.0,
+      "artificials": 0.0,
+      "min_rc": -1.390070281104272e-10,
+      "max_row_violation": 0.0,
+      "max_bound_violation": 0.0
+    }
+  },
+  "mip_native_claim": {
+    "fleet_proven_in_pool": true,
+    "pool_fleet_bound": 2.0
+  },
+  "independent_fleet_lower_bound": {
+    "bound": 2,
+    "proof": "Two mandatory service trips overlap strictly in time, so one vehicle cannot serve both. Together with the validated two-vehicle dispatch this proves the fleet optimum for this instance. It does not prove charging optimality.",
+    "witness": {
+      "trip_a": 1314,
+      "trip_b": 1337,
+      "a_time": [
+        366,
+        408
+      ],
+      "b_time": [
+        396,
+        435
+      ]
+    }
+  },
+  "not_checked": [
+    "Full GIRO power curves, reserve/endSOC/group constraints",
+    "Shared station capacity",
+    "Independent rerun of pricing global optimum or MIP branch-and-bound proof"
+  ],
+  "replay_code_commit": "0c51b1fa491492212f5d875d1c082b476db0f1c3"
+}

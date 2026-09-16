@@ -1,0 +1,26 @@
+{
+  "finding": "F4",
+  "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "implementation": "outputs/independent_review_20260916/execution/f4/audit.py",
+  "implementation_sha256": "b6dd426c2689b67242e0e130700cc8307669c0ecd39efc79b63c8bd29d76e2e1",
+  "source_master_sha256": "6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f",
+  "input_manifest_sha256": "699fa290ac5087e0327dbfff57a18920642b4e4c54bd874fa4c0d3e92824bb6a",
+  "known_continuous_summary_sha256": "9055ddab95a67ec5ffa9dffd284a4dd7f9e580096f62596e48527db9398ba46a",
+  "prior350_replay_reproduced": true,
+  "prior350_pass": 28,
+  "prior350_n": 40,
+  "baseline240_pass_on_same_prior40": 0,
+  "baseline240_pass_all42_variants": 0,
+  "reference_hashes": {
+    "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+  },
+  "source_code_hashes": {
+    "compare_original_giro_charging.py": "d9912f2821eaac07ded9ef9a965a14167d8f6cac1d8e9d8950873447c1d0aef4",
+    "pinned/src/audit_giro_known_columns.py": "f4f18439c303962f2e6276306e06481aef326d4da331eb9a289828dfdb0ba4fb",
+    "pinned/src/run_exact_pool_mip.py": "81ec981bce8080ed8ad5feecb08d29002eda62918dc2646bfd21485ed5fd2100",
+    "pinned/src/pricing_dp_og.py": "a7b4a5a5053543166aa5db9d948de28f1708f28e31c0b047f3f1e0ff8bda4871",
+    "pinned/src/config.py": "afda984ccfc503f51dfc042f68d28716947ff9f78bf835038f9c20b9c2e62b06"
+  },
+  "scope": "Original unmodified windows/energies. No within-window power trace observed; no rounding repair or energy clipping. Physical replay is not a 2.5kWh/5min graph representability proof. Rejection does not prove fixed trip sequence infeasible with reoptimized charging. Each chain counts its frozen duty variants; k beyond32 has input membership only, not completed CG."
+}

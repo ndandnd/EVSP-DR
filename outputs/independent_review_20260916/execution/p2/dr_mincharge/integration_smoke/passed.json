@@ -1,0 +1,58 @@
+{
+  "status": "passed",
+  "cg": {
+    "cg_stop": "pricing_certified",
+    "cg_pricing_certified": true,
+    "cg_seconds": 0.10098751168698072,
+    "terminal_target_kwh": 20,
+    "fleet_cap": 1,
+    "columns": 31,
+    "last_iteration": {
+      "iteration": 2,
+      "phase": "combined-cost",
+      "elapsed_s": 0.09918990172445774,
+      "rmp_objective": 100002.75,
+      "route_weight": 1.0,
+      "terminal_dual": 0.1,
+      "fleet_dual": 0.0,
+      "min_reduced_cost": 0.0,
+      "columns": 31,
+      "lp_seconds": 0.002584204077720642,
+      "pricing_seconds": 0.031168613582849503
+    },
+    "proof_scope": "expanded_event_graph_weighted_LP_if_certified; MIP_finite_pool_only",
+    "lp_seconds": 0.002584204077720642,
+    "pricing_seconds": 0.031168613582849503,
+    "columns_sha256": "2d6e941e9ca784def0147fe86ff01316acba385142e12a665a196e7b434756ae",
+    "weighted_full_graph_lp_lower_bound": 100002.75,
+    "certificate_tolerance": 1e-06,
+    "fleet_stage": {
+      "status": 2,
+      "seconds": 0.006951179355382919,
+      "bound": 1.0,
+      "buses": 1
+    },
+    "charging_stage": {
+      "status": 2,
+      "cost": 2.75,
+      "bound": 2.75,
+      "fleet": 1
+    },
+    "selected_active_charge_starts": 1,
+    "selected_idle_station_visits": 0,
+    "selected_terminal_kwh": 20.0,
+    "selected_continuous_charging_cost": 2.539999999993597
+  },
+  "fixed": {
+    "fleet_status": 2,
+    "fleet": 1,
+    "fleet_bound": 1.0,
+    "proof_scope": "finite_frozen_pool_with_exact_once_trip_rows; no new CG certificate",
+    "charging_status": 2,
+    "charging_cost": 2.75,
+    "charging_bound": 2.75,
+    "seconds": 0.004426301456987858,
+    "exact_once_verified": true
+  },
+  "synthetic_smoke_only": true
+}

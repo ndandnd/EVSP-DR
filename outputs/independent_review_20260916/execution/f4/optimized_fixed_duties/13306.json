@@ -1,0 +1,1237 @@
+{
+  "schema": "evsp-dr-fixed-duty-continuous-result-v1",
+  "feasible": true,
+  "trip_sequence": [
+    24,
+    18,
+    19,
+    20,
+    21,
+    8,
+    9,
+    22,
+    23,
+    10,
+    11,
+    6,
+    7,
+    25,
+    26,
+    27,
+    28,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    29
+  ],
+  "objective": 100050.49816920121,
+  "charging_cost": 50.49816920121607,
+  "electricity_cost": 25.498169201216072,
+  "charge_events": 5,
+  "delayed_starts": 0,
+  "terminal_soc_kwh": 6.838973831690964e-13,
+  "terminal_soc_policy": "free",
+  "max_charge_events": null,
+  "timing_mode": "optimized",
+  "peak_kw": 240.0,
+  "charger_concurrency_max": 1,
+  "route": {
+    "trips": [
+      24,
+      18,
+      19,
+      20,
+      21,
+      8,
+      9,
+      22,
+      23,
+      10,
+      11,
+      6,
+      7,
+      25,
+      26,
+      27,
+      28,
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      29
+    ],
+    "route_nodes": [
+      "PARX_0",
+      24,
+      18,
+      19,
+      20,
+      21,
+      8,
+      "7880C_0",
+      9,
+      22,
+      23,
+      10,
+      "7880C_0",
+      11,
+      6,
+      "3127L_0",
+      7,
+      25,
+      26,
+      27,
+      28,
+      0,
+      "3127L_0",
+      1,
+      2,
+      "3127L_0",
+      3,
+      4,
+      "3127L_0",
+      5,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      29,
+      "PARX_0"
+    ],
+    "charging_stops": {
+      "stations": [
+        "7880C_0",
+        "7880C_0",
+        "3127L_0",
+        "3127L_0",
+        "3127L_0"
+      ],
+      "cst": [
+        413.0,
+        504.0,
+        712.0,
+        802.0,
+        882.0
+      ],
+      "cet": [
+        424.0,
+        505.2594989950002,
+        737.0,
+        816.0,
+        895.0
+      ],
+      "kwh": [
+        44.0,
+        5.037995980000665,
+        100.0,
+        56.0,
+        52.00000000000007
+      ]
+    }
+  },
+  "charging_events": [
+    {
+      "station": "7880C_0",
+      "station_arrival_min": 413.0,
+      "latest_departure_min": 424.0,
+      "start_min": 413.0,
+      "end_min": 424.0,
+      "duration_min": 11.0,
+      "delivered_kwh": 44.0,
+      "energy_cost": 4.3648,
+      "blocks": [
+        {
+          "station": "7880C_0",
+          "start_min": 413.0,
+          "end_min": 420.0,
+          "delivered_kwh": 28.0,
+          "tariff_hour": 6,
+          "price_per_kwh": 0.0992,
+          "energy_cost": 2.7776,
+          "gap": 5,
+          "event_index": 0,
+          "soc_after_kwh": 190.04500028
+        },
+        {
+          "station": "7880C_0",
+          "start_min": 420.0,
+          "end_min": 424.0,
+          "delivered_kwh": 16.0,
+          "tariff_hour": 7,
+          "price_per_kwh": 0.0992,
+          "energy_cost": 1.5872,
+          "gap": 5,
+          "event_index": 0,
+          "soc_after_kwh": 206.04500028
+        }
+      ],
+      "gap": 5,
+      "event_index": 0,
+      "charge_start_cost": 5.0,
+      "event_cost": 9.364799999999999,
+      "delayed_start": false
+    },
+    {
+      "station": "7880C_0",
+      "station_arrival_min": 504.0,
+      "latest_departure_min": 514.0,
+      "start_min": 504.0,
+      "end_min": 505.2594989950002,
+      "duration_min": 1.2594989950001718,
+      "delivered_kwh": 5.037995980000665,
+      "energy_cost": 0.49976920121606594,
+      "blocks": [
+        {
+          "station": "7880C_0",
+          "start_min": 504.0,
+          "end_min": 505.2594989950002,
+          "delivered_kwh": 5.037995980000665,
+          "tariff_hour": 8,
+          "price_per_kwh": 0.0992,
+          "energy_cost": 0.49976920121606594,
+          "gap": 9,
+          "event_index": 0,
+          "soc_after_kwh": 158.64499660000067
+        }
+      ],
+      "gap": 9,
+      "event_index": 0,
+      "charge_start_cost": 5.0,
+      "event_cost": 5.499769201216066,
+      "delayed_start": false
+    },
+    {
+      "station": "3127L_0",
+      "station_arrival_min": 712.0,
+      "latest_departure_min": 737.0,
+      "start_min": 712.0,
+      "end_min": 737.0,
+      "duration_min": 25.0,
+      "delivered_kwh": 100.0,
+      "energy_cost": 9.92,
+      "blocks": [
+        {
+          "station": "3127L_0",
+          "start_min": 712.0,
+          "end_min": 720.0,
+          "delivered_kwh": 32.0,
+          "tariff_hour": 11,
+          "price_per_kwh": 0.0992,
+          "energy_cost": 3.1744,
+          "gap": 17,
+          "event_index": 0,
+          "soc_after_kwh": 68.68499750000065
+        },
+        {
+          "station": "3127L_0",
+          "start_min": 720.0,
+          "end_min": 737.0,
+          "delivered_kwh": 68.0,
+          "tariff_hour": 12,
+          "price_per_kwh": 0.0992,
+          "energy_cost": 6.7456,
+          "gap": 17,
+          "event_index": 0,
+          "soc_after_kwh": 136.68499750000063
+        }
+      ],
+      "gap": 17,
+      "event_index": 0,
+      "charge_start_cost": 5.0,
+      "event_cost": 14.92,
+      "delayed_start": false
+    },
+    {
+      "station": "3127L_0",
+      "station_arrival_min": 802.0,
+      "latest_departure_min": 816.0,
+      "start_min": 802.0,
+      "end_min": 816.0,
+      "duration_min": 14.0,
+      "delivered_kwh": 56.0,
+      "energy_cost": 5.5552,
+      "blocks": [
+        {
+          "station": "3127L_0",
+          "start_min": 802.0,
+          "end_min": 816.0,
+          "delivered_kwh": 56.0,
+          "tariff_hour": 13,
+          "price_per_kwh": 0.0992,
+          "energy_cost": 5.5552,
+          "gap": 19,
+          "event_index": 0,
+          "soc_after_kwh": 149.01599880000063
+        }
+      ],
+      "gap": 19,
+      "event_index": 0,
+      "charge_start_cost": 5.0,
+      "event_cost": 10.5552,
+      "delayed_start": false
+    },
+    {
+      "station": "3127L_0",
+      "station_arrival_min": 882.0,
+      "latest_departure_min": 895.0,
+      "start_min": 882.0,
+      "end_min": 895.0,
+      "duration_min": 13.0,
+      "delivered_kwh": 52.00000000000007,
+      "energy_cost": 5.1584000000000065,
+      "blocks": [
+        {
+          "station": "3127L_0",
+          "start_min": 882.0,
+          "end_min": 895.0,
+          "delivered_kwh": 52.00000000000007,
+          "tariff_hour": 14,
+          "price_per_kwh": 0.0992,
+          "energy_cost": 5.1584000000000065,
+          "gap": 21,
+          "event_index": 0,
+          "soc_after_kwh": 157.34700010000068
+        }
+      ],
+      "gap": 21,
+      "event_index": 0,
+      "charge_start_cost": 5.0,
+      "event_cost": 10.158400000000007,
+      "delayed_start": false
+    }
+  ],
+  "charging_blocks": [
+    {
+      "station": "7880C_0",
+      "start_min": 413.0,
+      "end_min": 420.0,
+      "delivered_kwh": 28.0,
+      "tariff_hour": 6,
+      "price_per_kwh": 0.0992,
+      "energy_cost": 2.7776,
+      "gap": 5,
+      "event_index": 0,
+      "soc_after_kwh": 190.04500028
+    },
+    {
+      "station": "7880C_0",
+      "start_min": 420.0,
+      "end_min": 424.0,
+      "delivered_kwh": 16.0,
+      "tariff_hour": 7,
+      "price_per_kwh": 0.0992,
+      "energy_cost": 1.5872,
+      "gap": 5,
+      "event_index": 0,
+      "soc_after_kwh": 206.04500028
+    },
+    {
+      "station": "7880C_0",
+      "start_min": 504.0,
+      "end_min": 505.2594989950002,
+      "delivered_kwh": 5.037995980000665,
+      "tariff_hour": 8,
+      "price_per_kwh": 0.0992,
+      "energy_cost": 0.49976920121606594,
+      "gap": 9,
+      "event_index": 0,
+      "soc_after_kwh": 158.64499660000067
+    },
+    {
+      "station": "3127L_0",
+      "start_min": 712.0,
+      "end_min": 720.0,
+      "delivered_kwh": 32.0,
+      "tariff_hour": 11,
+      "price_per_kwh": 0.0992,
+      "energy_cost": 3.1744,
+      "gap": 17,
+      "event_index": 0,
+      "soc_after_kwh": 68.68499750000065
+    },
+    {
+      "station": "3127L_0",
+      "start_min": 720.0,
+      "end_min": 737.0,
+      "delivered_kwh": 68.0,
+      "tariff_hour": 12,
+      "price_per_kwh": 0.0992,
+      "energy_cost": 6.7456,
+      "gap": 17,
+      "event_index": 0,
+      "soc_after_kwh": 136.68499750000063
+    },
+    {
+      "station": "3127L_0",
+      "start_min": 802.0,
+      "end_min": 816.0,
+      "delivered_kwh": 56.0,
+      "tariff_hour": 13,
+      "price_per_kwh": 0.0992,
+      "energy_cost": 5.5552,
+      "gap": 19,
+      "event_index": 0,
+      "soc_after_kwh": 149.01599880000063
+    },
+    {
+      "station": "3127L_0",
+      "start_min": 882.0,
+      "end_min": 895.0,
+      "delivered_kwh": 52.00000000000007,
+      "tariff_hour": 14,
+      "price_per_kwh": 0.0992,
+      "energy_cost": 5.1584000000000065,
+      "gap": 21,
+      "event_index": 0,
+      "soc_after_kwh": 157.34700010000068
+    }
+  ],
+  "physical_replay": {
+    "schema": "evsp-dr-fixed-duty-continuous-replay-v1",
+    "ok": true,
+    "route": {
+      "trips": [
+        24,
+        18,
+        19,
+        20,
+        21,
+        8,
+        9,
+        22,
+        23,
+        10,
+        11,
+        6,
+        7,
+        25,
+        26,
+        27,
+        28,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        29
+      ],
+      "route_nodes": [
+        "PARX_0",
+        24,
+        18,
+        19,
+        20,
+        21,
+        8,
+        "7880C_0",
+        9,
+        22,
+        23,
+        10,
+        "7880C_0",
+        11,
+        6,
+        "3127L_0",
+        7,
+        25,
+        26,
+        27,
+        28,
+        0,
+        "3127L_0",
+        1,
+        2,
+        "3127L_0",
+        3,
+        4,
+        "3127L_0",
+        5,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        29,
+        "PARX_0"
+      ],
+      "charging_stops": {
+        "stations": [
+          "7880C_0",
+          "7880C_0",
+          "3127L_0",
+          "3127L_0",
+          "3127L_0"
+        ],
+        "cst": [
+          413.0,
+          504.0,
+          712.0,
+          802.0,
+          882.0
+        ],
+        "cet": [
+          424.0,
+          505.2594989950002,
+          737.0,
+          816.0,
+          895.0
+        ],
+        "kwh": [
+          44.0,
+          5.037995980000665,
+          100.0,
+          56.0,
+          52.00000000000007
+        ]
+      }
+    },
+    "events": [
+      {
+        "station": "7880C_0",
+        "station_arrival_min": 413.0,
+        "latest_departure_min": 424.0,
+        "start_min": 413.0,
+        "end_min": 424.0,
+        "duration_min": 11.0,
+        "delivered_kwh": 44.0,
+        "energy_cost": 4.3648,
+        "blocks": [
+          {
+            "station": "7880C_0",
+            "start_min": 413.0,
+            "end_min": 420.0,
+            "delivered_kwh": 28.0,
+            "tariff_hour": 6,
+            "price_per_kwh": 0.0992,
+            "energy_cost": 2.7776,
+            "gap": 5,
+            "event_index": 0,
+            "soc_after_kwh": 190.04500028
+          },
+          {
+            "station": "7880C_0",
+            "start_min": 420.0,
+            "end_min": 424.0,
+            "delivered_kwh": 16.0,
+            "tariff_hour": 7,
+            "price_per_kwh": 0.0992,
+            "energy_cost": 1.5872,
+            "gap": 5,
+            "event_index": 0,
+            "soc_after_kwh": 206.04500028
+          }
+        ],
+        "gap": 5,
+        "event_index": 0,
+        "charge_start_cost": 5.0,
+        "event_cost": 9.364799999999999,
+        "delayed_start": false
+      },
+      {
+        "station": "7880C_0",
+        "station_arrival_min": 504.0,
+        "latest_departure_min": 514.0,
+        "start_min": 504.0,
+        "end_min": 505.2594989950002,
+        "duration_min": 1.2594989950001718,
+        "delivered_kwh": 5.037995980000665,
+        "energy_cost": 0.49976920121606594,
+        "blocks": [
+          {
+            "station": "7880C_0",
+            "start_min": 504.0,
+            "end_min": 505.2594989950002,
+            "delivered_kwh": 5.037995980000665,
+            "tariff_hour": 8,
+            "price_per_kwh": 0.0992,
+            "energy_cost": 0.49976920121606594,
+            "gap": 9,
+            "event_index": 0,
+            "soc_after_kwh": 158.64499660000067
+          }
+        ],
+        "gap": 9,
+        "event_index": 0,
+        "charge_start_cost": 5.0,
+        "event_cost": 5.499769201216066,
+        "delayed_start": false
+      },
+      {
+        "station": "3127L_0",
+        "station_arrival_min": 712.0,
+        "latest_departure_min": 737.0,
+        "start_min": 712.0,
+        "end_min": 737.0,
+        "duration_min": 25.0,
+        "delivered_kwh": 100.0,
+        "energy_cost": 9.92,
+        "blocks": [
+          {
+            "station": "3127L_0",
+            "start_min": 712.0,
+            "end_min": 720.0,
+            "delivered_kwh": 32.0,
+            "tariff_hour": 11,
+            "price_per_kwh": 0.0992,
+            "energy_cost": 3.1744,
+            "gap": 17,
+            "event_index": 0,
+            "soc_after_kwh": 68.68499750000065
+          },
+          {
+            "station": "3127L_0",
+            "start_min": 720.0,
+            "end_min": 737.0,
+            "delivered_kwh": 68.0,
+            "tariff_hour": 12,
+            "price_per_kwh": 0.0992,
+            "energy_cost": 6.7456,
+            "gap": 17,
+            "event_index": 0,
+            "soc_after_kwh": 136.68499750000063
+          }
+        ],
+        "gap": 17,
+        "event_index": 0,
+        "charge_start_cost": 5.0,
+        "event_cost": 14.92,
+        "delayed_start": false
+      },
+      {
+        "station": "3127L_0",
+        "station_arrival_min": 802.0,
+        "latest_departure_min": 816.0,
+        "start_min": 802.0,
+        "end_min": 816.0,
+        "duration_min": 14.0,
+        "delivered_kwh": 56.0,
+        "energy_cost": 5.5552,
+        "blocks": [
+          {
+            "station": "3127L_0",
+            "start_min": 802.0,
+            "end_min": 816.0,
+            "delivered_kwh": 56.0,
+            "tariff_hour": 13,
+            "price_per_kwh": 0.0992,
+            "energy_cost": 5.5552,
+            "gap": 19,
+            "event_index": 0,
+            "soc_after_kwh": 149.01599880000063
+          }
+        ],
+        "gap": 19,
+        "event_index": 0,
+        "charge_start_cost": 5.0,
+        "event_cost": 10.5552,
+        "delayed_start": false
+      },
+      {
+        "station": "3127L_0",
+        "station_arrival_min": 882.0,
+        "latest_departure_min": 895.0,
+        "start_min": 882.0,
+        "end_min": 895.0,
+        "duration_min": 13.0,
+        "delivered_kwh": 52.00000000000007,
+        "energy_cost": 5.1584000000000065,
+        "blocks": [
+          {
+            "station": "3127L_0",
+            "start_min": 882.0,
+            "end_min": 895.0,
+            "delivered_kwh": 52.00000000000007,
+            "tariff_hour": 14,
+            "price_per_kwh": 0.0992,
+            "energy_cost": 5.1584000000000065,
+            "gap": 21,
+            "event_index": 0,
+            "soc_after_kwh": 157.34700010000068
+          }
+        ],
+        "gap": 21,
+        "event_index": 0,
+        "charge_start_cost": 5.0,
+        "event_cost": 10.158400000000007,
+        "delayed_start": false
+      }
+    ],
+    "blocks": [
+      {
+        "station": "7880C_0",
+        "start_min": 413.0,
+        "end_min": 420.0,
+        "delivered_kwh": 28.0,
+        "tariff_hour": 6,
+        "price_per_kwh": 0.0992,
+        "energy_cost": 2.7776,
+        "gap": 5,
+        "event_index": 0,
+        "soc_after_kwh": 190.04500028
+      },
+      {
+        "station": "7880C_0",
+        "start_min": 420.0,
+        "end_min": 424.0,
+        "delivered_kwh": 16.0,
+        "tariff_hour": 7,
+        "price_per_kwh": 0.0992,
+        "energy_cost": 1.5872,
+        "gap": 5,
+        "event_index": 0,
+        "soc_after_kwh": 206.04500028
+      },
+      {
+        "station": "7880C_0",
+        "start_min": 504.0,
+        "end_min": 505.2594989950002,
+        "delivered_kwh": 5.037995980000665,
+        "tariff_hour": 8,
+        "price_per_kwh": 0.0992,
+        "energy_cost": 0.49976920121606594,
+        "gap": 9,
+        "event_index": 0,
+        "soc_after_kwh": 158.64499660000067
+      },
+      {
+        "station": "3127L_0",
+        "start_min": 712.0,
+        "end_min": 720.0,
+        "delivered_kwh": 32.0,
+        "tariff_hour": 11,
+        "price_per_kwh": 0.0992,
+        "energy_cost": 3.1744,
+        "gap": 17,
+        "event_index": 0,
+        "soc_after_kwh": 68.68499750000065
+      },
+      {
+        "station": "3127L_0",
+        "start_min": 720.0,
+        "end_min": 737.0,
+        "delivered_kwh": 68.0,
+        "tariff_hour": 12,
+        "price_per_kwh": 0.0992,
+        "energy_cost": 6.7456,
+        "gap": 17,
+        "event_index": 0,
+        "soc_after_kwh": 136.68499750000063
+      },
+      {
+        "station": "3127L_0",
+        "start_min": 802.0,
+        "end_min": 816.0,
+        "delivered_kwh": 56.0,
+        "tariff_hour": 13,
+        "price_per_kwh": 0.0992,
+        "energy_cost": 5.5552,
+        "gap": 19,
+        "event_index": 0,
+        "soc_after_kwh": 149.01599880000063
+      },
+      {
+        "station": "3127L_0",
+        "start_min": 882.0,
+        "end_min": 895.0,
+        "delivered_kwh": 52.00000000000007,
+        "tariff_hour": 14,
+        "price_per_kwh": 0.0992,
+        "energy_cost": 5.1584000000000065,
+        "gap": 21,
+        "event_index": 0,
+        "soc_after_kwh": 157.34700010000068
+      }
+    ],
+    "station_visits": [
+      {
+        "gap": 5,
+        "station": "7880C_0",
+        "arrival_min": 413.0,
+        "latest_departure_min": 424.0,
+        "charge_event_indices": [
+          0
+        ]
+      },
+      {
+        "gap": 9,
+        "station": "7880C_0",
+        "arrival_min": 504.0,
+        "latest_departure_min": 514.0,
+        "charge_event_indices": [
+          1
+        ]
+      },
+      {
+        "gap": 11,
+        "station": "3127L_0",
+        "arrival_min": 568.0,
+        "latest_departure_min": 572.0,
+        "charge_event_indices": []
+      },
+      {
+        "gap": 17,
+        "station": "3127L_0",
+        "arrival_min": 712.0,
+        "latest_departure_min": 737.0,
+        "charge_event_indices": [
+          2
+        ]
+      },
+      {
+        "gap": 19,
+        "station": "3127L_0",
+        "arrival_min": 802.0,
+        "latest_departure_min": 816.0,
+        "charge_event_indices": [
+          3
+        ]
+      },
+      {
+        "gap": 21,
+        "station": "3127L_0",
+        "arrival_min": 882.0,
+        "latest_departure_min": 895.0,
+        "charge_event_indices": [
+          4
+        ]
+      }
+    ],
+    "trace": [
+      {
+        "event": "trip",
+        "trip": 24,
+        "soc_after_kwh": 216.93400019999999
+      },
+      {
+        "event": "deadhead",
+        "gap": 0,
+        "kind": "direct",
+        "soc_after_kwh": 216.93400019999999
+      },
+      {
+        "event": "trip",
+        "trip": 18,
+        "soc_after_kwh": 207.3630001
+      },
+      {
+        "event": "deadhead",
+        "gap": 1,
+        "kind": "direct",
+        "soc_after_kwh": 207.3630001
+      },
+      {
+        "event": "trip",
+        "trip": 19,
+        "soc_after_kwh": 198.07300014
+      },
+      {
+        "event": "deadhead",
+        "gap": 2,
+        "kind": "direct",
+        "soc_after_kwh": 198.07300014
+      },
+      {
+        "event": "trip",
+        "trip": 20,
+        "soc_after_kwh": 188.50200004
+      },
+      {
+        "event": "deadhead",
+        "gap": 3,
+        "kind": "direct",
+        "soc_after_kwh": 188.50200004
+      },
+      {
+        "event": "trip",
+        "trip": 21,
+        "soc_after_kwh": 179.21200008000002
+      },
+      {
+        "event": "deadhead",
+        "gap": 4,
+        "kind": "direct",
+        "soc_after_kwh": 179.21200008000002
+      },
+      {
+        "event": "trip",
+        "trip": 8,
+        "soc_after_kwh": 162.04500028
+      },
+      {
+        "event": "station_gap",
+        "gap": 5,
+        "station": "7880C_0",
+        "soc_after_kwh": 206.04500028
+      },
+      {
+        "event": "trip",
+        "trip": 9,
+        "soc_after_kwh": 189.63500048
+      },
+      {
+        "event": "deadhead",
+        "gap": 6,
+        "kind": "direct",
+        "soc_after_kwh": 189.63500048
+      },
+      {
+        "event": "trip",
+        "trip": 22,
+        "soc_after_kwh": 180.06400038
+      },
+      {
+        "event": "deadhead",
+        "gap": 7,
+        "kind": "direct",
+        "soc_after_kwh": 180.06400038
+      },
+      {
+        "event": "trip",
+        "trip": 23,
+        "soc_after_kwh": 170.77400042000002
+      },
+      {
+        "event": "deadhead",
+        "gap": 8,
+        "kind": "direct",
+        "soc_after_kwh": 170.77400042000002
+      },
+      {
+        "event": "trip",
+        "trip": 10,
+        "soc_after_kwh": 153.60700062
+      },
+      {
+        "event": "station_gap",
+        "gap": 9,
+        "station": "7880C_0",
+        "soc_after_kwh": 158.64499660000067
+      },
+      {
+        "event": "trip",
+        "trip": 11,
+        "soc_after_kwh": 142.23499680000066
+      },
+      {
+        "event": "deadhead",
+        "gap": 10,
+        "kind": "direct",
+        "soc_after_kwh": 142.23499680000066
+      },
+      {
+        "event": "trip",
+        "trip": 6,
+        "soc_after_kwh": 122.05399700000066
+      },
+      {
+        "event": "station_gap",
+        "gap": 11,
+        "station": "3127L_0",
+        "soc_after_kwh": 122.05399700000066
+      },
+      {
+        "event": "trip",
+        "trip": 7,
+        "soc_after_kwh": 102.19199750000067
+      },
+      {
+        "event": "deadhead",
+        "gap": 12,
+        "kind": "direct",
+        "soc_after_kwh": 102.19199750000067
+      },
+      {
+        "event": "trip",
+        "trip": 25,
+        "soc_after_kwh": 91.91299720000066
+      },
+      {
+        "event": "deadhead",
+        "gap": 13,
+        "kind": "direct",
+        "soc_after_kwh": 91.91299720000066
+      },
+      {
+        "event": "trip",
+        "trip": 26,
+        "soc_after_kwh": 81.64699740000066
+      },
+      {
+        "event": "deadhead",
+        "gap": 14,
+        "kind": "direct",
+        "soc_after_kwh": 81.64699740000066
+      },
+      {
+        "event": "trip",
+        "trip": 27,
+        "soc_after_kwh": 71.36799710000065
+      },
+      {
+        "event": "deadhead",
+        "gap": 15,
+        "kind": "direct",
+        "soc_after_kwh": 71.36799710000065
+      },
+      {
+        "event": "trip",
+        "trip": 28,
+        "soc_after_kwh": 59.02599710000065
+      },
+      {
+        "event": "deadhead",
+        "gap": 16,
+        "kind": "direct",
+        "soc_after_kwh": 59.02599710000065
+      },
+      {
+        "event": "trip",
+        "trip": 0,
+        "soc_after_kwh": 36.68499750000065
+      },
+      {
+        "event": "station_gap",
+        "gap": 17,
+        "station": "3127L_0",
+        "soc_after_kwh": 136.68499750000063
+      },
+      {
+        "event": "trip",
+        "trip": 1,
+        "soc_after_kwh": 115.35699840000063
+      },
+      {
+        "event": "deadhead",
+        "gap": 18,
+        "kind": "direct",
+        "soc_after_kwh": 115.35699840000063
+      },
+      {
+        "event": "trip",
+        "trip": 2,
+        "soc_after_kwh": 93.01599880000063
+      },
+      {
+        "event": "station_gap",
+        "gap": 19,
+        "station": "3127L_0",
+        "soc_after_kwh": 149.01599880000063
+      },
+      {
+        "event": "trip",
+        "trip": 3,
+        "soc_after_kwh": 127.68799970000063
+      },
+      {
+        "event": "deadhead",
+        "gap": 20,
+        "kind": "direct",
+        "soc_after_kwh": 127.68799970000063
+      },
+      {
+        "event": "trip",
+        "trip": 4,
+        "soc_after_kwh": 105.34700010000063
+      },
+      {
+        "event": "station_gap",
+        "gap": 21,
+        "station": "3127L_0",
+        "soc_after_kwh": 157.34700010000068
+      },
+      {
+        "event": "trip",
+        "trip": 5,
+        "soc_after_kwh": 136.01900100000069
+      },
+      {
+        "event": "deadhead",
+        "gap": 22,
+        "kind": "direct",
+        "soc_after_kwh": 136.01900100000069
+      },
+      {
+        "event": "trip",
+        "trip": 12,
+        "soc_after_kwh": 117.38100050000068
+      },
+      {
+        "event": "deadhead",
+        "gap": 23,
+        "kind": "direct",
+        "soc_after_kwh": 117.38100050000068
+      },
+      {
+        "event": "trip",
+        "trip": 13,
+        "soc_after_kwh": 99.07500070000069
+      },
+      {
+        "event": "deadhead",
+        "gap": 24,
+        "kind": "direct",
+        "soc_after_kwh": 99.07500070000069
+      },
+      {
+        "event": "trip",
+        "trip": 14,
+        "soc_after_kwh": 80.43700020000068
+      },
+      {
+        "event": "deadhead",
+        "gap": 25,
+        "kind": "direct",
+        "soc_after_kwh": 80.43700020000068
+      },
+      {
+        "event": "trip",
+        "trip": 15,
+        "soc_after_kwh": 62.13100040000069
+      },
+      {
+        "event": "deadhead",
+        "gap": 26,
+        "kind": "direct",
+        "soc_after_kwh": 62.13100040000069
+      },
+      {
+        "event": "trip",
+        "trip": 16,
+        "soc_after_kwh": 43.49299990000068
+      },
+      {
+        "event": "deadhead",
+        "gap": 27,
+        "kind": "direct",
+        "soc_after_kwh": 43.49299990000068
+      },
+      {
+        "event": "trip",
+        "trip": 17,
+        "soc_after_kwh": 25.187000100000684
+      },
+      {
+        "event": "deadhead",
+        "gap": 28,
+        "kind": "direct",
+        "soc_after_kwh": 25.187000100000684
+      },
+      {
+        "event": "trip",
+        "trip": 29,
+        "soc_after_kwh": 12.800000000000685
+      },
+      {
+        "event": "deadhead",
+        "gap": 29,
+        "kind": "direct",
+        "soc_after_kwh": 6.838973831690964e-13
+      }
+    ],
+    "terminal_soc_kwh": 6.838973831690964e-13,
+    "electricity_cost": 25.498169201216072,
+    "charge_start_cost": 25.0,
+    "terminal_energy_credit": 0.0,
+    "replayed_objective": 100050.49816920122,
+    "peak_kw": 240.0,
+    "charger_concurrency_max": 1
+  },
+  "physical_replay_status": "validated",
+  "certificate": {
+    "schema": "evsp-dr-fixed-duty-continuous-certificate-v1",
+    "certified": true,
+    "scope": "optimal_continuous_charging_for_fixed_trip_sequence",
+    "algorithm": "event_based_milp",
+    "solver": "scipy.optimize.milp/HiGHS",
+    "scipy_version": "1.13.1",
+    "solver_status": 0,
+    "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+    "implementation_sha256": "79828f1fd51e132332b7298a17bc772fb6c1ee5af8855f71c8b288088144611f",
+    "trip_sequence": [
+      24,
+      18,
+      19,
+      20,
+      21,
+      8,
+      9,
+      22,
+      23,
+      10,
+      11,
+      6,
+      7,
+      25,
+      26,
+      27,
+      28,
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      29
+    ],
+    "declared_instance_sha256": "e13108b850e4511b3304b04d16d711e7c6c25122213da5f3b868939dca0180a8",
+    "problem_identity_sha256": "861562afa40e48279dfab124122af8d247c942aaa79221fc9fbd893f4aca1728",
+    "tariff_id": "flat_h26",
+    "declared_tariff_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3",
+    "tariff_curve_identity_sha256": "9cb75f25e60e7cb667971147e20bf9b5edc9d82a95850cb8dd61257f7624567e",
+    "physics": {
+      "g_kwh": 240.0,
+      "charge_kw": 240.0,
+      "reserve_kwh": 0.0,
+      "charge_start_cost": 5.0,
+      "chargers": "unlimited",
+      "deadhead": "zone_centroid",
+      "all_buses_start": "full",
+      "scope": "operator_frozen"
+    },
+    "timing_mode": "optimized",
+    "terminal_soc_policy": "free",
+    "terminal_energy_price": null,
+    "max_charge_events": null,
+    "objective": 100050.49816920121,
+    "replay_sha256": "8e34697636fcaf8878c0ddb3cf6dffb18d6e77e4c5101411eb75ea707ae1ce4a",
+    "certificate_sha256": "30d8d87db14098f96dd3074510314a2814e43db99f2a1d5962d7a8eec849675e"
+  },
+  "physics_caveat": "Constant power to 100% is a standard linear E-VSP idealization and is mildly optimistic because real charging tapers above about 80% SOC.",
+  "charger_capacity_caveat": "Charger capacity is unlimited. Load and concurrency are reported, but this solution does not license a peak-shaving claim.",
+  "runtime_s": 0.11688733426854014,
+  "audit_duty_id": "13306",
+  "source_input_sha256": "e13108b850e4511b3304b04d16d711e7c6c25122213da5f3b868939dca0180a8"
+}

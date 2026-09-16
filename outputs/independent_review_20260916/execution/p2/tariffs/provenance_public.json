@@ -1,0 +1,13 @@
+{
+  "source_url": "https://api.energy-charts.info/price?bzn=SE3&start=2025-09-15&end=2025-09-16",
+  "provider": "Fraunhofer ISE Energy-Charts API",
+  "retrieved_utc": "2026-09-16T21:46:04.673323+00:00",
+  "license_info": "The data provided herein is for private and internal use only. The utilization of any data, whether in its raw or derived form, for external or commercial purposes is expressly prohibited. Should you require licensing for market-related data, please direct your inquiries to the original data providers, including but not limited to EPEX SPOT SE.",
+  "publication": "Internal experiment only; do not publish raw or derived price data without provider permission. Public provenance may link API and state day/zone.",
+  "timezone": "Europe/Stockholm",
+  "horizon": "2025-09-15 00:00 through2025-09-16 02:00 local",
+  "conversion": "EUR/MWh divided by1000 toEUR/kWh; no normalization or clipping",
+  "selection": "one fixed historical weekday selected before inspecting optimization outcomes",
+  "raw_sha256": "3f04f11f1264e23a44638d1dec2dfb4bb1c757b4ea5d00c8422973001d042e69",
+  "csv_sha256": "a3f82e3ab6a2f0ed8c291f457aabaf5c0b73e7795398d61ef0a22a6b731eb5f4"
+}

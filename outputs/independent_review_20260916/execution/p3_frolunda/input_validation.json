@@ -1,0 +1,127 @@
+{
+  "status": "passed",
+  "cases": [
+    {
+      "case": "fdl_k01",
+      "trips": 15,
+      "adjacency_nodes": 23,
+      "no_direct_depot_start_arc": [],
+      "stations": [
+        "1179_0",
+        "2350_0",
+        "2530L_0",
+        "4290L_0",
+        "4760L_0",
+        "KB_B_0",
+        "KEX_1"
+      ],
+      "max_service_energy": 31.2264977,
+      "latest_trip_end": 1477
+    },
+    {
+      "case": "fdl_k02",
+      "trips": 38,
+      "adjacency_nodes": 46,
+      "no_direct_depot_start_arc": [],
+      "stations": [
+        "1179_0",
+        "2350_0",
+        "2530L_0",
+        "4290L_0",
+        "4760L_0",
+        "KB_B_0",
+        "KEX_1"
+      ],
+      "max_service_energy": 31.2264977,
+      "latest_trip_end": 1477
+    },
+    {
+      "case": "fdl_k03",
+      "trips": 67,
+      "adjacency_nodes": 75,
+      "no_direct_depot_start_arc": [],
+      "stations": [
+        "1179_0",
+        "2350_0",
+        "2530L_0",
+        "4290L_0",
+        "4760L_0",
+        "KB_B_0",
+        "KEX_1"
+      ],
+      "max_service_energy": 31.2264977,
+      "latest_trip_end": 1477
+    },
+    {
+      "case": "fdl_k05",
+      "trips": 109,
+      "adjacency_nodes": 117,
+      "no_direct_depot_start_arc": [],
+      "stations": [
+        "1179_0",
+        "2350_0",
+        "2530L_0",
+        "4290L_0",
+        "4760L_0",
+        "KB_B_0",
+        "KEX_1"
+      ],
+      "max_service_energy": 31.2264977,
+      "latest_trip_end": 1477
+    },
+    {
+      "case": "fdl_k08",
+      "trips": 166,
+      "adjacency_nodes": 174,
+      "no_direct_depot_start_arc": [],
+      "stations": [
+        "1179_0",
+        "2350_0",
+        "2530L_0",
+        "4290L_0",
+        "4760L_0",
+        "KB_B_0",
+        "KEX_1"
+      ],
+      "max_service_energy": 31.2264977,
+      "latest_trip_end": 1477
+    },
+    {
+      "case": "fdl_k10",
+      "trips": 209,
+      "adjacency_nodes": 217,
+      "no_direct_depot_start_arc": [],
+      "stations": [
+        "1179_0",
+        "2350_0",
+        "2530L_0",
+        "4290L_0",
+        "4760L_0",
+        "KB_B_0",
+        "KEX_1"
+      ],
+      "max_service_energy": 31.2264977,
+      "latest_trip_end": 1508
+    },
+    {
+      "case": "fdl_k15",
+      "trips": 352,
+      "adjacency_nodes": 360,
+      "no_direct_depot_start_arc": [],
+      "stations": [
+        "1179_0",
+        "2350_0",
+        "2530L_0",
+        "4290L_0",
+        "4760L_0",
+        "KB_B_0",
+        "KEX_1"
+      ],
+      "max_service_energy": 31.2264977,
+      "latest_trip_end": 1539
+    }
+  ],
+  "k1_fixed_feasible": true,
+  "k1_replay": "validated",
+  "scope": "Input/graph construction with default220min station-to-trip window + firstduty physical feasibility; no eventCG endpoint"
+}

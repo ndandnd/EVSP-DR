@@ -1,0 +1,53 @@
+a0e0bb76:src/config.py:32:# CHARGING_STATIONS = ["DEPOT", "CHARGER1"]
+a0e0bb76:src/config.py:41:CHARGING_STATIONS = ["2190L", "4808", "3127L", "7880C", "JON_A", "PARX"]
+a0e0bb76:src/event_pricer_network.py:84:def _window_cost(station, start, duration, energy, prices, charge_kw):
+a0e0bb76:src/event_pricer_network.py:86:    segments = _segments(start, end, station, prices, charge_kw)
+a0e0bb76:src/event_pricer_network.py:108:    charge_kw,
+a0e0bb76:src/event_pricer_network.py:110:    duration = float(energy) * 60.0 / float(charge_kw)
+a0e0bb76:src/event_pricer_network.py:138:                station_prices, charge_kw,
+a0e0bb76:src/event_pricer_network.py:158:        charge_kw,
+a0e0bb76:src/event_pricer_network.py:168:        self.charge_kw = float(charge_kw)
+a0e0bb76:src/event_pricer_network.py:506:                            charge_kw=self.charge_kw,
+a0e0bb76:src/event_pricer_network.py:703:                        charge_kw=self.charge_kw,
+a0e0bb76:src/event_pricer_network.py:790:            charge_kw=self.charge_kw,
+a0e0bb76:src/event_pricer_network.py:810:            self.problem, record, self.g, self.charge_kw,
+a0e0bb76:src/exact_pricer_expanded.py:53:from config import BIG_M_PENALTY, BUS_COST_KX, CHARGE_RATE_KW, CHARGE_START_COST, CHARGING_STATIONS
+a0e0bb76:src/exact_pricer_expanded.py:108:        "charge_kw": float(args.charge_kw),
+a0e0bb76:src/exact_pricer_expanded.py:189:    charge_kw: float,
+a0e0bb76:src/exact_pricer_expanded.py:221:                ("charge_kw", charge_kw),
+a0e0bb76:src/exact_pricer_expanded.py:273:            problem, route, g_kwh, charge_kw, reserve_kwh, HORIZON_MIN
+a0e0bb76:src/exact_pricer_expanded.py:285:            charge_kw=charge_kw,
+a0e0bb76:src/exact_pricer_expanded.py:309:            charge_kw=charge_kw,
+a0e0bb76:src/exact_pricer_expanded.py:414:    network, problem, g_kwh, charge_kw, reserve_kwh = context
+a0e0bb76:src/exact_pricer_expanded.py:419:        problem, record, g_kwh, charge_kw, reserve_kwh, HORIZON_MIN
+a0e0bb76:src/exact_pricer_expanded.py:487:    g_kwh: float, charge_kw: float, reserve_kwh: float,
+a0e0bb76:src/exact_pricer_expanded.py:600:        _INHERITED_EVENT_REPLAY_CONTEXT = (child_network, child_problem, g_kwh, charge_kw, reserve_kwh)
+a0e0bb76:src/exact_pricer_expanded.py:785:                 g_kwh: float = G_KWH, charge_kw: float = CHARGE_RATE_KW,
+a0e0bb76:src/exact_pricer_expanded.py:795:        self.charge_kw = float(charge_kw)
+a0e0bb76:src/exact_pricer_expanded.py:798:        self.block_kwh = float(charge_kw) * self.block_min / 60.0
+a0e0bb76:src/exact_pricer_expanded.py:1081:                charge_kw=self.charge_kw,
+a0e0bb76:src/exact_pricer_expanded.py:1390:        "charge_kw": args.charge_kw,
+a0e0bb76:src/exact_pricer_expanded.py:1775:                "charge_kw": args.charge_kw,
+a0e0bb76:src/exact_pricer_expanded.py:1810:        DATA_DIR / args.prices_csv, CHARGING_STATIONS
+a0e0bb76:src/exact_pricer_expanded.py:1847:            charge_kw=args.charge_kw,
+a0e0bb76:src/exact_pricer_expanded.py:2112:            "charge_kw": args.charge_kw,
+a0e0bb76:src/exact_pricer_expanded.py:2286:                charge_kw=args.charge_kw,
+a0e0bb76:src/exact_pricer_expanded.py:2348:                charge_kw=args.charge_kw,
+a0e0bb76:src/exact_pricer_expanded.py:2437:            "g_kwh": args.g_kwh, "charge_kw": args.charge_kw,
+a0e0bb76:src/exact_pricer_expanded.py:3215:        "charge_kw": args.charge_kw,
+a0e0bb76:src/expanded_path_realization.py:92:    charge_kw: float,
+a0e0bb76:src/expanded_path_realization.py:109:        charge_kw = float(charge_kw)
+a0e0bb76:src/expanded_path_realization.py:120:            g_kwh, charge_kw, reserve_kwh, soc_step
+a0e0bb76:src/expanded_path_realization.py:123:        or charge_kw <= 0
+a0e0bb76:src/expanded_path_realization.py:139:    block_kwh = charge_kw * block_min / 60.0
+a0e0bb76:src/expanded_path_realization.py:305:                available = duration * charge_kw / 60.0
+a0e0bb76:src/expanded_path_realization.py:472:        "charge_kw": charge_kw,
+a0e0bb76:src/expanded_path_realization.py:518:    charge_kw: float,
+a0e0bb76:src/expanded_path_realization.py:555:            capacity = max(0.0, segment_end - cursor) * charge_kw / 60.0
+a0e0bb76:src/expanded_path_realization.py:559:            actual_end = cursor + energy * 60.0 / charge_kw
+a0e0bb76:src/expanded_path_realization.py:579:        charge_kw=charge_kw,
+a0e0bb76:src/expanded_path_realization.py:589:    charge_kw: float,
+a0e0bb76:src/expanded_path_realization.py:647:        capacity = (end - start) * float(charge_kw) / 60.0
+a0e0bb76:src/expanded_path_realization.py:750:            charge_kw=float(mapping["charge_kw"]),
+a0e0bb76:src/expanded_path_realization.py:760:                * float(mapping["charge_kw"]) / 60.0,
+a0e0bb76:src/expanded_path_realization.py:793:        charge_kw=float(mapping["charge_kw"]),

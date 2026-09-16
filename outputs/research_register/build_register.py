@@ -39,6 +39,9 @@ COLUMNS = [
     "charge_kw", "parx_kw", "non_parx_kw", "soc_step_kwh",
     "block_minutes", "capacity_enforced", "charger_counts_json",
     "terminal_energy_policy", "charge_start_cost", "master_sense", "initialization",
+    "lagrangian_weighted_lower_bound", "numerical_event_model_integer_fleet_lower_bound",
+    "lagrangian_bound_scope", "giro_unchanged_schedule_valid_duties",
+    "giro_reoptimized_fixed_duty_valid_duties", "review_audit_path",
     "column_pool_treatment", "pool_size", "cg_iterations", "stop_reason",
     "runtime_s", "phase_runtime_json", "weighted_lp_objective",
     "recorded_lp_objective", "lp_objective_kind", "lp_endpoint_source",
@@ -397,7 +400,7 @@ class Register:
             "trip_count": at(payload, "trip_count", "cell.trips"),
             "target_k": target_k, "chain": chain, "replication": replication,
             "tariff_path": at(payload, "tariff", "tariff_path", "cell.tariff",
-                              "physics.prices_csv", "provenance.prices"),
+                              "physics.prices_csv", "prices_csv", "provenance.prices"),
             "tariff_sha256": at(payload, "tariff_sha256", "cell.tariff_sha256"),
             "prices_sha256": at(provenance, "prices_sha256", default=None)
                 or at(input_hashes, "prices_sha256", default=None),
@@ -523,6 +526,41 @@ class Register:
             "limitations": at(payload, "limitation", "reporting_scope.reason"),
             "notes": payload.get("provenance_warning"),
         })
+        # F4/F9: audited campaign-scoped settings, never global defaults.
+        if campaign_id in self.extension_cases:
+            manifest = (self.snapshot.get("campaigns", {}).get(campaign_id, {})
+                        .get("workflow", {}).get("manifest.json", {}))
+            settings = manifest.get("scientific_settings", {})
+            if (metadata and settings.get("objective") == "100000 + electricity + 5 per charge start"
+                    and manifest.get("execution_commit") == "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b"):
+                row.update(charge_start_cost=5.0,
+                           tariff_path="hourly_prices_flat.csv",
+                           tariff_sha256=manifest.get("data_sha256", {}).get("hourly_prices_flat.csv"),
+                           parx_kw=240.0, non_parx_kw=240.0,
+                           reserve_kwh=0.0, initial_soc_kwh=240.0,
+                           capacity_enforced=False,
+                           terminal_energy_policy="free ending SOC; no terminal floor")
+                audit_root = Path(__file__).resolve().parents[1] / "independent_review_20260916/execution"
+                bounds_path = audit_root / "f3/all_chain_extension_results_with_bounds.csv"
+                replay_path = audit_root / "f4/chain_replay_counts.csv"
+                if stage == "cg" and bounds_path.exists():
+                    with bounds_path.open() as handle:
+                        candidates = [x for x in csv.DictReader(handle)
+                                      if x["case_id"] == case_id and x["input_sha256"] == row["input_sha256"]]
+                    if candidates and isinstance(weighted_lp, (int, float)):
+                        b = candidates[0]
+                        if abs(float(b["weighted_lp_objective"]) - float(weighted_lp)) <= 1e-6:
+                            row.update(lagrangian_weighted_lower_bound=float(b["lagrangian_weighted_lower_bound"]),
+                                       numerical_event_model_integer_fleet_lower_bound=int(b["integer_fleet_lower_bound"]),
+                                       lagrangian_bound_scope=b["bound_scope"] + "; " + b["bound_validity"],
+                                       review_audit_path=str(bounds_path))
+                if metadata and replay_path.exists():
+                    with replay_path.open() as handle:
+                        matches = [x for x in csv.DictReader(handle)
+                                   if int(x["chain"]) == int(chain) and int(x["k"]) == int(target_k)]
+                    if matches:
+                        row.update(giro_unchanged_schedule_valid_duties=int(matches[0]["unchanged_giro_schedule_valid_count"]),
+                                   giro_reoptimized_fixed_duty_valid_duties=int(matches[0]["fixed_trip_optimized_charging_reverified_valid_count"]))
         if overrides:
             row.update(overrides)
         # The compatibility field has deliberately narrow semantics.  An

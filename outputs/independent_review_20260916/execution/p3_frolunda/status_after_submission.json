@@ -1,0 +1,219 @@
+{
+  "collected_utc": "2026-09-16T22:14:07.220381+00:00",
+  "manifest_sha256": "28564b44a0a013fc7711942c214a2d2a8753b1bd7cecedcd17a4b70cd25cc046",
+  "job": {
+    "job_id": "341413",
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=64G",
+      "--time=48:00:00",
+      "--requeue",
+      "--job-name=drFDL_review",
+      "--output=/home/nc437/ladder-lite/review_frolunda_20260916/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/review_frolunda_20260916/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/review_frolunda_20260916/worker.sub"
+    ],
+    "submitted_utc": "2026-09-16T22:12:19.725128+00:00",
+    "manifest_sha256": "28564b44a0a013fc7711942c214a2d2a8753b1bd7cecedcd17a4b70cd25cc046",
+    "policy_sha256": "49954b0300305f108e5e0c47bbbde43f0c5159140a95c839c4c3fad30f158867",
+    "stage_count": 7,
+    "single_sequential_allocation": true,
+    "scontrol": "JobId=341413 JobName=drFDL_review UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14010 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=2-00:00:00 TimeMin=N/A SubmitTime=2026-09-16T18:12:19 EligibleTime=2026-09-16T18:12:19 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T18:12:19 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2246030 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/review_frolunda_20260916/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/review_frolunda_20260916/logs/drFDL_review_341413.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/review_frolunda_20260916/logs/drFDL_review_341413.out TresPerTask=cpu=8 \n",
+    "resource_policy_verified": true
+  },
+  "complete": false,
+  "rows": [
+    {
+      "case": "fdl_k01",
+      "reference_duties": 1,
+      "input_trips": 15,
+      "input_sha256": "93acd77670ee25bbe1b0b40d2dc6ca7fe6a0e34e39102914c4cc00495bc3a256",
+      "attempts": [
+        {
+          "stage": "cache",
+          "path": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k01/cache/341413_r0/execution.json",
+          "sha256": "1259cbb35a88fde88e52a3bbf936b0ca6b663d7ed20b8c3f80466e9d8f2a4e5b",
+          "status": "finished",
+          "attempt": "341413_r0",
+          "started_epoch": 1789596742.0229008,
+          "ended_epoch": 1789596752.3098674,
+          "returncode": 0
+        },
+        {
+          "stage": "cg",
+          "path": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k01/cg/341413_r0/execution.json",
+          "sha256": "5c47110384a91cadc40ceec524fe8a9f6231354ddea4546cf79ab10f3b7acfa4",
+          "status": "finished",
+          "attempt": "341413_r0",
+          "started_epoch": 1789596752.387058,
+          "ended_epoch": 1789596756.5124705,
+          "returncode": 0
+        },
+        {
+          "stage": "mip",
+          "path": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k01/mip/341413_r0/execution.json",
+          "sha256": "ef6603388c73794ad8ea0af92922c903d70b9b9117113611641746ef4d6ce16b",
+          "status": "finished",
+          "attempt": "341413_r0",
+          "started_epoch": 1789596756.530546,
+          "ended_epoch": 1789596758.0016017,
+          "returncode": 0
+        }
+      ],
+      "cache_completed": true,
+      "cache_receipt": {
+        "manifest_sha256": "28564b44a0a013fc7711942c214a2d2a8753b1bd7cecedcd17a4b70cd25cc046",
+        "cache": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k01/cache/341413_r0/network.pkl",
+        "output_hashes": {
+          "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k01/cache/341413_r0/network.pkl": "b91b64198cc3ff5bb9c60931fef9cfca37953f8a05b4750a4d414f9eb7dc4416",
+          "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k01/cache/341413_r0/network.pkl.manifest.json": "890cccd2c942d33e38e00731d62ff5129efdea9a1f0e04e44cc33d4014562494"
+        }
+      },
+      "cache_receipt_sha256": "d4dd1913b0b2b61c508460c2b4b2d682d444eb693b2536f0f5fbe222a969d461",
+      "cg_completed": true,
+      "cg_receipt": {
+        "manifest_sha256": "28564b44a0a013fc7711942c214a2d2a8753b1bd7cecedcd17a4b70cd25cc046",
+        "result": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k01/cg/341413_r0/cg.json",
+        "pricing_certified": true,
+        "stop_reason": "certified",
+        "output_hashes": {
+          "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k01/cg/341413_r0/cg.json": "98259a55ced3d6f4ccb1a7c5a814d494f557c486d44ce4f2e18549ba8f513b16",
+          "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k01/cg/341413_r0/cg.json.columns.jsonl": "5335a32f7a17100e116f6200ac29e297ac7d070f8e2e8a06e5b6e3402623ceb6"
+        }
+      },
+      "cg_receipt_sha256": "b0418d7a1b6a739ce5c82e6403cd08875ee40684f5f2f7b44413a479fbcaa83c",
+      "cg_result_path": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k01/cg/341413_r0/cg.json",
+      "cg_result_sha256": "98259a55ced3d6f4ccb1a7c5a814d494f557c486d44ce4f2e18549ba8f513b16",
+      "cg_pricing_certificate": true,
+      "cg_stop_reason": "certified",
+      "cg_wall_s": 2.8508810019120574,
+      "cg_iterations": 30,
+      "cg_final": {
+        "iter": 30,
+        "attempt_iter": 30,
+        "lp_obj": 100035.8319999997,
+        "route_weight": 1.0,
+        "artificials": 0.0,
+        "min_rc": -4.3655745685100555e-11,
+        "max_row_violation": 0.0,
+        "max_bound_violation": 0.0
+      },
+      "cg_final_lp_source": "final_pool_resolve",
+      "mip_completed": true,
+      "mip_receipt": {
+        "manifest_sha256": "28564b44a0a013fc7711942c214a2d2a8753b1bd7cecedcd17a4b70cd25cc046",
+        "result": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k01/mip/341413_r0/result.json",
+        "source_cg_sha256": "98259a55ced3d6f4ccb1a7c5a814d494f557c486d44ce4f2e18549ba8f513b16",
+        "buses": 1,
+        "fleet_bound": 1.0,
+        "fleet_proven": true,
+        "output_hashes": {
+          "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k01/mip/341413_r0/result.json": "3088231976505a69e533e83531e0c02f3019600baf6ba48252d02d31544288ee"
+        }
+      },
+      "mip_receipt_sha256": "7daaef1f4f72aadeab0ce163c7997ec5dc89a88db0540f80daa17e23e9c5b45e",
+      "mip_result_path": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k01/mip/341413_r0/result.json",
+      "mip_result_sha256": "3088231976505a69e533e83531e0c02f3019600baf6ba48252d02d31544288ee",
+      "buses": 1,
+      "pool_fleet_bound": 1.0,
+      "fleet_proved_in_pool": true,
+      "individual_route_replay": true,
+      "duplicate_removal_validated": true,
+      "shared_capacity_validated": false
+    },
+    {
+      "case": "fdl_k02",
+      "reference_duties": 2,
+      "input_trips": 38,
+      "input_sha256": "61b76e014006e11609e593bfa3060fc85bab72532cac7047c7fa46ecb129c790",
+      "attempts": [
+        {
+          "stage": "cache",
+          "path": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cache/341413_r0/execution.json",
+          "sha256": "0af665eb92c0494a888b9356ceb477de645745fe56840d8de661a22e87fce06c",
+          "status": "finished",
+          "attempt": "341413_r0",
+          "started_epoch": 1789596758.011953,
+          "ended_epoch": 1789596824.40253,
+          "returncode": 0
+        },
+        {
+          "stage": "cg",
+          "path": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cg/341413_r0/execution.json",
+          "sha256": "ff0d726b24ee19075d55bfc58f42576b68266783ec3bc157aaacf04ee2e3f9c4",
+          "status": "running",
+          "attempt": "341413_r0",
+          "started_epoch": 1789596824.7358735,
+          "ended_epoch": null,
+          "returncode": null
+        }
+      ],
+      "cache_completed": true,
+      "cache_receipt": {
+        "manifest_sha256": "28564b44a0a013fc7711942c214a2d2a8753b1bd7cecedcd17a4b70cd25cc046",
+        "cache": "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cache/341413_r0/network.pkl",
+        "output_hashes": {
+          "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cache/341413_r0/network.pkl": "4f0819c4e381f38f785dfa4decf605769d9f31033b3c26e102e9f301b1cd7fe7",
+          "/home/nc437/ladder-lite/review_frolunda_20260916/cases/fdl_k02/cache/341413_r0/network.pkl.manifest.json": "94176481b3fe59fe0436bef8cf09ddf6bcc72bf38272f4feda7270dc7d97be4e"
+        }
+      },
+      "cache_receipt_sha256": "614169ba58f3d10e0a42ace1ddcf8692b18f888e51242428d706724eb3566bc1",
+      "cg_completed": false,
+      "mip_completed": false
+    },
+    {
+      "case": "fdl_k03",
+      "reference_duties": 3,
+      "input_trips": 67,
+      "input_sha256": "c2fd8b46d97a790fe931263a8c69d54cf82248c26e2b4df89fbd917e8d1a1b52",
+      "attempts": [],
+      "cache_completed": false,
+      "cg_completed": false,
+      "mip_completed": false
+    },
+    {
+      "case": "fdl_k05",
+      "reference_duties": 5,
+      "input_trips": 109,
+      "input_sha256": "b0bf8a1e87a4188174fa2987bb5733775c197b0a982a4b19729ed26d8d67d838",
+      "attempts": [],
+      "cache_completed": false,
+      "cg_completed": false,
+      "mip_completed": false
+    },
+    {
+      "case": "fdl_k08",
+      "reference_duties": 8,
+      "input_trips": 166,
+      "input_sha256": "443a48af5b3e88c7be893652e2cff9429e6e86b4add19276faffe8814d3cb7c2",
+      "attempts": [],
+      "cache_completed": false,
+      "cg_completed": false,
+      "mip_completed": false
+    },
+    {
+      "case": "fdl_k10",
+      "reference_duties": 10,
+      "input_trips": 209,
+      "input_sha256": "8cf3381e7419bc9fd2cfd43692b04b89574afdb9101ab69efd3c311ffe580443",
+      "attempts": [],
+      "cache_completed": false,
+      "cg_completed": false,
+      "mip_completed": false
+    },
+    {
+      "case": "fdl_k15",
+      "reference_duties": 15,
+      "input_trips": 352,
+      "input_sha256": "50e8bfa53bbefb27de0d3fcc801018fbdcb2f9393b0c1a6fb1f13e6bf745c709",
+      "attempts": [],
+      "cache_completed": false,
+      "cg_completed": false,
+      "mip_completed": false
+    }
+  ]
+}

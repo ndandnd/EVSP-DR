@@ -1,0 +1,8284 @@
+{
+  "peak08/Original GIRO, unchanged charging/13401": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_0",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 195.24422650000002
+    },
+    {
+      "where": "after_deadhead_to_3",
+      "soc_kwh": 195.24422650000002
+    },
+    {
+      "where": "after_trip_3",
+      "soc_kwh": 152.74422650000002
+    },
+    {
+      "where": "after_deadhead_to_8",
+      "soc_kwh": 152.74422650000002
+    },
+    {
+      "where": "after_trip_8",
+      "soc_kwh": 111.01422700000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 111.01422700000003
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 146.39001280000002
+    },
+    {
+      "where": "after_deadhead_to_13",
+      "soc_kwh": 146.39001280000002
+    },
+    {
+      "where": "after_trip_13",
+      "soc_kwh": 103.89001280000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 103.89001280000002
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 129.69502450000002
+    },
+    {
+      "where": "after_deadhead_to_20",
+      "soc_kwh": 129.69502450000002
+    },
+    {
+      "where": "after_trip_20",
+      "soc_kwh": 87.96502500000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 87.96502500000003
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 124.95761300000002
+    },
+    {
+      "where": "after_deadhead_to_25",
+      "soc_kwh": 124.95761300000002
+    },
+    {
+      "where": "after_trip_25",
+      "soc_kwh": 82.45761300000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 82.45761300000002
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 129.93917280000002
+    },
+    {
+      "where": "after_deadhead_to_30",
+      "soc_kwh": 129.93917280000002
+    },
+    {
+      "where": "after_trip_30",
+      "soc_kwh": 88.20917330000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 88.20917330000003
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 125.21554000000003
+    },
+    {
+      "where": "after_deadhead_to_34",
+      "soc_kwh": 125.21554000000003
+    },
+    {
+      "where": "after_trip_34",
+      "soc_kwh": 82.71554000000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 82.71554000000003
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 114.84375580000003
+    },
+    {
+      "where": "after_deadhead_to_41",
+      "soc_kwh": 114.84375580000003
+    },
+    {
+      "where": "after_trip_41",
+      "soc_kwh": 73.11375630000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 73.11375630000003
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 111.03555500000003
+    },
+    {
+      "where": "after_deadhead_to_46",
+      "soc_kwh": 111.03555500000003
+    },
+    {
+      "where": "after_trip_46",
+      "soc_kwh": 68.53555500000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 68.53555500000003
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 127.62131320000003
+    },
+    {
+      "where": "after_deadhead_to_52",
+      "soc_kwh": 127.62131320000003
+    },
+    {
+      "where": "after_trip_52",
+      "soc_kwh": 85.89131370000004
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 85.89131370000004
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 123.12196560000004
+    },
+    {
+      "where": "after_deadhead_to_57",
+      "soc_kwh": 123.12196560000004
+    },
+    {
+      "where": "after_trip_57",
+      "soc_kwh": 80.62196560000004
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 52.62196560000004
+    }
+  ],
+  "peak08/Original GIRO, unchanged charging/13403": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_1",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_1",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 197.74422650000002
+    },
+    {
+      "where": "after_deadhead_to_5",
+      "soc_kwh": 197.74422650000002
+    },
+    {
+      "where": "after_trip_5",
+      "soc_kwh": 155.24422650000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 155.24422650000002
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 195.00861170000002
+    },
+    {
+      "where": "after_deadhead_to_11",
+      "soc_kwh": 195.00861170000002
+    },
+    {
+      "where": "after_trip_11",
+      "soc_kwh": 153.27861220000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 153.27861220000003
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 185.60712630000003
+    },
+    {
+      "where": "after_deadhead_to_16",
+      "soc_kwh": 185.60712630000003
+    },
+    {
+      "where": "after_trip_16",
+      "soc_kwh": 143.10712630000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 143.10712630000003
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 166.97226910000003
+    },
+    {
+      "where": "after_deadhead_to_22",
+      "soc_kwh": 166.97226910000003
+    },
+    {
+      "where": "after_trip_22",
+      "soc_kwh": 125.24226960000004
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 125.24226960000004
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 159.45710190000005
+    },
+    {
+      "where": "after_deadhead_to_27",
+      "soc_kwh": 159.45710190000005
+    },
+    {
+      "where": "after_trip_27",
+      "soc_kwh": 116.95710190000005
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 116.95710190000005
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 161.34665120000005
+    },
+    {
+      "where": "after_deadhead_to_32",
+      "soc_kwh": 161.34665120000005
+    },
+    {
+      "where": "after_trip_32",
+      "soc_kwh": 119.61665170000006
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 119.61665170000006
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 154.27684990000006
+    },
+    {
+      "where": "after_deadhead_to_36",
+      "soc_kwh": 154.27684990000006
+    },
+    {
+      "where": "after_trip_36",
+      "soc_kwh": 111.77684990000006
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 111.77684990000006
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 147.19925900000007
+    },
+    {
+      "where": "after_deadhead_to_40",
+      "soc_kwh": 147.19925900000007
+    },
+    {
+      "where": "after_trip_40",
+      "soc_kwh": 105.46925950000008
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 105.46925950000008
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 141.1863997000001
+    },
+    {
+      "where": "after_deadhead_to_45",
+      "soc_kwh": 141.1863997000001
+    },
+    {
+      "where": "after_trip_45",
+      "soc_kwh": 98.6863997000001
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 98.6863997000001
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 149.6450102000001
+    },
+    {
+      "where": "after_deadhead_to_50",
+      "soc_kwh": 149.6450102000001
+    },
+    {
+      "where": "after_trip_50",
+      "soc_kwh": 107.9150107000001
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 107.9150107000001
+    },
+    {
+      "where": "after_charge_10",
+      "soc_kwh": 143.5376837000001
+    },
+    {
+      "where": "after_deadhead_to_55",
+      "soc_kwh": 143.5376837000001
+    },
+    {
+      "where": "after_trip_55",
+      "soc_kwh": 101.03768370000009
+    },
+    {
+      "where": "after_deadhead_to_59",
+      "soc_kwh": 101.03768370000009
+    },
+    {
+      "where": "after_trip_59",
+      "soc_kwh": 59.30768420000009
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 59.30768420000009
+    },
+    {
+      "where": "after_charge_11",
+      "soc_kwh": 124.54900190000009
+    },
+    {
+      "where": "after_deadhead_to_61",
+      "soc_kwh": 124.54900190000009
+    },
+    {
+      "where": "after_trip_61",
+      "soc_kwh": 82.04900190000009
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 54.04900190000009
+    }
+  ],
+  "peak08/Original GIRO, unchanged charging/13405": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_2",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_2",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 197.74422650000002
+    },
+    {
+      "where": "after_deadhead_to_6",
+      "soc_kwh": 197.74422650000002
+    },
+    {
+      "where": "after_trip_6",
+      "soc_kwh": 155.24422650000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 155.24422650000002
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 194.9770947
+    },
+    {
+      "where": "after_deadhead_to_10",
+      "soc_kwh": 194.9770947
+    },
+    {
+      "where": "after_trip_10",
+      "soc_kwh": 153.24709520000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 153.24709520000002
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 185.57382020000003
+    },
+    {
+      "where": "after_deadhead_to_15",
+      "soc_kwh": 185.57382020000003
+    },
+    {
+      "where": "after_trip_15",
+      "soc_kwh": 143.07382020000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 143.07382020000003
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 166.93492330000004
+    },
+    {
+      "where": "after_deadhead_to_19",
+      "soc_kwh": 166.93492330000004
+    },
+    {
+      "where": "after_trip_19",
+      "soc_kwh": 125.20492380000005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 125.20492380000005
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 159.41591090000003
+    },
+    {
+      "where": "after_deadhead_to_23",
+      "soc_kwh": 159.41591090000003
+    },
+    {
+      "where": "after_trip_23",
+      "soc_kwh": 116.91591090000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 116.91591090000003
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 161.29847930000003
+    },
+    {
+      "where": "after_deadhead_to_28",
+      "soc_kwh": 161.29847930000003
+    },
+    {
+      "where": "after_trip_28",
+      "soc_kwh": 119.56847980000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 119.56847980000003
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 154.22234180000004
+    },
+    {
+      "where": "after_deadhead_to_33",
+      "soc_kwh": 154.22234180000004
+    },
+    {
+      "where": "after_trip_33",
+      "soc_kwh": 111.72234180000004
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 111.72234180000004
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 156.62233570000004
+    },
+    {
+      "where": "after_deadhead_to_37",
+      "soc_kwh": 156.62233570000004
+    },
+    {
+      "where": "after_trip_37",
+      "soc_kwh": 114.89233620000005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 114.89233620000005
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 150.01576450000005
+    },
+    {
+      "where": "after_deadhead_to_42",
+      "soc_kwh": 150.01576450000005
+    },
+    {
+      "where": "after_trip_42",
+      "soc_kwh": 107.51576450000005
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 107.51576450000005
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 128.20135140000005
+    },
+    {
+      "where": "after_deadhead_to_47",
+      "soc_kwh": 128.20135140000005
+    },
+    {
+      "where": "after_trip_47",
+      "soc_kwh": 86.47135190000006
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 86.47135190000006
+    },
+    {
+      "where": "after_charge_10",
+      "soc_kwh": 123.65042900000006
+    },
+    {
+      "where": "after_deadhead_to_51",
+      "soc_kwh": 123.65042900000006
+    },
+    {
+      "where": "after_trip_51",
+      "soc_kwh": 81.15042900000006
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 81.15042900000006
+    },
+    {
+      "where": "after_charge_11",
+      "soc_kwh": 113.35741450000006
+    },
+    {
+      "where": "after_deadhead_to_56",
+      "soc_kwh": 113.35741450000006
+    },
+    {
+      "where": "after_trip_56",
+      "soc_kwh": 71.62741500000007
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 63.82741500000007
+    }
+  ],
+  "peak08/Original GIRO, unchanged charging/13408": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_4",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_4",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 216.2164566
+    },
+    {
+      "where": "after_deadhead_to_7",
+      "soc_kwh": 216.2164566
+    },
+    {
+      "where": "after_trip_7",
+      "soc_kwh": 174.4864571
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 174.4864571
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 200.264478
+    },
+    {
+      "where": "after_deadhead_to_12",
+      "soc_kwh": 200.264478
+    },
+    {
+      "where": "after_trip_12",
+      "soc_kwh": 157.764478
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 157.764478
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 196.5004895
+    },
+    {
+      "where": "after_deadhead_to_17",
+      "soc_kwh": 196.5004895
+    },
+    {
+      "where": "after_trip_17",
+      "soc_kwh": 154.77049
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 154.77049
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 187.0405553
+    },
+    {
+      "where": "after_deadhead_to_21",
+      "soc_kwh": 187.0405553
+    },
+    {
+      "where": "after_trip_21",
+      "soc_kwh": 144.5405553
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 144.5405553
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 186.4488118
+    },
+    {
+      "where": "after_deadhead_to_26",
+      "soc_kwh": 186.4488118
+    },
+    {
+      "where": "after_trip_26",
+      "soc_kwh": 144.7188123
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 144.7188123
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 177.6097806
+    },
+    {
+      "where": "after_deadhead_to_31",
+      "soc_kwh": 177.6097806
+    },
+    {
+      "where": "after_trip_31",
+      "soc_kwh": 135.1097806
+    },
+    {
+      "where": "after_deadhead_to_38",
+      "soc_kwh": 135.1097806
+    },
+    {
+      "where": "after_trip_38",
+      "soc_kwh": 93.3797811
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 93.3797811
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 129.9269308
+    },
+    {
+      "where": "after_deadhead_to_43",
+      "soc_kwh": 129.9269308
+    },
+    {
+      "where": "after_trip_43",
+      "soc_kwh": 87.42693080000001
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 87.42693080000001
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 134.5030226
+    },
+    {
+      "where": "after_deadhead_to_48",
+      "soc_kwh": 134.5030226
+    },
+    {
+      "where": "after_trip_48",
+      "soc_kwh": 92.77302310000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 92.77302310000002
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 124.42644070000001
+    },
+    {
+      "where": "after_deadhead_to_53",
+      "soc_kwh": 124.42644070000001
+    },
+    {
+      "where": "after_trip_53",
+      "soc_kwh": 81.92644070000001
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 53.926440700000015
+    }
+  ],
+  "peak08/Original GIRO, unchanged charging/13414": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_9",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_9",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 216.2164566
+    },
+    {
+      "where": "after_deadhead_to_14",
+      "soc_kwh": 216.2164566
+    },
+    {
+      "where": "after_trip_14",
+      "soc_kwh": 174.4864571
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 174.4864571
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 200.264478
+    },
+    {
+      "where": "after_deadhead_to_18",
+      "soc_kwh": 200.264478
+    },
+    {
+      "where": "after_trip_18",
+      "soc_kwh": 157.764478
+    },
+    {
+      "where": "after_deadhead_to_24",
+      "soc_kwh": 157.764478
+    },
+    {
+      "where": "after_trip_24",
+      "soc_kwh": 116.0344785
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 116.0344785
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 150.98379640000002
+    },
+    {
+      "where": "after_deadhead_to_29",
+      "soc_kwh": 150.98379640000002
+    },
+    {
+      "where": "after_trip_29",
+      "soc_kwh": 108.48379640000002
+    },
+    {
+      "where": "after_deadhead_to_35",
+      "soc_kwh": 108.48379640000002
+    },
+    {
+      "where": "after_trip_35",
+      "soc_kwh": 66.75379690000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 66.75379690000003
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 105.14142740000003
+    },
+    {
+      "where": "after_deadhead_to_39",
+      "soc_kwh": 105.14142740000003
+    },
+    {
+      "where": "after_trip_39",
+      "soc_kwh": 62.641427400000026
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 62.641427400000026
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 96.01616040000002
+    },
+    {
+      "where": "after_deadhead_to_44",
+      "soc_kwh": 96.01616040000002
+    },
+    {
+      "where": "after_trip_44",
+      "soc_kwh": 54.28616090000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 54.28616090000002
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 88.01461930000002
+    },
+    {
+      "where": "after_deadhead_to_49",
+      "soc_kwh": 88.01461930000002
+    },
+    {
+      "where": "after_trip_49",
+      "soc_kwh": 45.51461930000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 45.51461930000002
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 101.72123470000002
+    },
+    {
+      "where": "after_deadhead_to_54",
+      "soc_kwh": 101.72123470000002
+    },
+    {
+      "where": "after_trip_54",
+      "soc_kwh": 59.99123520000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 59.99123520000003
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 104.24462270000004
+    },
+    {
+      "where": "after_deadhead_to_58",
+      "soc_kwh": 104.24462270000004
+    },
+    {
+      "where": "after_trip_58",
+      "soc_kwh": 61.744622700000036
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 61.744622700000036
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 105.88850160000004
+    },
+    {
+      "where": "after_deadhead_to_60",
+      "soc_kwh": 105.88850160000004
+    },
+    {
+      "where": "after_trip_60",
+      "soc_kwh": 64.15850210000005
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 56.35850210000005
+    }
+  ],
+  "peak08/Fixed GIRO trips, charging optimized/13401": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_0",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 202.5
+    },
+    {
+      "where": "after_deadhead_to_3",
+      "soc_kwh": 202.5
+    },
+    {
+      "where": "after_trip_3",
+      "soc_kwh": 160.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 160.0
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 162.5
+    },
+    {
+      "where": "after_deadhead_to_8",
+      "soc_kwh": 162.5
+    },
+    {
+      "where": "after_trip_8",
+      "soc_kwh": 120.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_13",
+      "soc_kwh": 120.77000050000001
+    },
+    {
+      "where": "after_trip_13",
+      "soc_kwh": 78.27000050000001
+    },
+    {
+      "where": "after_deadhead_to_20",
+      "soc_kwh": 78.27000050000001
+    },
+    {
+      "where": "after_trip_20",
+      "soc_kwh": 36.54000100000001
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 36.54000100000001
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_25",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_25",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_30",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_trip_30",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_34",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_34",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_41",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_trip_41",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_46",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_46",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_52",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_trip_52",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_57",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_57",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 40.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 12.000000000000014
+    }
+  ],
+  "peak08/Fixed GIRO trips, charging optimized/13403": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_1",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_1",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 172.5
+    },
+    {
+      "where": "after_deadhead_to_5",
+      "soc_kwh": 172.5
+    },
+    {
+      "where": "after_trip_5",
+      "soc_kwh": 130.0
+    },
+    {
+      "where": "after_deadhead_to_11",
+      "soc_kwh": 130.0
+    },
+    {
+      "where": "after_trip_11",
+      "soc_kwh": 88.27000050000001
+    },
+    {
+      "where": "after_deadhead_to_16",
+      "soc_kwh": 88.27000050000001
+    },
+    {
+      "where": "after_trip_16",
+      "soc_kwh": 45.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_22",
+      "soc_kwh": 45.77000050000001
+    },
+    {
+      "where": "after_trip_22",
+      "soc_kwh": 4.040001000000011
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 4.040001000000011
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_27",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_27",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_32",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_trip_32",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_36",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_36",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_40",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_trip_40",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_45",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_45",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_50",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_trip_50",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_55",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_55",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_59",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_59",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_61",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_61",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_10",
+      "soc_kwh": 182.5
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 154.5
+    }
+  ],
+  "peak08/Fixed GIRO trips, charging optimized/13405": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_2",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_2",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 175.0
+    },
+    {
+      "where": "after_deadhead_to_6",
+      "soc_kwh": 175.0
+    },
+    {
+      "where": "after_trip_6",
+      "soc_kwh": 132.5
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 132.5
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 135.0
+    },
+    {
+      "where": "after_deadhead_to_10",
+      "soc_kwh": 135.0
+    },
+    {
+      "where": "after_trip_10",
+      "soc_kwh": 93.27000050000001
+    },
+    {
+      "where": "after_deadhead_to_15",
+      "soc_kwh": 93.27000050000001
+    },
+    {
+      "where": "after_trip_15",
+      "soc_kwh": 50.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_19",
+      "soc_kwh": 50.77000050000001
+    },
+    {
+      "where": "after_trip_19",
+      "soc_kwh": 9.04000100000001
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 9.04000100000001
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_23",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_23",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 52.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_28",
+      "soc_kwh": 52.500000000000014
+    },
+    {
+      "where": "after_trip_28",
+      "soc_kwh": 10.770000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 10.770000500000016
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 50.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_33",
+      "soc_kwh": 50.000000000000014
+    },
+    {
+      "where": "after_trip_33",
+      "soc_kwh": 7.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 7.500000000000014
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 65.00000000000001
+    },
+    {
+      "where": "after_deadhead_to_37",
+      "soc_kwh": 65.00000000000001
+    },
+    {
+      "where": "after_trip_37",
+      "soc_kwh": 23.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 23.270000500000016
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 62.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_42",
+      "soc_kwh": 62.500000000000014
+    },
+    {
+      "where": "after_trip_42",
+      "soc_kwh": 20.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 20.000000000000014
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 47.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_47",
+      "soc_kwh": 47.500000000000014
+    },
+    {
+      "where": "after_trip_47",
+      "soc_kwh": 5.770000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 5.770000500000016
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_51",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_trip_51",
+      "soc_kwh": 2.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 2.500000000000014
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_56",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_56",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_charge_10",
+      "soc_kwh": 10.000000000000016
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 2.200000000000016
+    }
+  ],
+  "peak08/Fixed GIRO trips, charging optimized/13408": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_4",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_4",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_7",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_trip_7",
+      "soc_kwh": 147.9700005
+    },
+    {
+      "where": "after_deadhead_to_12",
+      "soc_kwh": 147.9700005
+    },
+    {
+      "where": "after_trip_12",
+      "soc_kwh": 105.4700005
+    },
+    {
+      "where": "after_deadhead_to_17",
+      "soc_kwh": 105.4700005
+    },
+    {
+      "where": "after_trip_17",
+      "soc_kwh": 63.740001
+    },
+    {
+      "where": "after_deadhead_to_21",
+      "soc_kwh": 63.740001
+    },
+    {
+      "where": "after_trip_21",
+      "soc_kwh": 21.240001
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 21.240001
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 45.0
+    },
+    {
+      "where": "after_deadhead_to_26",
+      "soc_kwh": 45.0
+    },
+    {
+      "where": "after_trip_26",
+      "soc_kwh": 3.270000500000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000002
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_31",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_31",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 45.0
+    },
+    {
+      "where": "after_deadhead_to_38",
+      "soc_kwh": 45.0
+    },
+    {
+      "where": "after_trip_38",
+      "soc_kwh": 3.270000500000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000002
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_43",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_43",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 50.0
+    },
+    {
+      "where": "after_deadhead_to_48",
+      "soc_kwh": 50.0
+    },
+    {
+      "where": "after_trip_48",
+      "soc_kwh": 8.270000500000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 8.270000500000002
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_53",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_53",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 140.0
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 112.0
+    }
+  ],
+  "peak08/Fixed GIRO trips, charging optimized/13414": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_9",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_9",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_14",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_trip_14",
+      "soc_kwh": 147.9700005
+    },
+    {
+      "where": "after_deadhead_to_18",
+      "soc_kwh": 147.9700005
+    },
+    {
+      "where": "after_trip_18",
+      "soc_kwh": 105.4700005
+    },
+    {
+      "where": "after_deadhead_to_24",
+      "soc_kwh": 105.4700005
+    },
+    {
+      "where": "after_trip_24",
+      "soc_kwh": 63.740001
+    },
+    {
+      "where": "after_deadhead_to_29",
+      "soc_kwh": 63.740001
+    },
+    {
+      "where": "after_trip_29",
+      "soc_kwh": 21.240001
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 21.240001
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 55.0
+    },
+    {
+      "where": "after_deadhead_to_35",
+      "soc_kwh": 55.0
+    },
+    {
+      "where": "after_trip_35",
+      "soc_kwh": 13.270000500000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 13.270000500000002
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 52.5
+    },
+    {
+      "where": "after_deadhead_to_39",
+      "soc_kwh": 52.5
+    },
+    {
+      "where": "after_trip_39",
+      "soc_kwh": 10.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 10.0
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 50.0
+    },
+    {
+      "where": "after_deadhead_to_44",
+      "soc_kwh": 50.0
+    },
+    {
+      "where": "after_trip_44",
+      "soc_kwh": 8.270000500000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 8.270000500000002
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_49",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_49",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_54",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_54",
+      "soc_kwh": 0.7700005000000019
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 0.7700005000000019
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_58",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_58",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 50.0
+    },
+    {
+      "where": "after_deadhead_to_60",
+      "soc_kwh": 50.0
+    },
+    {
+      "where": "after_trip_60",
+      "soc_kwh": 8.270000500000002
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 0.47000050000000204
+    }
+  ],
+  "peak08/Fresh CG plus exact-once cleanup/route1": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_1",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_1",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 172.5
+    },
+    {
+      "where": "after_deadhead_to_9",
+      "soc_kwh": 172.5
+    },
+    {
+      "where": "after_trip_9",
+      "soc_kwh": 130.0
+    },
+    {
+      "where": "after_deadhead_to_14",
+      "soc_kwh": 130.0
+    },
+    {
+      "where": "after_trip_14",
+      "soc_kwh": 88.27000050000001
+    },
+    {
+      "where": "after_deadhead_to_18",
+      "soc_kwh": 88.27000050000001
+    },
+    {
+      "where": "after_trip_18",
+      "soc_kwh": 45.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_22",
+      "soc_kwh": 45.77000050000001
+    },
+    {
+      "where": "after_trip_22",
+      "soc_kwh": 4.040001000000011
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 4.040001000000011
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_27",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_27",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_32",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_trip_32",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_36",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_36",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_40",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_trip_40",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_45",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_45",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_52",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_trip_52",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_57",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_57",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 220.0
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 192.0
+    }
+  ],
+  "peak08/Fresh CG plus exact-once cleanup/route2": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_3",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_3",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_8",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_trip_8",
+      "soc_kwh": 147.9700005
+    },
+    {
+      "where": "after_deadhead_to_13",
+      "soc_kwh": 147.9700005
+    },
+    {
+      "where": "after_trip_13",
+      "soc_kwh": 105.4700005
+    },
+    {
+      "where": "after_deadhead_to_17",
+      "soc_kwh": 105.4700005
+    },
+    {
+      "where": "after_trip_17",
+      "soc_kwh": 63.740001
+    },
+    {
+      "where": "after_deadhead_to_21",
+      "soc_kwh": 63.740001
+    },
+    {
+      "where": "after_trip_21",
+      "soc_kwh": 21.240001
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 21.240001
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 45.0
+    },
+    {
+      "where": "after_deadhead_to_26",
+      "soc_kwh": 45.0
+    },
+    {
+      "where": "after_trip_26",
+      "soc_kwh": 3.270000500000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000002
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_31",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_31",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 55.0
+    },
+    {
+      "where": "after_deadhead_to_35",
+      "soc_kwh": 55.0
+    },
+    {
+      "where": "after_trip_35",
+      "soc_kwh": 13.270000500000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 13.270000500000002
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 52.5
+    },
+    {
+      "where": "after_deadhead_to_39",
+      "soc_kwh": 52.5
+    },
+    {
+      "where": "after_trip_39",
+      "soc_kwh": 10.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 10.0
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 50.0
+    },
+    {
+      "where": "after_deadhead_to_44",
+      "soc_kwh": 50.0
+    },
+    {
+      "where": "after_trip_44",
+      "soc_kwh": 8.270000500000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 8.270000500000002
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_49",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_49",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_54",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_54",
+      "soc_kwh": 0.7700005000000019
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 0.7700005000000019
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_58",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_58",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 52.5
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 24.5
+    }
+  ],
+  "peak08/Fresh CG plus exact-once cleanup/route3": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_2",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_2",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 172.5
+    },
+    {
+      "where": "after_deadhead_to_6",
+      "soc_kwh": 172.5
+    },
+    {
+      "where": "after_trip_6",
+      "soc_kwh": 130.0
+    },
+    {
+      "where": "after_deadhead_to_10",
+      "soc_kwh": 130.0
+    },
+    {
+      "where": "after_trip_10",
+      "soc_kwh": 88.27000050000001
+    },
+    {
+      "where": "after_deadhead_to_15",
+      "soc_kwh": 88.27000050000001
+    },
+    {
+      "where": "after_trip_15",
+      "soc_kwh": 45.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 45.77000050000001
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 47.50000000000001
+    },
+    {
+      "where": "after_deadhead_to_24",
+      "soc_kwh": 47.50000000000001
+    },
+    {
+      "where": "after_trip_24",
+      "soc_kwh": 5.770000500000009
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 5.770000500000009
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 42.50000000000001
+    },
+    {
+      "where": "after_deadhead_to_29",
+      "soc_kwh": 42.50000000000001
+    },
+    {
+      "where": "after_trip_29",
+      "soc_kwh": 7.105427357601002e-15
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 7.105427357601002e-15
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 65.0
+    },
+    {
+      "where": "after_deadhead_to_37",
+      "soc_kwh": 65.0
+    },
+    {
+      "where": "after_trip_37",
+      "soc_kwh": 23.270000500000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 23.270000500000002
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 62.5
+    },
+    {
+      "where": "after_deadhead_to_42",
+      "soc_kwh": 62.5
+    },
+    {
+      "where": "after_trip_42",
+      "soc_kwh": 20.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 20.0
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 47.5
+    },
+    {
+      "where": "after_deadhead_to_47",
+      "soc_kwh": 47.5
+    },
+    {
+      "where": "after_trip_47",
+      "soc_kwh": 5.770000500000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 5.770000500000002
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 45.0
+    },
+    {
+      "where": "after_deadhead_to_51",
+      "soc_kwh": 45.0
+    },
+    {
+      "where": "after_trip_51",
+      "soc_kwh": 2.5
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 2.5
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_56",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_56",
+      "soc_kwh": 0.7700005000000019
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 0.7700005000000019
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_61",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_61",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 47.5
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 19.5
+    }
+  ],
+  "peak08/Fresh CG plus exact-once cleanup/route4": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_5",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_5",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_11",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_trip_11",
+      "soc_kwh": 147.9700005
+    },
+    {
+      "where": "after_deadhead_to_16",
+      "soc_kwh": 147.9700005
+    },
+    {
+      "where": "after_trip_16",
+      "soc_kwh": 105.4700005
+    },
+    {
+      "where": "after_deadhead_to_20",
+      "soc_kwh": 105.4700005
+    },
+    {
+      "where": "after_trip_20",
+      "soc_kwh": 63.740001
+    },
+    {
+      "where": "after_deadhead_to_25",
+      "soc_kwh": 63.740001
+    },
+    {
+      "where": "after_trip_25",
+      "soc_kwh": 21.240001
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 21.240001
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 45.0
+    },
+    {
+      "where": "after_deadhead_to_30",
+      "soc_kwh": 45.0
+    },
+    {
+      "where": "after_trip_30",
+      "soc_kwh": 3.270000500000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000002
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_34",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_34",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 45.0
+    },
+    {
+      "where": "after_deadhead_to_38",
+      "soc_kwh": 45.0
+    },
+    {
+      "where": "after_trip_38",
+      "soc_kwh": 3.270000500000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000002
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_43",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_43",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 50.0
+    },
+    {
+      "where": "after_deadhead_to_48",
+      "soc_kwh": 50.0
+    },
+    {
+      "where": "after_trip_48",
+      "soc_kwh": 8.270000500000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 8.270000500000002
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_deadhead_to_53",
+      "soc_kwh": 42.5
+    },
+    {
+      "where": "after_trip_53",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 0.0
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 50.0
+    },
+    {
+      "where": "after_deadhead_to_60",
+      "soc_kwh": 50.0
+    },
+    {
+      "where": "after_trip_60",
+      "soc_kwh": 8.270000500000002
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 0.47000050000000204
+    }
+  ],
+  "peak08/Fresh CG plus exact-once cleanup/route5": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_0",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_deadhead_to_4",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_trip_4",
+      "soc_kwh": 170.0
+    },
+    {
+      "where": "after_deadhead_to_7",
+      "soc_kwh": 170.0
+    },
+    {
+      "where": "after_trip_7",
+      "soc_kwh": 128.2700005
+    },
+    {
+      "where": "after_deadhead_to_12",
+      "soc_kwh": 128.2700005
+    },
+    {
+      "where": "after_trip_12",
+      "soc_kwh": 85.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_19",
+      "soc_kwh": 85.77000050000001
+    },
+    {
+      "where": "after_trip_19",
+      "soc_kwh": 44.04000100000001
+    },
+    {
+      "where": "after_deadhead_to_23",
+      "soc_kwh": 44.04000100000001
+    },
+    {
+      "where": "after_trip_23",
+      "soc_kwh": 1.5400010000000108
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.5400010000000108
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_28",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_trip_28",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_33",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_33",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 72.50000000000001
+    },
+    {
+      "where": "after_deadhead_to_41",
+      "soc_kwh": 72.50000000000001
+    },
+    {
+      "where": "after_trip_41",
+      "soc_kwh": 30.770000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 30.770000500000016
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 70.00000000000001
+    },
+    {
+      "where": "after_deadhead_to_46",
+      "soc_kwh": 70.00000000000001
+    },
+    {
+      "where": "after_trip_46",
+      "soc_kwh": 27.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 27.500000000000014
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_50",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_trip_50",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000016
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_55",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_55",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_59",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_59",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 52.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 44.70000000000002
+    }
+  ],
+  "peak12/Original GIRO, unchanged charging/13401": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_0",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 195.24422650000002
+    },
+    {
+      "where": "after_deadhead_to_3",
+      "soc_kwh": 195.24422650000002
+    },
+    {
+      "where": "after_trip_3",
+      "soc_kwh": 152.74422650000002
+    },
+    {
+      "where": "after_deadhead_to_8",
+      "soc_kwh": 152.74422650000002
+    },
+    {
+      "where": "after_trip_8",
+      "soc_kwh": 111.01422700000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 111.01422700000003
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 146.39001280000002
+    },
+    {
+      "where": "after_deadhead_to_13",
+      "soc_kwh": 146.39001280000002
+    },
+    {
+      "where": "after_trip_13",
+      "soc_kwh": 103.89001280000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 103.89001280000002
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 129.69502450000002
+    },
+    {
+      "where": "after_deadhead_to_20",
+      "soc_kwh": 129.69502450000002
+    },
+    {
+      "where": "after_trip_20",
+      "soc_kwh": 87.96502500000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 87.96502500000003
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 124.95761300000002
+    },
+    {
+      "where": "after_deadhead_to_25",
+      "soc_kwh": 124.95761300000002
+    },
+    {
+      "where": "after_trip_25",
+      "soc_kwh": 82.45761300000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 82.45761300000002
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 129.93917280000002
+    },
+    {
+      "where": "after_deadhead_to_30",
+      "soc_kwh": 129.93917280000002
+    },
+    {
+      "where": "after_trip_30",
+      "soc_kwh": 88.20917330000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 88.20917330000003
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 125.21554000000003
+    },
+    {
+      "where": "after_deadhead_to_34",
+      "soc_kwh": 125.21554000000003
+    },
+    {
+      "where": "after_trip_34",
+      "soc_kwh": 82.71554000000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 82.71554000000003
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 114.84375580000003
+    },
+    {
+      "where": "after_deadhead_to_41",
+      "soc_kwh": 114.84375580000003
+    },
+    {
+      "where": "after_trip_41",
+      "soc_kwh": 73.11375630000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 73.11375630000003
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 111.03555500000003
+    },
+    {
+      "where": "after_deadhead_to_46",
+      "soc_kwh": 111.03555500000003
+    },
+    {
+      "where": "after_trip_46",
+      "soc_kwh": 68.53555500000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 68.53555500000003
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 127.62131320000003
+    },
+    {
+      "where": "after_deadhead_to_52",
+      "soc_kwh": 127.62131320000003
+    },
+    {
+      "where": "after_trip_52",
+      "soc_kwh": 85.89131370000004
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 85.89131370000004
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 123.12196560000004
+    },
+    {
+      "where": "after_deadhead_to_57",
+      "soc_kwh": 123.12196560000004
+    },
+    {
+      "where": "after_trip_57",
+      "soc_kwh": 80.62196560000004
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 52.62196560000004
+    }
+  ],
+  "peak12/Original GIRO, unchanged charging/13403": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_1",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_1",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 197.74422650000002
+    },
+    {
+      "where": "after_deadhead_to_5",
+      "soc_kwh": 197.74422650000002
+    },
+    {
+      "where": "after_trip_5",
+      "soc_kwh": 155.24422650000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 155.24422650000002
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 195.00861170000002
+    },
+    {
+      "where": "after_deadhead_to_11",
+      "soc_kwh": 195.00861170000002
+    },
+    {
+      "where": "after_trip_11",
+      "soc_kwh": 153.27861220000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 153.27861220000003
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 185.60712630000003
+    },
+    {
+      "where": "after_deadhead_to_16",
+      "soc_kwh": 185.60712630000003
+    },
+    {
+      "where": "after_trip_16",
+      "soc_kwh": 143.10712630000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 143.10712630000003
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 166.97226910000003
+    },
+    {
+      "where": "after_deadhead_to_22",
+      "soc_kwh": 166.97226910000003
+    },
+    {
+      "where": "after_trip_22",
+      "soc_kwh": 125.24226960000004
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 125.24226960000004
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 159.45710190000005
+    },
+    {
+      "where": "after_deadhead_to_27",
+      "soc_kwh": 159.45710190000005
+    },
+    {
+      "where": "after_trip_27",
+      "soc_kwh": 116.95710190000005
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 116.95710190000005
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 161.34665120000005
+    },
+    {
+      "where": "after_deadhead_to_32",
+      "soc_kwh": 161.34665120000005
+    },
+    {
+      "where": "after_trip_32",
+      "soc_kwh": 119.61665170000006
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 119.61665170000006
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 154.27684990000006
+    },
+    {
+      "where": "after_deadhead_to_36",
+      "soc_kwh": 154.27684990000006
+    },
+    {
+      "where": "after_trip_36",
+      "soc_kwh": 111.77684990000006
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 111.77684990000006
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 147.19925900000007
+    },
+    {
+      "where": "after_deadhead_to_40",
+      "soc_kwh": 147.19925900000007
+    },
+    {
+      "where": "after_trip_40",
+      "soc_kwh": 105.46925950000008
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 105.46925950000008
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 141.1863997000001
+    },
+    {
+      "where": "after_deadhead_to_45",
+      "soc_kwh": 141.1863997000001
+    },
+    {
+      "where": "after_trip_45",
+      "soc_kwh": 98.6863997000001
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 98.6863997000001
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 149.6450102000001
+    },
+    {
+      "where": "after_deadhead_to_50",
+      "soc_kwh": 149.6450102000001
+    },
+    {
+      "where": "after_trip_50",
+      "soc_kwh": 107.9150107000001
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 107.9150107000001
+    },
+    {
+      "where": "after_charge_10",
+      "soc_kwh": 143.5376837000001
+    },
+    {
+      "where": "after_deadhead_to_55",
+      "soc_kwh": 143.5376837000001
+    },
+    {
+      "where": "after_trip_55",
+      "soc_kwh": 101.03768370000009
+    },
+    {
+      "where": "after_deadhead_to_59",
+      "soc_kwh": 101.03768370000009
+    },
+    {
+      "where": "after_trip_59",
+      "soc_kwh": 59.30768420000009
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 59.30768420000009
+    },
+    {
+      "where": "after_charge_11",
+      "soc_kwh": 124.54900190000009
+    },
+    {
+      "where": "after_deadhead_to_61",
+      "soc_kwh": 124.54900190000009
+    },
+    {
+      "where": "after_trip_61",
+      "soc_kwh": 82.04900190000009
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 54.04900190000009
+    }
+  ],
+  "peak12/Original GIRO, unchanged charging/13405": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_2",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_2",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 197.74422650000002
+    },
+    {
+      "where": "after_deadhead_to_6",
+      "soc_kwh": 197.74422650000002
+    },
+    {
+      "where": "after_trip_6",
+      "soc_kwh": 155.24422650000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 155.24422650000002
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 194.9770947
+    },
+    {
+      "where": "after_deadhead_to_10",
+      "soc_kwh": 194.9770947
+    },
+    {
+      "where": "after_trip_10",
+      "soc_kwh": 153.24709520000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 153.24709520000002
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 185.57382020000003
+    },
+    {
+      "where": "after_deadhead_to_15",
+      "soc_kwh": 185.57382020000003
+    },
+    {
+      "where": "after_trip_15",
+      "soc_kwh": 143.07382020000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 143.07382020000003
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 166.93492330000004
+    },
+    {
+      "where": "after_deadhead_to_19",
+      "soc_kwh": 166.93492330000004
+    },
+    {
+      "where": "after_trip_19",
+      "soc_kwh": 125.20492380000005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 125.20492380000005
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 159.41591090000003
+    },
+    {
+      "where": "after_deadhead_to_23",
+      "soc_kwh": 159.41591090000003
+    },
+    {
+      "where": "after_trip_23",
+      "soc_kwh": 116.91591090000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 116.91591090000003
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 161.29847930000003
+    },
+    {
+      "where": "after_deadhead_to_28",
+      "soc_kwh": 161.29847930000003
+    },
+    {
+      "where": "after_trip_28",
+      "soc_kwh": 119.56847980000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 119.56847980000003
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 154.22234180000004
+    },
+    {
+      "where": "after_deadhead_to_33",
+      "soc_kwh": 154.22234180000004
+    },
+    {
+      "where": "after_trip_33",
+      "soc_kwh": 111.72234180000004
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 111.72234180000004
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 156.62233570000004
+    },
+    {
+      "where": "after_deadhead_to_37",
+      "soc_kwh": 156.62233570000004
+    },
+    {
+      "where": "after_trip_37",
+      "soc_kwh": 114.89233620000005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 114.89233620000005
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 150.01576450000005
+    },
+    {
+      "where": "after_deadhead_to_42",
+      "soc_kwh": 150.01576450000005
+    },
+    {
+      "where": "after_trip_42",
+      "soc_kwh": 107.51576450000005
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 107.51576450000005
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 128.20135140000005
+    },
+    {
+      "where": "after_deadhead_to_47",
+      "soc_kwh": 128.20135140000005
+    },
+    {
+      "where": "after_trip_47",
+      "soc_kwh": 86.47135190000006
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 86.47135190000006
+    },
+    {
+      "where": "after_charge_10",
+      "soc_kwh": 123.65042900000006
+    },
+    {
+      "where": "after_deadhead_to_51",
+      "soc_kwh": 123.65042900000006
+    },
+    {
+      "where": "after_trip_51",
+      "soc_kwh": 81.15042900000006
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 81.15042900000006
+    },
+    {
+      "where": "after_charge_11",
+      "soc_kwh": 113.35741450000006
+    },
+    {
+      "where": "after_deadhead_to_56",
+      "soc_kwh": 113.35741450000006
+    },
+    {
+      "where": "after_trip_56",
+      "soc_kwh": 71.62741500000007
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 63.82741500000007
+    }
+  ],
+  "peak12/Original GIRO, unchanged charging/13408": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_4",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_4",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 216.2164566
+    },
+    {
+      "where": "after_deadhead_to_7",
+      "soc_kwh": 216.2164566
+    },
+    {
+      "where": "after_trip_7",
+      "soc_kwh": 174.4864571
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 174.4864571
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 200.264478
+    },
+    {
+      "where": "after_deadhead_to_12",
+      "soc_kwh": 200.264478
+    },
+    {
+      "where": "after_trip_12",
+      "soc_kwh": 157.764478
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 157.764478
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 196.5004895
+    },
+    {
+      "where": "after_deadhead_to_17",
+      "soc_kwh": 196.5004895
+    },
+    {
+      "where": "after_trip_17",
+      "soc_kwh": 154.77049
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 154.77049
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 187.0405553
+    },
+    {
+      "where": "after_deadhead_to_21",
+      "soc_kwh": 187.0405553
+    },
+    {
+      "where": "after_trip_21",
+      "soc_kwh": 144.5405553
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 144.5405553
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 186.4488118
+    },
+    {
+      "where": "after_deadhead_to_26",
+      "soc_kwh": 186.4488118
+    },
+    {
+      "where": "after_trip_26",
+      "soc_kwh": 144.7188123
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 144.7188123
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 177.6097806
+    },
+    {
+      "where": "after_deadhead_to_31",
+      "soc_kwh": 177.6097806
+    },
+    {
+      "where": "after_trip_31",
+      "soc_kwh": 135.1097806
+    },
+    {
+      "where": "after_deadhead_to_38",
+      "soc_kwh": 135.1097806
+    },
+    {
+      "where": "after_trip_38",
+      "soc_kwh": 93.3797811
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 93.3797811
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 129.9269308
+    },
+    {
+      "where": "after_deadhead_to_43",
+      "soc_kwh": 129.9269308
+    },
+    {
+      "where": "after_trip_43",
+      "soc_kwh": 87.42693080000001
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 87.42693080000001
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 134.5030226
+    },
+    {
+      "where": "after_deadhead_to_48",
+      "soc_kwh": 134.5030226
+    },
+    {
+      "where": "after_trip_48",
+      "soc_kwh": 92.77302310000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 92.77302310000002
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 124.42644070000001
+    },
+    {
+      "where": "after_deadhead_to_53",
+      "soc_kwh": 124.42644070000001
+    },
+    {
+      "where": "after_trip_53",
+      "soc_kwh": 81.92644070000001
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 53.926440700000015
+    }
+  ],
+  "peak12/Original GIRO, unchanged charging/13414": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_9",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_9",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 216.2164566
+    },
+    {
+      "where": "after_deadhead_to_14",
+      "soc_kwh": 216.2164566
+    },
+    {
+      "where": "after_trip_14",
+      "soc_kwh": 174.4864571
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 174.4864571
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 200.264478
+    },
+    {
+      "where": "after_deadhead_to_18",
+      "soc_kwh": 200.264478
+    },
+    {
+      "where": "after_trip_18",
+      "soc_kwh": 157.764478
+    },
+    {
+      "where": "after_deadhead_to_24",
+      "soc_kwh": 157.764478
+    },
+    {
+      "where": "after_trip_24",
+      "soc_kwh": 116.0344785
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 116.0344785
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 150.98379640000002
+    },
+    {
+      "where": "after_deadhead_to_29",
+      "soc_kwh": 150.98379640000002
+    },
+    {
+      "where": "after_trip_29",
+      "soc_kwh": 108.48379640000002
+    },
+    {
+      "where": "after_deadhead_to_35",
+      "soc_kwh": 108.48379640000002
+    },
+    {
+      "where": "after_trip_35",
+      "soc_kwh": 66.75379690000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 66.75379690000003
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 105.14142740000003
+    },
+    {
+      "where": "after_deadhead_to_39",
+      "soc_kwh": 105.14142740000003
+    },
+    {
+      "where": "after_trip_39",
+      "soc_kwh": 62.641427400000026
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 62.641427400000026
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 96.01616040000002
+    },
+    {
+      "where": "after_deadhead_to_44",
+      "soc_kwh": 96.01616040000002
+    },
+    {
+      "where": "after_trip_44",
+      "soc_kwh": 54.28616090000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 54.28616090000002
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 88.01461930000002
+    },
+    {
+      "where": "after_deadhead_to_49",
+      "soc_kwh": 88.01461930000002
+    },
+    {
+      "where": "after_trip_49",
+      "soc_kwh": 45.51461930000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 45.51461930000002
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 101.72123470000002
+    },
+    {
+      "where": "after_deadhead_to_54",
+      "soc_kwh": 101.72123470000002
+    },
+    {
+      "where": "after_trip_54",
+      "soc_kwh": 59.99123520000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 59.99123520000003
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 104.24462270000004
+    },
+    {
+      "where": "after_deadhead_to_58",
+      "soc_kwh": 104.24462270000004
+    },
+    {
+      "where": "after_trip_58",
+      "soc_kwh": 61.744622700000036
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 61.744622700000036
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 105.88850160000004
+    },
+    {
+      "where": "after_deadhead_to_60",
+      "soc_kwh": 105.88850160000004
+    },
+    {
+      "where": "after_trip_60",
+      "soc_kwh": 64.15850210000005
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 56.35850210000005
+    }
+  ],
+  "peak12/Fixed GIRO trips, charging optimized/13401": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_0",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 202.5
+    },
+    {
+      "where": "after_deadhead_to_3",
+      "soc_kwh": 202.5
+    },
+    {
+      "where": "after_trip_3",
+      "soc_kwh": 160.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 160.0
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_8",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_8",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_13",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_13",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_20",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_20",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_25",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_trip_25",
+      "soc_kwh": 155.7700005
+    },
+    {
+      "where": "after_deadhead_to_30",
+      "soc_kwh": 155.7700005
+    },
+    {
+      "where": "after_trip_30",
+      "soc_kwh": 114.04000100000002
+    },
+    {
+      "where": "after_deadhead_to_34",
+      "soc_kwh": 114.04000100000002
+    },
+    {
+      "where": "after_trip_34",
+      "soc_kwh": 71.54000100000002
+    },
+    {
+      "where": "after_deadhead_to_41",
+      "soc_kwh": 71.54000100000002
+    },
+    {
+      "where": "after_trip_41",
+      "soc_kwh": 29.81000150000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 29.81000150000002
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_deadhead_to_46",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_trip_46",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 45.00000000000002
+    },
+    {
+      "where": "after_deadhead_to_52",
+      "soc_kwh": 45.00000000000002
+    },
+    {
+      "where": "after_trip_52",
+      "soc_kwh": 3.270000500000023
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000023
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_deadhead_to_57",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_trip_57",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 30.00000000000002
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 2.0000000000000213
+    }
+  ],
+  "peak12/Fixed GIRO trips, charging optimized/13403": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_1",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_1",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 207.5
+    },
+    {
+      "where": "after_deadhead_to_5",
+      "soc_kwh": 207.5
+    },
+    {
+      "where": "after_trip_5",
+      "soc_kwh": 165.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 165.0
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_11",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_11",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_16",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_16",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 220.0
+    },
+    {
+      "where": "after_deadhead_to_22",
+      "soc_kwh": 220.0
+    },
+    {
+      "where": "after_trip_22",
+      "soc_kwh": 178.2700005
+    },
+    {
+      "where": "after_deadhead_to_27",
+      "soc_kwh": 178.2700005
+    },
+    {
+      "where": "after_trip_27",
+      "soc_kwh": 135.7700005
+    },
+    {
+      "where": "after_deadhead_to_32",
+      "soc_kwh": 135.7700005
+    },
+    {
+      "where": "after_trip_32",
+      "soc_kwh": 94.04000100000002
+    },
+    {
+      "where": "after_deadhead_to_36",
+      "soc_kwh": 94.04000100000002
+    },
+    {
+      "where": "after_trip_36",
+      "soc_kwh": 51.54000100000002
+    },
+    {
+      "where": "after_deadhead_to_40",
+      "soc_kwh": 51.54000100000002
+    },
+    {
+      "where": "after_trip_40",
+      "soc_kwh": 9.81000150000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 9.81000150000002
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_deadhead_to_45",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_trip_45",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 45.00000000000002
+    },
+    {
+      "where": "after_deadhead_to_50",
+      "soc_kwh": 45.00000000000002
+    },
+    {
+      "where": "after_trip_50",
+      "soc_kwh": 3.270000500000023
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000023
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_deadhead_to_55",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_trip_55",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_deadhead_to_59",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_trip_59",
+      "soc_kwh": 0.7700005000000232
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 0.7700005000000232
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_deadhead_to_61",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_trip_61",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 30.00000000000002
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 2.0000000000000213
+    }
+  ],
+  "peak12/Fixed GIRO trips, charging optimized/13405": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_2",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_2",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 207.5
+    },
+    {
+      "where": "after_deadhead_to_6",
+      "soc_kwh": 207.5
+    },
+    {
+      "where": "after_trip_6",
+      "soc_kwh": 165.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 165.0
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 222.5
+    },
+    {
+      "where": "after_deadhead_to_10",
+      "soc_kwh": 222.5
+    },
+    {
+      "where": "after_trip_10",
+      "soc_kwh": 180.7700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 180.7700005
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 220.0
+    },
+    {
+      "where": "after_deadhead_to_15",
+      "soc_kwh": 220.0
+    },
+    {
+      "where": "after_trip_15",
+      "soc_kwh": 177.5
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 177.5
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_deadhead_to_19",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_trip_19",
+      "soc_kwh": 170.7700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.7700005
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 192.5
+    },
+    {
+      "where": "after_deadhead_to_23",
+      "soc_kwh": 192.5
+    },
+    {
+      "where": "after_trip_23",
+      "soc_kwh": 150.0
+    },
+    {
+      "where": "after_deadhead_to_28",
+      "soc_kwh": 150.0
+    },
+    {
+      "where": "after_trip_28",
+      "soc_kwh": 108.27000050000001
+    },
+    {
+      "where": "after_deadhead_to_33",
+      "soc_kwh": 108.27000050000001
+    },
+    {
+      "where": "after_trip_33",
+      "soc_kwh": 65.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_37",
+      "soc_kwh": 65.77000050000001
+    },
+    {
+      "where": "after_trip_37",
+      "soc_kwh": 24.04000100000001
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 24.04000100000001
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 62.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_42",
+      "soc_kwh": 62.500000000000014
+    },
+    {
+      "where": "after_trip_42",
+      "soc_kwh": 20.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 20.000000000000014
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 47.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_47",
+      "soc_kwh": 47.500000000000014
+    },
+    {
+      "where": "after_trip_47",
+      "soc_kwh": 5.770000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 5.770000500000016
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_51",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_trip_51",
+      "soc_kwh": 2.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 2.500000000000014
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_56",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_56",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 229.7
+    }
+  ],
+  "peak12/Fixed GIRO trips, charging optimized/13408": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_4",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_4",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_7",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_7",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_12",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_12",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_17",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_17",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 202.5
+    },
+    {
+      "where": "after_deadhead_to_21",
+      "soc_kwh": 202.5
+    },
+    {
+      "where": "after_trip_21",
+      "soc_kwh": 160.0
+    },
+    {
+      "where": "after_deadhead_to_26",
+      "soc_kwh": 160.0
+    },
+    {
+      "where": "after_trip_26",
+      "soc_kwh": 118.27000050000001
+    },
+    {
+      "where": "after_deadhead_to_31",
+      "soc_kwh": 118.27000050000001
+    },
+    {
+      "where": "after_trip_31",
+      "soc_kwh": 75.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_38",
+      "soc_kwh": 75.77000050000001
+    },
+    {
+      "where": "after_trip_38",
+      "soc_kwh": 34.04000100000001
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 34.04000100000001
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_43",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_43",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 50.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_48",
+      "soc_kwh": 50.000000000000014
+    },
+    {
+      "where": "after_trip_48",
+      "soc_kwh": 8.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 8.270000500000016
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_53",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_53",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 75.00000000000001
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 47.000000000000014
+    }
+  ],
+  "peak12/Fixed GIRO trips, charging optimized/13414": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_9",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_9",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_14",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_14",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 230.0
+    },
+    {
+      "where": "after_deadhead_to_18",
+      "soc_kwh": 230.0
+    },
+    {
+      "where": "after_trip_18",
+      "soc_kwh": 187.5
+    },
+    {
+      "where": "after_deadhead_to_24",
+      "soc_kwh": 187.5
+    },
+    {
+      "where": "after_trip_24",
+      "soc_kwh": 145.7700005
+    },
+    {
+      "where": "after_deadhead_to_29",
+      "soc_kwh": 145.7700005
+    },
+    {
+      "where": "after_trip_29",
+      "soc_kwh": 103.27000050000001
+    },
+    {
+      "where": "after_deadhead_to_35",
+      "soc_kwh": 103.27000050000001
+    },
+    {
+      "where": "after_trip_35",
+      "soc_kwh": 61.54000100000001
+    },
+    {
+      "where": "after_deadhead_to_39",
+      "soc_kwh": 61.54000100000001
+    },
+    {
+      "where": "after_trip_39",
+      "soc_kwh": 19.04000100000001
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 19.04000100000001
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 50.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_44",
+      "soc_kwh": 50.000000000000014
+    },
+    {
+      "where": "after_trip_44",
+      "soc_kwh": 8.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 8.270000500000016
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_49",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_49",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_54",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_54",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_58",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_58",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 50.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_60",
+      "soc_kwh": 50.000000000000014
+    },
+    {
+      "where": "after_trip_60",
+      "soc_kwh": 8.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 0.47000050000001625
+    }
+  ],
+  "peak12/Fresh CG plus exact-once cleanup/route1": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_0",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_4",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_4",
+      "soc_kwh": 197.5
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 197.5
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_8",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_8",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_13",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_13",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_19",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_19",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 200.0
+    },
+    {
+      "where": "after_deadhead_to_23",
+      "soc_kwh": 200.0
+    },
+    {
+      "where": "after_trip_23",
+      "soc_kwh": 157.5
+    },
+    {
+      "where": "after_deadhead_to_28",
+      "soc_kwh": 157.5
+    },
+    {
+      "where": "after_trip_28",
+      "soc_kwh": 115.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_33",
+      "soc_kwh": 115.77000050000001
+    },
+    {
+      "where": "after_trip_33",
+      "soc_kwh": 73.27000050000001
+    },
+    {
+      "where": "after_deadhead_to_37",
+      "soc_kwh": 73.27000050000001
+    },
+    {
+      "where": "after_trip_37",
+      "soc_kwh": 31.54000100000001
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 31.54000100000001
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 62.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_42",
+      "soc_kwh": 62.500000000000014
+    },
+    {
+      "where": "after_trip_42",
+      "soc_kwh": 20.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 20.000000000000014
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 47.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_47",
+      "soc_kwh": 47.500000000000014
+    },
+    {
+      "where": "after_trip_47",
+      "soc_kwh": 5.770000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 5.770000500000016
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_51",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_trip_51",
+      "soc_kwh": 2.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 2.500000000000014
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_56",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_56",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 107.50000000000003
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 99.70000000000003
+    }
+  ],
+  "peak12/Fresh CG plus exact-once cleanup/route2": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_1",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_1",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_9",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_9",
+      "soc_kwh": 197.5
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 197.5
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_14",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_14",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 205.0
+    },
+    {
+      "where": "after_deadhead_to_18",
+      "soc_kwh": 205.0
+    },
+    {
+      "where": "after_trip_18",
+      "soc_kwh": 162.5
+    },
+    {
+      "where": "after_deadhead_to_24",
+      "soc_kwh": 162.5
+    },
+    {
+      "where": "after_trip_24",
+      "soc_kwh": 120.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_29",
+      "soc_kwh": 120.77000050000001
+    },
+    {
+      "where": "after_trip_29",
+      "soc_kwh": 78.27000050000001
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 78.27000050000001
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 80.00000000000001
+    },
+    {
+      "where": "after_deadhead_to_38",
+      "soc_kwh": 80.00000000000001
+    },
+    {
+      "where": "after_trip_38",
+      "soc_kwh": 38.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 38.270000500000016
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_43",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_43",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 50.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_48",
+      "soc_kwh": 50.000000000000014
+    },
+    {
+      "where": "after_trip_48",
+      "soc_kwh": 8.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 8.270000500000016
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_53",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_53",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_59",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_59",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_61",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_61",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 45.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 17.000000000000014
+    }
+  ],
+  "peak12/Fresh CG plus exact-once cleanup/route3": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_3",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_3",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_7",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_7",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_12",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_12",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_17",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_17",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 217.5
+    },
+    {
+      "where": "after_deadhead_to_21",
+      "soc_kwh": 217.5
+    },
+    {
+      "where": "after_trip_21",
+      "soc_kwh": 175.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 175.0
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 177.5
+    },
+    {
+      "where": "after_deadhead_to_26",
+      "soc_kwh": 177.5
+    },
+    {
+      "where": "after_trip_26",
+      "soc_kwh": 135.7700005
+    },
+    {
+      "where": "after_deadhead_to_31",
+      "soc_kwh": 135.7700005
+    },
+    {
+      "where": "after_trip_31",
+      "soc_kwh": 93.27000050000001
+    },
+    {
+      "where": "after_deadhead_to_35",
+      "soc_kwh": 93.27000050000001
+    },
+    {
+      "where": "after_trip_35",
+      "soc_kwh": 51.54000100000001
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 51.54000100000001
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 52.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_39",
+      "soc_kwh": 52.500000000000014
+    },
+    {
+      "where": "after_trip_39",
+      "soc_kwh": 10.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 10.000000000000014
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 50.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_44",
+      "soc_kwh": 50.000000000000014
+    },
+    {
+      "where": "after_trip_44",
+      "soc_kwh": 8.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 8.270000500000016
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_49",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_49",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_54",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_54",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 0.7700005000000161
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_58",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_58",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_10",
+      "soc_kwh": 50.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_60",
+      "soc_kwh": 50.000000000000014
+    },
+    {
+      "where": "after_trip_60",
+      "soc_kwh": 8.270000500000016
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 0.47000050000001625
+    }
+  ],
+  "peak12/Fresh CG plus exact-once cleanup/route4": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_2",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_2",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 207.5
+    },
+    {
+      "where": "after_deadhead_to_6",
+      "soc_kwh": 207.5
+    },
+    {
+      "where": "after_trip_6",
+      "soc_kwh": 165.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 165.0
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_11",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_11",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_16",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_16",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 220.0
+    },
+    {
+      "where": "after_deadhead_to_22",
+      "soc_kwh": 220.0
+    },
+    {
+      "where": "after_trip_22",
+      "soc_kwh": 178.2700005
+    },
+    {
+      "where": "after_deadhead_to_27",
+      "soc_kwh": 178.2700005
+    },
+    {
+      "where": "after_trip_27",
+      "soc_kwh": 135.7700005
+    },
+    {
+      "where": "after_deadhead_to_32",
+      "soc_kwh": 135.7700005
+    },
+    {
+      "where": "after_trip_32",
+      "soc_kwh": 94.04000100000002
+    },
+    {
+      "where": "after_deadhead_to_36",
+      "soc_kwh": 94.04000100000002
+    },
+    {
+      "where": "after_trip_36",
+      "soc_kwh": 51.54000100000002
+    },
+    {
+      "where": "after_deadhead_to_40",
+      "soc_kwh": 51.54000100000002
+    },
+    {
+      "where": "after_trip_40",
+      "soc_kwh": 9.81000150000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 9.81000150000002
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_deadhead_to_45",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_trip_45",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 45.00000000000002
+    },
+    {
+      "where": "after_deadhead_to_50",
+      "soc_kwh": 45.00000000000002
+    },
+    {
+      "where": "after_trip_50",
+      "soc_kwh": 3.270000500000023
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000023
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_deadhead_to_55",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_trip_55",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 65.00000000000003
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 37.00000000000003
+    }
+  ],
+  "peak12/Fresh CG plus exact-once cleanup/route5": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_5",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_5",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_10",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_10",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_15",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_15",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 220.0
+    },
+    {
+      "where": "after_deadhead_to_20",
+      "soc_kwh": 220.0
+    },
+    {
+      "where": "after_trip_20",
+      "soc_kwh": 178.2700005
+    },
+    {
+      "where": "after_deadhead_to_25",
+      "soc_kwh": 178.2700005
+    },
+    {
+      "where": "after_trip_25",
+      "soc_kwh": 135.7700005
+    },
+    {
+      "where": "after_deadhead_to_30",
+      "soc_kwh": 135.7700005
+    },
+    {
+      "where": "after_trip_30",
+      "soc_kwh": 94.04000100000002
+    },
+    {
+      "where": "after_deadhead_to_34",
+      "soc_kwh": 94.04000100000002
+    },
+    {
+      "where": "after_trip_34",
+      "soc_kwh": 51.54000100000002
+    },
+    {
+      "where": "after_deadhead_to_41",
+      "soc_kwh": 51.54000100000002
+    },
+    {
+      "where": "after_trip_41",
+      "soc_kwh": 9.81000150000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 9.81000150000002
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_deadhead_to_46",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_trip_46",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 45.00000000000002
+    },
+    {
+      "where": "after_deadhead_to_52",
+      "soc_kwh": 45.00000000000002
+    },
+    {
+      "where": "after_trip_52",
+      "soc_kwh": 3.270000500000023
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 3.270000500000023
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_deadhead_to_57",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_trip_57",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 2.1316282072803006e-14
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 155.00000000000003
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 127.00000000000003
+    }
+  ],
+  "peak18/Original GIRO, unchanged charging/13401": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_0",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 195.24422650000002
+    },
+    {
+      "where": "after_deadhead_to_3",
+      "soc_kwh": 195.24422650000002
+    },
+    {
+      "where": "after_trip_3",
+      "soc_kwh": 152.74422650000002
+    },
+    {
+      "where": "after_deadhead_to_8",
+      "soc_kwh": 152.74422650000002
+    },
+    {
+      "where": "after_trip_8",
+      "soc_kwh": 111.01422700000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 111.01422700000003
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 146.39001280000002
+    },
+    {
+      "where": "after_deadhead_to_13",
+      "soc_kwh": 146.39001280000002
+    },
+    {
+      "where": "after_trip_13",
+      "soc_kwh": 103.89001280000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 103.89001280000002
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 129.69502450000002
+    },
+    {
+      "where": "after_deadhead_to_20",
+      "soc_kwh": 129.69502450000002
+    },
+    {
+      "where": "after_trip_20",
+      "soc_kwh": 87.96502500000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 87.96502500000003
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 124.95761300000002
+    },
+    {
+      "where": "after_deadhead_to_25",
+      "soc_kwh": 124.95761300000002
+    },
+    {
+      "where": "after_trip_25",
+      "soc_kwh": 82.45761300000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 82.45761300000002
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 129.93917280000002
+    },
+    {
+      "where": "after_deadhead_to_30",
+      "soc_kwh": 129.93917280000002
+    },
+    {
+      "where": "after_trip_30",
+      "soc_kwh": 88.20917330000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 88.20917330000003
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 125.21554000000003
+    },
+    {
+      "where": "after_deadhead_to_34",
+      "soc_kwh": 125.21554000000003
+    },
+    {
+      "where": "after_trip_34",
+      "soc_kwh": 82.71554000000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 82.71554000000003
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 114.84375580000003
+    },
+    {
+      "where": "after_deadhead_to_41",
+      "soc_kwh": 114.84375580000003
+    },
+    {
+      "where": "after_trip_41",
+      "soc_kwh": 73.11375630000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 73.11375630000003
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 111.03555500000003
+    },
+    {
+      "where": "after_deadhead_to_46",
+      "soc_kwh": 111.03555500000003
+    },
+    {
+      "where": "after_trip_46",
+      "soc_kwh": 68.53555500000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 68.53555500000003
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 127.62131320000003
+    },
+    {
+      "where": "after_deadhead_to_52",
+      "soc_kwh": 127.62131320000003
+    },
+    {
+      "where": "after_trip_52",
+      "soc_kwh": 85.89131370000004
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 85.89131370000004
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 123.12196560000004
+    },
+    {
+      "where": "after_deadhead_to_57",
+      "soc_kwh": 123.12196560000004
+    },
+    {
+      "where": "after_trip_57",
+      "soc_kwh": 80.62196560000004
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 52.62196560000004
+    }
+  ],
+  "peak18/Original GIRO, unchanged charging/13403": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_1",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_1",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 197.74422650000002
+    },
+    {
+      "where": "after_deadhead_to_5",
+      "soc_kwh": 197.74422650000002
+    },
+    {
+      "where": "after_trip_5",
+      "soc_kwh": 155.24422650000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 155.24422650000002
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 195.00861170000002
+    },
+    {
+      "where": "after_deadhead_to_11",
+      "soc_kwh": 195.00861170000002
+    },
+    {
+      "where": "after_trip_11",
+      "soc_kwh": 153.27861220000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 153.27861220000003
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 185.60712630000003
+    },
+    {
+      "where": "after_deadhead_to_16",
+      "soc_kwh": 185.60712630000003
+    },
+    {
+      "where": "after_trip_16",
+      "soc_kwh": 143.10712630000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 143.10712630000003
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 166.97226910000003
+    },
+    {
+      "where": "after_deadhead_to_22",
+      "soc_kwh": 166.97226910000003
+    },
+    {
+      "where": "after_trip_22",
+      "soc_kwh": 125.24226960000004
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 125.24226960000004
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 159.45710190000005
+    },
+    {
+      "where": "after_deadhead_to_27",
+      "soc_kwh": 159.45710190000005
+    },
+    {
+      "where": "after_trip_27",
+      "soc_kwh": 116.95710190000005
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 116.95710190000005
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 161.34665120000005
+    },
+    {
+      "where": "after_deadhead_to_32",
+      "soc_kwh": 161.34665120000005
+    },
+    {
+      "where": "after_trip_32",
+      "soc_kwh": 119.61665170000006
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 119.61665170000006
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 154.27684990000006
+    },
+    {
+      "where": "after_deadhead_to_36",
+      "soc_kwh": 154.27684990000006
+    },
+    {
+      "where": "after_trip_36",
+      "soc_kwh": 111.77684990000006
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 111.77684990000006
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 147.19925900000007
+    },
+    {
+      "where": "after_deadhead_to_40",
+      "soc_kwh": 147.19925900000007
+    },
+    {
+      "where": "after_trip_40",
+      "soc_kwh": 105.46925950000008
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 105.46925950000008
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 141.1863997000001
+    },
+    {
+      "where": "after_deadhead_to_45",
+      "soc_kwh": 141.1863997000001
+    },
+    {
+      "where": "after_trip_45",
+      "soc_kwh": 98.6863997000001
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 98.6863997000001
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 149.6450102000001
+    },
+    {
+      "where": "after_deadhead_to_50",
+      "soc_kwh": 149.6450102000001
+    },
+    {
+      "where": "after_trip_50",
+      "soc_kwh": 107.9150107000001
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 107.9150107000001
+    },
+    {
+      "where": "after_charge_10",
+      "soc_kwh": 143.5376837000001
+    },
+    {
+      "where": "after_deadhead_to_55",
+      "soc_kwh": 143.5376837000001
+    },
+    {
+      "where": "after_trip_55",
+      "soc_kwh": 101.03768370000009
+    },
+    {
+      "where": "after_deadhead_to_59",
+      "soc_kwh": 101.03768370000009
+    },
+    {
+      "where": "after_trip_59",
+      "soc_kwh": 59.30768420000009
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 59.30768420000009
+    },
+    {
+      "where": "after_charge_11",
+      "soc_kwh": 124.54900190000009
+    },
+    {
+      "where": "after_deadhead_to_61",
+      "soc_kwh": 124.54900190000009
+    },
+    {
+      "where": "after_trip_61",
+      "soc_kwh": 82.04900190000009
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 54.04900190000009
+    }
+  ],
+  "peak18/Original GIRO, unchanged charging/13405": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_2",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_2",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 197.74422650000002
+    },
+    {
+      "where": "after_deadhead_to_6",
+      "soc_kwh": 197.74422650000002
+    },
+    {
+      "where": "after_trip_6",
+      "soc_kwh": 155.24422650000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 155.24422650000002
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 194.9770947
+    },
+    {
+      "where": "after_deadhead_to_10",
+      "soc_kwh": 194.9770947
+    },
+    {
+      "where": "after_trip_10",
+      "soc_kwh": 153.24709520000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 153.24709520000002
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 185.57382020000003
+    },
+    {
+      "where": "after_deadhead_to_15",
+      "soc_kwh": 185.57382020000003
+    },
+    {
+      "where": "after_trip_15",
+      "soc_kwh": 143.07382020000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 143.07382020000003
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 166.93492330000004
+    },
+    {
+      "where": "after_deadhead_to_19",
+      "soc_kwh": 166.93492330000004
+    },
+    {
+      "where": "after_trip_19",
+      "soc_kwh": 125.20492380000005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 125.20492380000005
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 159.41591090000003
+    },
+    {
+      "where": "after_deadhead_to_23",
+      "soc_kwh": 159.41591090000003
+    },
+    {
+      "where": "after_trip_23",
+      "soc_kwh": 116.91591090000003
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 116.91591090000003
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 161.29847930000003
+    },
+    {
+      "where": "after_deadhead_to_28",
+      "soc_kwh": 161.29847930000003
+    },
+    {
+      "where": "after_trip_28",
+      "soc_kwh": 119.56847980000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 119.56847980000003
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 154.22234180000004
+    },
+    {
+      "where": "after_deadhead_to_33",
+      "soc_kwh": 154.22234180000004
+    },
+    {
+      "where": "after_trip_33",
+      "soc_kwh": 111.72234180000004
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 111.72234180000004
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 156.62233570000004
+    },
+    {
+      "where": "after_deadhead_to_37",
+      "soc_kwh": 156.62233570000004
+    },
+    {
+      "where": "after_trip_37",
+      "soc_kwh": 114.89233620000005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 114.89233620000005
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 150.01576450000005
+    },
+    {
+      "where": "after_deadhead_to_42",
+      "soc_kwh": 150.01576450000005
+    },
+    {
+      "where": "after_trip_42",
+      "soc_kwh": 107.51576450000005
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 107.51576450000005
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 128.20135140000005
+    },
+    {
+      "where": "after_deadhead_to_47",
+      "soc_kwh": 128.20135140000005
+    },
+    {
+      "where": "after_trip_47",
+      "soc_kwh": 86.47135190000006
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 86.47135190000006
+    },
+    {
+      "where": "after_charge_10",
+      "soc_kwh": 123.65042900000006
+    },
+    {
+      "where": "after_deadhead_to_51",
+      "soc_kwh": 123.65042900000006
+    },
+    {
+      "where": "after_trip_51",
+      "soc_kwh": 81.15042900000006
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 81.15042900000006
+    },
+    {
+      "where": "after_charge_11",
+      "soc_kwh": 113.35741450000006
+    },
+    {
+      "where": "after_deadhead_to_56",
+      "soc_kwh": 113.35741450000006
+    },
+    {
+      "where": "after_trip_56",
+      "soc_kwh": 71.62741500000007
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 63.82741500000007
+    }
+  ],
+  "peak18/Original GIRO, unchanged charging/13408": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_4",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_4",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 216.2164566
+    },
+    {
+      "where": "after_deadhead_to_7",
+      "soc_kwh": 216.2164566
+    },
+    {
+      "where": "after_trip_7",
+      "soc_kwh": 174.4864571
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 174.4864571
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 200.264478
+    },
+    {
+      "where": "after_deadhead_to_12",
+      "soc_kwh": 200.264478
+    },
+    {
+      "where": "after_trip_12",
+      "soc_kwh": 157.764478
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 157.764478
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 196.5004895
+    },
+    {
+      "where": "after_deadhead_to_17",
+      "soc_kwh": 196.5004895
+    },
+    {
+      "where": "after_trip_17",
+      "soc_kwh": 154.77049
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 154.77049
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 187.0405553
+    },
+    {
+      "where": "after_deadhead_to_21",
+      "soc_kwh": 187.0405553
+    },
+    {
+      "where": "after_trip_21",
+      "soc_kwh": 144.5405553
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 144.5405553
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 186.4488118
+    },
+    {
+      "where": "after_deadhead_to_26",
+      "soc_kwh": 186.4488118
+    },
+    {
+      "where": "after_trip_26",
+      "soc_kwh": 144.7188123
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 144.7188123
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 177.6097806
+    },
+    {
+      "where": "after_deadhead_to_31",
+      "soc_kwh": 177.6097806
+    },
+    {
+      "where": "after_trip_31",
+      "soc_kwh": 135.1097806
+    },
+    {
+      "where": "after_deadhead_to_38",
+      "soc_kwh": 135.1097806
+    },
+    {
+      "where": "after_trip_38",
+      "soc_kwh": 93.3797811
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 93.3797811
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 129.9269308
+    },
+    {
+      "where": "after_deadhead_to_43",
+      "soc_kwh": 129.9269308
+    },
+    {
+      "where": "after_trip_43",
+      "soc_kwh": 87.42693080000001
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 87.42693080000001
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 134.5030226
+    },
+    {
+      "where": "after_deadhead_to_48",
+      "soc_kwh": 134.5030226
+    },
+    {
+      "where": "after_trip_48",
+      "soc_kwh": 92.77302310000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 92.77302310000002
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 124.42644070000001
+    },
+    {
+      "where": "after_deadhead_to_53",
+      "soc_kwh": 124.42644070000001
+    },
+    {
+      "where": "after_trip_53",
+      "soc_kwh": 81.92644070000001
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 53.926440700000015
+    }
+  ],
+  "peak18/Original GIRO, unchanged charging/13414": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_9",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_9",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 216.2164566
+    },
+    {
+      "where": "after_deadhead_to_14",
+      "soc_kwh": 216.2164566
+    },
+    {
+      "where": "after_trip_14",
+      "soc_kwh": 174.4864571
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 174.4864571
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 200.264478
+    },
+    {
+      "where": "after_deadhead_to_18",
+      "soc_kwh": 200.264478
+    },
+    {
+      "where": "after_trip_18",
+      "soc_kwh": 157.764478
+    },
+    {
+      "where": "after_deadhead_to_24",
+      "soc_kwh": 157.764478
+    },
+    {
+      "where": "after_trip_24",
+      "soc_kwh": 116.0344785
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 116.0344785
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 150.98379640000002
+    },
+    {
+      "where": "after_deadhead_to_29",
+      "soc_kwh": 150.98379640000002
+    },
+    {
+      "where": "after_trip_29",
+      "soc_kwh": 108.48379640000002
+    },
+    {
+      "where": "after_deadhead_to_35",
+      "soc_kwh": 108.48379640000002
+    },
+    {
+      "where": "after_trip_35",
+      "soc_kwh": 66.75379690000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 66.75379690000003
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 105.14142740000003
+    },
+    {
+      "where": "after_deadhead_to_39",
+      "soc_kwh": 105.14142740000003
+    },
+    {
+      "where": "after_trip_39",
+      "soc_kwh": 62.641427400000026
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 62.641427400000026
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 96.01616040000002
+    },
+    {
+      "where": "after_deadhead_to_44",
+      "soc_kwh": 96.01616040000002
+    },
+    {
+      "where": "after_trip_44",
+      "soc_kwh": 54.28616090000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 54.28616090000002
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 88.01461930000002
+    },
+    {
+      "where": "after_deadhead_to_49",
+      "soc_kwh": 88.01461930000002
+    },
+    {
+      "where": "after_trip_49",
+      "soc_kwh": 45.51461930000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 45.51461930000002
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 101.72123470000002
+    },
+    {
+      "where": "after_deadhead_to_54",
+      "soc_kwh": 101.72123470000002
+    },
+    {
+      "where": "after_trip_54",
+      "soc_kwh": 59.99123520000003
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 59.99123520000003
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 104.24462270000004
+    },
+    {
+      "where": "after_deadhead_to_58",
+      "soc_kwh": 104.24462270000004
+    },
+    {
+      "where": "after_trip_58",
+      "soc_kwh": 61.744622700000036
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 61.744622700000036
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 105.88850160000004
+    },
+    {
+      "where": "after_deadhead_to_60",
+      "soc_kwh": 105.88850160000004
+    },
+    {
+      "where": "after_trip_60",
+      "soc_kwh": 64.15850210000005
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 56.35850210000005
+    }
+  ],
+  "peak18/Fixed GIRO trips, charging optimized/13401": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_0",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 202.5
+    },
+    {
+      "where": "after_deadhead_to_3",
+      "soc_kwh": 202.5
+    },
+    {
+      "where": "after_trip_3",
+      "soc_kwh": 160.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 160.0
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_8",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_8",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_13",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_13",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_20",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_20",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_25",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_25",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_30",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_30",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 235.0
+    },
+    {
+      "where": "after_deadhead_to_34",
+      "soc_kwh": 235.0
+    },
+    {
+      "where": "after_trip_34",
+      "soc_kwh": 192.5
+    },
+    {
+      "where": "after_deadhead_to_41",
+      "soc_kwh": 192.5
+    },
+    {
+      "where": "after_trip_41",
+      "soc_kwh": 150.7700005
+    },
+    {
+      "where": "after_deadhead_to_46",
+      "soc_kwh": 150.7700005
+    },
+    {
+      "where": "after_trip_46",
+      "soc_kwh": 108.27000050000001
+    },
+    {
+      "where": "after_deadhead_to_52",
+      "soc_kwh": 108.27000050000001
+    },
+    {
+      "where": "after_trip_52",
+      "soc_kwh": 66.54000100000002
+    },
+    {
+      "where": "after_deadhead_to_57",
+      "soc_kwh": 66.54000100000002
+    },
+    {
+      "where": "after_trip_57",
+      "soc_kwh": 24.040001000000018
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 24.040001000000018
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 160.00000000000003
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 132.00000000000003
+    }
+  ],
+  "peak18/Fixed GIRO trips, charging optimized/13403": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_1",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_1",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 207.5
+    },
+    {
+      "where": "after_deadhead_to_5",
+      "soc_kwh": 207.5
+    },
+    {
+      "where": "after_trip_5",
+      "soc_kwh": 165.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 165.0
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_11",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_11",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_16",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_16",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_22",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_22",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_27",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_27",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_32",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_32",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_36",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_36",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_40",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_40",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_deadhead_to_45",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_trip_45",
+      "soc_kwh": 170.0
+    },
+    {
+      "where": "after_deadhead_to_50",
+      "soc_kwh": 170.0
+    },
+    {
+      "where": "after_trip_50",
+      "soc_kwh": 128.2700005
+    },
+    {
+      "where": "after_deadhead_to_55",
+      "soc_kwh": 128.2700005
+    },
+    {
+      "where": "after_trip_55",
+      "soc_kwh": 85.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_59",
+      "soc_kwh": 85.77000050000001
+    },
+    {
+      "where": "after_trip_59",
+      "soc_kwh": 44.04000100000001
+    },
+    {
+      "where": "after_deadhead_to_61",
+      "soc_kwh": 44.04000100000001
+    },
+    {
+      "where": "after_trip_61",
+      "soc_kwh": 1.5400010000000108
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.5400010000000108
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 30.00000000000001
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 2.0000000000000107
+    }
+  ],
+  "peak18/Fixed GIRO trips, charging optimized/13405": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_2",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_2",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 207.5
+    },
+    {
+      "where": "after_deadhead_to_6",
+      "soc_kwh": 207.5
+    },
+    {
+      "where": "after_trip_6",
+      "soc_kwh": 165.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 165.0
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 222.5
+    },
+    {
+      "where": "after_deadhead_to_10",
+      "soc_kwh": 222.5
+    },
+    {
+      "where": "after_trip_10",
+      "soc_kwh": 180.7700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 180.7700005
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 220.0
+    },
+    {
+      "where": "after_deadhead_to_15",
+      "soc_kwh": 220.0
+    },
+    {
+      "where": "after_trip_15",
+      "soc_kwh": 177.5
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 177.5
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_deadhead_to_19",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_trip_19",
+      "soc_kwh": 170.7700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.7700005
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 210.0
+    },
+    {
+      "where": "after_deadhead_to_23",
+      "soc_kwh": 210.0
+    },
+    {
+      "where": "after_trip_23",
+      "soc_kwh": 167.5
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 167.5
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 225.0
+    },
+    {
+      "where": "after_deadhead_to_28",
+      "soc_kwh": 225.0
+    },
+    {
+      "where": "after_trip_28",
+      "soc_kwh": 183.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 183.2700005
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 222.5
+    },
+    {
+      "where": "after_deadhead_to_33",
+      "soc_kwh": 222.5
+    },
+    {
+      "where": "after_trip_33",
+      "soc_kwh": 180.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 180.0
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_deadhead_to_37",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_trip_37",
+      "soc_kwh": 170.7700005
+    },
+    {
+      "where": "after_deadhead_to_42",
+      "soc_kwh": 170.7700005
+    },
+    {
+      "where": "after_trip_42",
+      "soc_kwh": 128.2700005
+    },
+    {
+      "where": "after_deadhead_to_47",
+      "soc_kwh": 128.2700005
+    },
+    {
+      "where": "after_trip_47",
+      "soc_kwh": 86.54000100000002
+    },
+    {
+      "where": "after_deadhead_to_51",
+      "soc_kwh": 86.54000100000002
+    },
+    {
+      "where": "after_trip_51",
+      "soc_kwh": 44.04000100000002
+    },
+    {
+      "where": "after_deadhead_to_56",
+      "soc_kwh": 44.04000100000002
+    },
+    {
+      "where": "after_trip_56",
+      "soc_kwh": 2.31000150000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 2.31000150000002
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 135.00000000000003
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 127.20000000000003
+    }
+  ],
+  "peak18/Fixed GIRO trips, charging optimized/13408": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_4",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_4",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_7",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_7",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_12",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_12",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_17",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_17",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_21",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_21",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_26",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_26",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 235.0
+    },
+    {
+      "where": "after_deadhead_to_31",
+      "soc_kwh": 235.0
+    },
+    {
+      "where": "after_trip_31",
+      "soc_kwh": 192.5
+    },
+    {
+      "where": "after_deadhead_to_38",
+      "soc_kwh": 192.5
+    },
+    {
+      "where": "after_trip_38",
+      "soc_kwh": 150.7700005
+    },
+    {
+      "where": "after_deadhead_to_43",
+      "soc_kwh": 150.7700005
+    },
+    {
+      "where": "after_trip_43",
+      "soc_kwh": 108.27000050000001
+    },
+    {
+      "where": "after_deadhead_to_48",
+      "soc_kwh": 108.27000050000001
+    },
+    {
+      "where": "after_trip_48",
+      "soc_kwh": 66.54000100000002
+    },
+    {
+      "where": "after_deadhead_to_53",
+      "soc_kwh": 66.54000100000002
+    },
+    {
+      "where": "after_trip_53",
+      "soc_kwh": 24.040001000000018
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 24.040001000000018
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 30.000000000000018
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 2.0000000000000178
+    }
+  ],
+  "peak18/Fixed GIRO trips, charging optimized/13414": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_9",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_9",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_14",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_14",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_18",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_18",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_24",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_24",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_29",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_29",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_35",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_35",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_39",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_39",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_deadhead_to_44",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_trip_44",
+      "soc_kwh": 170.7700005
+    },
+    {
+      "where": "after_deadhead_to_49",
+      "soc_kwh": 170.7700005
+    },
+    {
+      "where": "after_trip_49",
+      "soc_kwh": 128.2700005
+    },
+    {
+      "where": "after_deadhead_to_54",
+      "soc_kwh": 128.2700005
+    },
+    {
+      "where": "after_trip_54",
+      "soc_kwh": 86.54000100000002
+    },
+    {
+      "where": "after_deadhead_to_58",
+      "soc_kwh": 86.54000100000002
+    },
+    {
+      "where": "after_trip_58",
+      "soc_kwh": 44.04000100000002
+    },
+    {
+      "where": "after_deadhead_to_60",
+      "soc_kwh": 44.04000100000002
+    },
+    {
+      "where": "after_trip_60",
+      "soc_kwh": 2.31000150000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 2.31000150000002
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 27.50000000000002
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 19.70000000000002
+    }
+  ],
+  "peak18/Fresh CG plus exact-once cleanup/route1": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_0",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_4",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_4",
+      "soc_kwh": 197.5
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 197.5
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_7",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_7",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_12",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_12",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_17",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_17",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_21",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_21",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_26",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_26",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_31",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_31",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_37",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_37",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 210.0
+    },
+    {
+      "where": "after_deadhead_to_42",
+      "soc_kwh": 210.0
+    },
+    {
+      "where": "after_trip_42",
+      "soc_kwh": 167.5
+    },
+    {
+      "where": "after_deadhead_to_47",
+      "soc_kwh": 167.5
+    },
+    {
+      "where": "after_trip_47",
+      "soc_kwh": 125.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_51",
+      "soc_kwh": 125.77000050000001
+    },
+    {
+      "where": "after_trip_51",
+      "soc_kwh": 83.27000050000001
+    },
+    {
+      "where": "after_deadhead_to_56",
+      "soc_kwh": 83.27000050000001
+    },
+    {
+      "where": "after_trip_56",
+      "soc_kwh": 41.54000100000001
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 41.54000100000001
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_61",
+      "soc_kwh": 42.500000000000014
+    },
+    {
+      "where": "after_trip_61",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.4210854715202004e-14
+    },
+    {
+      "where": "after_charge_10",
+      "soc_kwh": 32.500000000000014
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 4.500000000000014
+    }
+  ],
+  "peak18/Fresh CG plus exact-once cleanup/route2": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_3",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_3",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_8",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_8",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_13",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_13",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_19",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_19",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_23",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_23",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_28",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_28",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_33",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_33",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_deadhead_to_41",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_trip_41",
+      "soc_kwh": 170.7700005
+    },
+    {
+      "where": "after_deadhead_to_46",
+      "soc_kwh": 170.7700005
+    },
+    {
+      "where": "after_trip_46",
+      "soc_kwh": 128.2700005
+    },
+    {
+      "where": "after_deadhead_to_50",
+      "soc_kwh": 128.2700005
+    },
+    {
+      "where": "after_trip_50",
+      "soc_kwh": 86.54000100000002
+    },
+    {
+      "where": "after_deadhead_to_55",
+      "soc_kwh": 86.54000100000002
+    },
+    {
+      "where": "after_trip_55",
+      "soc_kwh": 44.04000100000002
+    },
+    {
+      "where": "after_deadhead_to_59",
+      "soc_kwh": 44.04000100000002
+    },
+    {
+      "where": "after_trip_59",
+      "soc_kwh": 2.31000150000002
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 2.31000150000002
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 90.00000000000003
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 82.20000000000003
+    }
+  ],
+  "peak18/Fresh CG plus exact-once cleanup/route3": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_5",
+      "soc_kwh": 232.2
+    },
+    {
+      "where": "after_trip_5",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 189.7
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_10",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_10",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_15",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_15",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_24",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_24",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_29",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_29",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_35",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_35",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_deadhead_to_39",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_trip_39",
+      "soc_kwh": 170.0
+    },
+    {
+      "where": "after_deadhead_to_44",
+      "soc_kwh": 170.0
+    },
+    {
+      "where": "after_trip_44",
+      "soc_kwh": 128.2700005
+    },
+    {
+      "where": "after_deadhead_to_49",
+      "soc_kwh": 128.2700005
+    },
+    {
+      "where": "after_trip_49",
+      "soc_kwh": 85.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_54",
+      "soc_kwh": 85.77000050000001
+    },
+    {
+      "where": "after_trip_54",
+      "soc_kwh": 44.04000100000001
+    },
+    {
+      "where": "after_deadhead_to_58",
+      "soc_kwh": 44.04000100000001
+    },
+    {
+      "where": "after_trip_58",
+      "soc_kwh": 1.5400010000000108
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.5400010000000108
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 125.0
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 97.0
+    }
+  ],
+  "peak18/Fresh CG plus exact-once cleanup/route4": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_1",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_1",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_9",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_9",
+      "soc_kwh": 197.5
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 197.5
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_14",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_14",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_18",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_18",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_22",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_22",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_27",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_27",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_32",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_32",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_deadhead_to_36",
+      "soc_kwh": 212.5
+    },
+    {
+      "where": "after_trip_36",
+      "soc_kwh": 170.0
+    },
+    {
+      "where": "after_deadhead_to_40",
+      "soc_kwh": 170.0
+    },
+    {
+      "where": "after_trip_40",
+      "soc_kwh": 128.2700005
+    },
+    {
+      "where": "after_deadhead_to_45",
+      "soc_kwh": 128.2700005
+    },
+    {
+      "where": "after_trip_45",
+      "soc_kwh": 85.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_52",
+      "soc_kwh": 85.77000050000001
+    },
+    {
+      "where": "after_trip_52",
+      "soc_kwh": 44.04000100000001
+    },
+    {
+      "where": "after_deadhead_to_57",
+      "soc_kwh": 44.04000100000001
+    },
+    {
+      "where": "after_trip_57",
+      "soc_kwh": 1.5400010000000108
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 1.5400010000000108
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 55.000000000000014
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 27.000000000000014
+    }
+  ],
+  "peak18/Fresh CG plus exact-once cleanup/route5": [
+    {
+      "where": "initial",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_2",
+      "soc_kwh": 212.0
+    },
+    {
+      "where": "after_trip_2",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 170.2700005
+    },
+    {
+      "where": "after_charge_0",
+      "soc_kwh": 207.5
+    },
+    {
+      "where": "after_deadhead_to_6",
+      "soc_kwh": 207.5
+    },
+    {
+      "where": "after_trip_6",
+      "soc_kwh": 165.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 165.0
+    },
+    {
+      "where": "after_charge_1",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_11",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_11",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_2",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_16",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_16",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_3",
+      "soc_kwh": 235.0
+    },
+    {
+      "where": "after_deadhead_to_20",
+      "soc_kwh": 235.0
+    },
+    {
+      "where": "after_trip_20",
+      "soc_kwh": 193.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 193.2700005
+    },
+    {
+      "where": "after_charge_4",
+      "soc_kwh": 232.5
+    },
+    {
+      "where": "after_deadhead_to_25",
+      "soc_kwh": 232.5
+    },
+    {
+      "where": "after_trip_25",
+      "soc_kwh": 190.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 190.0
+    },
+    {
+      "where": "after_charge_5",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_deadhead_to_30",
+      "soc_kwh": 240.0
+    },
+    {
+      "where": "after_trip_30",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 198.2700005
+    },
+    {
+      "where": "after_charge_6",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_deadhead_to_34",
+      "soc_kwh": 237.5
+    },
+    {
+      "where": "after_trip_34",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 195.0
+    },
+    {
+      "where": "after_charge_7",
+      "soc_kwh": 210.0
+    },
+    {
+      "where": "after_deadhead_to_38",
+      "soc_kwh": 210.0
+    },
+    {
+      "where": "after_trip_38",
+      "soc_kwh": 168.2700005
+    },
+    {
+      "where": "after_deadhead_to_43",
+      "soc_kwh": 168.2700005
+    },
+    {
+      "where": "after_trip_43",
+      "soc_kwh": 125.77000050000001
+    },
+    {
+      "where": "after_deadhead_to_48",
+      "soc_kwh": 125.77000050000001
+    },
+    {
+      "where": "after_trip_48",
+      "soc_kwh": 84.04000100000002
+    },
+    {
+      "where": "after_deadhead_to_53",
+      "soc_kwh": 84.04000100000002
+    },
+    {
+      "where": "after_trip_53",
+      "soc_kwh": 41.54000100000002
+    },
+    {
+      "where": "after_deadhead_to_2190L_0",
+      "soc_kwh": 41.54000100000002
+    },
+    {
+      "where": "after_charge_8",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_deadhead_to_60",
+      "soc_kwh": 42.50000000000002
+    },
+    {
+      "where": "after_trip_60",
+      "soc_kwh": 0.7700005000000232
+    },
+    {
+      "where": "after_deadhead_to_4808_0",
+      "soc_kwh": 0.7700005000000232
+    },
+    {
+      "where": "after_charge_9",
+      "soc_kwh": 80.00000000000003
+    },
+    {
+      "where": "after_deadhead_to_PARX_0",
+      "soc_kwh": 72.20000000000003
+    }
+  ]
+}

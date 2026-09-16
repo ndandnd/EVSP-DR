@@ -1,0 +1,39 @@
+diff --git a/src/run_exact_pool_mip.py b/src/run_exact_pool_mip.py
+index 5c7df2ed..b696dfb0 100644
+--- a/src/run_exact_pool_mip.py
++++ b/src/run_exact_pool_mip.py
+@@ -1978,6 +1978,8 @@ def main(argv=None) -> int:
+     )
+     parser.add_argument("--mipgap", type=float, default=1e-4)
+     parser.add_argument("--threads", type=int, default=2)
++    parser.add_argument("--seed", type=int, default=None,
++                        help="Explicit Gurobi Seed; omitted preserves solver default")
+     parser.add_argument(
+         "--gurobi-log", type=Path, default=None,
+         help="Optional native Gurobi log path.",
+@@ -2384,6 +2386,8 @@ def main(argv=None) -> int:
+     m.Params.TimeLimit = args.timelimit
+     m.Params.MIPGap = args.mipgap
+     m.Params.Threads = args.threads
++    if args.seed is not None:
++        m.Params.Seed = args.seed
+     experiment_arm = {
+         (False, False): "A",
+         (True, False): "B",
+@@ -3288,13 +3292,14 @@ def main(argv=None) -> int:
+                 "MIPGap": args.mipgap,
+                 "Threads": args.threads,
+                 "Seed": int(getattr(m.Params, "Seed", 0)),
+-                "seed_source": "gurobi_default",
+-                "seed_explicitly_set": False,
++                "seed_source": "explicit_argument" if args.seed is not None else "gurobi_default",
++                "seed_explicitly_set": args.seed is not None,
+             },
+             "arguments": {
+                 "timelimit": args.timelimit,
+                 "mipgap": args.mipgap,
+                 "threads": args.threads,
++                "seed": args.seed,
+                 "two_stage": args.two_stage,
+                 "cover": args.cover,
+                 "initial_partition_routes": (

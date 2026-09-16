@@ -1,0 +1,47 @@
+Set parameter LicenseID to value 2674428
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "en-cc-unicorn-data-dirs.coecis.cornell.edu"
+Set parameter OutputFlag to value 1
+Set parameter Threads to value 1
+Set parameter LogFile to value "/home/nc437/ladder-lite/review_strict_c5_20260916/smoke/native/parent.json.gurobi.log"
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2620 v3 @ 2.40GHz, instruction set [SSE2|AVX|AVX2]
+Thread count: 12 physical cores, 12 logical processors, using up to 1 threads
+
+Non-default parameters:
+Threads  1
+
+Optimize a model with 1 rows, 2 columns and 2 nonzeros
+Model fingerprint: 0x36bb68ae
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 1 rows and 2 columns
+Presolve time: 0.01s
+Presolve: All rows and columns removed
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.0000000e+05   0.000000e+00   0.000000e+00      0s
+
+Solved in 0 iterations and 0.01 seconds (0.00 work units)
+Optimal objective  1.000000000e+05
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2620 v3 @ 2.40GHz, instruction set [SSE2|AVX|AVX2]
+Thread count: 12 physical cores, 12 logical processors, using up to 1 threads
+
+Non-default parameters:
+Threads  1
+
+Optimize a model with 1 rows, 2 columns and 2 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+
+Solved in 0 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  1.000000000e+05
+{"arm": "parx60", "mode": "cg", "out": "/home/nc437/ladder-lite/review_strict_c5_20260916/smoke/native/parent.json", "status": "complete"}

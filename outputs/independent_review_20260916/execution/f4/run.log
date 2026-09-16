@@ -1,0 +1,49 @@
+13301 False charge at PARX_1 raises SOC to 240.2 > capacity 240.0
+13302 False charge 40.7 kWh exceeds 240 kW in 10 min at JON_A_0
+13303 False charge 33.2 kWh exceeds 240 kW in 7 min at JON_A_0
+13304 False charge 25.4 kWh exceeds 240 kW in 6 min at 3127L_0
+13305 False charge 120.2 kWh exceeds 240 kW in 24 min at 3127L_0
+13306 False charge 42.6 kWh exceeds 240 kW in 10 min at 7880C_0
+13307 False charge at PARX_1 raises SOC to 240.4 > capacity 240.0
+13308 False charge at PARX_1 raises SOC to 240.3 > capacity 240.0
+13309 False charge 44.8 kWh exceeds 240 kW in 10 min at JON_A_0
+13310 False charge 28.6 kWh exceeds 240 kW in 7 min at JON_A_0
+13311 False charge at PARX_1 raises SOC to 240.4 > capacity 240.0
+13312 False charge 45.1 kWh exceeds 240 kW in 10 min at JON_A_0
+13313 False charge 98.8 kWh exceeds 240 kW in 23 min at 3127L_0
+13314 False charge 20.2 kWh exceeds 240 kW in 5 min at JON_A_0
+13315 False charge 41.7 kWh exceeds 240 kW in 10 min at 7880C_0
+13316m False charge 54.1 kWh exceeds 240 kW in 12 min at 3127L_0
+13316uwt False charge 52.9 kWh exceeds 240 kW in 12 min at 3127L_0
+13317 False charge 113.1 kWh exceeds 240 kW in 23 min at 3127L_0
+13318 False charge at PARX_1 raises SOC to 240.4 > capacity 240.0
+13319 False charge at PARX_1 raises SOC to 240.2 > capacity 240.0
+13320 False charge 30.9 kWh exceeds 240 kW in 7 min at JON_A_0
+13321 False charge at PARX_1 raises SOC to 240.5 > capacity 240.0
+13322 False charge 50.0 kWh exceeds 240 kW in 10 min at JON_A_0
+13323 False charge at PARX_1 raises SOC to 241.0 > capacity 240.0
+13324muw False charge 52.4 kWh exceeds 240 kW in 12 min at 7880C_0
+13324t False charge 52.4 kWh exceeds 240 kW in 12 min at 7880C_0
+13325 False charge 43.1 kWh exceeds 240 kW in 10 min at JON_A_0
+13326 False charge 102.4 kWh exceeds 240 kW in 23 min at 3127L_0
+13401 False charge 25.0 kWh exceeds 240 kW in 6 min at 4808_0
+13402 False charge 32.0 kWh exceeds 240 kW in 7 min at 4808_0
+13403 False charge 39.8 kWh exceeds 240 kW in 9 min at 2190L_0
+13404 False charge 31.0 kWh exceeds 240 kW in 7 min at 4808_0
+13405 False charge 39.7 kWh exceeds 240 kW in 9 min at 2190L_0
+13406 False charge 32.9 kWh exceeds 240 kW in 8 min at 4808_0
+13407 False charge 34.1 kWh exceeds 240 kW in 8 min at 2190L_0
+13408 False charge 38.7 kWh exceeds 240 kW in 9 min at 2190L_0
+13409 False charge 23.2 kWh exceeds 240 kW in 5 min at 2190L_0
+13410 False charge 42.2 kWh exceeds 240 kW in 10 min at 2190L_0
+13411 False charge 23.2 kWh exceeds 240 kW in 5 min at 2190L_0
+13412 False charge 42.2 kWh exceeds 240 kW in 10 min at 2190L_0
+13413 False charge 29.2 kWh exceeds 240 kW in 7 min at 4808_0
+13414 False charge 34.9 kWh exceeds 240 kW in 7 min at 4808_0
+{
+  "prior350_replay_reproduced": true,
+  "prior350_pass": 28,
+  "prior350_n": 40,
+  "baseline240_pass_on_same_prior40": 0,
+  "baseline240_pass_all42_variants": 0
+}

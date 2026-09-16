@@ -1,0 +1,52 @@
+# EVSP–DR Scaglione resource policy
+
+Standing user instruction, confirmed 9 September 2026.
+
+Reserve scaglione-compute-01 for GPU users. GPU jobs also need CPU resources; CPU-only jobs must not exhaust that node. Every EVSP–DR Scaglione CPU/MIP submission must include `--exclude=scaglione-compute-01`. Note that scaglione-cpu-01 is a different node and is not the reserved GPU node.
+
+Use the remaining Scaglione CPU machines for MIP computations, subject to the scheduler and other users. Do not interpret the request to reduce usage as a blanket shutdown of all Scaglione work. Run column generation on default_partition where suitable; save supported checkpoints for preemption. A Gurobi incumbent checkpoint does not preserve its branch-and-bound tree.
+
+Do not release held historical campaigns automatically. Verify node exclusion in scontrol after submission. This policy remains in force until the user explicitly changes it.
+
+Clarification, 10 September 2026: scaglione-compute-01 also belongs to default_partition. The exclusion is a physical-node reservation, not just a partition-specific rule. Include --exclude=scaglione-compute-01 in ALL EVSP–DR CPU-only submissions, including default-partition CG, and verify the effective exclusion after submission.
+
+## Default-partition concurrency — user instruction, 10 September 2026
+
+For independent EVSP–DR column-generation cases on default_partition, use a default array concurrency of 50, or the number of cases if fewer than 50 exist. Do not impose arbitrary caps of 2, 16 or 24. A smaller cap requires a documented cluster restriction or concrete measured bottleneck (per-job RAM, aggregate node RAM, I/O, license service or other resource), with the reason recorded in the campaign manifest. More than 50 is allowed when justified by workload size and resource evidence.
+
+Request realistic CPU and RAM per job; Slurm controls actual admission and reserves these resources. Raising the array throttle does not raise an individual job's memory limit. Preserve true data dependencies: a chain that imports the previous k's columns is sequential by design, not artificially throttled. If several independent chains exist, they may proceed in parallel.
+
+This supersedes the earlier pilot default of 16. It does not release held historical jobs, change Scaglione MIP limits, or relax the scaglione-compute-01 exclusion. Verify actual array throttles and node exclusions after submission. At this audit, the Cornell Unicorn documentation and inspected user/QOS fields contain no explicit concurrency restriction below 50; this is not a claim that all system/parent-account limits are absent.
+
+## Overnight default-partition MIPs — 11 September 2026 UTC
+
+The user authorizes default_partition for the one-hour saved-pool MIPs, accepting preemption and lost branch-and-bound search. Pending fresh-covering MIPs may migrate there; retain exact scientific settings and true input dependencies. Keep per-attempt job IDs, scheduler states, timing/resource/priority samples and output hashes in the MIP preemption study. No automatic requeue for wrappers unable to restart safely; interrupted retries require unique attempt outputs and preserved prior records. Preemption risk is measured, not presumed zero. Existing Scaglione MIPs remain usable. scaglione-compute-01 remains excluded everywhere and held historical jobs stay untouched.
+
+## Default MIPs — user clarification 11 September evening
+
+Use default_partition for new table-filling MIPs. User accepts preemption and requeue; use restart-safe output paths and retain attempt statistics. Gurobi tree search restarts. Exclude scaglione-compute-01 and preserve held jobs. Overnight extension worker uses explicit --requeue and job/restart output directories.
+
+{
+  "job_id": "341413",
+  "argv": [
+    "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+    "--parsable",
+    "--partition=default_partition",
+    "--exclude=scaglione-compute-01",
+    "--cpus-per-task=8",
+    "--mem=64G",
+    "--time=48:00:00",
+    "--requeue",
+    "--job-name=drFDL_review",
+    "--output=/home/nc437/ladder-lite/review_frolunda_20260916/logs/%x_%j.out",
+    "--error=/home/nc437/ladder-lite/review_frolunda_20260916/logs/%x_%j.err",
+    "/home/nc437/ladder-lite/review_frolunda_20260916/worker.sub"
+  ],
+  "submitted_utc": "2026-09-16T22:12:19.725128+00:00",
+  "manifest_sha256": "28564b44a0a013fc7711942c214a2d2a8753b1bd7cecedcd17a4b70cd25cc046",
+  "policy_sha256": "49954b0300305f108e5e0c47bbbde43f0c5159140a95c839c4c3fad30f158867",
+  "stage_count": 7,
+  "single_sequential_allocation": true,
+  "scontrol": "JobId=341413 JobName=drFDL_review UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14010 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=2-00:00:00 TimeMin=N/A SubmitTime=2026-09-16T18:12:19 EligibleTime=2026-09-16T18:12:19 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T18:12:19 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2246030 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/review_frolunda_20260916/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/review_frolunda_20260916/logs/drFDL_review_341413.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/review_frolunda_20260916/logs/drFDL_review_341413.out TresPerTask=cpu=8 \n",
+  "resource_policy_verified": true
+}

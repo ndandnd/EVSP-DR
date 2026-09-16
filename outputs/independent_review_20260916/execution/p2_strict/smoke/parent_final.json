@@ -1,0 +1,97 @@
+{
+  "arm": "parx60",
+  "capacity_selector": "reference",
+  "certified_rc_optimal": true,
+  "checkpoint": {
+    "atomic_pool_replace": true,
+    "id": "2cab6130898596f523b57c7317b8c6e8df97714fe0d8cb3608221bb60768801d",
+    "initial_pool_columns": 1,
+    "resumed": false,
+    "schema": "evsp-dr-capacity-speed-cg-checkpoint-v1",
+    "writes_this_attempt": 2
+  },
+  "final": {
+    "artificial_total": 0.0,
+    "objective": 100000.0,
+    "pool_columns": 1,
+    "route_weight": 1.0
+  },
+  "gurobi_log": "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/p2_strict/smoke/parent_final.json.gurobi.log",
+  "inheritance": null,
+  "iterations": [
+    {
+      "artificial_total": 0.0,
+      "iteration": 1,
+      "lp_columns": 2,
+      "lp_nonzeros": 2,
+      "lp_objective": 100000.0,
+      "lp_rows": 1,
+      "lp_solve_s": 0.00472958292812109,
+      "min_reduced_cost": 0.0,
+      "nonzero_capacity_duals": 0,
+      "pool_columns": 1,
+      "priced_trip_count": 1,
+      "pricing_s": 0.0002561667934060097,
+      "route_weight": 1.0
+    }
+  ],
+  "mode": "cg",
+  "network": {
+    "arc_mode": "explicit",
+    "dag_arcs": 236,
+    "dag_nodes": 66,
+    "event_lattice_sha256": "07c1a6acf1e59a6e735f47411561829341271a698d717703d21cce2cafa57a53",
+    "materialized_python_arc_objects": 236,
+    "packed_arc_bytes": 0,
+    "station_charge_kw": {
+      "PARX": 60.0
+    },
+    "station_event_times": {
+      "2190L_0": 236,
+      "3127L_0": 28,
+      "4808_0": 242,
+      "7880C_0": 28,
+      "JON_A_0": 28,
+      "PARX_1": 241
+    },
+    "time_model": "event"
+  },
+  "network_build_s": 0.07445445889607072,
+  "physics": {
+    "battery_kwh": 236.44,
+    "capacity_enforced": false,
+    "charger_counts": {},
+    "event_block_min": 5,
+    "initial_soc_kwh": 236.44,
+    "max_station_wait_min": 1560.0,
+    "non_parx_kw": 240.0,
+    "parx_capacity": "unlimited",
+    "parx_kw": 60.0,
+    "reserve_kwh": 35.466,
+    "soc_step_kwh": 2.5,
+    "terminal_soc_constraint": "reserve_only"
+  },
+  "pool": "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/p2_strict/smoke/parent_final.pool.jsonl",
+  "pool_sha256": "2dd7a75cb70c6439065f001cdd68bc902ae7c50593b3c1af1a67e4d0b027c8e9",
+  "pricing_certificate_scope": "full conservative event-time/SOC covering LP without shared capacity",
+  "provenance": {
+    "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "git_commit": "50ceb6c095a580f79f87b53bef536cac31f81963",
+    "git_tracked_dirty": false,
+    "gurobi_version": "12.0.1",
+    "host": "Nathans-MacBook-Pro-2.local",
+    "instance": "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/p2_strict/smoke/trips1.csv",
+    "instance_sha256": "1e4c1ad45771acfdec5339308a99a1cf34c33577a04bb1d3f9c439899365db39",
+    "prices": "/Users/nadan/Documents/projects/demandresponse/.codex-work/review-strict-chain-20260916/data/hourly_prices_flat.csv",
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference_data_dir": "/Users/nadan/Documents/projects/demandresponse/.codex-work/review-strict-chain-20260916/data",
+    "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "slurm_array_task_id": null,
+    "slurm_job_id": null
+  },
+  "runtime_s": 0.09595470828935504,
+  "schema": "evsp-dr-capacity-speed-exact-event-pilot-v1",
+  "status": "complete",
+  "stop_reason": "exact_nonnegative_reduced_cost",
+  "terminal_exact_min_reduced_cost": 0.0
+}

@@ -1,0 +1,5 @@
+{
+  "job_id": "341140",
+  "command": "/usr/local/slurm/slurm-25.05.5/bin/sbatch --parsable --partition=default_partition --exclude=scaglione-compute-01 --cpus-per-task=1 --mem=2G --time=00:10:00 --job-name=rvStrictSmoke --output=/home/nc437/ladder-lite/review_strict_c5_20260916/logs/smoke_%j.out --error=/home/nc437/ladder-lite/review_strict_c5_20260916/logs/smoke_%j.err --chdir=/home/nc437/ladder-lite/review_strict_c5_20260916 /home/nc437/ladder-lite/review_strict_c5_20260916/smoke.sh /home/nc437/ladder-lite/review_strict_c5_20260916",
+  "submitted_unix": 1789596113.835666
+}

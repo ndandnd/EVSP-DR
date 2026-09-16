@@ -1,3 +1,5 @@
+> **Scope correction,16 September:** the extension table below covers the original through-k25 subset, not the later k26–32 campaigns. Its “largest match25” headline is a subset result. For all102 original endpoints and26 longer-MIP results, use [the complete dated tables](../../overnight_next_20260914/status_20260916T194843Z/README.md). Original and longer MIPs remain separate. The24 fresh-versus-warm comparisons below retain their original budgets.
+
 # Research status — 16 September, 15:55 EDT
 
 Largest verified match in the original one-hour chain MIPs: **25 buses**. Separate longer-MIP results are reported independently. These are baseline covering runs with inherited columns, 240 kWh batteries, 240 kW charging and a fee of 5 per charging start. Shared station capacity and a terminal-SOC floor are absent. Fleet proofs apply to the saved pools; physical replay checks individual routes. Charging optimality is a separate question.
