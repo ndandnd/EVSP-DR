@@ -1,0 +1,9 @@
+#!/bin/bash
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+cd /home/nc437/ladder-lite/code_pins/zero_fee_terminal_c210187b
+/home/nc437/evsp_env/bin/python -m unittest discover -s tests -p test_terminal_full_cg.py
+/home/nc437/evsp_env/bin/python -m unittest discover -s tests -p test_event_pricer_network.py

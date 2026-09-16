@@ -1,0 +1,163 @@
+.Set parameter LicenseID to value 2674428
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "en-cc-unicorn-data-dirs.coecis.cornell.edu"
+Set parameter Threads to value 1
+Set parameter Method to value 1
+Set parameter LogFile to value "/tmp/tmpvs6_bl93/run/cg.gurobi.log"
+Set parameter TimeLimit to value 5.9887124957051128e+01
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  5.9887124957051128e+01
+Method  1
+Threads  1
+
+Optimize a model with 4 rows, 4 columns and 6 nonzeros
+Model fingerprint: 0x3450fe64
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+01]
+  Objective range  [4e-03, 1e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+02]
+Presolve removed 4 rows and 4 columns
+Presolve time: 0.03s
+Presolve: All rows and columns removed
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.2083333e+00   0.000000e+00   0.000000e+00      0s
+
+Solved in 0 iterations and 0.03 seconds (0.00 work units)
+Optimal objective  1.208333333e+00
+Set parameter TimeLimit to value 5.9682754895649850e+01
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  5.9682754895649850e+01
+Method  1
+Threads  1
+
+Optimize a model with 4 rows, 16 columns and 47 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+02]
+  Objective range  [4e-03, 1e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+02]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -1.0703125e+30   1.092969e+31   1.070312e+00      0s
+       2    0.0000000e+00   0.000000e+00   0.000000e+00      0s
+
+Solved in 2 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  0.000000000e+00
+Set parameter TimeLimit to value 5.9680737480986863e+01
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  5.9680737480986863e+01
+Method  1
+Threads  1
+
+Optimize a model with 4 rows, 16 columns and 47 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+02]
+  Objective range  [1e+05, 1e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+02]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -2.5025875e+34   4.134375e+31   2.502588e+04      0s
+       4    1.0001700e+05   0.000000e+00   0.000000e+00      0s
+
+Solved in 4 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  1.000170000e+05
+Set parameter Threads to value 1
+Set parameter MIPGap to value 0
+Set parameter TimeLimit to value 5
+Set parameter LogFile to value "/tmp/tmpvs6_bl93/run/fleet.gurobi.log"
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  5
+MIPGap  0
+Method  1
+Threads  1
+
+Optimize a model with 4 rows, 16 columns and 47 nonzeros
+Model fingerprint: 0xd5624a7b
+Variable types: 3 continuous, 13 integer (13 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+02]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+02]
+Found heuristic solution: objective 1.0000000
+Presolve removed 4 rows and 16 columns
+Presolve time: 0.01s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.02 seconds (0.00 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 1 
+
+Optimal solution found (tolerance 0.00e+00)
+Best objective 1.000000000000e+00, best bound 1.000000000000e+00, gap 0.0000%
+Set parameter TimeLimit to value 9.9764955062419176e+00
+Set parameter LogFile to value "/tmp/tmpvs6_bl93/run/charging.gurobi.log"
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  9.9764955062419176e+00
+MIPGap  0
+Method  1
+Threads  1
+
+Optimize a model with 5 rows, 16 columns and 60 nonzeros
+Model fingerprint: 0x9f7a0f95
+Variable types: 3 continuous, 13 integer (13 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+02]
+  Objective range  [3e+00, 2e+01]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+02]
+
+Loaded user MIP start with objective 21
+MIP start from previous solve did not produce a new incumbent solution
+
+Presolve removed 5 rows and 16 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds (0.00 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 2: 18 21 
+
+Optimal solution found (tolerance 0.00e+00)
+Best objective 1.800000000000e+01, best bound 1.800000000000e+01, gap 0.0000%
+.
+----------------------------------------------------------------------
+Ran 2 tests in 1.686s
+
+OK
+............
+----------------------------------------------------------------------
+Ran 12 tests in 15.556s
+
+OK

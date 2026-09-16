@@ -947,4 +947,19 @@ if giro_summary_path.exists():
         giro_campaign['summary_read_error'] = str(exc)
 out['campaigns']['giro_zero_start_fee_20260913'] = giro_campaign
 
+# Fresh zero-fee full CG is a separate experiment from saved-pool repricing.
+zf_root = home / 'zero_fee_full_cg_20260916'
+if (zf_root / 'manifest.json').is_file():
+    zf = {'root': str(zf_root), 'manifest': json.loads((zf_root/'manifest.json').read_text()),
+          'manifest_sha256': file_sha256(zf_root/'manifest.json'), 'attempts': []}
+    for attempt_path in sorted(zf_root.glob('results/*/*/attempt.json')):
+        entry = {'path': str(attempt_path), 'sha256': file_sha256(attempt_path),
+                 'attempt': json.loads(attempt_path.read_text())}
+        result_path = attempt_path.parent/'optimization'/'summary.json'
+        if result_path.is_file():
+            entry.update(summary=json.loads(result_path.read_text()),
+                         summary_path=str(result_path), summary_sha256=file_sha256(result_path))
+        zf['attempts'].append(entry)
+    out['campaigns']['zero_fee_full_cg_20260916'] = zf
+
 print(json.dumps(out))

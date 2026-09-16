@@ -1,3 +1,7 @@
+# Priority update — 15 September late evening
+
+Unicorn access restored after user authentication. New `zero_fee_full_cg_20260916` array **275432_0–2** was verified RUNNING on default_partition. Native validation275221 COMPLETED0:0. These are actual fresh full-CG runs for peaks08/12/18, not saved-pool repricing. Frozen commitc210187, covering, zero fee,240kWh/350kW, aggregate terminal energy>=280.7833253kWh and fleet<=5. CG4h plus two-stage MIP1h. Excludecompute01. Each requeue starts a fresh private attempt directory; preserve old attempts. Do not transplant an old pool/certificate. Check this campaign first on next monitor. Read `outputs/zero_fee_full_cg_20260916/README.md` and manifest. Update Q3 in current Doc only on verified results; full weighted-LP certificate is distinct from finite-pool MIP proof and does not establish global charging optimality.
+
 # Active research monitor — 15 September 2026
 
 User authorization: continue productive Unicorn experiments and hourly monitoring, fix demonstrated execution problems, and maintain one understandable current Google Doc. Existing heartbeat `unicorn-connection-and-research-progress` is ACTIVE. Root handles routine checks without subagents. Notify only on meaningful findings, failures, access changes or a needed decision; quiet checks need no browser update or repeated briefing.

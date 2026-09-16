@@ -1,0 +1,13 @@
+#!/bin/bash
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONHASHSEED=0
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+/home/nc437/evsp_env/bin/python - <<'PY'
+import gurobipy as gp
+m=gp.Model('unrestricted_license_check');m.Params.OutputFlag=0;m.Params.Threads=1
+v=m.addVars(2001,obj=1);m.addConstr(v.sum()>=1);m.optimize();assert m.Status==gp.GRB.OPTIMAL
+print('Unrestricted Gurobi license check passed',flush=True)
+PY
+exec /home/nc437/evsp_env/bin/python -u /home/nc437/ladder-lite/zero_fee_full_cg_20260916/worker.py

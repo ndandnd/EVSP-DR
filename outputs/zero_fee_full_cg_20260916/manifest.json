@@ -1,0 +1,82 @@
+{
+  "schema": "zero-fee-full-terminal-cg-v1",
+  "created_utc": "2026-09-16T03:33:05.442796+00:00",
+  "execution_commit": "c210187bb50a2eac2022178ea21aa39d7ff6b9b1",
+  "code": "/home/nc437/ladder-lite/code_pins/zero_fee_terminal_c210187b",
+  "cases": [
+    {
+      "id": "peak08_fresh",
+      "data_dir": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data",
+      "instance": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv",
+      "tariff": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak08_h26.csv",
+      "input_hashes": {
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak08_h26.csv": "b461f12cf8ca41ba8a89102b32d46ea16b974566ea05849dd75776a7108f341e",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      },
+      "comparator_directory": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak08/fee0"
+    },
+    {
+      "id": "peak12_fresh",
+      "data_dir": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data",
+      "instance": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv",
+      "tariff": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak12_h26.csv",
+      "input_hashes": {
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak12_h26.csv": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      },
+      "comparator_directory": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak12/fee0"
+    },
+    {
+      "id": "peak18_fresh",
+      "data_dir": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data",
+      "instance": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv",
+      "tariff": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak18_h26.csv",
+      "input_hashes": {
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak18_h26.csv": "d70c3c3f9c15b82f26e1262fb2067f9fcc5e41d63e9ffbe877d33b5fa16563a6",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      },
+      "comparator_directory": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak18/fee0"
+    }
+  ],
+  "validation_job": 275221,
+  "physics": {
+    "battery_kwh": 240,
+    "initial_kwh": 240,
+    "charging_kw": 350,
+    "reserve_kwh": 0,
+    "shared_capacity": false,
+    "soc_step_kwh": 2.5,
+    "event_minutes": 5,
+    "aggregate_terminal_kwh": 280.7833253
+  },
+  "objective": {
+    "cg": "100000 * buses + electricity; start fee = 0",
+    "mip_stage1": "minimize fleet",
+    "mip_stage2": "minimize electricity with buses <= stage1 incumbent",
+    "fleet_cap": 5,
+    "coverage": "cover"
+  },
+  "initialization": "fresh direct singletons plus explicit Phase I; no inherited or GIRO columns",
+  "budgets": {
+    "cg_seconds": 14400,
+    "mip_total_seconds": 3600,
+    "mip_stage1_seconds": 1800
+  },
+  "resources": {
+    "partition": "default_partition",
+    "exclude": "scaglione-compute-01",
+    "cpus": 8,
+    "memory": "48G",
+    "walltime": "08:00:00",
+    "concurrency": 3
+  },
+  "dependencies": "native validation 275221 must pass; three tariffs independent",
+  "restarts": "distinct attempt directory per Slurm restart; restart from scratch; preserves prior journals, no Gurobi tree recovery",
+  "proof": "CG certificate applies only to declared event graph and weighted objective. MIP proof is finite-pool only. Physical replay separate. No continuous/full-GIRO/global charging optimality claim."
+}

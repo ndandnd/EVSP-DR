@@ -1,0 +1,22 @@
+{
+  "array_job": 275432,
+  "validation_job": 275221,
+  "validation_state": "COMPLETED",
+  "validation_exit": "0:0",
+  "production_tasks": [
+    "275432_0",
+    "275432_1",
+    "275432_2"
+  ],
+  "observed_state": "RUNNING",
+  "nodes": [
+    "jingjie-cpu-04",
+    "jingjie-cpu-04",
+    "jingjie-cpu-08"
+  ],
+  "checked_utc": "2026-09-16T03:35:17.364832+00:00",
+  "partition": "default_partition",
+  "exclude": "scaglione-compute-01",
+  "manifest_sha256": "8b5eb4feef46fb983ba943b360ede006dd629308a40d61e98811d11aef14d8bc",
+  "execution_commit": "c210187bb50a2eac2022178ea21aa39d7ff6b9b1"
+}

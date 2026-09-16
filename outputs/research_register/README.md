@@ -1,3 +1,5 @@
+Current priority: [full zero-fee CG with return-energy pricing](../zero_fee_full_cg_20260916/README.md), array275432, launched15September late evening. Earlier three-tariff ties are saved-pool results, not a full-CG comparison.
+
 **Document now organized by research question:** [Concise current summary](../research_questions_20260915/doc_after.md). User requested a short front page: sequential reach, accumulated-time fresh controls, algorithm changes, and zero-fee economic value; diagnostic detail stays in linked reports.
 
 **Start here:** [Current Google Doc dashboard](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.79m3d3x4h45m) · [Active overnight monitoring plan](ACTIVE_MONITOR_PLAN.md). The dashboard replaces its current tables in place; dated notices below remain historical evidence. The old weekly document tab is now a research log, and both figure tabs are preserved.
