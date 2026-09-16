@@ -954,7 +954,7 @@ class EventExpandedNetwork:
                     objective_costs = 0.0
                 elif objective == "fleet-only":
                     objective_costs = 1.0 if source == 0 else 0.0
-                elif source == 0:
+                elif objective == "charging-cost" and source == 0:
                     objective_costs = (
                         self._arc_costs_np[start:end] - BUS_COST_KX
                     )
