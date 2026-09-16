@@ -1,6 +1,6 @@
 {
   "authoritative_772009_rows": 1,
-  "campaign_count": 84,
+  "campaign_count": 85,
   "checks": [
     "all stable row IDs unique",
     "all retained SHA-256 fields are 64 lowercase hexadecimal characters",
@@ -14,8 +14,8 @@
   "families_and_stages": {
     "capacity_speed_exact_event:cg": 45,
     "capacity_speed_exact_event:mip": 57,
-    "cg_phase_telemetry:telemetry": 658,
-    "column_generation:cg": 720,
+    "cg_phase_telemetry:telemetry": 659,
+    "column_generation:cg": 721,
     "cumulative_budget_case_metadata:audit_result": 24,
     "cumulative_budget_endpoint:cg": 24,
     "cumulative_budget_endpoint:mip": 48,
@@ -23,9 +23,9 @@
     "fixed_dual_pricing_diagnostic:pricing_call": 4,
     "giro_zero_fee_comparison:comparison_arm": 18,
     "matched_tariff_comparison:comparison_arm": 57,
-    "pool_mip:mip": 987,
+    "pool_mip:mip": 993,
     "rejected_mip_output:mip_rejected": 2,
-    "scheduler:queue_state": 63,
+    "scheduler:queue_state": 57,
     "small_reference_cg:cg_arm": 32,
     "small_same_pool_comparison:lp": 64,
     "small_same_pool_comparison:mip": 64,
@@ -40,18 +40,18 @@
     "terminal_energy_full_cg:cg": 3,
     "terminal_energy_full_cg:mip": 3,
     "terminal_postprocessing:mip": 6,
-    "workflow:workflow": 248,
+    "workflow:workflow": 254,
     "workflow:workflow_cg": 45,
     "workflow:workflow_cg_reference": 54,
     "workflow:workflow_freeze": 54,
     "workflow:workflow_mip": 54
   },
   "rejected_rows": 2,
-  "row_count": 3383,
-  "rows_with_source_sha256": 1681,
-  "rows_without_source_sha256": 1702,
+  "row_count": 3391,
+  "rows_with_source_sha256": 1687,
+  "rows_without_source_sha256": 1704,
   "schema": "evsp-dr-research-register-validation-v1",
-  "source_snapshot_sha256": "f125677b18c18816c1ffe8b6c66d0489fdcf29d38b60137fc7f559cb3c2fabe3",
+  "source_snapshot_sha256": "2f0cef6303981bb8d5e8047330a2d4b6fb46bb7281bb7bcd4ecc3f5812576faf",
   "superseded_772031_rows": 1,
-  "unique_row_ids": 3383
+  "unique_row_ids": 3391
 }

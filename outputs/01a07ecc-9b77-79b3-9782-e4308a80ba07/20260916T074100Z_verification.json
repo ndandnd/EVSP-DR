@@ -1,0 +1,47 @@
+{
+  "mode": "after",
+  "records": 3391,
+  "views": [
+    {
+      "name": "Campaigns",
+      "range": "A1:G14",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A1:G14\",\"rows\":14,\"cols\":7,\"values\":[[null,null,null,null,null,null,null],[\"EVSP–DR experiment register\",null,null,null,null,null,null],[\"Evidence captured 2026-09-16T07:41:01.050851+00:00. Counts below are records, not independent experimental samples.\",null,null,null,null,null,null],[null,null,null,null,null,null,null],[\"Campaign / source group\",\"Family\",\"LP / CG records\",\"MIP records\",\"Charging records\",\"Execution / audit records\",\"Total records\"],[\"capacity_deadline5_retry\",\"production_or_historical\",5,5,0,1,11],[\"capacity_fixed_dual_20260914\",\"production_or_historical\",0,0,0,5,5],[\"capacity_fixed_dual_retry_20260914\",\"production_or_historical\",0,0,0,5,5],[\"capacity_pricing_boundary_20260914\",\"production_or_historical\",7,7,0,3,17],[\"capacity_speed_pilot\",\"controlled_physics_pilot\",10,10,0,2,22],[\"capacity_timeout6_rerun\",\"production_or_historical\",1,1,0,3,5],[\"chain_extension_20260913\",\"production_or_historical\",60,60,0,66,186],[\"chain_extension_20260914\",\"production_or_historical\",18,18,0,22,58],[\"chain_extension_20260915\",\"production_or_historical\",12,12,0,16,40]]}"
+    },
+    {
+      "name": "Campaigns",
+      "range": "A14:H15",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A14:H15\",\"rows\":2,\"cols\":8,\"values\":[[\"chain_extension_20260915\",\"production_or_historical\",12,12,0,16,40,\"/home/nc437/ladder-lite/chain_extension_20260915\"],[\"chain_extension_31_32_20260915\",\"production_or_historical\",3,2,0,13,18,\"/home/nc437/ladder-lite/chain_extension_31_32_20260915\"]]}"
+    },
+    {
+      "name": "Campaigns",
+      "range": "A22:H23",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A22:H23\",\"rows\":2,\"cols\":8,\"values\":[[\"continuation_gaps4_20260915\",\"production_or_historical\",0,1,0,6,7,\"/home/nc437/ladder-lite/continuation_gaps4_20260915\"],[\"continuation_gaps5_20260916\",\"production_or_historical\",0,4,0,6,10,\"/home/nc437/ladder-lite/continuation_gaps5_20260916\"]]}"
+    },
+    {
+      "name": "CG",
+      "range": "A118:N121",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"CG\",\"address\":\"A118:N121\",\"rows\":4,\"cols\":14,\"values\":[[\"chain_extension_20260915\",\"w6_k30\",\"cg\",null,30,null,3001246.505414593,\"bus_plus_charging\",30.00000000000074,\"no\",\"wall_limit\",297,14379.059985174332,null],[\"chain_extension_31_32_20260915\",\"w3_k31\",\"cg\",null,31,null,3101273.782045101,\"bus_plus_charging\",31.000000000000068,\"no\",\"wall_limit\",180,14354.461500404868,null],[\"chain_extension_31_32_20260915\",\"w5_k31\",\"cg\",null,31,null,3001338.8027028893,\"bus_plus_charging\",29.999999999999254,\"yes\",\"certified\",222,11850.257104144897,null],[\"chain_extension_31_32_20260915\",\"w6_k31\",\"cg\",null,31,null,3101295.2608397086,\"bus_plus_charging\",31.000000000000114,\"no\",\"wall_limit\",199,14388.279145091306,null]]}"
+    },
+    {
+      "name": "MIP",
+      "range": "A118:L120",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"MIP\",\"address\":\"A118:L120\",\"rows\":3,\"cols\":12,\"values\":[[\"chain_extension_20260915\",\"w6_k30\",\"mip\",null,30,null,31,30.000000000000036,\"no\",1,\"TIME_LIMIT\",235114],[\"chain_extension_31_32_20260915\",\"w3_k31\",\"mip\",null,31,null,31,31,\"yes\",0,\"TIME_LIMIT\",187342],[\"chain_extension_31_32_20260915\",\"w5_k31\",\"mip\",null,31,null,36,30.00000000000024,\"no\",5,\"TIME_LIMIT\",254068]]}"
+    },
+    {
+      "name": "MIP",
+      "range": "A198:L202",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"MIP\",\"address\":\"A198:L202\",\"rows\":5,\"cols\":12,\"values\":[[\"continuation_gaps4_20260915\",\"w1_k28_longmip\",\"mip\",null,28,null,28,28,\"yes\",0,\"TIME_LIMIT\",257850],[\"continuation_gaps5_20260916\",\"w1_k29_longmip\",\"mip\",null,29,null,29,29,\"yes\",0,\"TIME_LIMIT\",263453],[\"continuation_gaps5_20260916\",\"w2_k29_longmip\",\"mip\",null,29,null,29,29,\"yes\",0,\"TIME_LIMIT\",206839],[\"continuation_gaps5_20260916\",\"w5_k29_longmip\",\"mip\",null,29,null,30,28.000000000037733,\"no\",1,\"TIME_LIMIT\",237964],[\"continuation_gaps5_20260916\",\"w6_k29_longmip\",\"mip\",null,29,null,29,29,\"yes\",0,\"TIME_LIMIT\",226183]]}"
+    },
+    {
+      "name": "Attempts",
+      "range": "A128:H141",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Attempts\",\"address\":\"A128:H141\",\"rows\":14,\"cols\":8,\"values\":[[\"chain_extension_20260915\",\"w6_k30\",\"telemetry\",null,30,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_31_32_20260915\",\"attempt_progress\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_31_32_20260915\",\"case_jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_31_32_20260915\",\"jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_31_32_20260915\",\"manifest.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_31_32_20260915\",\"w1_k31\",\"telemetry\",null,31,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_31_32_20260915\",\"w2_k31\",\"telemetry\",null,31,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_31_32_20260915\",\"w3_k31\",\"telemetry\",null,31,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_31_32_20260915\",\"w3_k32\",\"telemetry\",null,32,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_31_32_20260915\",\"w4_k31\",\"telemetry\",null,31,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_31_32_20260915\",\"w5_k31\",\"telemetry\",null,31,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_31_32_20260915\",\"w5_k32\",\"telemetry\",null,32,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_31_32_20260915\",\"w6_k31\",\"telemetry\",null,31,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_31_32_20260915\",\"w6_k32\",\"telemetry\",null,32,null,\"cg_phase_telemetry\",\"telemetry\"]]}"
+    },
+    {
+      "name": "Attempts",
+      "range": "A247:H253",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Attempts\",\"address\":\"A247:H253\",\"rows\":7,\"cols\":8,\"values\":[[\"continuation_gaps4_20260915\",\"validation.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps5_20260916\",\"attempt_progress\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps5_20260916\",\"case_jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps5_20260916\",\"jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps5_20260916\",\"manifest.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps5_20260916\",\"scheduler_verification.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps5_20260916\",\"validation.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"]]}"
+    }
+  ],
+  "formulaScan": "{\"kind\":\"notice\",\"message\":\"Cell search matched 0 entries.\"}"
+}
