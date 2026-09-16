@@ -233,22 +233,22 @@
     "registered_tasks": 102,
     "accounting_missing_task_ids": [],
     "attempts": 102,
-    "started": 93,
-    "ended_started_attempts": 92,
+    "started": 96,
+    "ended_started_attempts": 93,
     "confirmed_preemptions": 0,
     "preemption_fraction_among_ended": 0.0,
     "descriptive_wilson95": [
       0,
-      0.04008138928562172
+      0.03966750261173514
     ],
     "state_counts": {
-      "COMPLETED": 92,
-      "PENDING": 9,
-      "RUNNING": 1
+      "COMPLETED": 93,
+      "RUNNING": 3,
+      "PENDING": 6
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 359510
+    "allocation_exposure_seconds": 366360
   },
   "default_compact_large_seed_20260914": {
     "registered_tasks": 24,
@@ -403,25 +403,25 @@
     "allocation_exposure_seconds": 137482
   },
   "default_overnight_diagnostics_20260914": {
-    "registered_tasks": 211,
+    "registered_tasks": 213,
     "accounting_missing_task_ids": [],
-    "attempts": 211,
-    "started": 211,
-    "ended_started_attempts": 206,
+    "attempts": 213,
+    "started": 213,
+    "ended_started_attempts": 210,
     "confirmed_preemptions": 1,
-    "preemption_fraction_among_ended": 0.0048543689320388345,
+    "preemption_fraction_among_ended": 0.004761904761904762,
     "descriptive_wilson95": [
-      0.0008574298980504168,
-      0.026980056809881546
+      0.0008410882735945795,
+      0.026475685811790724
     ],
     "state_counts": {
-      "COMPLETED": 205,
+      "COMPLETED": 209,
       "PREEMPTED": 1,
-      "RUNNING": 5
+      "RUNNING": 3
     },
     "confirmed_preempted_allocation_seconds": 7451,
     "confirmed_preempted_allocated_cpu_seconds": 59608,
-    "allocation_exposure_seconds": 1860787
+    "allocation_exposure_seconds": 1886715
   },
   "default_overnight_extension_3600": {
     "registered_tasks": 87,
