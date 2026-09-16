@@ -1,0 +1,57 @@
+{
+  "cases": [
+    {
+      "id": "peak08_fresh",
+      "source": "/home/nc437/ladder-lite/zero_fee_full_cg_20260916/results/peak08_fresh/job275436_restart0/optimization/summary.json",
+      "sha256": "31059f58e221f332581f936f9d0f6e56666556ed6799cc60d36b5b5169f6090a",
+      "pool_sha256": "c05da16f749af082ff4abcd745a9cc9c42242ae6b97ea8aa605aa37b6896b41b",
+      "input_hashes": {
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak08_h26.csv": "b461f12cf8ca41ba8a89102b32d46ea16b974566ea05849dd75776a7108f341e",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      }
+    },
+    {
+      "id": "peak12_fresh",
+      "source": "/home/nc437/ladder-lite/zero_fee_full_cg_20260916/results/peak12_fresh/job275437_restart0/optimization/summary.json",
+      "sha256": "6cab95546dd45081e71433aca6639417894e65a723f9e2755ca989799ecdb6c3",
+      "pool_sha256": "abc3166906059877a76c6aad8087b43a0660c6b3032b55a58881d349c331048e",
+      "input_hashes": {
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak12_h26.csv": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      }
+    },
+    {
+      "id": "peak18_fresh",
+      "source": "/home/nc437/ladder-lite/zero_fee_full_cg_20260916/results/peak18_fresh/job275432_restart0/optimization/summary.json",
+      "sha256": "6a40a5e3bcd63aa8ecf95c2bc7e9ac113a01d53476fde16dfb9c48dd6e436236",
+      "pool_sha256": "c935025daa061866874fb82ea072a9972b0c4a1a2694caf36d20074c43c0e70c",
+      "input_hashes": {
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak18_h26.csv": "d70c3c3f9c15b82f26e1262fb2067f9fcc5e41d63e9ffbe877d33b5fa16563a6",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      }
+    }
+  ],
+  "execution_commit": "c92a34eaffd95affc12ba4f6d05082fb72438072",
+  "source_commit": "c210187bb50a2eac2022178ea21aa39d7ff6b9b1",
+  "question": "Can the same CG pool supply a five-bus exact-once executable selection?",
+  "change": "Final MIP trip rows equal one; no CG rerun and no new columns",
+  "physics": "unchanged240kWh/350kW,zero fee,aggregate return>=280.7833253kWh",
+  "budget_s": 3600,
+  "resources": {
+    "partition": "default_partition",
+    "cpus": 8,
+    "memory": "24G",
+    "walltime": "02:00:00",
+    "exclude": "scaglione-compute-01",
+    "concurrency": 3
+  },
+  "dependencies": [],
+  "validation": "two local tests passed; repeat both natively before every solve",
+  "restart": "private job/restart directory"
+}

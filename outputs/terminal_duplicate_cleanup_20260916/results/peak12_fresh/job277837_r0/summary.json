@@ -1,0 +1,21 @@
+{
+  "fleet_status": 2,
+  "fleet": 5,
+  "fleet_bound": 5.0,
+  "proof_scope": "finite_frozen_pool_with_exact_once_trip_rows; no new CG certificate",
+  "charging_status": 2,
+  "charging_cost": 164.3165467818644,
+  "charging_bound": 164.3165467818644,
+  "seconds": 2784.4154391239863,
+  "exact_once_verified": true,
+  "source": "/home/nc437/ladder-lite/zero_fee_full_cg_20260916/results/peak12_fresh/job275437_restart0/optimization/summary.json",
+  "source_sha256": "6cab95546dd45081e71433aca6639417894e65a723f9e2755ca989799ecdb6c3",
+  "selected_source_sha256": "6ca7a25ca8dd0fe14e9b7250cc7fcf66de8ee473b25e57babf4abc42289123b4",
+  "treatment": "remove duplicated trips from selected duties; optimize charging frontiers; exact-once selection",
+  "generated_sequences": 8,
+  "repair_columns": 870,
+  "individual_replay_verified": true,
+  "shared_capacity_validated": false,
+  "continuous_charging_cost": 160.60524134602747,
+  "terminal_kwh": 281.1700005
+}

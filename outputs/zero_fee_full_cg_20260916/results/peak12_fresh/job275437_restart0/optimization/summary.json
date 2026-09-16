@@ -1,0 +1,59 @@
+{
+  "cg_stop": "pricing_certified",
+  "cg_pricing_certified": true,
+  "cg_seconds": 1006.3332043210976,
+  "terminal_target_kwh": 280.7833253,
+  "fleet_cap": 5,
+  "columns": 30962,
+  "last_iteration": {
+    "iteration": 1031,
+    "phase": "combined-cost",
+    "elapsed_s": 1006.2637028419413,
+    "rmp_objective": 500161.8630869568,
+    "route_weight": 5.0,
+    "terminal_dual": 0.030077177622782378,
+    "fleet_dual": 0.0,
+    "min_reduced_cost": -2.3938755144836676e-10,
+    "columns": 30962,
+    "lp_seconds": 29.597360979299992,
+    "pricing_seconds": 878.5251718605869
+  },
+  "proof_scope": "expanded_event_graph_weighted_LP_if_certified; MIP_finite_pool_only",
+  "lp_seconds": 29.597360979299992,
+  "pricing_seconds": 878.5251718605869,
+  "columns_sha256": "abc3166906059877a76c6aad8087b43a0660c6b3032b55a58881d349c331048e",
+  "weighted_full_graph_lp_lower_bound": 500161.86308695556,
+  "certificate_tolerance": 1e-06,
+  "fleet_stage": {
+    "status": 2,
+    "seconds": 3.8166580479592085,
+    "bound": 5.0,
+    "buses": 5
+  },
+  "charging_stage": {
+    "status": 2,
+    "cost": 172.99075021444878,
+    "bound": 172.99075021444878,
+    "fleet": 5
+  },
+  "selected_terminal_kwh": 483.29999999999995,
+  "selected_continuous_charging_cost": 169.24434378861042,
+  "graph_seconds": 213.94971313001588,
+  "input_hashes": {
+    "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+    "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak12_h26.csv": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+    "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+  },
+  "physics": {
+    "battery_kwh": 240,
+    "initial_kwh": 240,
+    "charge_kw": 350,
+    "reserve_kwh": 0,
+    "soc_step": 2.5,
+    "time_step": 5,
+    "shared_capacity": false,
+    "charge_start_fee": 0,
+    "coverage": "cover"
+  }
+}

@@ -7,6 +7,13 @@ new=json.loads(Path(meta['snapshot']).read_text());old=json.loads(Path(meta['pre
 def flatten(d):
  out={}
  for campaign,c in d.get('campaigns',{}).items():
+  if campaign in ('terminal_exact_once_20260916','terminal_duplicate_cleanup_20260916'):
+   for r in c.get('results',[]):
+    out[campaign,'terminal_postprocess',r['path']]=r
+  if campaign == 'zero_fee_full_cg_20260916':
+   for r in c.get('attempts',[]):
+    if r.get('summary_path'):
+     out[campaign,'terminal_full_cg',r['summary_path']]={'sha256':r['summary_sha256'],'result':r['summary']}
   for stage in ['mip','cg','records','comparisons','rejected_mip_outputs','pricing_calls']:
    for i,r in enumerate(c.get(stage,[])):
     path=r.get('path') or (r.get('artifact_hashes',{}).get('diagnostic.json',{}).get('path') if stage=='pricing_calls' else None) or str(i)

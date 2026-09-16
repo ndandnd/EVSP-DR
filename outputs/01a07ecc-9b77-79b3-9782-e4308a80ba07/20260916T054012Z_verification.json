@@ -1,0 +1,67 @@
+{
+  "mode": "after",
+  "records": 3381,
+  "views": [
+    {
+      "name": "Campaigns",
+      "range": "A1:G14",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A1:G14\",\"rows\":14,\"cols\":7,\"values\":[[null,null,null,null,null,null,null],[\"EVSP–DR experiment register\",null,null,null,null,null,null],[\"Evidence captured 2026-09-16T05:40:12.993535+00:00. Counts below are records, not independent experimental samples.\",null,null,null,null,null,null],[null,null,null,null,null,null,null],[\"Campaign / source group\",\"Family\",\"LP / CG records\",\"MIP records\",\"Charging records\",\"Execution / audit records\",\"Total records\"],[\"capacity_deadline5_retry\",\"production_or_historical\",5,5,0,1,11],[\"capacity_fixed_dual_20260914\",\"production_or_historical\",0,0,0,5,5],[\"capacity_fixed_dual_retry_20260914\",\"production_or_historical\",0,0,0,5,5],[\"capacity_pricing_boundary_20260914\",\"production_or_historical\",7,7,0,3,17],[\"capacity_speed_pilot\",\"controlled_physics_pilot\",10,10,0,2,22],[\"capacity_timeout6_rerun\",\"production_or_historical\",1,1,0,3,5],[\"chain_extension_20260913\",\"production_or_historical\",60,60,0,66,186],[\"chain_extension_20260914\",\"production_or_historical\",18,18,0,22,58],[\"chain_extension_20260915\",\"production_or_historical\",12,11,0,16,39]]}"
+    },
+    {
+      "name": "Campaigns",
+      "range": "A13:H14",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A13:H14\",\"rows\":2,\"cols\":8,\"values\":[[\"chain_extension_20260914\",\"production_or_historical\",18,18,0,22,58,\"/home/nc437/ladder-lite/chain_extension_20260914\"],[\"chain_extension_20260915\",\"production_or_historical\",12,11,0,16,39,\"/home/nc437/ladder-lite/chain_extension_20260915\"]]}"
+    },
+    {
+      "name": "Campaigns",
+      "range": "A88:H89",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A88:H89\",\"rows\":2,\"cols\":8,\"values\":[[\"zero_charge_start_fee_20260913\",\"production_or_historical\",36,36,0,3,75,\"/home/nc437/ladder-lite/zero_charge_start_fee_20260913\"],[\"zero_fee_full_cg_20260916\",\"terminal_energy_full_cg\",3,3,0,0,6,\"/home/nc437/ladder-lite/zero_fee_full_cg_20260916\"]]}"
+    },
+    {
+      "name": "Campaigns",
+      "range": "A79:H80",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A79:H80\",\"rows\":2,\"cols\":8,\"values\":[[\"terminal_energy_fair_mip_retry_5cdb813\",\"production_or_historical\",0,3,9,2,14,\"/home/nc437/ladder-lite/terminal_energy_fair_mip_retry_5cdb813_20260910\"],[\"terminal_exact_once_20260916\",\"terminal_postprocessing\",0,3,0,0,3,\"/home/nc437/ladder-lite/terminal_exact_once_20260916\"]]}"
+    },
+    {
+      "name": "Campaigns",
+      "range": "A76:H77",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A76:H77\",\"rows\":2,\"cols\":8,\"values\":[[\"targeted_audit:legacy_full_cache_witness\",\"targeted_audit\",0,0,0,4,4,\"/home/nc437/ladder-lite/full_cache_witness_legacy175_20260909_1755\"],[\"terminal_duplicate_cleanup_20260916\",\"terminal_postprocessing\",0,2,0,0,2,\"/home/nc437/ladder-lite/terminal_duplicate_cleanup_20260916\"]]}"
+    },
+    {
+      "name": "CG",
+      "range": "A106:N118",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"CG\",\"address\":\"A106:N118\",\"rows\":13,\"cols\":14,\"values\":[[\"chain_extension_20260914\",\"w6_k28\",\"cg\",null,28,null,2801156.023368558,\"bus_plus_charging\",28.000000000000636,\"no\",\"wall_limit\",315,14392.3921842454,null],[\"chain_extension_20260915\",\"w1_k29\",\"cg\",null,29,null,2901199.407727373,\"bus_plus_charging\",28.999999999999996,\"no\",\"wall_limit\",186,14374.855279233307,null],[\"chain_extension_20260915\",\"w1_k30\",\"cg\",null,30,null,3001214.1093936283,\"bus_plus_charging\",29.99999999999985,\"no\",\"wall_limit\",215,14397.396455698516,null],[\"chain_extension_20260915\",\"w2_k29\",\"cg\",null,29,null,2901181.0742299906,\"bus_plus_charging\",28.99999999999993,\"no\",\"wall_limit\",252,14350.64293270465,null],[\"chain_extension_20260915\",\"w2_k30\",\"cg\",null,30,null,3001210.201447417,\"bus_plus_charging\",29.999999999999268,\"no\",\"wall_limit\",180,14350.986983924638,null],[\"chain_extension_20260915\",\"w3_k29\",\"cg\",null,29,null,2901164.5923426924,\"bus_plus_charging\",28.999999999999655,\"no\",\"wall_limit\",307,14365.397598891519,null],[\"chain_extension_20260915\",\"w3_k30\",\"cg\",null,30,null,3001212.0357340374,\"bus_plus_charging\",30.00000000000034,\"no\",\"wall_limit\",219,14375.071768854279,null],[\"chain_extension_20260915\",\"w4_k29\",\"cg\",null,29,null,2901181.619144913,\"bus_plus_charging\",29.00000000000086,\"no\",\"wall_limit\",246,14395.226738582074,null],[\"chain_extension_20260915\",\"w4_k30\",\"cg\",null,30,null,2901286.4659678508,\"bus_plus_charging\",29.000000000000092,\"no\",\"wall_limit\",126,14380.826052370016,null],[\"chain_extension_20260915\",\"w5_k29\",\"cg\",null,29,null,2801254.6146085905,\"bus_plus_charging\",28.000000000000465,\"no\",\"wall_limit\",344,14394.58233822789,null],[\"chain_extension_20260915\",\"w5_k30\",\"cg\",null,30,null,2901299.359386698,\"bus_plus_charging\",29.000000000000398,\"no\",\"wall_limit\",315,14374.98546269117,null],[\"chain_extension_20260915\",\"w6_k29\",\"cg\",null,29,null,2901222.0137721775,\"bus_plus_charging\",28.99999999999958,\"yes\",\"certified\",221,5686.091551497579,null],[\"chain_extension_20260915\",\"w6_k30\",\"cg\",null,30,null,3001246.505414593,\"bus_plus_charging\",30.00000000000074,\"no\",\"wall_limit\",297,14379.059985174332,null]]}"
+    },
+    {
+      "name": "CG",
+      "range": "A888:N891",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"CG\",\"address\":\"A888:N891\",\"rows\":4,\"cols\":14,\"values\":[[\"zero_charge_start_fee_20260913\",\"w6_k15\",\"cg\",\"fee5\",15,null,1500606.3379640586,\"bus_plus_charging\",14.999999999999824,\"yes\",\"certified\",22,662.0083098346367,null],[\"zero_fee_full_cg_20260916\",\"peak08_fresh\",\"cg\",null,5,62,500128.1260433465,\"100000 fleet + electricity, zero start fee\",5,\"yes\",\"pricing_certified\",939,914.4816741799004,28202],[\"zero_fee_full_cg_20260916\",\"peak12_fresh\",\"cg\",null,5,62,500161.8630869568,\"100000 fleet + electricity, zero start fee\",5,\"yes\",\"pricing_certified\",1031,1006.3332043210976,30962],[\"zero_fee_full_cg_20260916\",\"peak18_fresh\",\"cg\",null,5,62,500090.20266396605,\"100000 fleet + electricity, zero start fee\",5,\"yes\",\"pricing_certified\",1220,1332.0429197973572,36632]]}"
+    },
+    {
+      "name": "MIP",
+      "range": "A106:L117",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"MIP\",\"address\":\"A106:L117\",\"rows\":12,\"cols\":12,\"values\":[[\"chain_extension_20260914\",\"w6_k28\",\"mip\",null,28,null,28,28,\"yes\",0,\"TIME_LIMIT\",219566],[\"chain_extension_20260915\",\"w1_k29\",\"mip\",null,29,null,30,29.000000000000014,\"no\",1,\"TIME_LIMIT\",263453],[\"chain_extension_20260915\",\"w1_k30\",\"mip\",null,30,null,31,30.000000000000004,\"no\",1,\"TIME_LIMIT\",269919],[\"chain_extension_20260915\",\"w2_k29\",\"mip\",null,29,null,30,29.000000000000018,\"no\",1,\"TIME_LIMIT\",206839],[\"chain_extension_20260915\",\"w3_k29\",\"mip\",null,29,null,29,29,\"yes\",0,\"TIME_LIMIT\",175293],[\"chain_extension_20260915\",\"w3_k30\",\"mip\",null,30,null,30,30,\"yes\",0,\"TIME_LIMIT\",181900],[\"chain_extension_20260915\",\"w4_k29\",\"mip\",null,29,null,29,29,\"yes\",0,\"TIME_LIMIT\",229026],[\"chain_extension_20260915\",\"w4_k30\",\"mip\",null,30,null,39,29.000000000000664,\"no\",9,\"TIME_LIMIT\",232820],[\"chain_extension_20260915\",\"w5_k29\",\"mip\",null,29,null,35,28.000000000000078,\"no\",6,\"TIME_LIMIT\",237964],[\"chain_extension_20260915\",\"w5_k30\",\"mip\",null,30,null,37,29.00000000000041,\"no\",7,\"TIME_LIMIT\",247427],[\"chain_extension_20260915\",\"w6_k29\",\"mip\",null,29,null,30,29.000000000000004,\"no\",1,\"TIME_LIMIT\",226183],[\"chain_extension_20260915\",\"w6_k30\",\"mip\",null,30,null,31,30.000000000000036,\"no\",1,\"TIME_LIMIT\",235114]]}"
+    },
+    {
+      "name": "MIP",
+      "range": "A1176:L1179",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"MIP\",\"address\":\"A1176:L1179\",\"rows\":4,\"cols\":12,\"values\":[[\"zero_charge_start_fee_20260913\",\"w6_k15\",\"mip\",\"fee5\",15,null,15,15,\"yes\",0,\"TIME_LIMIT\",92284],[\"zero_fee_full_cg_20260916\",\"peak08_fresh\",\"mip\",null,5,62,5,5,\"yes\",0,\"OPTIMAL\",28202],[\"zero_fee_full_cg_20260916\",\"peak12_fresh\",\"mip\",null,5,62,5,5,\"yes\",0,\"OPTIMAL\",30962],[\"zero_fee_full_cg_20260916\",\"peak18_fresh\",\"mip\",null,5,62,5,5,\"yes\",0,\"OPTIMAL\",36632]]}"
+    },
+    {
+      "name": "MIP",
+      "range": "A1088:L1091",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"MIP\",\"address\":\"A1088:L1091\",\"rows\":4,\"cols\":12,\"values\":[[\"terminal_energy_fair_mip_retry_5cdb813\",\"peak18\",\"mip\",null,null,null,null,null,null,\"\",null,null],[\"terminal_exact_once_20260916\",\"peak08_fresh\",\"mip\",null,5,62,null,null,\"no\",\"\",\"INFEASIBLE\",null],[\"terminal_exact_once_20260916\",\"peak12_fresh\",\"mip\",null,5,62,null,null,\"no\",\"\",\"INFEASIBLE\",null],[\"terminal_exact_once_20260916\",\"peak18_fresh\",\"mip\",null,5,62,5,5,\"yes\",0,\"OPTIMAL\",null]]}"
+    },
+    {
+      "name": "MIP",
+      "range": "A1080:L1082",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"MIP\",\"address\":\"A1080:L1082\",\"rows\":3,\"cols\":12,\"values\":[[\"strict_capacity_parallel_20260914\",\"k2_flat_240r0_parx60\",\"mip\",null,2,null,2,2,\"yes\",0,\"OPTIMAL\",142],[\"terminal_duplicate_cleanup_20260916\",\"peak08_fresh\",\"mip\",null,5,62,5,5,\"yes\",0,\"OPTIMAL\",null],[\"terminal_duplicate_cleanup_20260916\",\"peak12_fresh\",\"mip\",null,5,62,5,5,\"yes\",0,\"OPTIMAL\",null]]}"
+    },
+    {
+      "name": "Attempts",
+      "range": "A112:H128",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Attempts\",\"address\":\"A112:H128\",\"rows\":17,\"cols\":8,\"values\":[[\"chain_extension_20260914\",\"w6_k28\",\"telemetry\",null,28,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"attempt_progress\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_20260915\",\"case_jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_20260915\",\"jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_20260915\",\"manifest.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_20260915\",\"w1_k29\",\"telemetry\",null,29,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w1_k30\",\"telemetry\",null,30,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w2_k29\",\"telemetry\",null,29,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w2_k30\",\"telemetry\",null,30,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w3_k29\",\"telemetry\",null,29,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w3_k30\",\"telemetry\",null,30,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w4_k29\",\"telemetry\",null,29,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w4_k30\",\"telemetry\",null,30,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w5_k29\",\"telemetry\",null,29,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w5_k30\",\"telemetry\",null,30,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w6_k29\",\"telemetry\",null,29,null,\"cg_phase_telemetry\",\"telemetry\"],[\"chain_extension_20260915\",\"w6_k30\",\"telemetry\",null,30,null,\"cg_phase_telemetry\",\"telemetry\"]]}"
+    }
+  ],
+  "formulaScan": "{\"kind\":\"notice\",\"message\":\"Cell search matched 0 entries.\"}"
+}

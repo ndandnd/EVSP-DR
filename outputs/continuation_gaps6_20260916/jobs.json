@@ -1,0 +1,98 @@
+[
+  {
+    "case_id": "w1_k30_longmip",
+    "job_id": "278000",
+    "kind": "mip",
+    "treatment": "continuation_original_pool_longer_search",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=4:30:00",
+      "--requeue",
+      "--job-name=drP_w1_k30_longmip",
+      "--output=/home/nc437/ladder-lite/continuation_gaps6_20260916/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/continuation_gaps6_20260916/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/continuation_gaps6_20260916/worker.sub",
+      "/home/nc437/ladder-lite/continuation_gaps6_20260916",
+      "w1_k30_longmip"
+    ],
+    "submitted_utc": "2026-09-16T04:53:58.080206+00:00"
+  },
+  {
+    "case_id": "w4_k30_longmip",
+    "job_id": "278001",
+    "kind": "mip",
+    "treatment": "continuation_original_pool_longer_search",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=4:30:00",
+      "--requeue",
+      "--job-name=drP_w4_k30_longmip",
+      "--output=/home/nc437/ladder-lite/continuation_gaps6_20260916/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/continuation_gaps6_20260916/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/continuation_gaps6_20260916/worker.sub",
+      "/home/nc437/ladder-lite/continuation_gaps6_20260916",
+      "w4_k30_longmip"
+    ],
+    "submitted_utc": "2026-09-16T04:53:58.189110+00:00"
+  },
+  {
+    "case_id": "w5_k30_longmip",
+    "job_id": "278002",
+    "kind": "mip",
+    "treatment": "continuation_original_pool_longer_search",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=4:30:00",
+      "--requeue",
+      "--job-name=drP_w5_k30_longmip",
+      "--output=/home/nc437/ladder-lite/continuation_gaps6_20260916/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/continuation_gaps6_20260916/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/continuation_gaps6_20260916/worker.sub",
+      "/home/nc437/ladder-lite/continuation_gaps6_20260916",
+      "w5_k30_longmip"
+    ],
+    "submitted_utc": "2026-09-16T04:53:58.290765+00:00"
+  },
+  {
+    "case_id": "w6_k30_longmip",
+    "job_id": "278003",
+    "kind": "mip",
+    "treatment": "continuation_original_pool_longer_search",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=4:30:00",
+      "--requeue",
+      "--job-name=drP_w6_k30_longmip",
+      "--output=/home/nc437/ladder-lite/continuation_gaps6_20260916/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/continuation_gaps6_20260916/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/continuation_gaps6_20260916/worker.sub",
+      "/home/nc437/ladder-lite/continuation_gaps6_20260916",
+      "w6_k30_longmip"
+    ],
+    "submitted_utc": "2026-09-16T04:53:58.398155+00:00"
+  }
+]

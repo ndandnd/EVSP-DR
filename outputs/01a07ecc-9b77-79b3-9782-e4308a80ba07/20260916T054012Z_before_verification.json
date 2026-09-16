@@ -1,0 +1,17 @@
+{
+  "prior_workbook_sha256": "83f64aee29f02085b9da100c719a61f87af2e956d7780cb45d44a385b82c7e33",
+  "prior_checks": {
+    "sourceTime": "2026-09-16T04:38:40.842521+00:00",
+    "sourceRows": 3366,
+    "partition": {
+      "CG": 885,
+      "MIP": 1169,
+      "Charging": 78,
+      "Attempts": 1234
+    },
+    "historicalRows": 39,
+    "campaignCountCheck": true,
+    "formulaScan": "{\"kind\":\"notice\",\"message\":\"Cell search matched 0 entries.\"}"
+  },
+  "note": "Prior local build was not yet mirrored; preserve its hash without claiming mirror equality."
+}

@@ -1,0 +1,54 @@
+{
+  "rows": [
+    {
+      "peak": "peak08",
+      "fixed_grid": 132.41905857999518,
+      "fixed_continuous": 128.29345485323574,
+      "fixed_terminal_kwh": 281.1700005,
+      "baseline_source": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak08/fee0/joint/comparison.json",
+      "baseline_sha256": "0e00ce0faf3c54846247b0f5d313222663b45ba3833478d9b3e13ca4e251a674",
+      "cleanup_status": "validated selection",
+      "cleanup_grid": 128.9475887481094,
+      "solver_grid_objective": 128.9475887481094,
+      "selected_minus_solver_grid_cost": 0.0,
+      "cleanup_continuous": 124.69204890407855,
+      "cleanup_terminal_kwh": 281.1700005,
+      "same_terminal_energy": true,
+      "reduction_percent": 2.807162651654449,
+      "charging_status": 2,
+      "summary_path": "outputs/terminal_duplicate_cleanup_20260916/results/peak08_fresh/job277836_r0/summary.json",
+      "summary_sha256": "cd821734518e52ba5645f5f670792ff1ee646092c9de2ce62710a06c676f7472",
+      "selected_sha256": "48536bcf4303e6d5838678f5226478b2138ad96d64524244abcf822415a79da3"
+    },
+    {
+      "peak": "peak12",
+      "fixed_grid": 167.8362710149231,
+      "fixed_continuous": 164.2305708873173,
+      "fixed_terminal_kwh": 281.1700005,
+      "baseline_source": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak12/fee0/joint/comparison.json",
+      "baseline_sha256": "bb79b68365df06e3193128a9a6c6f4b23aa103038945313561158dbdd082a027",
+      "cleanup_status": "validated selection",
+      "cleanup_grid": 164.3165729415923,
+      "solver_grid_objective": 164.3165467818644,
+      "selected_minus_solver_grid_cost": 2.615972792341381e-05,
+      "cleanup_continuous": 160.60524134602747,
+      "cleanup_terminal_kwh": 281.1700005,
+      "same_terminal_energy": true,
+      "reduction_percent": 2.2074632766010738,
+      "charging_status": 2,
+      "summary_path": "outputs/terminal_duplicate_cleanup_20260916/results/peak12_fresh/job277837_r0/summary.json",
+      "summary_sha256": "2fcc469bc8af109acb33f1bd82b2e4e920c7401eacfffe30117dc97866850978",
+      "selected_sha256": "7177224d2361bc2606f54289c8fe75c71d88e0362369f96fbfae1d6bfb9cde36"
+    },
+    {
+      "peak": "peak18",
+      "fixed_grid": 96.94992510972952,
+      "fixed_continuous": 95.28505423778552,
+      "fixed_terminal_kwh": 282.9,
+      "baseline_source": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak18/fee0/joint/comparison.json",
+      "baseline_sha256": "edd4ae5d98ede2de0f5c3344edcafb35ada72c975be29bb40581844d138bf571",
+      "cleanup_status": "pending"
+    }
+  ],
+  "scope": "Fresh full CG followed by duplicate deletion and charging reoptimization; simplified 240 kWh/350 kW, no reserve or shared capacity; aggregate ending energy, zero start fee. Not global optimality."
+}

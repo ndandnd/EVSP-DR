@@ -1,3 +1,7 @@
+# Latest verified comparison — 16 September
+
+[Zero-fee charging improvements with exact-once trips](../zero_fee_validated_comparison_20260916/README.md) · [Pricing correction scope](../reduced_cost_scope_audit_20260916/README.md) · [Current monitor report](../overnight_next_20260914/status_20260916T054012Z/README.md).
+
 Latest verified chain results: [15 September23:37EDT](../overnight_next_20260914/status_20260916T032811Z/README.md). New longer target29 searches: [campaign](../continuation_gaps5_20260916/README.md).
 
 Current priority: [full zero-fee CG with return-energy pricing](../zero_fee_full_cg_20260916/README.md), array275432, launched15September late evening. Earlier three-tariff ties are saved-pool results, not a full-CG comparison.

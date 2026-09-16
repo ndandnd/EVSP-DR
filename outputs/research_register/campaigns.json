@@ -296,7 +296,7 @@
     "family": "production_or_historical",
     "report_links": [],
     "root": "/home/nc437/ladder-lite/chain_extension_20260915",
-    "row_count": 34,
+    "row_count": 39,
     "workflow_job_ids": [
       "187972",
       "187978",
@@ -337,7 +337,7 @@
     "family": "production_or_historical",
     "report_links": [],
     "root": "/home/nc437/ladder-lite/chain_extension_31_32_20260915",
-    "row_count": 7,
+    "row_count": 10,
     "workflow_job_ids": [
       "224631",
       "224635",
@@ -677,6 +677,32 @@
     "row_count": 7,
     "workflow_job_ids": [
       "236276"
+    ]
+  },
+  {
+    "campaign_id": "continuation_gaps5_20260916",
+    "family": "production_or_historical",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/continuation_gaps5_20260916",
+    "row_count": 6,
+    "workflow_job_ids": [
+      "275867",
+      "275868",
+      "275869",
+      "275870"
+    ]
+  },
+  {
+    "campaign_id": "continuation_gaps6_20260916",
+    "family": "production_or_historical",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/continuation_gaps6_20260916",
+    "row_count": 6,
+    "workflow_job_ids": [
+      "278000",
+      "278001",
+      "278002",
+      "278003"
     ]
   },
   {
@@ -2029,15 +2055,9 @@
     "family": "scheduler",
     "report_links": [],
     "root": null,
-    "row_count": 72,
+    "row_count": 67,
     "workflow_job_ids": [
-      "224632",
-      "224635",
       "224636",
-      "224644",
-      "224648",
-      "224652",
-      "228593",
       "228594",
       "228595",
       "228596",
@@ -2062,7 +2082,15 @@
       "228615",
       "228616",
       "228617",
-      "275432",
+      "275867",
+      "275868",
+      "275869",
+      "275870",
+      "277834",
+      "278000",
+      "278001",
+      "278002",
+      "278003",
       "537227"
     ]
   },
@@ -2238,6 +2266,14 @@
     "workflow_job_ids": []
   },
   {
+    "campaign_id": "terminal_duplicate_cleanup_20260916",
+    "family": "terminal_postprocessing",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/terminal_duplicate_cleanup_20260916",
+    "row_count": 2,
+    "workflow_job_ids": []
+  },
+  {
     "campaign_id": "terminal_energy_fair",
     "family": "matched_terminal_energy",
     "report_links": [],
@@ -2258,6 +2294,14 @@
       "778802",
       "810459"
     ]
+  },
+  {
+    "campaign_id": "terminal_exact_once_20260916",
+    "family": "terminal_postprocessing",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/terminal_exact_once_20260916",
+    "row_count": 3,
+    "workflow_job_ids": []
   },
   {
     "campaign_id": "union_target_feasibility_20260915",
@@ -2540,6 +2584,14 @@
     "report_links": [],
     "root": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913",
     "row_count": 75,
+    "workflow_job_ids": []
+  },
+  {
+    "campaign_id": "zero_fee_full_cg_20260916",
+    "family": "terminal_energy_full_cg",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/zero_fee_full_cg_20260916",
+    "row_count": 6,
     "workflow_job_ids": []
   }
 ]

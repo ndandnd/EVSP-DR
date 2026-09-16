@@ -1,8 +1,8 @@
 # Research experiment register
 
-Source snapshot: `20260916T032811Z.json` (`ccc83563fadbe6cc562095a23cbd1e7420347a68667de9f303d9df043f7b8a04`), captured 2026-09-16T03:28:13.334830+00:00.
+Source snapshot: `20260916T054012Z.json` (`0fdc26465ef29f76b6a808e2878dec53240e622ec8fb6bb5a9e79a92db9e62ce`), captured 2026-09-16T05:40:12.993535+00:00.
 
-This build contains **3355 normalized artifact/stage rows** across **79 source groups/campaigns**. These groups include scheduler and log-only collections and are not 26 independent experiments. `unknown` means the compact source snapshot did not retain that field; no value is inferred from another metric.
+This build contains **3381 normalized artifact/stage rows** across **84 source groups/campaigns**. These groups include scheduler and log-only collections and are not 26 independent experiments. `unknown` means the compact source snapshot did not retain that field; no value is inferred from another metric.
 
 ## Campaign index
 
@@ -16,8 +16,8 @@ This build contains **3355 normalized artifact/stage rows** across **79 source g
 | capacity_timeout6_rerun | production_or_historical | /home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef | 5 | 772080<br>811181<br>811182<br>811184<br>811192 | unknown |
 | chain_extension_20260913 | production_or_historical | /home/nc437/ladder-lite/chain_extension_20260913 | 186 | 133908<br>133909<br>133910<br>133911<br>133912<br>133913<br>133914<br>133915<br>133916<br>133917<br>133918<br>133919<br>133920<br>133921<br>133922<br>133923<br>133924<br>133925<br>133926<br>133927<br>133928<br>133929<br>133930<br>133931<br>133932<br>133933<br>133934<br>133935<br>133936<br>133937<br>133938<br>133939<br>133940<br>133941<br>133942<br>133943<br>133944<br>133945<br>133946<br>133947<br>133948<br>133949<br>133950<br>133951<br>133952<br>133953<br>133954<br>133955<br>133956<br>133957<br>133958<br>133959<br>133960<br>133961<br>133962<br>133963<br>133964<br>133965<br>133966<br>133967<br>133968<br>133969<br>133970<br>133971<br>133972<br>133973<br>133974<br>133975<br>133976<br>133977<br>133978<br>133979<br>133980<br>133981<br>133982<br>133983<br>133984<br>133985<br>133986<br>133987<br>133988<br>133989<br>133990<br>133991<br>133992<br>133993<br>133994<br>133995<br>133996<br>133997<br>134050<br>134051<br>134052<br>134053<br>134054<br>134055<br>134056<br>134057<br>134058<br>134059<br>134060<br>134061<br>134062<br>134063<br>134064<br>134065<br>134066<br>134067<br>134068<br>134069<br>134070<br>134071<br>134072<br>134073<br>134074<br>134075<br>134076<br>134077<br>134078<br>134079<br>134080 | unknown |
 | chain_extension_20260914 | production_or_historical | /home/nc437/ladder-lite/chain_extension_20260914 | 58 | 133927<br>133947<br>133967<br>133987<br>134059<br>134079<br>187967<br>187968<br>187969<br>187970<br>187971<br>187972<br>187973<br>187974<br>187975<br>187976<br>187977<br>187978<br>187979<br>187980<br>187981<br>187982<br>187983<br>187984<br>187985<br>187986<br>187987<br>187988<br>187989<br>187990<br>187991<br>187992<br>187993<br>187994<br>187995<br>187996<br>187997<br>187998<br>187999<br>188000<br>188001<br>188002<br>188004 | unknown |
-| chain_extension_20260915 | production_or_historical | /home/nc437/ladder-lite/chain_extension_20260915 | 34 | 187972<br>187978<br>187984<br>187990<br>187996<br>188002<br>224563<br>224628<br>224629<br>224630<br>224631<br>224632<br>224633<br>224634<br>224635<br>224636<br>224637<br>224638<br>224639<br>224640<br>224641<br>224642<br>224643<br>224644<br>224645<br>224646<br>224647<br>224648<br>224649<br>224650<br>224651<br>224652 | unknown |
-| chain_extension_31_32_20260915 | production_or_historical | /home/nc437/ladder-lite/chain_extension_31_32_20260915 | 7 | 224631<br>224635<br>224639<br>224643<br>224647<br>224651<br>228593<br>228594<br>228595<br>228596<br>228597<br>228598<br>228599<br>228600<br>228601<br>228602<br>228603<br>228604<br>228605<br>228606<br>228607<br>228608<br>228609<br>228610<br>228611<br>228612<br>228613<br>228614<br>228615<br>228616<br>228617 | unknown |
+| chain_extension_20260915 | production_or_historical | /home/nc437/ladder-lite/chain_extension_20260915 | 39 | 187972<br>187978<br>187984<br>187990<br>187996<br>188002<br>224563<br>224628<br>224629<br>224630<br>224631<br>224632<br>224633<br>224634<br>224635<br>224636<br>224637<br>224638<br>224639<br>224640<br>224641<br>224642<br>224643<br>224644<br>224645<br>224646<br>224647<br>224648<br>224649<br>224650<br>224651<br>224652 | unknown |
+| chain_extension_31_32_20260915 | production_or_historical | /home/nc437/ladder-lite/chain_extension_31_32_20260915 | 10 | 224631<br>224635<br>224639<br>224643<br>224647<br>224651<br>228593<br>228594<br>228595<br>228596<br>228597<br>228598<br>228599<br>228600<br>228601<br>228602<br>228603<br>228604<br>228605<br>228606<br>228607<br>228608<br>228609<br>228610<br>228611<br>228612<br>228613<br>228614<br>228615<br>228616<br>228617 | unknown |
 | compact_large_seed_20260914 | production_or_historical | /home/nc437/ladder-lite/compact_large_seed_20260914 | 82 | 207647<br>207648<br>207649<br>207650<br>207651<br>207652<br>207653<br>207654<br>207655<br>207656<br>207657<br>207658<br>207659<br>207660<br>207661<br>207662<br>207663<br>207664<br>207665<br>207666<br>207667<br>207668<br>207669<br>207670<br>207671<br>207672<br>207673<br>207674<br>207675<br>207676<br>207677<br>207678<br>207679<br>207680<br>207681<br>207682<br>207683<br>207684<br>207685<br>207686<br>207687<br>207688<br>207689<br>207690<br>207692<br>207693<br>207694<br>207695 | unknown |
 | compact_pool_union_20260915 | production_or_historical | /home/nc437/ladder-lite/compact_pool_union_20260915 | 18 | 41567<br>41577<br>41579<br>41581<br>41583<br>41585<br>41587<br>41589<br>41591<br>227315<br>227316<br>227317<br>227318<br>227321<br>227322<br>227323<br>227324<br>227325<br>227327<br>227328<br>227329<br>227330<br>227331<br>227332<br>227333<br>227334<br>227335<br>227336<br>227337<br>810283<br>810285<br>810287<br>810289<br>810291 | unknown |
 | compact_seed_support_20260914 | production_or_historical | /home/nc437/ladder-lite/compact_seed_support_20260914 | 114 | 41567<br>41568<br>41569<br>41573<br>41574<br>41575<br>41577<br>41579<br>41581<br>41583<br>41585<br>41587<br>41589<br>41591<br>41594<br>41596<br>41598<br>41600<br>41602<br>41604<br>41607<br>41609<br>41611<br>41613<br>41616<br>41618<br>41620<br>41622<br>41624<br>41627<br>41629<br>41631<br>41633<br>41636<br>41638<br>41640<br>41642<br>201438<br>201439<br>201440<br>201441<br>201442<br>201443<br>201444<br>201445<br>201446<br>201447<br>201448<br>201449<br>201450<br>201451<br>201452<br>201453<br>201454<br>201455<br>201456<br>201457<br>201458<br>201459<br>201460<br>201461<br>201462<br>201463<br>201464<br>201465<br>201466<br>201467<br>201468<br>201469<br>201470<br>201471<br>201472<br>201473<br>201474<br>201475<br>201476<br>201477<br>201478<br>201479<br>201480<br>201481<br>201482<br>201483<br>201484<br>201485<br>201486<br>201487<br>201488<br>201489<br>201490<br>201491<br>201492<br>201493<br>201494<br>201495<br>201496<br>201497<br>201498<br>201499<br>201500<br>201501<br>201502<br>201503<br>201504<br>201505<br>201506<br>201507<br>201508<br>201509<br>679893<br>679894<br>679895<br>679896<br>679897<br>679898<br>679899<br>679900<br>679901<br>779026<br>779027<br>779028<br>779030<br>779031<br>779032<br>779033<br>779034<br>779035<br>810283<br>810285<br>810287<br>810289<br>810291<br>810323<br>810324<br>810325<br>810328<br>810329<br>810330<br>810331<br>810335<br>810336<br>810337<br>810338<br>810339<br>810340<br>810341<br>810342<br>810345<br>810346<br>810347<br>810348<br>810349<br>810350<br>810351<br>810353<br>810354 | unknown |
@@ -25,6 +25,8 @@ This build contains **3355 normalized artifact/stage rows** across **79 source g
 | continuation_gaps2_20260915 | production_or_historical | /home/nc437/ladder-lite/continuation_gaps2_20260915 | 8 | 227897<br>227898 | unknown |
 | continuation_gaps3_20260915 | production_or_historical | /home/nc437/ladder-lite/continuation_gaps3_20260915 | 8 | 228579<br>228580 | unknown |
 | continuation_gaps4_20260915 | production_or_historical | /home/nc437/ladder-lite/continuation_gaps4_20260915 | 7 | 236276 | unknown |
+| continuation_gaps5_20260916 | production_or_historical | /home/nc437/ladder-lite/continuation_gaps5_20260916 | 6 | 275867<br>275868<br>275869<br>275870 | unknown |
+| continuation_gaps6_20260916 | production_or_historical | /home/nc437/ladder-lite/continuation_gaps6_20260916 | 6 | 278000<br>278001<br>278002<br>278003 | unknown |
 | controlled_comparison_20260913 | production_or_historical | /home/nc437/ladder-lite/controlled_comparison_20260913 | 93 | unknown | unknown |
 | covering_complement75 | production_or_historical | /home/nc437/ladder-lite/covering_complement75_20260911_21fbecb | 232 | 810454<br>810588<br>810589<br>812608<br>812619<br>812766<br>812767 | unknown |
 | covering_rerun9 | production_or_historical | /home/nc437/ladder-lite/covering_rerun9_20260909_21fbecb | 32 | 657972<br>659482<br>659492<br>669246<br>676020 | unknown |
@@ -63,7 +65,7 @@ This build contains **3355 normalized artifact/stage rows** across **79 source g
 | remaining_chain_gaps_20260914 | production_or_historical | /home/nc437/ladder-lite/remaining_chain_gaps_20260914 | 15 | 201512<br>201513<br>201514<br>201515<br>201516<br>201517<br>201518<br>201519<br>201520 | unknown |
 | reserve_feasibility_screen_20260914 | production_or_historical | /home/nc437/ladder-lite/reserve_feasibility_screen_20260914 | 23 | 207726<br>207727<br>207728<br>207729<br>207730<br>207731<br>207732<br>207733<br>207734<br>207735 | unknown |
 | retrospective_prefix_controls_20260914 | production_or_historical | /home/nc437/ladder-lite/retrospective_prefix_controls_20260914 | 10 | 189902<br>189905<br>189906<br>189907<br>189908<br>189909<br>189910 | unknown |
-| scheduler_snapshot | scheduler | unknown | 72 | 224632<br>224635<br>224636<br>224644<br>224648<br>224652<br>228593<br>228594<br>228595<br>228596<br>228597<br>228598<br>228599<br>228600<br>228601<br>228602<br>228603<br>228604<br>228605<br>228606<br>228607<br>228608<br>228609<br>228610<br>228611<br>228612<br>228613<br>228614<br>228615<br>228616<br>228617<br>275432<br>537227 | unknown |
+| scheduler_snapshot | scheduler | unknown | 67 | 224636<br>228594<br>228595<br>228596<br>228597<br>228598<br>228599<br>228600<br>228601<br>228602<br>228603<br>228604<br>228605<br>228606<br>228607<br>228608<br>228609<br>228610<br>228611<br>228612<br>228613<br>228614<br>228615<br>228616<br>228617<br>275867<br>275868<br>275869<br>275870<br>277834<br>278000<br>278001<br>278002<br>278003<br>537227 | unknown |
 | stage2_cap_license_recovery | production_or_historical | /home/nc437/ladder-lite/stage2_cap_license_recovery_20260910_871d057 | 3 | 772009 | unknown |
 | stage2_cap_saved_pool_reruns | production_or_historical | /home/nc437/ladder-lite/stage2_cap_saved_pool_reruns_20260910_15e781a | 4 | unknown | unknown |
 | strict_capacity_mip1h_20260914 | production_or_historical | /home/nc437/ladder-lite/strict_capacity_mip1h_20260914 | 15 | 188123<br>188124<br>188125<br>188126<br>188127<br>188128<br>188129<br>188130<br>188131<br>188132<br>188133<br>188134<br>188143<br>188144<br>188145<br>188146<br>188147<br>188148<br>188149<br>188150<br>188151<br>188152<br>188153<br>188154 | unknown |
@@ -77,8 +79,10 @@ This build contains **3355 normalized artifact/stage rows** across **79 source g
 | targeted_audit:april_source_replay | targeted_audit | /home/nc437/ladder-lite/april175_replay_20260909 | 4 | 653567 | unknown |
 | targeted_audit:full_cache_witness | targeted_audit | /home/nc437/ladder-lite/full_cache_witness_audit_20260909_1745 | 12 | unknown | unknown |
 | targeted_audit:legacy_full_cache_witness | targeted_audit | /home/nc437/ladder-lite/full_cache_witness_legacy175_20260909_1755 | 4 | unknown | unknown |
+| terminal_duplicate_cleanup_20260916 | terminal_postprocessing | /home/nc437/ladder-lite/terminal_duplicate_cleanup_20260916 | 2 | unknown | unknown |
 | terminal_energy_fair | matched_terminal_energy | /home/nc437/ladder-lite/terminal_energy_fair_20260910_2424369 | 9 | 778801<br>778802 | unknown |
 | terminal_energy_fair_mip_retry_5cdb813 | production_or_historical | /home/nc437/ladder-lite/terminal_energy_fair_mip_retry_5cdb813_20260910 | 14 | 778802<br>810459 | unknown |
+| terminal_exact_once_20260916 | terminal_postprocessing | /home/nc437/ladder-lite/terminal_exact_once_20260916 | 3 | unknown | unknown |
 | union_target_feasibility_20260915 | production_or_historical | /home/nc437/ladder-lite/union_target_feasibility_20260915 | 11 | 228618<br>228619<br>228654<br>228655<br>228656<br>228657<br>228658<br>228659<br>228660 | unknown |
 | w2_chain_recovery_20260912 | production_or_historical | /home/nc437/ladder-lite/w2_chain_recovery_20260912 | 2 | 15687<br>37532<br>37533<br>37534<br>949704<br>949705<br>949706 | unknown |
 | w2_chain_recovery_retry2_20260912 | production_or_historical | /home/nc437/ladder-lite/w2_chain_recovery_retry2_20260912 | 6 | 15687<br>37532<br>37533<br>37534<br>37583<br>37584<br>37585<br>949704<br>949705<br>949706 | unknown |
@@ -87,6 +91,7 @@ This build contains **3355 normalized artifact/stage rows** across **79 source g
 | warm_chain_p5_k2_10 | production_or_historical | /home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1 | 64 | 779026<br>779027<br>779028<br>779030<br>779031<br>779032<br>779033<br>779034<br>779035<br>779056<br>779057<br>779058<br>779059<br>779060<br>779061<br>779062<br>779063<br>779064<br>779065<br>779066<br>779067<br>779068<br>779069<br>779070<br>779071<br>779072<br>779073 | unknown |
 | warm_multichain_p1246 | production_or_historical | /home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1 | 240 | 810283<br>810285<br>810287<br>810289<br>810291<br>810293<br>810296<br>810319<br>810320<br>810323<br>810324<br>810325<br>810328<br>810329<br>810330<br>810331<br>810332<br>810333<br>810335<br>810336<br>810337<br>810338<br>810339<br>810340<br>810341<br>810342<br>810344<br>810345<br>810346<br>810347<br>810348<br>810349<br>810350<br>810351<br>810353<br>810354<br>810931<br>810933<br>810944<br>810945<br>810946<br>810947<br>810948<br>810949<br>810950<br>810951<br>810952<br>810953<br>810954<br>810955<br>810956<br>810957<br>810958<br>810959<br>810960<br>810961<br>810962<br>810963<br>810964<br>810965<br>810966<br>810967<br>810968<br>810969<br>810970<br>810971<br>810972<br>810973<br>810974<br>810975<br>810976<br>810977<br>810978<br>810979<br>810980<br>810981<br>810982<br>810983<br>810984<br>810985<br>810986<br>810987<br>810988<br>810989<br>810990<br>810991<br>810992<br>810993<br>810994<br>810995<br>810996<br>810997<br>810998<br>810999<br>811001<br>811002<br>811003<br>811004<br>811005<br>811006<br>811007<br>811008<br>811009<br>811010<br>811011<br>811012<br>811013<br>811014 | unknown |
 | zero_charge_start_fee_20260913 | production_or_historical | /home/nc437/ladder-lite/zero_charge_start_fee_20260913 | 75 | unknown | unknown |
+| zero_fee_full_cg_20260916 | terminal_energy_full_cg | /home/nc437/ladder-lite/zero_fee_full_cg_20260916 | 6 | unknown | unknown |
 
 ## Row coverage by family and stage
 
@@ -94,8 +99,8 @@ This build contains **3355 normalized artifact/stage rows** across **79 source g
 |---|---|---|
 | capacity_speed_exact_event | cg | 45 |
 | capacity_speed_exact_event | mip | 57 |
-| cg_phase_telemetry | telemetry | 653 |
-| column_generation | cg | 717 |
+| cg_phase_telemetry | telemetry | 656 |
+| column_generation | cg | 718 |
 | cumulative_budget_case_metadata | audit_result | 24 |
 | cumulative_budget_endpoint | cg | 24 |
 | cumulative_budget_endpoint | mip | 48 |
@@ -103,9 +108,9 @@ This build contains **3355 normalized artifact/stage rows** across **79 source g
 | fixed_dual_pricing_diagnostic | pricing_call | 4 |
 | giro_zero_fee_comparison | comparison_arm | 18 |
 | matched_tariff_comparison | comparison_arm | 57 |
-| pool_mip | mip | 982 |
+| pool_mip | mip | 986 |
 | rejected_mip_output | mip_rejected | 2 |
-| scheduler | queue_state | 72 |
+| scheduler | queue_state | 67 |
 | small_reference_cg | cg_arm | 32 |
 | small_same_pool_comparison | lp | 64 |
 | small_same_pool_comparison | mip | 64 |
@@ -117,7 +122,10 @@ This build contains **3355 normalized artifact/stage rows** across **79 source g
 | targeted_audit_log | log_tail | 2 |
 | terminal_energy | frontier | 3 |
 | terminal_energy | mip_failed_preoptimization | 3 |
-| workflow | workflow | 236 |
+| terminal_energy_full_cg | cg | 3 |
+| terminal_energy_full_cg | mip | 3 |
+| terminal_postprocessing | mip | 5 |
+| workflow | workflow | 248 |
 | workflow | workflow_cg | 45 |
 | workflow | workflow_cg_reference | 54 |
 | workflow | workflow_freeze | 54 |

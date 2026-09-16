@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "manifest_sha256": "9a0e9f79a931ee1290f3d255df47f81f047f5e54434467ee938ea364c3d2d272",
+  "checks": [
+    {
+      "case_id": "w1_k30_longmip",
+      "status": "passed",
+      "source_status_sha256": "599a5cd6d7e077ebe159a0aca3085de4ff9ddf7a701478f86dac478800f8b9c4",
+      "source_journal_sha256": "f72544beff00efc96aeb71b533b5dfa407d117179f1977e9c8167375935f8709"
+    },
+    {
+      "case_id": "w4_k30_longmip",
+      "status": "passed",
+      "source_status_sha256": "88731b9828546bfd8a0cf9cabe9c712420198a58a76bb1c75db32d29b8044662",
+      "source_journal_sha256": "fc2acf00cb3e18197d0c59461198a88c2498c7b1ed5cfb62d069eb6b97366c5e"
+    },
+    {
+      "case_id": "w5_k30_longmip",
+      "status": "passed",
+      "source_status_sha256": "10a803c0916517c634dee4fc17b9164ac55a0f7388d23818fd989b8814845482",
+      "source_journal_sha256": "2ee9ce2e9c7bc6b3e88d548704e56bf43612ca68aceb5f9818fbe5d61ba756c2"
+    },
+    {
+      "case_id": "w6_k30_longmip",
+      "status": "passed",
+      "source_status_sha256": "616ee02fcae479de020eb6c4a9cb2cab8b514c5173ee1003fa3ccfe86438a0b7",
+      "source_journal_sha256": "bb843d0134df139b44878415d104390498539c4096ac4d3afd58507f07e780a1"
+    }
+  ],
+  "native_runner": "Exact previously native-validated worker and871 runner unchanged; every attempt performs large-license check and source pool physical replay."
+}

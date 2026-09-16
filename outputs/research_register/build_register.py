@@ -218,7 +218,7 @@ class Register:
             self.extension_jobs[campaign_id] = extension_workflow.get("case_jobs.json", {}) or {}
         self.diagnostic_cases = {}
         self.diagnostic_jobs = {}
-        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914", "compact_seed_support_20260914", "compact_large_seed_20260914", "compact_pool_union_20260915", "lp_support_pool_diagnostic_20260914", "remaining_chain_gaps_20260914", "final_chain_gap_20260915", "continuation_gap_20260915", "continuation_gaps2_20260915", "continuation_gaps3_20260915", "continuation_gaps4_20260915", "continuation_gaps5_20260916", "retrospective_prefix_controls_20260914", "decomposition_pool_union_20260914", "decomposition_lp_support_union_20260914"):
+        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914", "compact_seed_support_20260914", "compact_large_seed_20260914", "compact_pool_union_20260915", "lp_support_pool_diagnostic_20260914", "remaining_chain_gaps_20260914", "final_chain_gap_20260915", "continuation_gap_20260915", "continuation_gaps2_20260915", "continuation_gaps3_20260915", "continuation_gaps4_20260915", "continuation_gaps5_20260916", "continuation_gaps6_20260916", "retrospective_prefix_controls_20260914", "decomposition_pool_union_20260914", "decomposition_lp_support_union_20260914"):
             diagnostic = snapshot.get("campaigns", {}).get(campaign_id, {})
             diagnostic_workflow = diagnostic.get("workflow", {}) or {}
             self.diagnostic_cases[campaign_id] = {
@@ -774,8 +774,91 @@ class Register:
                     "notes": "One case-level budget and alias record, not an additional CG or MIP solve. Historical warm references and matched warm MIP are retained separately in details.",
                 })
 
+    def terminal_full_cg_campaign(self, campaign_id, campaign):
+        manifest = campaign['manifest']
+        cases = {c['id']: c for c in manifest['cases']}
+        for item in campaign.get('attempts', []):
+            result = item.get('summary')
+            if not result:
+                continue
+            attempt = item['attempt']
+            case = cases[attempt['case']]
+            assert attempt['execution_commit'] == manifest['execution_commit']
+            assert result['input_hashes'] == case['input_hashes']
+            assert result['terminal_target_kwh'] == manifest['physics']['aggregate_terminal_kwh']
+            assert result['fleet_cap'] == manifest['objective']['fleet_cap']
+            common = dict(target_k=5, trip_count=62, code_commit=manifest['execution_commit'],
+                          input_path=case['instance'], input_sha256=case['input_hashes'][case['instance']],
+                          tariff_path=case['tariff'], tariff_sha256=case['input_hashes'][case['tariff']],
+                          battery_kwh=240, charge_kw=350, charge_start_cost=0, master_sense='cover',
+                          initialization='fresh direct singletons plus Phase I; no inherited/GIRO routes',
+                          capacity_enforced=False, cross_route_capacity_validated=False,
+                          terminal_energy_policy='aggregate post-return grid energy >=280.7833253 kWh',
+                          pool_size=result['columns'],
+                          notes='New full CG, distinct from saved-pool repricing. Covering selections may repeat trips; executable validation is a separate treatment.')
+            last = result.get('last_iteration') or {}
+            self.add(campaign_id, campaign['root'], 'terminal_energy_full_cg', 'cg', result,
+                     case_id=case['id'], source_path=item['summary_path'], source_sha256=item['summary_sha256'],
+                     overrides={**common, 'runtime_s': result['cg_seconds'],
+                                'recorded_lp_objective': last.get('rmp_objective'),
+                                'lp_objective_kind': '100000 fleet + electricity, zero start fee',
+                                'fractional_fleet': last.get('route_weight'),
+                                'full_model_lp_certified': result['cg_pricing_certified'],
+                                'lp_bound_scope': 'source-reported weighted event-graph LP certificate; not continuous/global integer proof',
+                                'stop_reason': result['cg_stop'], 'min_reduced_cost': last.get('min_reduced_cost'),
+                                'cg_iterations': last.get('iteration')})
+            fleet = result.get('fleet_stage') or {}
+            charge = result.get('charging_stage') or {}
+            if fleet:
+                self.add(campaign_id, campaign['root'], 'terminal_energy_full_cg', 'mip', result,
+                         case_id=case['id'], source_path=item['summary_path'], source_sha256=item['summary_sha256'],
+                         overrides={**common, 'mip_incumbent_fleet': charge.get('fleet', fleet.get('buses')),
+                                    'mip_bound_fleet': fleet.get('bound'), 'fleet_proven': fleet.get('status') == 2,
+                                    'mip_status': {2: 'OPTIMAL', 3: 'INFEASIBLE', 9: 'TIME_LIMIT'}.get(charge.get('status', fleet.get('status')), 'OTHER'),
+                                    'charging_cost_grid': charge.get('cost'),
+                                    'charging_cost_continuous': result.get('selected_continuous_charging_cost'),
+                                    'physical_selected_validated': bool(charge.get('fleet')),
+                                    'physical_validation_scope': 'individual routes replayed; duplicate-trip removal NOT verified; shared capacity absent',
+                                    'full_model_lp_certified': False,
+                                    'proof_scope': 'finite generated pool, covering rows; not an exact-once executable schedule'})
+
+    def terminal_postprocess_campaign(self, campaign_id, campaign):
+        manifest = campaign['manifest']
+        cases = {c['id']: c for c in manifest['cases']}
+        for item in campaign.get('results', []):
+            result = item['result']
+            case_id = Path(item['path']).parent.parent.name
+            case = cases[case_id]
+            assert result['source_sha256'] == case['sha256']
+            exact = result.get('exact_once_verified') is True
+            status = result.get('charging_status', result['fleet_status'])
+            self.add(campaign_id, campaign['root'], 'terminal_postprocessing', 'mip', result,
+                     case_id=case_id, source_path=item['path'], source_sha256=item['sha256'],
+                     overrides=dict(target_k=5, trip_count=62, master_sense='partition',
+                        code_commit=manifest['execution_commit'], battery_kwh=240, charge_kw=350,
+                        charge_start_cost=0, capacity_enforced=False, cross_route_capacity_validated=False,
+                        initialization=manifest['change'], full_model_lp_certified=False,
+                        mip_incumbent_fleet=result.get('fleet'), mip_bound_fleet=result.get('fleet_bound'),
+                        fleet_proven=result.get('fleet_status') == 2,
+                        mip_status={2: 'OPTIMAL', 3: 'INFEASIBLE', 9: 'TIME_LIMIT'}.get(status, 'OTHER'),
+                        charging_cost_grid=result.get('charging_cost'),
+                        charging_cost_continuous=result.get('continuous_charging_cost'),
+                        terminal_energy_grid_kwh=result.get('terminal_kwh'),
+                        physical_selected_validated=result.get('individual_replay_verified', False),
+                        overcovered_trips=0 if exact else None, runtime_s=result.get('seconds'),
+                        terminal_energy_policy='aggregate return energy >=280.7833253 kWh',
+                        physical_validation_scope='exact-once trips and individual route replay' if exact else 'no executable selection verified',
+                        proof_scope=result['proof_scope'],
+                        notes='Separate postprocessing treatment. No new CG certificate; infeasibility concerns this finite pool and cap only.'))
+
     def standard_campaigns(self):
         for campaign_id, campaign in self.snapshot.get("campaigns", {}).items():
+            if campaign_id in ("terminal_exact_once_20260916", "terminal_duplicate_cleanup_20260916"):
+                self.terminal_postprocess_campaign(campaign_id, campaign)
+                continue
+            if campaign_id == "zero_fee_full_cg_20260916":
+                self.terminal_full_cg_campaign(campaign_id, campaign)
+                continue
             if campaign_id == "cumulative_budget_20260913":
                 self.cumulative_budget_campaign(campaign_id, campaign)
                 continue

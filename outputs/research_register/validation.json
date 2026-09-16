@@ -1,6 +1,6 @@
 {
   "authoritative_772009_rows": 1,
-  "campaign_count": 79,
+  "campaign_count": 84,
   "checks": [
     "all stable row IDs unique",
     "all retained SHA-256 fields are 64 lowercase hexadecimal characters",
@@ -14,8 +14,8 @@
   "families_and_stages": {
     "capacity_speed_exact_event:cg": 45,
     "capacity_speed_exact_event:mip": 57,
-    "cg_phase_telemetry:telemetry": 653,
-    "column_generation:cg": 717,
+    "cg_phase_telemetry:telemetry": 656,
+    "column_generation:cg": 718,
     "cumulative_budget_case_metadata:audit_result": 24,
     "cumulative_budget_endpoint:cg": 24,
     "cumulative_budget_endpoint:mip": 48,
@@ -23,9 +23,9 @@
     "fixed_dual_pricing_diagnostic:pricing_call": 4,
     "giro_zero_fee_comparison:comparison_arm": 18,
     "matched_tariff_comparison:comparison_arm": 57,
-    "pool_mip:mip": 982,
+    "pool_mip:mip": 986,
     "rejected_mip_output:mip_rejected": 2,
-    "scheduler:queue_state": 72,
+    "scheduler:queue_state": 67,
     "small_reference_cg:cg_arm": 32,
     "small_same_pool_comparison:lp": 64,
     "small_same_pool_comparison:mip": 64,
@@ -37,18 +37,21 @@
     "targeted_audit_log:log_tail": 2,
     "terminal_energy:frontier": 3,
     "terminal_energy:mip_failed_preoptimization": 3,
-    "workflow:workflow": 236,
+    "terminal_energy_full_cg:cg": 3,
+    "terminal_energy_full_cg:mip": 3,
+    "terminal_postprocessing:mip": 5,
+    "workflow:workflow": 248,
     "workflow:workflow_cg": 45,
     "workflow:workflow_cg_reference": 54,
     "workflow:workflow_freeze": 54,
     "workflow:workflow_mip": 54
   },
   "rejected_rows": 2,
-  "row_count": 3355,
-  "rows_with_source_sha256": 1664,
-  "rows_without_source_sha256": 1691,
+  "row_count": 3381,
+  "rows_with_source_sha256": 1679,
+  "rows_without_source_sha256": 1702,
   "schema": "evsp-dr-research-register-validation-v1",
-  "source_snapshot_sha256": "ccc83563fadbe6cc562095a23cbd1e7420347a68667de9f303d9df043f7b8a04",
+  "source_snapshot_sha256": "0fdc26465ef29f76b6a808e2878dec53240e622ec8fb6bb5a9e79a92db9e62ce",
   "superseded_772031_rows": 1,
-  "unique_row_ids": 3355
+  "unique_row_ids": 3381
 }
