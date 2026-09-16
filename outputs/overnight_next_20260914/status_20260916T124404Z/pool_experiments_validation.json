@@ -1,0 +1,505 @@
+{
+  "snapshot_sha256": "0d33cd2331e724c26c208b41d7d4fb6f354917319bd132217f484aa106a8f3ca",
+  "checks": [
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c1_k20_core",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c1_k20_core_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c1_k20_core512",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c1_k20_core512_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c1_k25_core",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c1_k25_core_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c1_k25_core512",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c1_k25_core512_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c2_k20_core",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c2_k20_core_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c2_k20_core512",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c2_k20_core512_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c2_k25_core",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c2_k25_core_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c2_k25_core512",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c2_k25_core512_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c3_k20_core",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c3_k20_core_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c3_k20_core512",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c3_k20_core512_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c3_k25_core",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c3_k25_core_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c3_k25_core512",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c3_k25_core512_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c4_k20_core",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c4_k20_core_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c4_k20_core512",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c4_k20_core512_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c4_k25_core",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c4_k25_core_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c4_k25_core512",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c4_k25_core512_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c5_k20_core",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c5_k20_core_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c5_k20_core512",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c5_k20_core512_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c5_k25_core",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c5_k25_core_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c5_k25_core512",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c5_k25_core512_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c6_k20_core",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c6_k20_core_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c6_k20_core512",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c6_k20_core512_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c6_k25_core",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c6_k25_core_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c6_k25_core512",
+      "stage": "cg",
+      "passed": true
+    },
+    {
+      "campaign": "compact_large_seed_20260914",
+      "case": "c6_k25_core512_mip",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c1_k08_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c1_k08_integer_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c1_k08_integer_matched_zero_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c1_k08_lpweight_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c1_k08_lpweight_matched_zero_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c1_k10_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c1_k10_integer_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c1_k10_integer_matched_zero_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c2_k08_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c2_k08_lpweight_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c2_k08_lpweight_matched_zero_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c3_k08_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c3_k08_integer_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c3_k08_integer_matched_zero_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c3_k08_lpweight_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c3_k08_lpweight_matched_zero_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c4_k08_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c4_k08_integer_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c4_k08_integer_matched_zero_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c4_k08_lpweight_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c4_k08_lpweight_matched_zero_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c4_k10_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c4_k10_integer_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c4_k10_integer_matched_zero_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c4_k10_lpweight_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c4_k10_lpweight_matched_zero_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c5_k08_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c5_k08_lpweight_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c5_k08_lpweight_matched_zero_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c5_k10_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c5_k10_lpweight_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c5_k10_lpweight_matched_zero_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c6_k10_support_only",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c6_k10_lpweight_positive_added",
+      "stage": "mip",
+      "passed": true
+    },
+    {
+      "campaign": "lp_support_pool_diagnostic_20260914",
+      "case": "c6_k10_lpweight_matched_zero_added",
+      "stage": "mip",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "note": "Collector publication and recorded provenance bindings verified; no new physical replay run."
+}

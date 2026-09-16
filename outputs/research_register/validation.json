@@ -1,6 +1,6 @@
 {
   "authoritative_772009_rows": 1,
-  "campaign_count": 88,
+  "campaign_count": 90,
   "checks": [
     "all stable row IDs unique",
     "all retained SHA-256 fields are 64 lowercase hexadecimal characters",
@@ -23,9 +23,9 @@
     "fixed_dual_pricing_diagnostic:pricing_call": 4,
     "giro_zero_fee_comparison:comparison_arm": 18,
     "matched_tariff_comparison:comparison_arm": 57,
-    "pool_mip:mip": 1005,
+    "pool_mip:mip": 1006,
     "rejected_mip_output:mip_rejected": 2,
-    "scheduler:queue_state": 43,
+    "scheduler:queue_state": 45,
     "small_reference_cg:cg_arm": 32,
     "small_same_pool_comparison:lp": 64,
     "small_same_pool_comparison:mip": 64,
@@ -40,18 +40,18 @@
     "terminal_energy_full_cg:cg": 3,
     "terminal_energy_full_cg:mip": 3,
     "terminal_postprocessing:mip": 6,
-    "workflow:workflow": 272,
+    "workflow:workflow": 284,
     "workflow:workflow_cg": 45,
     "workflow:workflow_cg_reference": 54,
     "workflow:workflow_freeze": 54,
     "workflow:workflow_mip": 54
   },
   "rejected_rows": 2,
-  "row_count": 3416,
-  "rows_with_source_sha256": 1699,
-  "rows_without_source_sha256": 1717,
+  "row_count": 3431,
+  "rows_with_source_sha256": 1700,
+  "rows_without_source_sha256": 1731,
   "schema": "evsp-dr-research-register-validation-v1",
-  "source_snapshot_sha256": "ad103f86761f65026c3df24efe06c661b7c73ec1239b57afa64b27c29ca89979",
+  "source_snapshot_sha256": "0d33cd2331e724c26c208b41d7d4fb6f354917319bd132217f484aa106a8f3ca",
   "superseded_772031_rows": 1,
-  "unique_row_ids": 3416
+  "unique_row_ids": 3431
 }

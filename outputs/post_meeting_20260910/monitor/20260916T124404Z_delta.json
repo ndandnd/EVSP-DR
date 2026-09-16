@@ -1,0 +1,96 @@
+{
+  "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260916T114344Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260916T124404Z.json",
+  "timestamp_utc": "2026-09-16T12:44:05.082579+00:00",
+  "changed_results": [
+    {
+      "campaign": "chain_extension_31_32_20260915",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_31_32_20260915/cases/w6_k32/mip/228617_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 33,
+        "fleet_bound": 32.000000000000014,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3611.789836168289,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "cb1150997e9957cf4b4bb9eca8414eabcfd6a58295b2d81458132ea729aecc37",
+      "payload_sha256": "cb1150997e9957cf4b4bb9eca8414eabcfd6a58295b2d81458132ea729aecc37"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "228617",
+      "case_id": "w6_k32",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "294800",
+      "case_id": "w1_k31_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "294801",
+      "case_id": "w3_k32_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "294802",
+      "case_id": "w5_k32_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "228617",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-17"
+      },
+      "after": null
+    },
+    {
+      "job": "294800",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      }
+    },
+    {
+      "job": "294801",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      }
+    },
+    {
+      "job": "294802",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      }
+    }
+  ]
+}

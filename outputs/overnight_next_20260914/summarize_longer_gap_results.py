@@ -9,7 +9,7 @@ from summarize_pool_experiments import case_id, verify_mip, write_csv
 
 def summarize(source):
     rows, checks = [], []
-    for name in ('final_chain_gap_20260915', 'continuation_gap_20260915', 'continuation_gaps2_20260915', 'continuation_gaps3_20260915', 'continuation_gaps4_20260915', 'continuation_gaps5_20260916', 'continuation_gaps6_20260916', 'continuation_gaps7_20260916', 'continuation_gaps8_20260916', 'continuation_gaps9_20260916', 'continuation_gaps10_20260916', 'continuation_gaps11_20260916', 'continuation_gaps12_20260916'):
+    for name in ('final_chain_gap_20260915', 'continuation_gap_20260915', 'continuation_gaps2_20260915', 'continuation_gaps3_20260915', 'continuation_gaps4_20260915', 'continuation_gaps5_20260916', 'continuation_gaps6_20260916', 'continuation_gaps7_20260916', 'continuation_gaps8_20260916', 'continuation_gaps9_20260916', 'continuation_gaps10_20260916', 'continuation_gaps11_20260916', 'continuation_gaps12_20260916', 'continuation_gaps13_20260916'):
         campaign = source['campaigns'].get(name)
         if campaign is None:
             continue  # A collection can predate registration of a new campaign.
