@@ -1,0 +1,860 @@
+{
+  "finding": "F4",
+  "status": "VERIFIED_NATIVE_ENDPOINT_BINDINGS_AND_VALIDATION_FLAGS",
+  "scope": "20 deterministic original-pool sequences, not full-pool/fleet success; no-path onlywithin event model",
+  "rows": [
+    {
+      "arm": "baseline",
+      "job_id": "342321",
+      "result_path": "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/runs/baseline/342321_r0/pilot_result.json",
+      "result_sha256": "4dcb475b06438784a1acaaa24dc455ebbcadd10376c95c27bb72366638b98c30",
+      "outcomes_sha256": "7f638168abfb8999fb5afd6496014dcc729920935d0222efe0b3303ad674f6e8",
+      "outcome_counts": {
+        "feasible": 20
+      },
+      "unknown_count": 0,
+      "elapsed_s": 118.22493790276349,
+      "stage_resources": [
+        {
+          "stage": "extract",
+          "elapsed_s": 70.23950890917331,
+          "max_rss_kib": 4440848
+        },
+        {
+          "stage": "replay",
+          "elapsed_s": 43.65973988501355,
+          "max_rss_kib": 192732
+        }
+      ],
+      "sequences": [
+        {
+          "sha256": "0051d639293473b68c54177f22ba1d64d2d9079698917692fa8559cbe1807406",
+          "trips": 1,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "16f1a7e020e7672552b2052356e8aea331d1f0249004f93a21c209e06beadd3b",
+          "trips": 14,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "a94928aaf79555c57122a8bed44bf2480bbc0691510910e9662697d5582546cf",
+          "trips": 18,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "23682a1d793f89c6336d4f9cc7b56d143a8ebec18f7562977807eeaf817cd803",
+          "trips": 20,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "e23115cb343d05773b9311055fddb5bcd8efe123230e4b886fbed303eb64b0e9",
+          "trips": 22,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "b7efbdffff3f94147394f71f2b893841b50d4d84475bf614d44145abcdadec40",
+          "trips": 23,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d4ff08832d7881f8b0cd36e992c5e8e63e9e8b2b2eedf1a0df3ffc24560324c2",
+          "trips": 24,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "df37f3a97fbb7fb0ab7617d4054c824e54b44681c58964c954771c0df8d533a6",
+          "trips": 25,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "8936189b6e862a08528af4dd4a7c320b179a07d28454f2bd844db905c856f572",
+          "trips": 26,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "2e26507eaddd90df409c3b7c9e0091feb250e7c6e136620517621da0ffd12adc",
+          "trips": 27,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "aa1ac8c3b509e82245e2715cb310c1637fc0bdef03f7f9e440cc56860fefa091",
+          "trips": 27,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d6df4bc3f7b29384d58753322a08a65a79b327ccc6fd7b4a57eb0f3b1f63d232",
+          "trips": 28,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d5c6b1287a5425c84ce2b63a825a4ee0101b79c03a3de6b4fd11f9d22001d1b3",
+          "trips": 29,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "b97db7b3655d2284cb290cfac88974e74f0b30808e5ff8bd33224c473d027406",
+          "trips": 30,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "ec008614c146bd3389258f0aa24fc590228b279bea3b7d6b711b7101296835ba",
+          "trips": 32,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "19878dd14a8bd67aad5040333613d72ab1e1adcb4f4d006438a38a5741bf2507",
+          "trips": 35,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "10bed9addb19598793221b36ed860ce8b86f597f8aa67c13db7cd0ba10a3c3e1",
+          "trips": 37,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "f922d517a26fe42037a2f186b5db5d31a817a6f2fe0aae7122852c52cbebf293",
+          "trips": 38,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "26125b4c23e129a8e8c7ca693ceb8b6235b8259d95740d6dbe0b43b64d1cdd59",
+          "trips": 41,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "fd9449fc57013bc82debe46212f3aade0486d0a9e745a9e90cc90b9b73a968f0",
+          "trips": 55,
+          "status": "feasible",
+          "physical_valid": true
+        }
+      ]
+    },
+    {
+      "arm": "parx60_only",
+      "job_id": "342380",
+      "result_path": "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/runs/parx60_only/342380_r0/pilot_result.json",
+      "result_sha256": "f717ba5e13e3830a2d786a816ee8128e61d007d40e6dae2836cf7f7c3b039591",
+      "outcomes_sha256": "9b555c1c4f3a38f0e797de9c290e89396b931feaacab51dd84f8685fbb46d8be",
+      "outcome_counts": {
+        "feasible": 20
+      },
+      "unknown_count": 0,
+      "elapsed_s": 49.56183963618241,
+      "stage_resources": [
+        {
+          "stage": "replay",
+          "elapsed_s": 44.905941679142416,
+          "max_rss_kib": 192688
+        }
+      ],
+      "sequences": [
+        {
+          "sha256": "0051d639293473b68c54177f22ba1d64d2d9079698917692fa8559cbe1807406",
+          "trips": 1,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "16f1a7e020e7672552b2052356e8aea331d1f0249004f93a21c209e06beadd3b",
+          "trips": 14,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "a94928aaf79555c57122a8bed44bf2480bbc0691510910e9662697d5582546cf",
+          "trips": 18,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "23682a1d793f89c6336d4f9cc7b56d143a8ebec18f7562977807eeaf817cd803",
+          "trips": 20,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "e23115cb343d05773b9311055fddb5bcd8efe123230e4b886fbed303eb64b0e9",
+          "trips": 22,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "b7efbdffff3f94147394f71f2b893841b50d4d84475bf614d44145abcdadec40",
+          "trips": 23,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d4ff08832d7881f8b0cd36e992c5e8e63e9e8b2b2eedf1a0df3ffc24560324c2",
+          "trips": 24,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "df37f3a97fbb7fb0ab7617d4054c824e54b44681c58964c954771c0df8d533a6",
+          "trips": 25,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "8936189b6e862a08528af4dd4a7c320b179a07d28454f2bd844db905c856f572",
+          "trips": 26,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "2e26507eaddd90df409c3b7c9e0091feb250e7c6e136620517621da0ffd12adc",
+          "trips": 27,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "aa1ac8c3b509e82245e2715cb310c1637fc0bdef03f7f9e440cc56860fefa091",
+          "trips": 27,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d6df4bc3f7b29384d58753322a08a65a79b327ccc6fd7b4a57eb0f3b1f63d232",
+          "trips": 28,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d5c6b1287a5425c84ce2b63a825a4ee0101b79c03a3de6b4fd11f9d22001d1b3",
+          "trips": 29,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "b97db7b3655d2284cb290cfac88974e74f0b30808e5ff8bd33224c473d027406",
+          "trips": 30,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "ec008614c146bd3389258f0aa24fc590228b279bea3b7d6b711b7101296835ba",
+          "trips": 32,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "19878dd14a8bd67aad5040333613d72ab1e1adcb4f4d006438a38a5741bf2507",
+          "trips": 35,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "10bed9addb19598793221b36ed860ce8b86f597f8aa67c13db7cd0ba10a3c3e1",
+          "trips": 37,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "f922d517a26fe42037a2f186b5db5d31a817a6f2fe0aae7122852c52cbebf293",
+          "trips": 38,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "26125b4c23e129a8e8c7ca693ceb8b6235b8259d95740d6dbe0b43b64d1cdd59",
+          "trips": 41,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "fd9449fc57013bc82debe46212f3aade0486d0a9e745a9e90cc90b9b73a968f0",
+          "trips": 55,
+          "status": "feasible",
+          "physical_valid": true
+        }
+      ]
+    },
+    {
+      "arm": "reserve15_only",
+      "job_id": "342381",
+      "result_path": "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/runs/reserve15_only/342381_r0/pilot_result.json",
+      "result_sha256": "0aec05aa1f15945fd25afe0fe9d60ae53035ec63e1166391c142cdbd64f60faa",
+      "outcomes_sha256": "cbb8dc9d09b6d666899e9b601b32eeb58cf49a7a217bdebcd182c6af263f9214",
+      "outcome_counts": {
+        "feasible": 19,
+        "infeasible_in_fixed_sequence_event_model": 1
+      },
+      "unknown_count": 0,
+      "elapsed_s": 44.26665223087184,
+      "stage_resources": [
+        {
+          "stage": "replay",
+          "elapsed_s": 39.44383351900615,
+          "max_rss_kib": 192072
+        }
+      ],
+      "sequences": [
+        {
+          "sha256": "0051d639293473b68c54177f22ba1d64d2d9079698917692fa8559cbe1807406",
+          "trips": 1,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "16f1a7e020e7672552b2052356e8aea331d1f0249004f93a21c209e06beadd3b",
+          "trips": 14,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "a94928aaf79555c57122a8bed44bf2480bbc0691510910e9662697d5582546cf",
+          "trips": 18,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "23682a1d793f89c6336d4f9cc7b56d143a8ebec18f7562977807eeaf817cd803",
+          "trips": 20,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "e23115cb343d05773b9311055fddb5bcd8efe123230e4b886fbed303eb64b0e9",
+          "trips": 22,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "b7efbdffff3f94147394f71f2b893841b50d4d84475bf614d44145abcdadec40",
+          "trips": 23,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d4ff08832d7881f8b0cd36e992c5e8e63e9e8b2b2eedf1a0df3ffc24560324c2",
+          "trips": 24,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "df37f3a97fbb7fb0ab7617d4054c824e54b44681c58964c954771c0df8d533a6",
+          "trips": 25,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "8936189b6e862a08528af4dd4a7c320b179a07d28454f2bd844db905c856f572",
+          "trips": 26,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "2e26507eaddd90df409c3b7c9e0091feb250e7c6e136620517621da0ffd12adc",
+          "trips": 27,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "aa1ac8c3b509e82245e2715cb310c1637fc0bdef03f7f9e440cc56860fefa091",
+          "trips": 27,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d6df4bc3f7b29384d58753322a08a65a79b327ccc6fd7b4a57eb0f3b1f63d232",
+          "trips": 28,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d5c6b1287a5425c84ce2b63a825a4ee0101b79c03a3de6b4fd11f9d22001d1b3",
+          "trips": 29,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "b97db7b3655d2284cb290cfac88974e74f0b30808e5ff8bd33224c473d027406",
+          "trips": 30,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "ec008614c146bd3389258f0aa24fc590228b279bea3b7d6b711b7101296835ba",
+          "trips": 32,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "19878dd14a8bd67aad5040333613d72ab1e1adcb4f4d006438a38a5741bf2507",
+          "trips": 35,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "10bed9addb19598793221b36ed860ce8b86f597f8aa67c13db7cd0ba10a3c3e1",
+          "trips": 37,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "f922d517a26fe42037a2f186b5db5d31a817a6f2fe0aae7122852c52cbebf293",
+          "trips": 38,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "26125b4c23e129a8e8c7ca693ceb8b6235b8259d95740d6dbe0b43b64d1cdd59",
+          "trips": 41,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "fd9449fc57013bc82debe46212f3aade0486d0a9e745a9e90cc90b9b73a968f0",
+          "trips": 55,
+          "status": "infeasible_in_fixed_sequence_event_model",
+          "physical_valid": false
+        }
+      ]
+    },
+    {
+      "arm": "battery236p44_only",
+      "job_id": "342382",
+      "result_path": "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/runs/battery236p44_only/342382_r0/pilot_result.json",
+      "result_sha256": "7c238803fd452ac51e9c3042ab375ad28cf45a1da04270ad853ce89a9356215d",
+      "outcomes_sha256": "de8814c3311c072c39e822efdd3f5d10728f2700d4bc382e2d8acc4b0538663e",
+      "outcome_counts": {
+        "feasible": 20
+      },
+      "unknown_count": 0,
+      "elapsed_s": 51.57191349286586,
+      "stage_resources": [
+        {
+          "stage": "replay",
+          "elapsed_s": 46.66099045192823,
+          "max_rss_kib": 192900
+        }
+      ],
+      "sequences": [
+        {
+          "sha256": "0051d639293473b68c54177f22ba1d64d2d9079698917692fa8559cbe1807406",
+          "trips": 1,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "16f1a7e020e7672552b2052356e8aea331d1f0249004f93a21c209e06beadd3b",
+          "trips": 14,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "a94928aaf79555c57122a8bed44bf2480bbc0691510910e9662697d5582546cf",
+          "trips": 18,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "23682a1d793f89c6336d4f9cc7b56d143a8ebec18f7562977807eeaf817cd803",
+          "trips": 20,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "e23115cb343d05773b9311055fddb5bcd8efe123230e4b886fbed303eb64b0e9",
+          "trips": 22,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "b7efbdffff3f94147394f71f2b893841b50d4d84475bf614d44145abcdadec40",
+          "trips": 23,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d4ff08832d7881f8b0cd36e992c5e8e63e9e8b2b2eedf1a0df3ffc24560324c2",
+          "trips": 24,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "df37f3a97fbb7fb0ab7617d4054c824e54b44681c58964c954771c0df8d533a6",
+          "trips": 25,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "8936189b6e862a08528af4dd4a7c320b179a07d28454f2bd844db905c856f572",
+          "trips": 26,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "2e26507eaddd90df409c3b7c9e0091feb250e7c6e136620517621da0ffd12adc",
+          "trips": 27,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "aa1ac8c3b509e82245e2715cb310c1637fc0bdef03f7f9e440cc56860fefa091",
+          "trips": 27,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d6df4bc3f7b29384d58753322a08a65a79b327ccc6fd7b4a57eb0f3b1f63d232",
+          "trips": 28,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d5c6b1287a5425c84ce2b63a825a4ee0101b79c03a3de6b4fd11f9d22001d1b3",
+          "trips": 29,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "b97db7b3655d2284cb290cfac88974e74f0b30808e5ff8bd33224c473d027406",
+          "trips": 30,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "ec008614c146bd3389258f0aa24fc590228b279bea3b7d6b711b7101296835ba",
+          "trips": 32,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "19878dd14a8bd67aad5040333613d72ab1e1adcb4f4d006438a38a5741bf2507",
+          "trips": 35,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "10bed9addb19598793221b36ed860ce8b86f597f8aa67c13db7cd0ba10a3c3e1",
+          "trips": 37,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "f922d517a26fe42037a2f186b5db5d31a817a6f2fe0aae7122852c52cbebf293",
+          "trips": 38,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "26125b4c23e129a8e8c7ca693ceb8b6235b8259d95740d6dbe0b43b64d1cdd59",
+          "trips": 41,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "fd9449fc57013bc82debe46212f3aade0486d0a9e745a9e90cc90b9b73a968f0",
+          "trips": 55,
+          "status": "feasible",
+          "physical_valid": true
+        }
+      ]
+    },
+    {
+      "arm": "battery239p01_only",
+      "job_id": "342383",
+      "result_path": "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/runs/battery239p01_only/342383_r0/pilot_result.json",
+      "result_sha256": "ed28a7900c542dc0ace98b42ebe189347d2cafc1231bc07dec9887aa2afd736e",
+      "outcomes_sha256": "eccea924103562d6eaa5cd0d94009f61b80020daef44d36572f630e1fb3fa33e",
+      "outcome_counts": {
+        "feasible": 20
+      },
+      "unknown_count": 0,
+      "elapsed_s": 51.603498572018,
+      "stage_resources": [
+        {
+          "stage": "replay",
+          "elapsed_s": 46.542472313158214,
+          "max_rss_kib": 191508
+        }
+      ],
+      "sequences": [
+        {
+          "sha256": "0051d639293473b68c54177f22ba1d64d2d9079698917692fa8559cbe1807406",
+          "trips": 1,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "16f1a7e020e7672552b2052356e8aea331d1f0249004f93a21c209e06beadd3b",
+          "trips": 14,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "a94928aaf79555c57122a8bed44bf2480bbc0691510910e9662697d5582546cf",
+          "trips": 18,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "23682a1d793f89c6336d4f9cc7b56d143a8ebec18f7562977807eeaf817cd803",
+          "trips": 20,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "e23115cb343d05773b9311055fddb5bcd8efe123230e4b886fbed303eb64b0e9",
+          "trips": 22,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "b7efbdffff3f94147394f71f2b893841b50d4d84475bf614d44145abcdadec40",
+          "trips": 23,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d4ff08832d7881f8b0cd36e992c5e8e63e9e8b2b2eedf1a0df3ffc24560324c2",
+          "trips": 24,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "df37f3a97fbb7fb0ab7617d4054c824e54b44681c58964c954771c0df8d533a6",
+          "trips": 25,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "8936189b6e862a08528af4dd4a7c320b179a07d28454f2bd844db905c856f572",
+          "trips": 26,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "2e26507eaddd90df409c3b7c9e0091feb250e7c6e136620517621da0ffd12adc",
+          "trips": 27,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "aa1ac8c3b509e82245e2715cb310c1637fc0bdef03f7f9e440cc56860fefa091",
+          "trips": 27,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d6df4bc3f7b29384d58753322a08a65a79b327ccc6fd7b4a57eb0f3b1f63d232",
+          "trips": 28,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d5c6b1287a5425c84ce2b63a825a4ee0101b79c03a3de6b4fd11f9d22001d1b3",
+          "trips": 29,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "b97db7b3655d2284cb290cfac88974e74f0b30808e5ff8bd33224c473d027406",
+          "trips": 30,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "ec008614c146bd3389258f0aa24fc590228b279bea3b7d6b711b7101296835ba",
+          "trips": 32,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "19878dd14a8bd67aad5040333613d72ab1e1adcb4f4d006438a38a5741bf2507",
+          "trips": 35,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "10bed9addb19598793221b36ed860ce8b86f597f8aa67c13db7cd0ba10a3c3e1",
+          "trips": 37,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "f922d517a26fe42037a2f186b5db5d31a817a6f2fe0aae7122852c52cbebf293",
+          "trips": 38,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "26125b4c23e129a8e8c7ca693ceb8b6235b8259d95740d6dbe0b43b64d1cdd59",
+          "trips": 41,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "fd9449fc57013bc82debe46212f3aade0486d0a9e745a9e90cc90b9b73a968f0",
+          "trips": 55,
+          "status": "feasible",
+          "physical_valid": true
+        }
+      ]
+    },
+    {
+      "arm": "segregation_only",
+      "job_id": "342384",
+      "result_path": "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/runs/segregation_only/342384_r0/pilot_result.json",
+      "result_sha256": "ed94910cb82ee5bb75cdd4f39ea1fe16de1e2ae24bf42a7c2285efaeec15c9d5",
+      "outcomes_sha256": "c6a4655450e211ea22abe0841fb168749a6f0c62baefd2b5cd78e0294bc0e9ab",
+      "outcome_counts": {
+        "feasible": 17,
+        "structurally_excluded_mixed_groups": 3
+      },
+      "unknown_count": 0,
+      "elapsed_s": 42.86176797305234,
+      "stage_resources": [
+        {
+          "stage": "replay",
+          "elapsed_s": 37.55415131896734,
+          "max_rss_kib": 192828
+        }
+      ],
+      "sequences": [
+        {
+          "sha256": "0051d639293473b68c54177f22ba1d64d2d9079698917692fa8559cbe1807406",
+          "trips": 1,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "16f1a7e020e7672552b2052356e8aea331d1f0249004f93a21c209e06beadd3b",
+          "trips": 14,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "a94928aaf79555c57122a8bed44bf2480bbc0691510910e9662697d5582546cf",
+          "trips": 18,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "23682a1d793f89c6336d4f9cc7b56d143a8ebec18f7562977807eeaf817cd803",
+          "trips": 20,
+          "status": "structurally_excluded_mixed_groups",
+          "physical_valid": false
+        },
+        {
+          "sha256": "e23115cb343d05773b9311055fddb5bcd8efe123230e4b886fbed303eb64b0e9",
+          "trips": 22,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "b7efbdffff3f94147394f71f2b893841b50d4d84475bf614d44145abcdadec40",
+          "trips": 23,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d4ff08832d7881f8b0cd36e992c5e8e63e9e8b2b2eedf1a0df3ffc24560324c2",
+          "trips": 24,
+          "status": "structurally_excluded_mixed_groups",
+          "physical_valid": false
+        },
+        {
+          "sha256": "df37f3a97fbb7fb0ab7617d4054c824e54b44681c58964c954771c0df8d533a6",
+          "trips": 25,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "8936189b6e862a08528af4dd4a7c320b179a07d28454f2bd844db905c856f572",
+          "trips": 26,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "2e26507eaddd90df409c3b7c9e0091feb250e7c6e136620517621da0ffd12adc",
+          "trips": 27,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "aa1ac8c3b509e82245e2715cb310c1637fc0bdef03f7f9e440cc56860fefa091",
+          "trips": 27,
+          "status": "structurally_excluded_mixed_groups",
+          "physical_valid": false
+        },
+        {
+          "sha256": "d6df4bc3f7b29384d58753322a08a65a79b327ccc6fd7b4a57eb0f3b1f63d232",
+          "trips": 28,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "d5c6b1287a5425c84ce2b63a825a4ee0101b79c03a3de6b4fd11f9d22001d1b3",
+          "trips": 29,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "b97db7b3655d2284cb290cfac88974e74f0b30808e5ff8bd33224c473d027406",
+          "trips": 30,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "ec008614c146bd3389258f0aa24fc590228b279bea3b7d6b711b7101296835ba",
+          "trips": 32,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "19878dd14a8bd67aad5040333613d72ab1e1adcb4f4d006438a38a5741bf2507",
+          "trips": 35,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "10bed9addb19598793221b36ed860ce8b86f597f8aa67c13db7cd0ba10a3c3e1",
+          "trips": 37,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "f922d517a26fe42037a2f186b5db5d31a817a6f2fe0aae7122852c52cbebf293",
+          "trips": 38,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "26125b4c23e129a8e8c7ca693ceb8b6235b8259d95740d6dbe0b43b64d1cdd59",
+          "trips": 41,
+          "status": "feasible",
+          "physical_valid": true
+        },
+        {
+          "sha256": "fd9449fc57013bc82debe46212f3aade0486d0a9e745a9e90cc90b9b73a968f0",
+          "trips": 55,
+          "status": "feasible",
+          "physical_valid": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 # Single-factor charging replay: timing pilot
 
+**All six pilots completed.** [Results, timing and validation](RESULTS.md). The submission record below is preserved; no full replay or CG/MIP was launched.
+
 **Control job 342321 passed; the five 20-sequence sensitivity pilots are now submitted.** No full replay, new CG or MIP is authorized by this campaign.
 
 | Control result | Measured value |

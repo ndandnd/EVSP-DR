@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-09-16T23:44:34.622979+00:00",
+  "generated_utc": "2026-09-16T23:49:58.127064+00:00",
   "scope": "execution tree only; no commit/copy performed",
-  "included_files": 574,
-  "included_bytes": 19523831,
+  "included_files": 586,
+  "included_bytes": 19908665,
   "excluded_files": 256,
   "credential_findings": [],
   "binary_git_bundles": [
@@ -565,6 +565,11 @@
       "bytes": 5726
     },
     {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260916T234609Z/readiness.json",
+      "sha256": "d78af92d69314e859f782d7c4c4199c0b1258df91070f322178ff6c30055e1ba",
+      "bytes": 5726
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/test_four_numbers.py",
       "sha256": "3df4fd9756ca9351154f8efb2913a50e54b6646b4d91bf4cf858244205b511ca",
       "bytes": 4299
@@ -581,8 +586,18 @@
     },
     {
       "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/README.md",
-      "sha256": "e2e17cd483c531b0a6a07aecc34a99c8191c5c3ad865ac62bec036fd936f48fe",
-      "bytes": 3811
+      "sha256": "6e83921d4d2b172d44121b775277a4e854a8f59f60d6a129c976baea80cd14c6",
+      "bytes": 3969
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/RESULTS.md",
+      "sha256": "ac93f9adc988add76525d045d84b0073e6148c85c3bc4e3d5730fdcb219ec7c2",
+      "bytes": 1425
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/audit_endpoints_remote.py",
+      "sha256": "182fe758deb04a24e789496ca7571215f7579d27bdaa76578985dedb040155e8",
+      "bytes": 1832
     },
     {
       "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/collect.py",
@@ -615,19 +630,29 @@
       "bytes": 304
     },
     {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/endpoint_audit.json",
+      "sha256": "dc3ef3fe13a4c737cfcf108ae76b03acac4f939d186f1017656f1ae9edf093a2",
+      "bytes": 28435
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/jobs.json",
       "sha256": "7d7f562ab2b63984a976c86f3daa93e95f3e55a97e9da91d73b8585fa2f984d2",
       "bytes": 15528
     },
     {
       "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/latest_snapshot.txt",
-      "sha256": "0b31159f2209f1d96349a559feefd6e22a6f4845b45ac4906fe21217217c756b",
+      "sha256": "05b4efff5b73bf6a7ed7c3f19c8c99eb8e1b9fb4058ad2ef8351404eca3286d2",
       "bytes": 166
     },
     {
       "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/monitor_pilot.py",
       "sha256": "a2982c65e803f6fcc62d626c4f26cdb1682a934e6198221659da776e38f6c302",
       "bytes": 1243
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/notification_receipt.json",
+      "sha256": "83ca08454ea96d997534e266d3d102396381bdc86455befdf716b31414480ad2",
+      "bytes": 202
     },
     {
       "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/pilot_manifest.json",
@@ -745,6 +770,11 @@
       "bytes": 26915
     },
     {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/snapshots/20260916T234610Z/status.json",
+      "sha256": "918b39ee67d494059b1cbb41725a44e97fdbd1c83b530ead89bd0c496badd129",
+      "bytes": 52255
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/status_manifest.json",
       "sha256": "5df7c7ae1838cc1f1f26689ff5fc052ee9bf46f65ecb6f0cecd7e287006d8ea2",
       "bytes": 1297
@@ -806,8 +836,8 @@
     },
     {
       "path": "outputs/independent_review_20260916/execution/doc/current.html",
-      "sha256": "53fb7d1f13e9fa1009a8b34a393c298e67fa429410473d850d76389aa7b87e0f",
-      "bytes": 12304
+      "sha256": "c37dba037a72792993acd95aa595ab44961b05dc81e50ab90304d7dac7e234e8",
+      "bytes": 13019
     },
     {
       "path": "outputs/independent_review_20260916/execution/doc/verification.json",
@@ -1705,8 +1735,38 @@
       "bytes": 9204
     },
     {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260916T234609Z/SUMMARY.md",
+      "sha256": "194f6ed722e166a456027128534421739205879f6c8e259a6d3cc110eecea5f4",
+      "bytes": 805
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260916T234609Z/doc_verification.json",
+      "sha256": "b97d9069e27c82e6119076e8ae932bfd8aafe57dbabf05b5638ce8b33b05f8be",
+      "bytes": 334
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260916T234609Z/receipt.json",
+      "sha256": "60843d2681149a12d4a48835f49b452d75787b926a168dbfa540039e2001e3c9",
+      "bytes": 615
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260916T234609Z/sacct.txt",
+      "sha256": "4ac4471efaa812700603e054c0ea9fde780a14753e0430c865711c62c80d223e",
+      "bytes": 39565
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260916T234609Z/snapshot.json",
+      "sha256": "47c3670f0549f34c5c841cc30d1318df5e60f058cfaf44a3012027a33455bbed",
+      "bytes": 243730
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260916T234609Z/squeue.txt",
+      "sha256": "259f7e85c56216127da7341f632f5ab21a49d26022e5eea607d365e269cb30c2",
+      "bytes": 9037
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/monitor/latest_path.txt",
-      "sha256": "5c1f38314c20ff136c70cf93162a4b5b0bb5060b7a327c71b654b5b978fb86cb",
+      "sha256": "14c953cde1bbc6490fc25f033bc05ca88b65d7f8d11ead7fee34196f0122a696",
       "bytes": 118
     },
     {

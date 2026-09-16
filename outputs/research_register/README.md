@@ -1,3 +1,5 @@
+New verified pilot endpoints: [six single-factor timing tests](../independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/RESULTS.md). All completed; no full replay authorized. Four-result briefing still9/37ready.
+
 Current authorized sequence: [one-arm pilot, held full-CG recovery fix, conditional MIP plan and four-result gate](../independent_review_20260916/execution/advisor_sequence_20260916/README.md). No general cluster refill is authorized.
 
 Latest advisor follow-up: [six authorized F6 runs, held follow-up plans, checkpoint audit and corrected proof counts](../independent_review_20260916/execution/advisor_followup_20260916/README.md). No further submissions without user confirmation after a load report.
