@@ -1,0 +1,24 @@
+{
+  "checked_utc": "2026-09-16T03:49:29.237209+00:00",
+  "jobs": [
+    "275867",
+    "275868",
+    "275869",
+    "275870"
+  ],
+  "states": [
+    "RUNNING",
+    "RUNNING",
+    "RUNNING",
+    "RUNNING"
+  ],
+  "native_large_license_checks": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "partition": "default_partition",
+  "excluded_node": "scaglione-compute-01",
+  "initialization_and_budget_unchanged": true
+}
