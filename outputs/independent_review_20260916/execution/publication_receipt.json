@@ -1,8 +1,14 @@
 {
   "mirror_root": "/home/nc437/ladder-lite/research-register",
-  "verified_utc": "2026-09-16T23:44:14.946529+00:00",
-  "source_commit": "9023caafa995e50fc894e10ae77e0836e8e9cd51",
-  "verified_files": 5029,
+  "verified_utc": "2026-09-16T23:50:51.647704+00:00",
+  "source_commit": "053a06ecdbc433eb4afd8c92915b134204113844",
+  "verified_files": 5041,
   "mismatch_count": 0,
-  "errors": []
+  "errors": [],
+  "verification_scope": "Previous verified mirror plus 22 freshly hash-verified changed/new files",
+  "previous_verification": {
+    "source_commit": "9023caafa995e50fc894e10ae77e0836e8e9cd51",
+    "verified_utc": "2026-09-16T23:44:14.946529+00:00",
+    "verified_files": 5029
+  }
 }
