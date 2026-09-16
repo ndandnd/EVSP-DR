@@ -1,0 +1,25 @@
+{
+  "source_commit": "584b87bd31b1f709a34c10e1c3ad99fbae9db329",
+  "verified_utc": "2026-09-16T22:33:43.843023+00:00",
+  "files_sha256": {
+    "outputs/independent_review_20260916/execution/monitor/20260916T223032Z/sacct.txt": "6f2d7db47b8fddfcf739fd0147f359bf44c1239ebbc43d6675e29cdcea8c6d64",
+    "outputs/research_register/preemption_study/attempts.csv": "320b7c1093d9dd59fd4649b97186260477bd3b52240ca5dd35aa209196f4b086",
+    "outputs/research_register/preemption_study/full_snapshot_path.txt": "c5f6b241735543ed41aa79e0ce47ee1e82e0f8bc28576795a5a73e8dd1afe922",
+    "outputs/independent_review_20260916/execution/monitor/20260916T223032Z/verification.json": "7e8b8ec12c6fdf77778745037990924e752381239c2e9a144ea22e823b9d3f3e",
+    "outputs/independent_review_20260916/execution/monitor/latest_path.txt": "14e743247317b3ee6e7e88071c0d096ce73d7b473de94a587a7eaea9cdfdf089",
+    "outputs/independent_review_20260916/execution/monitor/20260916T223032Z/preemption_snapshot.json": "f43a1bb055aaad3bf3cfeb8183dad84bc2fa988e68bce83e1a25b0a31391d46c",
+    "outputs/independent_review_20260916/execution/monitor/20260916T223032Z/preemption_delta.json": "c730e0ac36f0268fc3ca1a4c32ff3c24c74bc6f8553e5880ddb727d8a7045b73",
+    "outputs/research_register/preemption_study/latest.json": "aa0bf6bd4096c662df73c7d9e4121b383ee4b43b3c1366bf88a690ab2812a11f",
+    "outputs/research_register/preemption_study/summary.json": "c7d77b47416c9bf5761c4933667429472f86a0ef632f595c32154d1fce995ea3",
+    "outputs/research_register/preemption_study/snapshots/2026-09-16T223224.946961_0000.json": "acf80b971fbbb57184628a971fb4d6b9ca6b02406166e148854d1cd53b531012",
+    "outputs/independent_review_20260916/execution/monitor/20260916T223032Z/squeue.txt": "5e4ca57912993e478b74e14102039156cd8bf3ab0facf0d87902eb8912885ef8",
+    "outputs/independent_review_20260916/execution/monitor/20260916T223032Z/delta_raw.json": "a12f86c69a6593e87bca921b6567498270cd1b97f25d7104e76a81939c3517f0",
+    "outputs/independent_review_20260916/execution/monitor/20260916T223032Z/snapshot.json": "71080ac31531a7a2d8951ebf53a1810aa8b25547c578deb9b370f14c3ae55170",
+    "outputs/independent_review_20260916/execution/monitor/20260916T223032Z/receipt.json": "516dafd238c8f6b24b1b260c0623bbbf37e33f5edbdbe980294051ed0965a53d",
+    "outputs/independent_review_20260916/execution/monitor/20260916T223032Z/SUMMARY.md": "ee8e13496a72fb8943961cc346d6928f7054a2b2ec641f87640e3441d534906a"
+  },
+  "verification": {
+    "verified_files": 15,
+    "mismatches": []
+  }
+}
