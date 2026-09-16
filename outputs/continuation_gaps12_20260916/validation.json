@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "manifest_sha256": "a1dbcda6515c9af7b4302c31feaf84d9dacfc20953184606d089254dc1872ec3",
+  "checks": [
+    {
+      "case_id": "w1_k31_longmip",
+      "status": "passed",
+      "source_status_sha256": "27cfd4d411bc35d25341c3fb1825d72f042991af81fd53e8f982823a5eaaa22a",
+      "source_journal_sha256": "2202e6b49bfb07d65f9a89469836bdbedc3d7045b321488cbee4004d539d3861"
+    },
+    {
+      "case_id": "w3_k32_longmip",
+      "status": "passed",
+      "source_status_sha256": "5b29dffe10237557e1e49d12fc0855834b84175c19e32e621a4444d8c6d67fac",
+      "source_journal_sha256": "6545c5aecbe6205e6143524f5122155269e8d9ca2dad3a1221ced7584bbdd6e2"
+    },
+    {
+      "case_id": "w5_k32_longmip",
+      "status": "passed",
+      "source_status_sha256": "ebb0ecdb121d9f9e55e4e7e720eb770fdb9a37dcaec1e47b07edc208a9b8acc5",
+      "source_journal_sha256": "19e4340ef818e2b9d3b5240363a530cf60c6e97d925aab9efede90f4523de555"
+    }
+  ],
+  "native_runner": "Exact previously native-validated worker and871 runner unchanged; every attempt performs large-license check and source pool physical replay."
+}

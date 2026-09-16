@@ -1,0 +1,235 @@
+{
+  "schema": "evsp-continuation-gap-v1",
+  "prepared_utc": "2026-09-16T11:48:10.125720+00:00",
+  "cases": {
+    "w2_k31_longmip": {
+      "id": "w2_k31_longmip",
+      "kind": "mip",
+      "chain": 2,
+      "target_k": 31,
+      "target_duties": 31,
+      "treatment": "continuation_original_pool_longer_search",
+      "source_code": "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "data_dir": "/home/nc437/ladder-lite/chain_extension_31_32_20260915/code/data",
+      "csv": "scale_ladder/instances/chain_extension_31_32_20260915/w2_k31.csv",
+      "input_path": "/home/nc437/ladder-lite/chain_extension_31_32_20260915/code/data/scale_ladder/instances/chain_extension_31_32_20260915/w2_k31.csv",
+      "input_sha256": "4045b8fc6ab360088968f8b8efb6c118933e7d5ca7ceb7f4dbca7a76d879ebf3",
+      "static_hashes": {
+        "/home/nc437/ladder-lite/chain_extension_31_32_20260915/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/chain_extension_31_32_20260915/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "/home/nc437/ladder-lite/chain_extension_31_32_20260915/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/share/scaglione/nc437/evsp-dr/chain_extension_31_32_20260915/cases/w2_k31/mip_result.json": "5c39e6a916de30476fe7fc1ce0217256123c4807e18cb442fd3a5e0a2af75d93"
+      },
+      "solver_budget_s": 12600,
+      "stage1_budget_s": 10800,
+      "watchdog_s": 15300,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "argv": [
+        "/home/nc437/evsp_env/bin/python",
+        "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb/src/run_exact_pool_mip.py",
+        "--result",
+        "{source_status}",
+        "--data-dir",
+        "/home/nc437/ladder-lite/chain_extension_31_32_20260915/code/data",
+        "--reference-data-dir",
+        "/home/nc437/ladder-lite/chain_extension_31_32_20260915/code/data",
+        "--cover",
+        "--two-stage",
+        "--timelimit",
+        "12600",
+        "--stage1-timelimit",
+        "10800",
+        "--threads",
+        "8",
+        "--mipgap",
+        "0.0001",
+        "--gurobi-log",
+        "{attempt_dir}/gurobi.log",
+        "--out",
+        "{out}"
+      ],
+      "source_status": "/share/scaglione/nc437/evsp-dr/chain_extension_31_32_20260915/cases/w2_k31/cg/228598_r0/cg.json",
+      "source_status_sha256": "a59e3add8bb4185ed50268d85a33b29db9bf82aa6722e987a3f227385fdd5248",
+      "source_journal_sha256": "fb32a00c852273a2cd0bde792294253507819b4e371079e47ff6389e844fae03",
+      "original_case": "w2_k31",
+      "source_cg_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+      "comparator": {
+        "prior_result": "/share/scaglione/nc437/evsp-dr/chain_extension_31_32_20260915/cases/w2_k31/mip_result.json",
+        "prior_sha256": "5c39e6a916de30476fe7fc1ce0217256123c4807e18cb442fd3a5e0a2af75d93"
+      },
+      "changed_factor": "Fleet-stage allowance1800 -> 10800s; total3600 ->12600s preserves1800s cost allowance",
+      "interpretation": "New tree on unchanged original pool; longer fleet search. Finite-pool proof only; independent structural/global bounds remain separate.",
+      "selection_snapshot": "20260916T104308Z",
+      "latest_original_result": "/share/scaglione/nc437/evsp-dr/chain_extension_31_32_20260915/cases/w2_k31/mip_result.json",
+      "latest_original_sha256": "5c39e6a916de30476fe7fc1ce0217256123c4807e18cb442fd3a5e0a2af75d93",
+      "latest_original_buses": 32,
+      "latest_original_target_matched": false,
+      "selected_as_gap_at_snapshot": true,
+      "matched_original_audit": {
+        "original_execution": {
+          "arguments": {
+            "cover": true,
+            "initial_partition_routes": null,
+            "mipgap": 0.0001,
+            "threads": 8,
+            "timelimit": 3600,
+            "two_stage": true,
+            "verified_expanded_initial_partition": false
+          },
+          "expected_git_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+          "final_observed_git_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+          "git_branch": "",
+          "git_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+          "git_detached": true,
+          "git_dirty": false,
+          "gurobi": "12.0.3",
+          "gurobi_parameters": {
+            "MIPGap": 0.0001,
+            "Seed": 0,
+            "Threads": 8,
+            "TimeLimit_s": 3600,
+            "seed_explicitly_set": false,
+            "seed_source": "gurobi_default"
+          },
+          "host": "snavely-cpu-11.cs.cornell.edu",
+          "observed_git_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+          "python": "3.12.13",
+          "tracked_clean_at_end": true
+        },
+        "original_physics": {
+          "block_min": 5,
+          "charge_kw": 240.0,
+          "g_kwh": 240.0,
+          "min_soc_frac": 0.0,
+          "prices_csv": "hourly_prices_flat.csv",
+          "soc_step": 2.5
+        },
+        "ordered_pool_sha256": "a0374b016e641d6b7a09bee73ad7dd0e90a856a2aa4ab8f0a4347cf4cf75c7d8",
+        "original_pool_columns": 217900,
+        "original_mip_start": {
+          "assigned_variable_count": 217900,
+          "assignment_complete": true,
+          "expected_full_objective": 31400978.52,
+          "kind": "greedy_pool_partition",
+          "selected_variable_count": 314,
+          "solver_acceptance": {
+            "accepted": true,
+            "messages": [
+              "Loaded user MIP start with objective 314"
+            ],
+            "rejection_observed": false,
+            "status": "accepted"
+          },
+          "source": null,
+          "source_sha256": null,
+          "validated": true,
+          "validated_bus_count": 314
+        },
+        "original_physical_pool_audit": {
+          "accepted_columns": 217900,
+          "added_giro_route_count": 0,
+          "added_giro_route_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "assigned_mip_start_route_count": 314,
+          "augmented_pool_column_count": 217900,
+          "augmented_pool_ordered_sha256": "a0374b016e641d6b7a09bee73ad7dd0e90a856a2aa4ab8f0a4347cf4cf75c7d8",
+          "base_pool_column_count": 217900,
+          "base_pool_ordered_sha256": "a0374b016e641d6b7a09bee73ad7dd0e90a856a2aa4ab8f0a4347cf4cf75c7d8",
+          "continuous_cost_pricing_certified": false,
+          "deterministically_repaired": 0,
+          "input_hashes": {
+            "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+            "instance_sha256": "4045b8fc6ab360088968f8b8efb6c118933e7d5ca7ceb7f4dbca7a76d879ebf3",
+            "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+            "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+          },
+          "master_cost_semantics": "expanded_grid_cost_unchanged",
+          "master_sense": "cover",
+          "mip_ordered_pool_sha256": "a0374b016e641d6b7a09bee73ad7dd0e90a856a2aa4ab8f0a4347cf4cf75c7d8",
+          "mip_unique_accepted_columns": 217900,
+          "persisted_charging_block_count": 576515,
+          "persisted_charging_block_payload_bytes": 116557640,
+          "post_augmentation_columns": 217900,
+          "post_augmentation_master_cost_semantics": "expanded_grid_cost",
+          "preparation_wall_s": 357.8333533050027,
+          "pricing_certificate_scope": "not_certified",
+          "rejected_columns": 0,
+          "rejected_samples": [],
+          "rejected_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "repaired_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "schema": "evsp-dr-strict-pool-physical-gate-v1",
+          "source_pricing_certified": false,
+          "source_reference_hashes_bound": true,
+          "total_columns": 217900,
+          "valid_as_recorded": 217900,
+          "valid_set_sha256": "0f87c1b89e621c3b4a6c294db2114c7da2660ca53b298e02460e51a39de4f98a"
+        },
+        "only_design_change": "Longer time allowance; fresh tree with same greedy initializer policy, default Seed0 and all non-time settings. Actual node and search timing can differ."
+      }
+    }
+  },
+  "selection_audit": [
+    {
+      "case_id": "w2_k31",
+      "skipped": false,
+      "buses": 32,
+      "source_result_sha256": "a59e3add8bb4185ed50268d85a33b29db9bf82aa6722e987a3f227385fdd5248",
+      "source_journal_sha256": "fb32a00c852273a2cd0bde792294253507819b4e371079e47ff6389e844fae03",
+      "physical_pool_audit": {
+        "accepted_columns": 217900,
+        "added_giro_route_count": 0,
+        "added_giro_route_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "assigned_mip_start_route_count": 314,
+        "augmented_pool_column_count": 217900,
+        "augmented_pool_ordered_sha256": "a0374b016e641d6b7a09bee73ad7dd0e90a856a2aa4ab8f0a4347cf4cf75c7d8",
+        "base_pool_column_count": 217900,
+        "base_pool_ordered_sha256": "a0374b016e641d6b7a09bee73ad7dd0e90a856a2aa4ab8f0a4347cf4cf75c7d8",
+        "continuous_cost_pricing_certified": false,
+        "deterministically_repaired": 0,
+        "input_hashes": {
+          "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+          "instance_sha256": "4045b8fc6ab360088968f8b8efb6c118933e7d5ca7ceb7f4dbca7a76d879ebf3",
+          "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+          "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+        },
+        "master_cost_semantics": "expanded_grid_cost_unchanged",
+        "master_sense": "cover",
+        "mip_ordered_pool_sha256": "a0374b016e641d6b7a09bee73ad7dd0e90a856a2aa4ab8f0a4347cf4cf75c7d8",
+        "mip_unique_accepted_columns": 217900,
+        "persisted_charging_block_count": 576515,
+        "persisted_charging_block_payload_bytes": 116557640,
+        "post_augmentation_columns": 217900,
+        "post_augmentation_master_cost_semantics": "expanded_grid_cost",
+        "preparation_wall_s": 357.8333533050027,
+        "pricing_certificate_scope": "not_certified",
+        "rejected_columns": 0,
+        "rejected_samples": [],
+        "rejected_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "repaired_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "schema": "evsp-dr-strict-pool-physical-gate-v1",
+        "source_pricing_certified": false,
+        "source_reference_hashes_bound": true,
+        "total_columns": 217900,
+        "valid_as_recorded": 217900,
+        "valid_set_sha256": "0f87c1b89e621c3b4a6c294db2114c7da2660ca53b298e02460e51a39de4f98a"
+      }
+    }
+  ],
+  "storage_root": "/share/scaglione/nc437/evsp-dr/continuation_gaps11_20260916",
+  "tooling_sha256": {
+    "worker.py": "83cec3969cee73b142155c468636d4df53635dca9969a085a854759da305e301",
+    "worker.sub": "208ec644f65e67c83f6211f4ea8d427a73f0fc8dbc78ec806bbf5cfd73c43cc2",
+    "prepare.py": "649ad2a36a1a124aa54c0d6af4a5b3cad52c048908349d5cf6030089538a83f4",
+    "submit.py": "e0d2db564f7bd019dedaebd9487c42bc08001d957dfbe6b136da04d59847a6cb"
+  },
+  "execution_budgets": {
+    "total_s": 12600,
+    "fleet_stage_s": 10800
+  },
+  "policy_sha256": "49954b0300305f108e5e0c47bbbde43f0c5159140a95c839c4c3fad30f158867",
+  "interpretation": "Independent same-pool MIP for the unresolved C2 k31 endpoint; no new CG certificate. Frozen worker registry cohort retained; exact campaign root and case ID identify population."
+}

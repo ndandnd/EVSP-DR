@@ -337,7 +337,7 @@
     "family": "production_or_historical",
     "report_links": [],
     "root": "/home/nc437/ladder-lite/chain_extension_31_32_20260915",
-    "row_count": 29,
+    "row_count": 33,
     "workflow_job_ids": [
       "224631",
       "224635",
@@ -648,6 +648,16 @@
     ]
   },
   {
+    "campaign_id": "continuation_gaps10_20260916",
+    "family": "production_or_historical",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/continuation_gaps10_20260916",
+    "row_count": 6,
+    "workflow_job_ids": [
+      "290897"
+    ]
+  },
+  {
     "campaign_id": "continuation_gaps2_20260915",
     "family": "production_or_historical",
     "report_links": [],
@@ -720,7 +730,7 @@
     "family": "production_or_historical",
     "report_links": [],
     "root": "/home/nc437/ladder-lite/continuation_gaps8_20260916",
-    "row_count": 6,
+    "row_count": 7,
     "workflow_job_ids": [
       "284705"
     ]
@@ -2085,22 +2095,18 @@
     "family": "scheduler",
     "report_links": [],
     "root": null,
-    "row_count": 47,
+    "row_count": 43,
     "workflow_job_ids": [
       "228596",
       "228597",
-      "228599",
       "228600",
       "228601",
-      "228605",
       "228608",
       "228609",
-      "228613",
-      "228616",
       "228617",
-      "284705",
       "288847",
       "290897",
+      "294595",
       "537227"
     ]
   },

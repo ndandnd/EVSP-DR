@@ -1,0 +1,29 @@
+{
+  "utc": "2026-09-16T11:51:55.715338+00:00",
+  "rows": [
+    {
+      "job_id": "294800",
+      "case_id": "w1_k31_longmip",
+      "state": "RUNNING",
+      "node": "unicorn-cpu-01",
+      "native_license_passed": true,
+      "raw": "JobId=294800 JobName=drP_w1_k31_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14015 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:01:01 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-16T07:50:10 EligibleTime=2026-09-16T07:50:10 AccrueTime=2026-09-16T07:50:10 StartTime=2026-09-16T07:50:54 EndTime=2026-09-16T12:20:54 Deadline=N/A PreemptEligibleTime=2026-09-16T07:50:54 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T07:50:54 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1855000 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList=unicorn-cpu-01 BatchHost=unicorn-cpu-01 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=cpu=8,mem=24G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/continuation_gaps12_20260916/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/continuation_gaps12_20260916/logs/drP_w1_k31_longmip_294800.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/continuation_gaps12_20260916/logs/drP_w1_k31_longmip_294800.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "job_id": "294801",
+      "case_id": "w3_k32_longmip",
+      "state": "RUNNING",
+      "node": "unicorn-cpu-01",
+      "native_license_passed": true,
+      "raw": "JobId=294801 JobName=drP_w3_k32_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14015 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:01:01 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-16T07:50:10 EligibleTime=2026-09-16T07:50:10 AccrueTime=2026-09-16T07:50:10 StartTime=2026-09-16T07:50:54 EndTime=2026-09-16T12:20:54 Deadline=N/A PreemptEligibleTime=2026-09-16T07:50:54 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T07:50:54 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1855000 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList=unicorn-cpu-01 BatchHost=unicorn-cpu-01 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=cpu=8,mem=24G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/continuation_gaps12_20260916/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/continuation_gaps12_20260916/logs/drP_w3_k32_longmip_294801.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/continuation_gaps12_20260916/logs/drP_w3_k32_longmip_294801.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "job_id": "294802",
+      "case_id": "w5_k32_longmip",
+      "state": "RUNNING",
+      "node": "jingjie-cpu-06",
+      "native_license_passed": true,
+      "raw": "JobId=294802 JobName=drP_w5_k32_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14015 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:01:01 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-16T07:50:10 EligibleTime=2026-09-16T07:50:10 AccrueTime=2026-09-16T07:50:10 StartTime=2026-09-16T07:50:54 EndTime=2026-09-16T12:20:54 Deadline=N/A PreemptEligibleTime=2026-09-16T07:50:54 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T07:50:54 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1855000 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList=jingjie-cpu-06 BatchHost=jingjie-cpu-06 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=cpu=8,mem=24G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/continuation_gaps12_20260916/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/continuation_gaps12_20260916/logs/drP_w5_k32_longmip_294802.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/continuation_gaps12_20260916/logs/drP_w5_k32_longmip_294802.out TresPerTask=cpu=8 \n"
+    }
+  ]
+}

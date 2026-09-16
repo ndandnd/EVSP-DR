@@ -1,0 +1,13 @@
+{
+  "utc": "2026-09-16T11:51:55.355608+00:00",
+  "rows": [
+    {
+      "job_id": "294595",
+      "case_id": "w2_k31_longmip",
+      "state": "RUNNING",
+      "node": "snavely-cpu-09",
+      "native_license_passed": true,
+      "raw": "JobId=294595 JobName=drP_w2_k31_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14015 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:03:01 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-16T07:48:49 EligibleTime=2026-09-16T07:48:49 AccrueTime=2026-09-16T07:48:49 StartTime=2026-09-16T07:48:54 EndTime=2026-09-16T12:18:54 Deadline=N/A PreemptEligibleTime=2026-09-16T07:48:54 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-16T07:48:54 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1847372 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList=snavely-cpu-09 BatchHost=snavely-cpu-09 NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=cpu=8,mem=24G,node=1,billing=8 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/continuation_gaps11_20260916/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/continuation_gaps11_20260916/logs/drP_w2_k31_longmip_294595.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/continuation_gaps11_20260916/logs/drP_w2_k31_longmip_294595.out TresPerTask=cpu=8 \n"
+    }
+  ]
+}
