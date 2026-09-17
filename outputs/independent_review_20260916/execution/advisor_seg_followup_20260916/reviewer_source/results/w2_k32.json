@@ -1,0 +1,39 @@
+{
+ "case": "w2_k32",
+ "cg_json": "/home/nc437/ladder-lite/chain_extension_31_32_20260915/cases/w2_k32/cg.json",
+ "instance_csv": "/home/nc437/ladder-lite/chain_extension_31_32_20260915/code/data/scale_ladder/instances/chain_extension_31_32_20260915/w2_k32.csv",
+ "trips": 751,
+ "trips_18E1": 147,
+ "trips_18E2": 604,
+ "columns_total": 222546,
+ "columns_mixed": 28268,
+ "recorded_final_lp": 3201258.594466608,
+ "recorded_route_weight": 31.99999999999884,
+ "certified": false,
+ "full_pool_lp": {
+  "status": "OPTIMAL",
+  "objective": 3201258.584389168,
+  "total_route_weight": 31.999999999999957,
+  "pure_18E1_weight": 9.972058399715895,
+  "pure_18E2_weight": 21.1332733897642,
+  "mixed_weight": 0.8946682105198637,
+  "positive_routes": 619,
+  "columns": 222546,
+  "runtime_s": 22.503398895263672
+ },
+ "unmixed_pool_lp": {
+  "status": "OPTIMAL",
+  "objective": 3201476.61493392,
+  "total_route_weight": 31.999999999999936,
+  "pure_18E1_weight": 10.000000000000181,
+  "pure_18E2_weight": 21.99999999999976,
+  "mixed_weight": 0.0,
+  "positive_routes": 516,
+  "columns": 194278,
+  "runtime_s": 9.714695930480957
+ },
+ "segregated_integer_fleet_lower_bound_in_pool": 32,
+ "load_s": 7.007436990737915,
+ "total_s": 48.82634973526001,
+ "note": "Restricted-pool LPs: upper bounds on the true LP of each model (no pricing). Unmixed LP >= full LP always. seg bound = ceil(LP_A)+ceil(LP_B) over pure columns; valid lower bound for a segregated integer fleet *within this pool* only."
+}

@@ -1,0 +1,21 @@
+{
+  "cg_argv_only_difference": [
+    [
+      36,
+      "172800",
+      "42300"
+    ]
+  ],
+  "graph_argv_unchanged": true,
+  "fallback_and_validator_bytes_unchanged": true,
+  "solver_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "watchdog_tests_elapsed_to_timeout_s": {
+    "0": 42600.0,
+    "300": 42600.0,
+    "900": 42120.0,
+    "1800": 41220.0
+  },
+  "scheduler_wall_s": 43200,
+  "scientific_cg_s": 42300,
+  "all_tests_passed": true
+}

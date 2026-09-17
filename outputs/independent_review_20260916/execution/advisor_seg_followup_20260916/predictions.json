@@ -1,0 +1,58 @@
+{
+  "source_readme_sha256": "038ae55d79b359f9a79aaa16731bf20e97291290f7f7f9e68fc146328d47f98d",
+  "source_reported_run_utc": "2026-09-17T00:45\u201300:50Z",
+  "recorded_utc": "2026-09-17T01:16:50.719988+00:00",
+  "tolerance_route_weight": 1e-05,
+  "units": "sum of fractional route weights at weighted-objective LP optimum; not itself a fleet lower bound",
+  "predictions": [
+    {
+      "arm": "baseline",
+      "predicted_lp_route_weight": [
+        30
+      ],
+      "predicted_integer_fleet": ">=31"
+    },
+    {
+      "arm": "parx60_only",
+      "predicted_lp_route_weight": [
+        30
+      ],
+      "predicted_integer_fleet": ">=31"
+    },
+    {
+      "arm": "reserve15_only",
+      "predicted_lp_route_weight": [
+        30,
+        31
+      ],
+      "predicted_integer_fleet": null
+    },
+    {
+      "arm": "battery236p44_only",
+      "predicted_lp_route_weight": [
+        30
+      ],
+      "predicted_integer_fleet": null
+    },
+    {
+      "arm": "battery239p01_only",
+      "predicted_lp_route_weight": [
+        30
+      ],
+      "predicted_integer_fleet": null
+    },
+    {
+      "arm": "segregation_only",
+      "predicted_lp_route_weight": [
+        31
+      ],
+      "predicted_integer_fleet": "31",
+      "predicted_group_weights": {
+        "18E1": 12,
+        "18E2": 19
+      },
+      "requires_pricing_certificate": true
+    }
+  ],
+  "interpretation": "Compare completed matched-settings CG endpoints. Uncertified mismatches remain unresolved, not falsifications of a full-model optimum prediction. Timed MIP incumbents do not prove fleet minima. Physical validation required for attainment claims."
+}

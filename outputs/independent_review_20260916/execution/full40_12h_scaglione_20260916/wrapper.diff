@@ -1,0 +1,22 @@
+--- tested-checkpoint_v2/campaign.py
++++ scaglione_12h_v1/campaign.py
+@@ -157,6 +157,7 @@
+ 
+ 
+ def worker(mode, cid):
++    worker_started = time.monotonic()
+     v = read(MANIFEST)
+     if cid == 'array':
+         cid = sorted(v['cases'])[int(os.environ['SLURM_ARRAY_TASK_ID'])]
+@@ -198,7 +199,10 @@
+             record['resume_selection'] = str(a/'resume_selection.json')
+             record['resume_from'] = read(a/'resume_selection.json')['candidates'][-1]
+             args = [PY, str(B/'code/src/exact_pricer_expanded.py'), *cg_argv(v, c, out), '--resume']
+-        limit = 176400
++        # Bound operational shutdown time inside the exact 12-hour allocation.
++        limit = min(float(v['cg_watchdog_s']), max(1.0,
++            float(v['cg_wrapper_budget_s']) - (time.monotonic() - worker_started)
++            - float(v['cg_shutdown_grace_s'])))
+     elif mode == 'mip':
+         status = root/'cg.json'; value = read(status); assert usable(value)
+         os.environ.update(EVSP_EXPECTED_COMMIT=v['mip_execution_commit'], EVSP_REQUIRE_DETACHED='1',

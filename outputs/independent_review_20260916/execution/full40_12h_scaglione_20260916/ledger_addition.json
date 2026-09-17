@@ -1,0 +1,69 @@
+{
+  "experiment_id": "review_full40_c1_scaglione12h_20260916",
+  "finding": "F8",
+  "case": "c1_full40",
+  "supersedes_cg_job": "341405",
+  "effective_job_map": {
+    "graph": "341404_0",
+    "cg": "343119",
+    "mip": "341406"
+  },
+  "scheduler_state": {
+    "graph": "RUNNING at receipt",
+    "cg": "PENDING dependency on341404_0",
+    "mip": "HELD by user, dependency rewired to343119"
+  },
+  "source_input": {
+    "id": "c1_full40",
+    "csv": "review_full40_c1.csv",
+    "input_sha256": "904070ec8919dd11bf431eab62e1396ad4882d95f7d5917bcf83f34d1e20e607",
+    "trip_count": 948,
+    "target_duties": 40,
+    "chain": 1,
+    "cg_seconds": 42300,
+    "cache": "/home/nc437/ladder-lite/review_full40_20260916/cases/c1_full40/network.pkl",
+    "parent_status": null,
+    "input_source": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w1_k40.csv"
+  },
+  "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "scientific_settings": {
+    "battery_kwh": 240,
+    "charge_kw": 240,
+    "reserve_kwh": 0,
+    "terminal_soc": "free",
+    "master_sense": "cover",
+    "objective": "100000 + electricity + 5 per charge start",
+    "tariff": "flat",
+    "shared_capacity": false,
+    "initialization": "fresh singletons; no GIRO or inherited routes",
+    "grid_kwh": 2.5,
+    "event_minutes": 5,
+    "rc_epsilon": 0.0001,
+    "columns_per_iteration": 30,
+    "mip_total_s": 12600,
+    "mip_fleet_s": 10800,
+    "mip_cost_s": 1800
+  },
+  "initialization": "fresh singletons, no inherited/GIRO columns",
+  "cg_application_limit_s": 42300,
+  "scheduler_wall_s": 43200,
+  "request": {
+    "cpus": 8,
+    "mem": "120G",
+    "wall": "12:00:00",
+    "partition": "scaglione"
+  },
+  "exclude": "scaglione-compute-01",
+  "manifest_remote": "/home/nc437/ladder-lite/review_full40_20260916/scaglione_12h_v1/manifest.json",
+  "manifest_sha256": "2a25ceb4e34e7d56b1954f4b767ad91d0fc4aa2dacd238a3a1a78be4e7efc200",
+  "submission_receipt_sha256": "215e69cbb6f24040be449931df6e5b8a42f212de154b2694339ba308fce016cd",
+  "memory_evidence": "resource_rationale.json; projection, not measured full40peak",
+  "pricing_certificate": null,
+  "finite_pool_mip_proof": null,
+  "physical_validation": null,
+  "giro_target_attainment": null,
+  "output_base": "/home/nc437/ladder-lite/review_full40_20260916/cases/c1_full40",
+  "user_authorization": "Explicit12h/right-sized Scaglione full-PartilleCG instruction; supersedes earlier conditionalhold",
+  "old_job_records_preserved": true,
+  "monitor_note": "Use replacement343119 as currentfull40CG;341405CANCELLED is superseded, not a computational failure.341406 remains held. No newMIP was submitted."
+}

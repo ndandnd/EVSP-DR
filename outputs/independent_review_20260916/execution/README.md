@@ -1,3 +1,5 @@
+**F4/F2 new exact bound:** all 102 separated-group time-only minima equal GIRO k; mixed minima are k in93 and k−1 in the same9. [Results and proof](../time_only_vsp_20260916/README.md) · [Reviewer follow-up and prediction checks](advisor_seg_followup_20260916/README.md). This proves group separation excludes k−1; mixed integer EV savings remain open. Full-Partille [CG343119](full40_12h_scaglione_20260916/README.md) is queued on Scaglione with12h/120G; graph continues, MIP held.
+
 Six full single-factor arms are submitted: [experiment settings, job IDs and monitoring](action3_full_20260916/README.md). Replay array342540 covers every254,068sequence in each arm,50tasks at once; dependent CG/MIP jobs342668–342681 are queued. Other submission holds remain.
 
 New post-hoc result: [mixed-group lambda in all102 LP endpoints](mixed_group_lp_20260916/README.md). F4 group mixing VERIFIED; F2 causal attribution UNRESOLVED. The9 k−1 cases average17.38% mixed weight versus8.28% in27 other k27–32 cases. No solver run.

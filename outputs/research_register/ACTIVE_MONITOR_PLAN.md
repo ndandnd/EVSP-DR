@@ -1,3 +1,11 @@
+## Latest authorization — time-only VSP and full-Partille follow-up
+
+The user requested the per-group time-only VSP for all 102 audited instances and authorized reducing the full-Partille CG request to 12 hours on Scaglione with justified memory. This supersedes the earlier conditional full-CG hold, but not the held downstream MIP or unrelated submission restrictions. The existing six full action3 arms continue; do not duplicate them.
+
+Compare those arms against the frozen reviewer predictions with `python3 outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/check_predictions.py --refresh` (read-only). This replaces a separate call to the action3 collector for that polling cycle. Missing or uncertified endpoints are not refutations. Keep partial replay counts distinct from completed CG/MIP results. See `execution/full40_12h_scaglione_20260916/` for the effective job, exact budget and checkpoint wrapper; never release old held commands blindly.
+
+The time-only audit is `outputs/independent_review_20260916/time_only_vsp_20260916/`. Its model permits shortest deadhead paths and ignores energy; distinguish time-only fleet certificates, continuous GIRO-duty feasibility, event-grid representability and weighted-CG certificates. Preserve all baseline counts and model labels.
+
 ## Latest authorization — 16 September 20:00 EDT
 
 The user approved all six full action3 single-factor arms, superseding the pilot-only restriction below. Full-pool replay and downstream CG/MIP use the original C5 k31 trip-sequence pool under one changed factor per arm. Other submissions remain on hold. A read-only mixed-group LP-weight audit of all102 frozen endpoints is also requested; no solver is authorized for that audit.

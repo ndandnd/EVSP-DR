@@ -24,7 +24,13 @@ def full_collect(b):
    if mode=='cg':r.update(cg_stop_reason=d.get('stop_reason'),cg_pricing_certified=d.get('certified_rc_optimal'),cg_wall_s=d.get('wall_s'),cg_iterations=d.get('iterations'),cg_final=d.get('final'),cg_final_lp_source=d.get('final_lp_source'))
    else:r.update(buses=d.get('buses'),pool_fleet_bound=d.get('fleet_bound'),fleet_proven_in_pool=d.get('fleet_proven'),physical_route_replay=d.get('physical_replay_validated'),duplicate_cleanup=d.get('duplicate_trip_removal_validated'),shared_capacity_validated=d.get('cross_route_charger_capacity_validated'))
   rows.append(r)
- return {'rows':rows,'manifest_sha256':sha(b/'manifest.json')}
+ result={'rows':rows,'manifest_sha256':sha(b/'manifest.json')}
+ replacement=b/'scaglione_12h_v1/submission_receipt.json'
+ if replacement.exists():
+  receipt=read(replacement);manifest=replacement.parent/'manifest.json'
+  assert receipt['state']=='complete' and sha(manifest)==receipt['manifest_sha256']
+  result['cg_resource_override']={'receipt_path':str(replacement),'receipt_sha256':sha(replacement),'manifest_sha256':sha(manifest),'effective_cg_job':receipt['replacement_job_id'],'scientific_cg_s':receipt['scientific_cg_s'],'scheduler_wall_s':receipt['scheduler_wall_s'],'memory_GiB':receipt['memory_GiB'],'superseded_cg':'341405','mip_remains_held':True}
+ return result
 
 def collect(name,b):
  try:
@@ -84,6 +90,15 @@ for name,b in ROOTS.items():
     if key in d:row[key]=d[key]
    if d.get('error'):row['worker_error']=str(d['error'])[:1500]
    attempts.append(row)
+# Authorized replacement has a separate immutable receipt; retain old attempt identity.
+replacement=ROOTS['full40']/'scaglione_12h_v1/submission_receipt.json'
+if replacement.exists():
+ receipt=read(replacement);assert receipt['state']=='complete'
+ new_id=str(receipt['replacement_job_id']);assert new_id.isdigit()
+ registry.append({'campaign':'full40','job_id':new_id,'case_id':'c1_full40','mode':'cg','dependencies':['341404_0'],'supersedes':'341405','receipt_sha256':sha(replacement)})
+ for entry in registry:
+  if entry['campaign']=='full40' and entry['job_id']=='341405':entry.update(superseded_by=new_id,expected_cancellation=True)
+  if entry['campaign']=='full40' and entry['job_id']=='341406':entry.update(dependencies=[new_id],held_by_user=True)
 # Register the four reused seed-zero jobs even before a result exists.
 for cell in read(ROOTS['p1']/'manifest.json')['reused_cells']:
  for r in jobrows(read(Path(cell['campaign'])/'jobs.json')):

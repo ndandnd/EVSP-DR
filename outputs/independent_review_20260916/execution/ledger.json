@@ -97,7 +97,7 @@
       "item": 13,
       "finding": "F8",
       "status": "submitted",
-      "result": "Full 40-duty / 948-trip graph, 48-hour fresh CG and 3-hour fleet MIP submitted: 341404/341405/341406. Scientific outcome UNRESOLVED.",
+      "result": "F8 scientific result UNRESOLVED. Superseded held CG341405 cancelled after dependency rewire; replacement343119 queued on Scaglione, 120G/8CPUs/12h allocation, 11h45m scientificCG. Graph341404_0 continues; downstreamMIP341406 remains held. See full40_12h_scaglione_20260916/README.md.",
       "evidence": "p3_full/jobs.json"
     },
     {
@@ -108,7 +108,7 @@
       "evidence": "p3_frolunda/jobs.json"
     }
   ],
-  "updated_utc": "2026-09-17T00:33:00.346232+00:00",
+  "updated_utc": "2026-09-17T01:30:22.165874+00:00",
   "posthoc_mixed_group_audit": {
     "status": "completed_no_solver",
     "finding": "F4/F2",
@@ -1055,5 +1055,106 @@
     "monitor_command": "python3 outputs/independent_review_20260916/execution/action3_full_20260916/collect.py",
     "readme": "outputs/independent_review_20260916/execution/action3_full_20260916/README.md",
     "budget_qualification": "Nominal4hCG+1hMIP perarm; graph/replay additional; restart attempts add total computation."
+  },
+  "time_only_vsp": {
+    "finding": "F4/F2",
+    "tested_proposition": "Mandatory vehicle-group separation excludes k\u22121 fractional or integer fleets in all nine cases",
+    "verdict": "VERIFIED",
+    "cases": 102,
+    "segregated_time_min_equals_k": 102,
+    "mixed_time_min_equals_k": 93,
+    "mixed_time_min_equals_k_minus_1": 9,
+    "certificates_checked": 612,
+    "antichains_checked": 306,
+    "saved_route_connections_checked": 1040239,
+    "script": "outputs/independent_review_20260916/time_only_vsp_20260916/time_only_vsp.py",
+    "summary_sha256": "4f0b5f24e46ebaf3d945fa41970ad0e54a8aaba668ba0dd415707a6520289bcf",
+    "results_sha256": "822be44fb41a5d675a55112623ae94d479665f2eb84c558d2a805f5d267744b1",
+    "independent_audit_sha256": "06714601850cc149e10b9b0987bb3a58eb0626a42cb06ea95369a4c019ea928e",
+    "scope": "Exact travel/time relaxation, no commercial optimizer or cluster submission. F4 continuous k-bus witnesses linked separately; event-grid integer and weighted charging proofs are not inferred. Mixed integer EV k\u22121 remains unresolved."
+  },
+  "full40_12h_scaglione": {
+    "experiment_id": "review_full40_c1_scaglione12h_20260916",
+    "finding": "F8",
+    "case": "c1_full40",
+    "supersedes_cg_job": "341405",
+    "effective_job_map": {
+      "graph": "341404_0",
+      "cg": "343119",
+      "mip": "341406"
+    },
+    "scheduler_state": {
+      "graph": "RUNNING at receipt",
+      "cg": "PENDING dependency on341404_0",
+      "mip": "HELD by user, dependency rewired to343119"
+    },
+    "source_input": {
+      "id": "c1_full40",
+      "csv": "review_full40_c1.csv",
+      "input_sha256": "904070ec8919dd11bf431eab62e1396ad4882d95f7d5917bcf83f34d1e20e607",
+      "trip_count": 948,
+      "target_duties": 40,
+      "chain": 1,
+      "cg_seconds": 42300,
+      "cache": "/home/nc437/ladder-lite/review_full40_20260916/cases/c1_full40/network.pkl",
+      "parent_status": null,
+      "input_source": "/home/nc437/ladder-lite/chain_extension_20260913/inputs/w1_k40.csv"
+    },
+    "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+    "scientific_settings": {
+      "battery_kwh": 240,
+      "charge_kw": 240,
+      "reserve_kwh": 0,
+      "terminal_soc": "free",
+      "master_sense": "cover",
+      "objective": "100000 + electricity + 5 per charge start",
+      "tariff": "flat",
+      "shared_capacity": false,
+      "initialization": "fresh singletons; no GIRO or inherited routes",
+      "grid_kwh": 2.5,
+      "event_minutes": 5,
+      "rc_epsilon": 0.0001,
+      "columns_per_iteration": 30,
+      "mip_total_s": 12600,
+      "mip_fleet_s": 10800,
+      "mip_cost_s": 1800
+    },
+    "initialization": "fresh singletons, no inherited/GIRO columns",
+    "cg_application_limit_s": 42300,
+    "scheduler_wall_s": 43200,
+    "request": {
+      "cpus": 8,
+      "mem": "120G",
+      "wall": "12:00:00",
+      "partition": "scaglione"
+    },
+    "exclude": "scaglione-compute-01",
+    "manifest_remote": "/home/nc437/ladder-lite/review_full40_20260916/scaglione_12h_v1/manifest.json",
+    "manifest_sha256": "2a25ceb4e34e7d56b1954f4b767ad91d0fc4aa2dacd238a3a1a78be4e7efc200",
+    "submission_receipt_sha256": "215e69cbb6f24040be449931df6e5b8a42f212de154b2694339ba308fce016cd",
+    "memory_evidence": "resource_rationale.json; projection, not measured full40peak",
+    "pricing_certificate": null,
+    "finite_pool_mip_proof": null,
+    "physical_validation": null,
+    "giro_target_attainment": null,
+    "output_base": "/home/nc437/ladder-lite/review_full40_20260916/cases/c1_full40",
+    "user_authorization": "Explicit12h/right-sized Scaglione full-PartilleCG instruction; supersedes earlier conditionalhold",
+    "old_job_records_preserved": true,
+    "monitor_note": "Use replacement343119 as currentfull40CG;341405CANCELLED is superseded, not a computational failure.341406 remains held. No newMIP was submitted."
+  },
+  "action3_prediction_check": {
+    "predictions_sha256": "0b7eef916d933ba2fecc8e81f2c1deeb526fb578b11b49f62552c944792d15e7",
+    "source_receipt_sha256": "3ee5a52dcfa0053963af412c731c840b30733179d7447b8f392870025321cf33",
+    "check_command": "python3 outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/check_predictions.py --refresh",
+    "latest_at_recording": "comparisons/20260917T011953Z/comparison.json",
+    "verdict": "PENDING; six arms unchanged"
+  },
+  "doc_seg_update": {
+    "verification": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/doc/doc_verification.json",
+    "verification_sha256": "8909c5c4cd0785f12eec9ad8b712065e06fd64fa2f520588d2a20dc3920e1faa",
+    "all_checks_passed": true,
+    "counts_changed": false,
+    "sibling_tabs_changed": false,
+    "slides_edited": false
   }
 }

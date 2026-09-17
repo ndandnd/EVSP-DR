@@ -1,0 +1,7 @@
+{
+  "tests_passed": 9,
+  "run_utc": "2026-09-17T01:20:27.059651+00:00",
+  "command": "python3 -m unittest discover -s outputs/independent_review_20260916/execution/advisor_seg_followup_20260916 -p test_check_predictions.py -v",
+  "checker_sha256": "43ab7863a7c0d371ae1fb7c92d4dcf0ae6f7322a9eb84f7064438ae7ffea2bc0",
+  "test_sha256": "9bd47e8b905f501fd8084463af14172add7e92f636eaa958420bae4d2bb46918"
+}

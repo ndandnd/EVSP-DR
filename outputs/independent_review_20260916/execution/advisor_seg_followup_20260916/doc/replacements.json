@@ -1,0 +1,42 @@
+[
+  [
+    "Post-hoc group check: the nine k\u22121 endpoints put 17.38% of LP route weight on routes mixing 18E1 and 18E2 trips, versus 11.47% in the other 93 endpoints and 8.28% in the 27 other cases at k=27\u201332. Mixing is higher at every matched k. The approved single-factor group-separation arm tests whether it causes the lower fleet values.",
+    "Vehicle-group result: time-only scheduling with deadheading needs exactly GIRO\u2019s fleet in all 102 instances when groups stay separate, for each group individually. With mixing allowed, the time-only minimum is k in 93 cases and k\u22121 in the same nine as our LP results. Thus group separation rules out those one-bus savings, independently of energy constraints. The electric-bus integer saving with mixing is still open."
+  ],
+  [
+    "So GIRO's k is always achievable in principle; the scientific content is the lower bound and the 9 cases where it is k\u22121.",
+    "This establishes a continuous-charging k-bus upper bound. It does not itself establish representability on our event grid; that requires a separate feasible event-grid schedule."
+  ],
+  [
+    "are the 9 cases real savings or an artifact of our faster depot charging? Two tests running (see table below).",
+    "can an integer electric-bus schedule achieve the one-bus saving when vehicle groups may mix? The six single-factor arms also test the effects of depot power, reserve and battery size."
+  ],
+  [
+    "Full Partille, 40 duties / 948 trips, 48 h CG",
+    "Full Partille, 40 duties / 948 trips, 12 h allocation"
+  ],
+  [
+    "held \u2014 checkpoint fix tested; memory sizing unresolved",
+    "CG 343119: Scaglione, 120 GiB; 11 h 45 min CG; checkpoint fallback tested"
+  ],
+  [
+    "Held; no scheduled start",
+    "Waiting for graph 341404_0; no scheduled start"
+  ],
+  [
+    "Q1 closed: either proof that the 9 k\u22121 cases are artifacts of 240 kW depot charging, or a validated schedule with fewer buses than GIRO. (Items 8, 11.)",
+    "Q1: group separation now rules out k\u22121 in all nine cases. Still open: a validated electric-bus schedule attaining k\u22121 when groups may mix, and sensitivity to the tighter physics. (Items 8, 11.)"
+  ],
+  [
+    "One large instance: full Partille certified or bounded. (Held.)",
+    "One large instance: full Partille certified or bounded. (CG queued after graph preparation.)"
+  ],
+  [
+    "Full-Partille job: checkpoint fallback fixed and tested. k=32 aggregate MaxRSS is 206\u2013232 GiB; the \u2264120 GB condition for a Scaglione move is not met. CG and MIP remain held.",
+    "Full-Partille CG 343119 is queued on Scaglione with 120 GiB and a 12 h allocation (11 h 45 min CG plus shutdown allowance), after the existing graph job. Memory sizing uses the fresh single-process run, not the older eight-worker inheritance peaks. The downstream MIP remains held."
+  ],
+  [
+    "Updated 16 September 2026, 20:06 EDT.",
+    "Updated 16 September 2026, 21:25 EDT; earlier experiment tables retain their stated snapshot."
+  ]
+]

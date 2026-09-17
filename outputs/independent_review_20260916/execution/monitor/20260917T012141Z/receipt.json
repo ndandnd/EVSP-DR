@@ -1,0 +1,21 @@
+{
+  "status": "collected",
+  "stamp": "20260917T012141Z",
+  "elapsed_s": 2.326977541670203,
+  "snapshot_sha256": "dbc8bec4a92a8ab7a8e987907f139a7fa99e331c65dd0131025ab46ec3f6f131",
+  "local_script_sha256": "9c8e0d2ad27786ca8258b4f96e117dc14ae7efd800525245c5b52da415b5ecb0",
+  "remote_script_sha256": "a7b641ab73495311fffc90ce1906f40624490e36b4fc3ab6c846b5b4a0ec5837",
+  "campaign_collector_success": {
+    "p1": true,
+    "dr": true,
+    "strict": true,
+    "random": true,
+    "full40": true,
+    "frolunda": true,
+    "f6_k5": true
+  },
+  "scheduler_query_success": {
+    "squeue": true,
+    "sacct": true
+  }
+}

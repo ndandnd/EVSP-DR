@@ -1,0 +1,31 @@
+{
+  "finalized_utc": "2026-09-17T01:25:42.494002+00:00",
+  "new_jobs_submitted": 1,
+  "replacement_job": "343119",
+  "cancelled_superseded_cg": "341405",
+  "rewired_but_still_held_mip": "341406",
+  "graph_unchanged": "341404_0",
+  "shared_ledgers_or_docs_edited": false,
+  "files_sha256": {
+    "README.md": "666d3184ed817cfa1d110e237f1e26277e8ccdc37f90cfeaaf07504d5d295f7a",
+    "SCAGLIONE_RESOURCE_POLICY.snapshot.md": "49954b0300305f108e5e0c47bbbde43f0c5159140a95c839c4c3fad30f158867",
+    "collect_memory.py": "028a57f66bdabd57acc4f49551f2eab19f46ea53192eaa804c3128f01664b247",
+    "deploy_remote.py": "d8a8e7a69d3a890268fa303fbc8b66ab97f9d0f44fbffdfc401f36f459af7a5f",
+    "deployment_receipt.json": "e946cc802d750cbf82d83cf7e55bbcab2624cf07e919511a0716ef3fe1b1ee15",
+    "deployment_stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "k32_graph_scale.json": "4d19c8e7c5ec36d11cedc504f8bac6672c31d99987e72541bc7c84eeb17a0485",
+    "ledger_addition.json": "f5111a2b215a564a532f8ea3873ed9873d66937c49c79f63193f5fd3941fc333",
+    "prepared/campaign.py": "c16504ed70afc6f9d035e88055d167429aa03e74c6a2e6e5379f113bc9fa4da1",
+    "prepared/checkpoint_recovery.py": "1f4a5af14a881bcdf833d432183f29d092b3ea5da7a3ac40f3128ee991d2a05b",
+    "prepared/checkpoint_validator.py": "2ab565931f466f7eeadadbc2a3abf78c2bebce0aac0f64d8da230ff86ee80d06",
+    "prepared/manifest.json": "2a25ceb4e34e7d56b1954f4b767ad91d0fc4aa2dacd238a3a1a78be4e7efc200",
+    "prepared/worker.sub": "0d4844b14e7f3493c46b29840a5d96afb5f9874e5a0fd14e945e578b7386ec4d",
+    "resource_rationale.json": "1cba3d7241b595fd5d2eac258fc54c8e208156150cc4d27d29c73cbfe1943ac9",
+    "submission_receipt.json": "215e69cbb6f24040be449931df6e5b8a42f212de154b2694339ba308fce016cd",
+    "submission_stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission_stdout.json": "215e69cbb6f24040be449931df6e5b8a42f212de154b2694339ba308fce016cd",
+    "submit_remote.py": "a491eced6591dbf70cc3c4f1f2248f37d74b0aabc4603267ee6ebe4991f5ab69",
+    "validation.json": "1548a8987b4598152b5f3e5dea08d91e77b2815490cdea9b2890fe0682815000",
+    "wrapper.diff": "3900f6cb04d62e360817be61b8bf853d2ea909215ae5611c9acc7875fb652639"
+  }
+}

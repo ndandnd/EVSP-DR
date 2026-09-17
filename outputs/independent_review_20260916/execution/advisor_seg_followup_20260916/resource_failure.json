@@ -1,0 +1,15 @@
+{
+  "finding": "F6/F7 item10",
+  "job_id": "341187",
+  "case": "c5_k15_peak12_fixed",
+  "scheduler_state": "OUT_OF_MEMORY",
+  "memory_request": "32G",
+  "batch_MaxRSS_KiB": 33409728,
+  "elapsed_s": 8608,
+  "end_EDT": "2026-09-16T20:27:35",
+  "native_log": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/logs/dr3m_c5_k15_peak12_fixed_341187.err",
+  "confirmed_native_error": "Detected 1 oom_kill event in StepId=341187.batch; subprocess return code -9",
+  "interpretation": "Resource failure, not proven infeasibility, solver license failure or preemption. No objective endpoint. Outside four-number37-cellgate.",
+  "retry_submitted": false,
+  "notification": "Reported alongside this task; do not repeat notification unless state changes."
+}

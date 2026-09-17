@@ -3,7 +3,7 @@ import collections,datetime,json,subprocess,sys
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
 REMOTE=r'''
-import collections,datetime,json,subprocess
+import collections,datetime,hashlib,json,subprocess
 from pathlib import Path
 r=Path('/home/nc437/ladder-lite/action3_full_20260916');b='/usr/local/slurm/slurm-25.05.5/bin/'
 m=json.loads((r/'manifest.json').read_text());out={'collected_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'manifest':m,'replay':{},'stages':{},'attempts':[],'errors':[]}
@@ -24,7 +24,14 @@ for arm in m['arms']:
  if arm=='baseline':out['replay'][arm]['unexpected_nonfeasible_counts']={k:v for k,v in counts.items() if k!='feasible'}
 for p in sorted((r/'continuation').glob('*/*.json')):
  try:
-  d=json.loads(p.read_text());out['stages'][str(p.relative_to(r))]={k:v for k,v in d.items() if not isinstance(v,(dict,list))}
+  d=json.loads(p.read_text());summary={k:v for k,v in d.items() if not isinstance(v,(dict,list))}
+  def compact(value):
+   if isinstance(value,dict):return {k:compact(v) for k,v in value.items() if k not in ['selected_indices','overcovered_trips','stations']}
+   return value
+  for key in ['final','physics','result','pool_acceptance','duplicate_service_audit','physical_station_capacity_audit','provenance']:
+   if key in d:summary[key]=compact(d[key])
+  summary['_endpoint_sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
+  out['stages'][str(p.relative_to(r))]=summary
  except Exception as e:out['errors'].append({'path':str(p),'error':str(e)})
 for p in sorted((r/'assembly_status').glob('*.json')):
  d=json.loads(p.read_text());result=d['result'];out['stages'][str(p.relative_to(r))]={'assembly':d['assembly'],**{k:v for k,v in result.items() if k not in ['source_receipts','singleton_fallbacks']}}

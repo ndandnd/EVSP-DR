@@ -1,0 +1,41 @@
+{
+  "verified_utc": "2026-09-17T01:29:14.579840+00:00",
+  "checks": {
+    "history_unchanged": true,
+    "figures_unchanged": true,
+    "curves_unchanged": true,
+    "all_replacement_text_present": true,
+    "four_editable_tables": true,
+    "original_footer_html_unchanged": true,
+    "six_original_links_preserved": true,
+    "new_source_links": true,
+    "128_102_67_35_70_preserved": true
+  },
+  "passed": true,
+  "before": {
+    "md_sha256": "100df9b958584c8fb7ec58066e258b6de76ac8b0a09884c50a474325fcb363a1",
+    "html_sha256": "f5b1f449c3f491110e213d0e8c0ab0fb77212ff5fe34edeca7bd47571f8a0f83"
+  },
+  "after": {
+    "md_sha256": "b3e5da076073f96f97d85563f89edee3feee3bd5204631d7d701d445e434914b",
+    "html_sha256": "e87f0e864c6451c93a300b4600771e0f7a2863c767f63ec7475b7fd2ce8b646f",
+    "pdf_sha256": "d56dcad733ce10a8a5be219beb40a13dd3d7a5b30634e5a486812b338ba5b8ff"
+  },
+  "siblings": {
+    "history": {
+      "prior_sha256": "3840e8beb7e50ad780a73161436a78f668e181f25b0e2833d65a28dcf5b080fb",
+      "after_sha256": "3840e8beb7e50ad780a73161436a78f668e181f25b0e2833d65a28dcf5b080fb"
+    },
+    "figures": {
+      "prior_sha256": "e848a5de2cce2c92eb8eff7d5a82defc488bf8d627b97c1807b0f2ded5ff5ddf",
+      "after_sha256": "e848a5de2cce2c92eb8eff7d5a82defc488bf8d627b97c1807b0f2ded5ff5ddf"
+    },
+    "curves": {
+      "prior_sha256": "6b0317fba680ea88c536e18240dc2d0e3f5e74c1515b55167697071ed12c8a90",
+      "after_sha256": "6b0317fba680ea88c536e18240dc2d0e3f5e74c1515b55167697071ed12c8a90"
+    }
+  },
+  "scope": "10 current-tab text replacements and two source links; no figures/history/slides edits",
+  "saved_to_drive_observed": true,
+  "visual_review": "All five PDF pages inspected; readable tables, no clipped or orphan headings. New source links appear below the timestamp."
+}

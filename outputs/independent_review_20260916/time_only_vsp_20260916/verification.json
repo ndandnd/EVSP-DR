@@ -1,0 +1,626 @@
+{
+  "status": "verified",
+  "certificate_graphs_checked": 612,
+  "closure_antichains_checked_for_pairwise_nonreachability": 306,
+  "saved_lp_cases": 102,
+  "saved_positive_routes": 41921,
+  "saved_route_adjacent_connections": 1040239,
+  "connection_violations": [],
+  "certificate_sha256": "599e47eb0eb42ee882b1112d549faf9fbe8a209182b6b7e11acafbab3bb9e732",
+  "support_archive_sha256": "33ca17ca67b3ebd5dad64ba81e3422891c012525ea4bae2231916d29f64c9a95",
+  "script_sha256": "019389ff59076492efdf334dc76f84432a51d9599b87f807da14481b49a311cb",
+  "per_case": [
+    {
+      "case_id": "w1_k16",
+      "positive_routes_checked": 235,
+      "adjacent_connections_checked": 5843,
+      "source_file_sha256": "5a934f9d29f006f70a093391ef49c2e8aa7da561f31aa1ac9ef86291f3499171"
+    },
+    {
+      "case_id": "w2_k16",
+      "positive_routes_checked": 256,
+      "adjacent_connections_checked": 6648,
+      "source_file_sha256": "04e82d62b69783d8fa4f526e32575c61cfdbdced43a6a7abe20ad0dd7b6df95b"
+    },
+    {
+      "case_id": "w3_k16",
+      "positive_routes_checked": 241,
+      "adjacent_connections_checked": 5563,
+      "source_file_sha256": "433fed006c70499a69d5a60acfb82beece6036161b37e4f5f04f8b758dcde7c9"
+    },
+    {
+      "case_id": "w4_k16",
+      "positive_routes_checked": 261,
+      "adjacent_connections_checked": 7239,
+      "source_file_sha256": "0c55ca50d60f5990ad392aa14f25fcab67086c4070140b27a7e47fc01afab396"
+    },
+    {
+      "case_id": "w5_k16",
+      "positive_routes_checked": 220,
+      "adjacent_connections_checked": 5084,
+      "source_file_sha256": "c3dbd4a1e3055e07e5504f48b5b3a2d53f580afe7c5c941cd15fcf0d72f928ba"
+    },
+    {
+      "case_id": "w6_k16",
+      "positive_routes_checked": 251,
+      "adjacent_connections_checked": 6078,
+      "source_file_sha256": "b343495a4027b33df780443b49b2724e11e9235860a162b31a6a315dca590537"
+    },
+    {
+      "case_id": "w1_k17",
+      "positive_routes_checked": 254,
+      "adjacent_connections_checked": 6002,
+      "source_file_sha256": "1d0846ed2e86e9e016b860f9d3d41d50bfeee0fe5495c58e1b0a28dd483a5100"
+    },
+    {
+      "case_id": "w2_k17",
+      "positive_routes_checked": 274,
+      "adjacent_connections_checked": 7173,
+      "source_file_sha256": "30311ddb8ac29652324ce92b0110077c1414d3b7ccff211764a32cf59a980512"
+    },
+    {
+      "case_id": "w3_k17",
+      "positive_routes_checked": 269,
+      "adjacent_connections_checked": 6177,
+      "source_file_sha256": "b8463be2527d6fc8a8ea257bb35d7d82fa828a4ee0cd3dbdbe9b8a1cab67d3b1"
+    },
+    {
+      "case_id": "w4_k17",
+      "positive_routes_checked": 289,
+      "adjacent_connections_checked": 7765,
+      "source_file_sha256": "cb3e66c6569420104c3d8d4dd60fcdb7902b4ba41274e834af04f9a48f7e2469"
+    },
+    {
+      "case_id": "w5_k17",
+      "positive_routes_checked": 244,
+      "adjacent_connections_checked": 5667,
+      "source_file_sha256": "6e78ca39840fceae94f8dcc7713d7ec953ecc694ded6b489d41072cc48a63d79"
+    },
+    {
+      "case_id": "w6_k17",
+      "positive_routes_checked": 228,
+      "adjacent_connections_checked": 5622,
+      "source_file_sha256": "ba25940dfebe4be9b94da8fa7a96bf4da210a996874c9966842047eacab491c0"
+    },
+    {
+      "case_id": "w1_k18",
+      "positive_routes_checked": 276,
+      "adjacent_connections_checked": 7407,
+      "source_file_sha256": "0298642a4b2cff27104a4b9756431b884673d9cfb51cf06c40c7e60e209ba51a"
+    },
+    {
+      "case_id": "w2_k18",
+      "positive_routes_checked": 302,
+      "adjacent_connections_checked": 7770,
+      "source_file_sha256": "a88a85e1c3a04cdc0e1d9d6ec9eac4e61c95bf4154803eda4cd8c00b01add102"
+    },
+    {
+      "case_id": "w3_k18",
+      "positive_routes_checked": 276,
+      "adjacent_connections_checked": 6339,
+      "source_file_sha256": "e96792ee18e653abe9ce9d38c6231b51ea6a61406922f8290b86512165c16ed4"
+    },
+    {
+      "case_id": "w4_k18",
+      "positive_routes_checked": 293,
+      "adjacent_connections_checked": 7527,
+      "source_file_sha256": "fbed554b9d74ea7b2a2604103f8c38daa6493b095b630df215d2e3c135c0b732"
+    },
+    {
+      "case_id": "w5_k18",
+      "positive_routes_checked": 268,
+      "adjacent_connections_checked": 6043,
+      "source_file_sha256": "01463b5742a2776ed309932700dbe77ebb35e12de1b15904793c851d8972196c"
+    },
+    {
+      "case_id": "w6_k18",
+      "positive_routes_checked": 268,
+      "adjacent_connections_checked": 6597,
+      "source_file_sha256": "c5bc874fc03cf31ad15ae8315d9905c2b6ac88c3faa89a81f0c5d36026ea737a"
+    },
+    {
+      "case_id": "w1_k19",
+      "positive_routes_checked": 353,
+      "adjacent_connections_checked": 9674,
+      "source_file_sha256": "e084c169a395bc3318cae0625ff8030d826404c9e05ee6a65e8c4d0063fde9e2"
+    },
+    {
+      "case_id": "w2_k19",
+      "positive_routes_checked": 318,
+      "adjacent_connections_checked": 7982,
+      "source_file_sha256": "3e9ab72d4c30871449639bf50f90e82e8102d494a61bad7610bae811a9069594"
+    },
+    {
+      "case_id": "w3_k19",
+      "positive_routes_checked": 286,
+      "adjacent_connections_checked": 6549,
+      "source_file_sha256": "07408b6bf57ff9e6d0c60049acc745bab4564d55a9e2344cc2158ca9f6cd01a4"
+    },
+    {
+      "case_id": "w4_k19",
+      "positive_routes_checked": 337,
+      "adjacent_connections_checked": 9177,
+      "source_file_sha256": "b8f878d363ff49c4a509ecf0af758a5a16f8fd6d8042182738e36fc726978712"
+    },
+    {
+      "case_id": "w5_k19",
+      "positive_routes_checked": 271,
+      "adjacent_connections_checked": 6574,
+      "source_file_sha256": "056e63afee24ec3f2202edf11f4ad8fa5ca1a62a350e1643b478a909ebffe7a7"
+    },
+    {
+      "case_id": "w6_k19",
+      "positive_routes_checked": 269,
+      "adjacent_connections_checked": 6554,
+      "source_file_sha256": "3c18ef76355b80b7b13540d68acff151aff07bacbebf81a59dc5f9de967df944"
+    },
+    {
+      "case_id": "w1_k20",
+      "positive_routes_checked": 360,
+      "adjacent_connections_checked": 9326,
+      "source_file_sha256": "2198d07bf280696daddf373d2182236f015020e6515b2194ae986ae0750364bd"
+    },
+    {
+      "case_id": "w2_k20",
+      "positive_routes_checked": 347,
+      "adjacent_connections_checked": 8618,
+      "source_file_sha256": "7cfc68cb6ec7ebafb86e391c7d547fad96ef0cc28fa7c7f5af85f07996e18ab0"
+    },
+    {
+      "case_id": "w3_k20",
+      "positive_routes_checked": 301,
+      "adjacent_connections_checked": 6859,
+      "source_file_sha256": "7e669e8f10f3e133f9996c31dab9d7566d15f3477d16b902a5398d1155a226b2"
+    },
+    {
+      "case_id": "w4_k20",
+      "positive_routes_checked": 350,
+      "adjacent_connections_checked": 9381,
+      "source_file_sha256": "4a2a8c59fbaf26da73de7ecf655b31b9273b2f4fbd2cfb8a07823c46a0e87145"
+    },
+    {
+      "case_id": "w5_k20",
+      "positive_routes_checked": 306,
+      "adjacent_connections_checked": 7579,
+      "source_file_sha256": "d1d8472e2429a0d5d7fd3154c5a0bce814c7b0de763f4cf4c5a7503baefa1842"
+    },
+    {
+      "case_id": "w6_k20",
+      "positive_routes_checked": 293,
+      "adjacent_connections_checked": 7067,
+      "source_file_sha256": "f3919aa1c6eba1afc1063a11fa4fb1750cce306c37fec31a923d6003ad2f5789"
+    },
+    {
+      "case_id": "w1_k21",
+      "positive_routes_checked": 343,
+      "adjacent_connections_checked": 8607,
+      "source_file_sha256": "5d63fa9c5369e82c6fea3bcd29ff2c1e882f3fbb35a3db308e79f540cf85e935"
+    },
+    {
+      "case_id": "w2_k21",
+      "positive_routes_checked": 353,
+      "adjacent_connections_checked": 8697,
+      "source_file_sha256": "5a399798c1eefc486327847a42c4b2ccd2c4e93bcd57649a68d74ef4674b7747"
+    },
+    {
+      "case_id": "w3_k21",
+      "positive_routes_checked": 339,
+      "adjacent_connections_checked": 8236,
+      "source_file_sha256": "9d138548cf619cbf91f783a69e74b46e6db5dfd79659a7a8894deb8204fa0aa4"
+    },
+    {
+      "case_id": "w4_k21",
+      "positive_routes_checked": 363,
+      "adjacent_connections_checked": 9778,
+      "source_file_sha256": "531bc84b1489a47d60c5146f1aba13c1ba747430bc1f95c4cd88814a757a68af"
+    },
+    {
+      "case_id": "w5_k21",
+      "positive_routes_checked": 339,
+      "adjacent_connections_checked": 8649,
+      "source_file_sha256": "7bec34b423737eb853e29867a43c5fb67f7da647e16095b90bec0c4730f05921"
+    },
+    {
+      "case_id": "w6_k21",
+      "positive_routes_checked": 314,
+      "adjacent_connections_checked": 7401,
+      "source_file_sha256": "1b40bd30089b2072440a61a3b9a1db68768f41ea756b410ca46542a0c9c12400"
+    },
+    {
+      "case_id": "w1_k22",
+      "positive_routes_checked": 357,
+      "adjacent_connections_checked": 8896,
+      "source_file_sha256": "5f2d0d8013f483e8156a6259e87211e04c27d7445039ace4a1c815b6b2396b33"
+    },
+    {
+      "case_id": "w2_k22",
+      "positive_routes_checked": 385,
+      "adjacent_connections_checked": 9053,
+      "source_file_sha256": "c85b1c2c6949e779cd94fca1ec0698edf5760792f2421abac865978238215714"
+    },
+    {
+      "case_id": "w3_k22",
+      "positive_routes_checked": 349,
+      "adjacent_connections_checked": 8340,
+      "source_file_sha256": "dc11730c191e493a2f5a81502f0ae4e0d6072850546284141cf007354fcb1e57"
+    },
+    {
+      "case_id": "w4_k22",
+      "positive_routes_checked": 382,
+      "adjacent_connections_checked": 9998,
+      "source_file_sha256": "f5513d389753472fb95b9dd18a0972dcce597d53268368f74e6cfe15656320b9"
+    },
+    {
+      "case_id": "w5_k22",
+      "positive_routes_checked": 380,
+      "adjacent_connections_checked": 9664,
+      "source_file_sha256": "9382dee7b131bbe1ba0df1e5c6ddcee8023bea839af3239370e1fd77acabd7ef"
+    },
+    {
+      "case_id": "w6_k22",
+      "positive_routes_checked": 316,
+      "adjacent_connections_checked": 7474,
+      "source_file_sha256": "3c2375266b9b5c1319edc32e615376916f90b5de0afbb22dca53517a47cd84bd"
+    },
+    {
+      "case_id": "w1_k23",
+      "positive_routes_checked": 406,
+      "adjacent_connections_checked": 10494,
+      "source_file_sha256": "9421f5f577719ddd058b8cd94340a7a34d07182baea203bda013670cdcb02055"
+    },
+    {
+      "case_id": "w2_k23",
+      "positive_routes_checked": 399,
+      "adjacent_connections_checked": 9530,
+      "source_file_sha256": "f3d094363a8347fc5ae4d9e1b8217206cbfb94879b1a9754fdf2b0eae14f7489"
+    },
+    {
+      "case_id": "w3_k23",
+      "positive_routes_checked": 362,
+      "adjacent_connections_checked": 8498,
+      "source_file_sha256": "b2798d3e0d988bbd445d9b27d867f75e2deaac9b1f1c36d8bc45b6417d85e3e3"
+    },
+    {
+      "case_id": "w4_k23",
+      "positive_routes_checked": 393,
+      "adjacent_connections_checked": 10231,
+      "source_file_sha256": "5973a570d7bdd4d70ad26ca85ed4c0686b072543f9ec8745c2b16801516588e2"
+    },
+    {
+      "case_id": "w5_k23",
+      "positive_routes_checked": 401,
+      "adjacent_connections_checked": 10054,
+      "source_file_sha256": "c6a7aa4fee083efa9aa4adb587d84868e1f29e415163d507681d3e1be37c6d6f"
+    },
+    {
+      "case_id": "w6_k23",
+      "positive_routes_checked": 366,
+      "adjacent_connections_checked": 8857,
+      "source_file_sha256": "4be33bf53f5988a969b28809113eeab7814283d8c5f2f07ab30bcf15d1471735"
+    },
+    {
+      "case_id": "w1_k24",
+      "positive_routes_checked": 393,
+      "adjacent_connections_checked": 9714,
+      "source_file_sha256": "90769318cf1a6af85dd220a344c87803006693cbe78c3575a354f426ffeead2f"
+    },
+    {
+      "case_id": "w2_k24",
+      "positive_routes_checked": 409,
+      "adjacent_connections_checked": 9814,
+      "source_file_sha256": "c09e56a318448bd1aab1fd9dc90070f7f30e64e6969ad0f599f8155bd72b16e7"
+    },
+    {
+      "case_id": "w3_k24",
+      "positive_routes_checked": 361,
+      "adjacent_connections_checked": 8185,
+      "source_file_sha256": "1b36e0e605f3b52a467b0dbb4636cfef507bc00b152d4560001e77a2ad9b4605"
+    },
+    {
+      "case_id": "w4_k24",
+      "positive_routes_checked": 381,
+      "adjacent_connections_checked": 9751,
+      "source_file_sha256": "1ba18ba6cb294698b9c5e035c3b34d3d1cafa227cc59f6a0e2d36cdea40c696f"
+    },
+    {
+      "case_id": "w5_k24",
+      "positive_routes_checked": 428,
+      "adjacent_connections_checked": 10291,
+      "source_file_sha256": "ec3549d35146941ecafca5ff88454c818d95e0312f4b77715b1b4a157d006c72"
+    },
+    {
+      "case_id": "w6_k24",
+      "positive_routes_checked": 379,
+      "adjacent_connections_checked": 9367,
+      "source_file_sha256": "41fa6d0f3cb1897db675239e70a2107bd269029c4b5db399658134c235c8b4aa"
+    },
+    {
+      "case_id": "w1_k25",
+      "positive_routes_checked": 446,
+      "adjacent_connections_checked": 11447,
+      "source_file_sha256": "6a4b945e3d249d8f26d931bc568a3943f2b4d4d9357e6e504ec74923b7a7dd46"
+    },
+    {
+      "case_id": "w2_k25",
+      "positive_routes_checked": 422,
+      "adjacent_connections_checked": 9638,
+      "source_file_sha256": "2fb4b0ec2a10b741559e6633f25d2152c2f63d70423c923ca56177fdff35c819"
+    },
+    {
+      "case_id": "w3_k25",
+      "positive_routes_checked": 395,
+      "adjacent_connections_checked": 8897,
+      "source_file_sha256": "e6180014d794e4cdb16923ee78c7ddf7771123ebce20a2ec6783221efa271ea5"
+    },
+    {
+      "case_id": "w4_k25",
+      "positive_routes_checked": 463,
+      "adjacent_connections_checked": 12363,
+      "source_file_sha256": "ba1a1397f84f202847dca4d6a577ffe24b0b436925ae4e8f611dc057967b66c5"
+    },
+    {
+      "case_id": "w5_k25",
+      "positive_routes_checked": 494,
+      "adjacent_connections_checked": 12535,
+      "source_file_sha256": "5fbef70027639a27c97d0c316d9516bac30c270ce5d9155e03be464242b67f94"
+    },
+    {
+      "case_id": "w6_k25",
+      "positive_routes_checked": 421,
+      "adjacent_connections_checked": 10276,
+      "source_file_sha256": "338142c85f87bfaf1c9988f2e530c92634a208b797a98215d27bf4357a65d33c"
+    },
+    {
+      "case_id": "w1_k26",
+      "positive_routes_checked": 448,
+      "adjacent_connections_checked": 11385,
+      "source_file_sha256": "772edc543c515ba9208218d4d5beecb7ae1a8a5f0892c9dc60cc4ece32dd6cde"
+    },
+    {
+      "case_id": "w2_k26",
+      "positive_routes_checked": 456,
+      "adjacent_connections_checked": 10744,
+      "source_file_sha256": "8c9f0e1dfa83fb7522ea30b5e48b98e4428fadd5a8ec35d9f5688ffd0fd04d76"
+    },
+    {
+      "case_id": "w3_k26",
+      "positive_routes_checked": 413,
+      "adjacent_connections_checked": 9431,
+      "source_file_sha256": "fe1b4e7ba0b9f90fa7a2d48bf27fe5553f9d6f78947a28ecda4fff5e0f0d8444"
+    },
+    {
+      "case_id": "w4_k26",
+      "positive_routes_checked": 447,
+      "adjacent_connections_checked": 11663,
+      "source_file_sha256": "8353c798322153803511a67cd02a0fc5d984f14a6918d9bbe7039f8ee5a00a93"
+    },
+    {
+      "case_id": "w5_k26",
+      "positive_routes_checked": 485,
+      "adjacent_connections_checked": 12094,
+      "source_file_sha256": "db4a6557510067e9b7835585142cdf463ba1abbe261678ce09c3d0ec12f31b63"
+    },
+    {
+      "case_id": "w6_k26",
+      "positive_routes_checked": 433,
+      "adjacent_connections_checked": 10327,
+      "source_file_sha256": "58acaa618526544d9cebc78c1ed2b392e7d1a738245fbc5db5eb1f3a1ee79ce7"
+    },
+    {
+      "case_id": "w1_k27",
+      "positive_routes_checked": 470,
+      "adjacent_connections_checked": 11521,
+      "source_file_sha256": "605d9f281f598d9d05cba06c51e5dbb39ef7a1632bdfbee9db326eb09179d0d2"
+    },
+    {
+      "case_id": "w2_k27",
+      "positive_routes_checked": 478,
+      "adjacent_connections_checked": 11211,
+      "source_file_sha256": "7e176e4b1e04600e215cd7755d7dda48bb71103065b47c6df236f30504ec6596"
+    },
+    {
+      "case_id": "w3_k27",
+      "positive_routes_checked": 421,
+      "adjacent_connections_checked": 9358,
+      "source_file_sha256": "0b740d682871725d1936fbda18e5e101b0f9010dd1a9a6c1731d702788000426"
+    },
+    {
+      "case_id": "w4_k27",
+      "positive_routes_checked": 465,
+      "adjacent_connections_checked": 11769,
+      "source_file_sha256": "a30b1fd50595d513b2db7bd52393a9c958cb58f1bd9a05e55ff28e46d2e4325b"
+    },
+    {
+      "case_id": "w5_k27",
+      "positive_routes_checked": 536,
+      "adjacent_connections_checked": 14482,
+      "source_file_sha256": "6ce6d66c03cbb986495db6c34e2e4f8e6cf32e2f2d98d533d8d4026474f0f233"
+    },
+    {
+      "case_id": "w6_k27",
+      "positive_routes_checked": 488,
+      "adjacent_connections_checked": 11785,
+      "source_file_sha256": "345751fa78a843d696c0a9989c28f12affc57e375ab89d7d11b2b223beb41d17"
+    },
+    {
+      "case_id": "w1_k28",
+      "positive_routes_checked": 509,
+      "adjacent_connections_checked": 12924,
+      "source_file_sha256": "a12b26527e5b998b83cf31ed4517f6574b1d701112202bcfe65f0e16a21d035e"
+    },
+    {
+      "case_id": "w2_k28",
+      "positive_routes_checked": 495,
+      "adjacent_connections_checked": 11820,
+      "source_file_sha256": "f42400decfb477d425532bd117a7f5ce2ca485f93172c8b483d5be8de00b0d4e"
+    },
+    {
+      "case_id": "w3_k28",
+      "positive_routes_checked": 418,
+      "adjacent_connections_checked": 9481,
+      "source_file_sha256": "2945438839ca8f108f82656cf57214e360f04e54171fce6a59448c8ea73d0f89"
+    },
+    {
+      "case_id": "w4_k28",
+      "positive_routes_checked": 495,
+      "adjacent_connections_checked": 12559,
+      "source_file_sha256": "c2c8db963e3a9c6ce1181015134c88b02b55c22b023e77ae0c47346e189a3aa8"
+    },
+    {
+      "case_id": "w5_k28",
+      "positive_routes_checked": 509,
+      "adjacent_connections_checked": 13077,
+      "source_file_sha256": "62bcf0993b6d0bd71e1c5066563c95b6ffb97e0b3c3b5ff070b9e593b64a738e"
+    },
+    {
+      "case_id": "w6_k28",
+      "positive_routes_checked": 505,
+      "adjacent_connections_checked": 12410,
+      "source_file_sha256": "f7500c57a0736d69df0b1841acf5f8c7e2b9a27a402745cef5d7ebffe9027950"
+    },
+    {
+      "case_id": "w1_k29",
+      "positive_routes_checked": 532,
+      "adjacent_connections_checked": 13462,
+      "source_file_sha256": "33632756f326768df2ab982ffe1cb6a567aa4af5ed3928ab90f5c96b0c085d66"
+    },
+    {
+      "case_id": "w2_k29",
+      "positive_routes_checked": 540,
+      "adjacent_connections_checked": 12971,
+      "source_file_sha256": "e8ded8f5d4809b341ee3e89c620f0416b5ffb8b5a706148bfb19d24072341024"
+    },
+    {
+      "case_id": "w3_k29",
+      "positive_routes_checked": 454,
+      "adjacent_connections_checked": 10175,
+      "source_file_sha256": "2e091babd14e9db254f40a379d5577e919e684841a6383490aa59b861ac844d5"
+    },
+    {
+      "case_id": "w4_k29",
+      "positive_routes_checked": 544,
+      "adjacent_connections_checked": 13443,
+      "source_file_sha256": "b484bb761432f7122f16ee7b1106c355431ed9d0ab9bde67fa6f75461bf42655"
+    },
+    {
+      "case_id": "w5_k29",
+      "positive_routes_checked": 516,
+      "adjacent_connections_checked": 13442,
+      "source_file_sha256": "1a5fc84ed8289453f1bf9416d24a735d2b31328c9b25e0877ae66c40fd6ace84"
+    },
+    {
+      "case_id": "w6_k29",
+      "positive_routes_checked": 525,
+      "adjacent_connections_checked": 12948,
+      "source_file_sha256": "6894758c044901af89d6f44f2981653c52831db62362101676e6bfdd4c0d86de"
+    },
+    {
+      "case_id": "w1_k30",
+      "positive_routes_checked": 553,
+      "adjacent_connections_checked": 13854,
+      "source_file_sha256": "599a5cd6d7e077ebe159a0aca3085de4ff9ddf7a701478f86dac478800f8b9c4"
+    },
+    {
+      "case_id": "w2_k30",
+      "positive_routes_checked": 577,
+      "adjacent_connections_checked": 14080,
+      "source_file_sha256": "1017f66d3375f4b94364430fab84befb8f11e31d59e88e35586a3817569055f4"
+    },
+    {
+      "case_id": "w3_k30",
+      "positive_routes_checked": 503,
+      "adjacent_connections_checked": 11791,
+      "source_file_sha256": "7ecf3b2b3be6861861f4f1a58b340283542422e6245cd1d66399c5c00dd89745"
+    },
+    {
+      "case_id": "w4_k30",
+      "positive_routes_checked": 577,
+      "adjacent_connections_checked": 15315,
+      "source_file_sha256": "88731b9828546bfd8a0cf9cabe9c712420198a58a76bb1c75db32d29b8044662"
+    },
+    {
+      "case_id": "w5_k30",
+      "positive_routes_checked": 512,
+      "adjacent_connections_checked": 13289,
+      "source_file_sha256": "10a803c0916517c634dee4fc17b9164ac55a0f7388d23818fd989b8814845482"
+    },
+    {
+      "case_id": "w6_k30",
+      "positive_routes_checked": 541,
+      "adjacent_connections_checked": 13221,
+      "source_file_sha256": "616ee02fcae479de020eb6c4a9cb2cab8b514c5173ee1003fa3ccfe86438a0b7"
+    },
+    {
+      "case_id": "w1_k31",
+      "positive_routes_checked": 574,
+      "adjacent_connections_checked": 14306,
+      "source_file_sha256": "27cfd4d411bc35d25341c3fb1825d72f042991af81fd53e8f982823a5eaaa22a"
+    },
+    {
+      "case_id": "w2_k31",
+      "positive_routes_checked": 603,
+      "adjacent_connections_checked": 14828,
+      "source_file_sha256": "a59e3add8bb4185ed50268d85a33b29db9bf82aa6722e987a3f227385fdd5248"
+    },
+    {
+      "case_id": "w3_k31",
+      "positive_routes_checked": 551,
+      "adjacent_connections_checked": 13201,
+      "source_file_sha256": "33e442fbe16c1b2cd0a3e06429b95259fbb5ea91665cbab82491c1d65d3b6846"
+    },
+    {
+      "case_id": "w4_k31",
+      "positive_routes_checked": 577,
+      "adjacent_connections_checked": 15472,
+      "source_file_sha256": "aa3c10e38ec5bae09c0d0c5c7b34effb7e6dd4aee753030bfa1103e069858736"
+    },
+    {
+      "case_id": "w5_k31",
+      "positive_routes_checked": 501,
+      "adjacent_connections_checked": 12822,
+      "source_file_sha256": "b438a1cc36981127c83020ddec86f6da14bf1b91dce73caf7c653145f89fda85"
+    },
+    {
+      "case_id": "w6_k31",
+      "positive_routes_checked": 584,
+      "adjacent_connections_checked": 14543,
+      "source_file_sha256": "2a4dbb5e3d06c27cb8414a5a51111f0077e3652e02928b66327a3fd7dfa6655b"
+    },
+    {
+      "case_id": "w1_k32",
+      "positive_routes_checked": 652,
+      "adjacent_connections_checked": 16767,
+      "source_file_sha256": "c87d517918ec0a404450ae4c0c3c368990ac121e3aa2d8c50c755e9f51488dd8"
+    },
+    {
+      "case_id": "w2_k32",
+      "positive_routes_checked": 636,
+      "adjacent_connections_checked": 15816,
+      "source_file_sha256": "d92a6bd0e716ed5fe0aec1fb54fe431466def8622b64b2e46d573cf34f160085"
+    },
+    {
+      "case_id": "w3_k32",
+      "positive_routes_checked": 609,
+      "adjacent_connections_checked": 15124,
+      "source_file_sha256": "5b29dffe10237557e1e49d12fc0855834b84175c19e32e621a4444d8c6d67fac"
+    },
+    {
+      "case_id": "w4_k32",
+      "positive_routes_checked": 592,
+      "adjacent_connections_checked": 15345,
+      "source_file_sha256": "0c80557ba838a6a159fc5e1187fd763ea0e08cb51e0fd55c1d22e8bde8b1cdb0"
+    },
+    {
+      "case_id": "w5_k32",
+      "positive_routes_checked": 532,
+      "adjacent_connections_checked": 13264,
+      "source_file_sha256": "ebb0ecdb121d9f9e55e4e7e720eb770fdb9a37dcaec1e47b07edc208a9b8acc5"
+    },
+    {
+      "case_id": "w6_k32",
+      "positive_routes_checked": 630,
+      "adjacent_connections_checked": 16100,
+      "source_file_sha256": "da628c6b14a4a0b82f50dc5eddb486c8b7df1bf3e2f05d36857f188601355b44"
+    }
+  ]
+}
