@@ -1,3 +1,5 @@
+**Collected 16 September 23:44 EDT:** items 7 and 9 have 30 completed, control-verified endpoints. Fresh-k15: 0/18 target hits after 3h fleet search. New C1/C3 k32 seeds 1/2 recover 32; together with earlier C2/C4/C5/C6 results, all six chains now have a 32-bus result at target 32. C5 k31 12h item 8 remains running. [Interim meeting report requested by the user](../meeting_progress_20260917/README.md). The gated four-result report remains pending. Source-level route replay is separate from dispatch conversion for these new results. Earlier launch notes below are historical.
+
 # Review §4 P1: fixed-pool MIP experiments
 
 Submitted 27 jobs for F5 (item 7), F2/F4 (item 8), and F2/F5 (item 9); four existing seed-0 cells reused. All 27 were observed running with the required node exclusion/resources. No new column generation. Solver findings remain unresolved until endpoints arrive. See jobs.json and startup_verification.json.

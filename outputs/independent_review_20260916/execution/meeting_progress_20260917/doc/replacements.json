@@ -1,0 +1,42 @@
+[
+  {
+    "old": "16 September 2026, 21:25 EDT; earlier experiment tables retain their stated snapshot",
+    "new": "from the 16 September 2026, 23:44 EDT collection. The 128/102/67/35 audit counts remain frozen; new seed results are reported separately"
+  },
+  {
+    "old": "Answer so far: GIRO is fleet-optimal under the continuous baseline in 93 of 102 instances; we match the lower bound in 67; possible 1-bus savings exist in 9 instances (chains 4 and 5, k \u2265 27) and are",
+    "new": "Latest sequential reach: all six chains now have a 32-bus result at target 32, including selected longer searches and seed repeats. Original one-hour MIPs reached largest targets 26/28/31/29/26/28. These are largest observed matches, not success at every smaller k. New seed results pass individual-route replay; their separate dispatch-conversion audit is pending. The 128/102/67/35 table below is the frozen earlier audit, not a refreshed total. Mixed-model one-bus savings remain"
+  },
+  {
+    "old": "Answer so far: unresolved. The earlier \"fresh 6/24 vs warm 24/24\" result mostly measured MIP time, not CG",
+    "new": "Updated 16 September, 23:44 EDT: sequential construction remains much stronger in the tested comparisons. All 18 fresh-k15 repeats missed the target after 3 hours of fleet search; their integer gaps remain open"
+  },
+  {
+    "old": "Fresh and warm CG reach the identical LP bound in all 24 comparisons. Fresh MIPs then missed the target under a 30-minute fleet search; only 4 of 18 misses are proven pool limitations, the rest are timeouts. Whether a longer search closes them is running now",
+    "new": "In the original accumulated-CG-time comparison, warm runs matched 24/24 targets and fresh runs 6/24: 5/6 at k=5, 1/6 at k=8, none at k=10 or 15. Four fresh pools provably exclude their target; other gaps remain open. All 24 fresh CGs reached their pricing stopping certificate. The completed k15 repeats use 16\u201319 buses, with a pool bound near 15, across three seeds per chain. This is evidence for the tested sequential method, not proof that fresh pricing can never succeed"
+  },
+  {
+    "old": "Answer so far: on one 5-duty instance, most of the value is smarter charging; re-routing adds 2\u20137% on top. Not yet shown under realistic charging rules or at larger size",
+    "new": "On one 5-duty instance, charging reoptimization produces most of the savings; fresh-CG-derived duties add 2\u20137% under relaxed rules. A preliminary morning comparison retains a 1.93% gain with reserve and minimum-charge rules. Full GIRO constraints and larger-size gains remain unestablished"
+  },
+  {
+    "old": "the same three arms at k=5 with a 15% reserve and 3-minute minimum (decisive for whether the gain is real), and fresh CG vs fixed-duty at k=15 under three synthetic tariffs plus one real SE3 price day",
+    "new": "Stricter k5 check (15% reserve, 3-minute minimum, still 350 kW): morning costs are 157.965 fixed-duty versus 154.921 fresh CG, 1.93% lower. Both serve trips exactly once; fresh CG returns with more total energy. Evening shows a 2.89% lower cost but retains one duplicate trip pending its dispatch check. The noon fixed-duty job timed out before its first worker record. Larger k15 comparisons remain under review"
+  },
+  {
+    "old": "16 Sep, 22:22",
+    "new": "Complete: 0/18 target matches; 16\u201319 buses found."
+  },
+  {
+    "old": "16 Sep, 22:22 (8 new runs; 4 seed-zero results reused)",
+    "new": "Complete: 12 seed results; new C1/C3 seeds reach 32."
+  },
+  {
+    "old": "16 Sep, 21:55 (5/6 completed)",
+    "new": "5/6 results; noon fixed-duty startup timed out."
+  },
+  {
+    "old": " resolved one way or the other: fresh k15 with 3 h search. (Running.)",
+    "new": ": the 3-hour fresh-k15 searches are complete (0/18 matches). Next distinguish missing useful integer routes from unfinished MIP search; all 18 fleet gaps remain open."
+  }
+]

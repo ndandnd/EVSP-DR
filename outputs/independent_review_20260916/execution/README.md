@@ -1,3 +1,5 @@
+**Meeting update:** [Current results and code-review triage](meeting_progress_20260917/README.md). New source-verified seed repeats recover 32 in C1/C3; all six sequential chains now have target32 results when follow-ups are included. Fresh-k15 repeats remain 0/18 matches, all gaps open. The frozen audit counts are unchanged; full four-result gate still awaits C5 k31.
+
 **F4/F2 new exact bound:** all 102 separated-group time-only minima equal GIRO k; mixed minima are k in93 and k−1 in the same9. [Results and proof](../time_only_vsp_20260916/README.md) · [Reviewer follow-up and prediction checks](advisor_seg_followup_20260916/README.md). This proves group separation excludes k−1; mixed integer EV savings remain open. Full-Partille [CG343119](full40_12h_scaglione_20260916/README.md) is queued on Scaglione with12h/120G; graph continues, MIP held.
 
 Six full single-factor arms are submitted: [experiment settings, job IDs and monitoring](action3_full_20260916/README.md). Replay array342540 covers every254,068sequence in each arm,50tasks at once; dependent CG/MIP jobs342668–342681 are queued. Other submission holds remain.

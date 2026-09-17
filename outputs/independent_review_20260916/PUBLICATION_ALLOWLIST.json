@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-09-17T02:55:04.389096+00:00",
+  "generated_utc": "2026-09-17T03:55:34.209332+00:00",
   "scope": "execution tree and explicit time_only_vsp_20260916 audit; no commit/copy performed",
-  "included_files": 805,
-  "included_bytes": 29893779,
+  "included_files": 825,
+  "included_bytes": 30607106,
   "excluded_files": 273,
   "credential_findings": [],
   "binary_git_bundles": [
@@ -27,8 +27,8 @@
     },
     {
       "path": "outputs/independent_review_20260916/execution/README.md",
-      "sha256": "7076c4ddfff4407f833befb2d67eaddfa3b004cd6a6b861354a36fa3594b2980",
-      "bytes": 8776
+      "sha256": "8f4829beb8a2b854d884e80a7aa36f9c9178c6aab53425f8cde980a280a2e1f6",
+      "bytes": 9148
     },
     {
       "path": "outputs/independent_review_20260916/execution/RESULTS_INDEX.md",
@@ -1121,6 +1121,11 @@
       "bytes": 1656
     },
     {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T034416Z/readiness.json",
+      "sha256": "8c64dc4c708fca220fae9259a503a86e2d4307aee9c81bff0a84e8c6e535ddba",
+      "bytes": 1656
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/test_four_numbers.py",
       "sha256": "3df4fd9756ca9351154f8efb2913a50e54b6646b4d91bf4cf858244205b511ca",
       "bytes": 4299
@@ -1392,8 +1397,8 @@
     },
     {
       "path": "outputs/independent_review_20260916/execution/doc/current.html",
-      "sha256": "b4af58c6b48db8a805f03b715f777df5ea6941f633d14ca144a4e3e082184e8f",
-      "bytes": 22929
+      "sha256": "c82f1c49d8b3f87a380f983dff4d82379036d46b6143f89f1a42507d6bd9da21",
+      "bytes": 24059
     },
     {
       "path": "outputs/independent_review_20260916/execution/doc/verification.json",
@@ -2371,6 +2376,81 @@
       "bytes": 32399
     },
     {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/CODE_REVIEW_RESPONSE.md",
+      "sha256": "840e84c65258f6cdb1c28066336d55187b27a9893f791cd8c8a2e66597914052",
+      "bytes": 3851
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/CODE_REVIEW_SUPPLIED.md",
+      "sha256": "5919becdde06ad091719780a11b22b86e031e9c864fd93c28a1fe58b97343198",
+      "bytes": 12817
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/DETAILS.md",
+      "sha256": "1672ab8e2d607922b26929fedeaf68b5485608b5cb1f19e901fcec985940a20c",
+      "bytes": 8837
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/README.md",
+      "sha256": "063e330205758bb04b7492107bf7adfae67c753dd5924633c2ead28e96cf0d2b",
+      "bytes": 3826
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/constrained_k5_source_check.jsonl",
+      "sha256": "37efbdf21a38cec648d0a5bddc9c334310eee95bb2940eb9117241187f50f102",
+      "bytes": 5297
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/doc/after.html",
+      "sha256": "c82f1c49d8b3f87a380f983dff4d82379036d46b6143f89f1a42507d6bd9da21",
+      "bytes": 24059
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/doc/after.md",
+      "sha256": "27d116ee33d152707d5e9250347f4060ae492652da516c75a3e46c5e403ec9f7",
+      "bytes": 12439
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/doc/after.pdf",
+      "sha256": "9686f547cc18b6204146e5db5a76547a0c771f8109919ff686524c01c8a7b308",
+      "bytes": 176223
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/doc/before.html",
+      "sha256": "b4af58c6b48db8a805f03b715f777df5ea6941f633d14ca144a4e3e082184e8f",
+      "bytes": 22929
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/doc/before.md",
+      "sha256": "47515587b0c1bd78719913f98d94502dae470b31b6483d4517723af50b2f57be",
+      "bytes": 11298
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/doc/doc_verification.json",
+      "sha256": "042a3c116d2725f6282ac731914c1f8044aeb7eab807c35617d2033a3e973578",
+      "bytes": 1243
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/doc/replacements.json",
+      "sha256": "6a45ea8e4aca4ddd6e17aea9e595a225b00471c3046580f0556a6f29761d859d",
+      "bytes": 3908
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/p1_selected_results.json",
+      "sha256": "a7bcfc7c933c14f589f6044324693a98aa78da450bc663b41a17ffb071810d4d",
+      "bytes": 22235
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/verification.json",
+      "sha256": "0a5da7041c225992cb3fc2766d49e794b5d1b1a5c23fbcb95cc2b4f11be8e980",
+      "bytes": 3547
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/verify_numbers.py",
+      "sha256": "81a780628c03c67142f82628fdf5cb3d7424e75839c1094cdbfc5e52949d5e83",
+      "bytes": 3658
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/mixed_group_lp_20260916/README.md",
       "sha256": "4ca6a3072aefc31aeff1b633eea1da95bc82e390998e62f85d3e165b26d4ce13",
       "bytes": 7536
@@ -2756,8 +2836,28 @@
       "bytes": 5053
     },
     {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T034416Z/receipt.json",
+      "sha256": "4b22e0db2b98c0cd25b265c6c5522de27d348594250ad6d38d3c0dba1b65975e",
+      "bytes": 615
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T034416Z/sacct.txt",
+      "sha256": "56f75bf0659cf2bca248c981fc29ea49ce6dbf054f3a51589d267adce8b2c901",
+      "bytes": 45088
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T034416Z/snapshot.json",
+      "sha256": "741e45686c8e44e431826b81fb7e14f147db617da53071de989a5eca957c781e",
+      "bytes": 342725
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T034416Z/squeue.txt",
+      "sha256": "f400e8b9971bf874bb70f2a3505674bf263d0f4aab0c51623a32276ac2b80fe5",
+      "bytes": 4992
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/monitor/latest_path.txt",
-      "sha256": "8af0f139ff2e1d41d5faea6af8c4fec15553ccf5ab07dffb2e740fc9d8d6993e",
+      "sha256": "5cc009f77c0af71697e8849e43ec2b360e635b244bc99e423169a26c1f2a0a83",
       "bytes": 118
     },
     {
@@ -2767,8 +2867,8 @@
     },
     {
       "path": "outputs/independent_review_20260916/execution/p1/README.md",
-      "sha256": "54964c10467f1757770d1ac2e2681dd50e0ebd4dd9d668847043a1025bd80411",
-      "bytes": 3467
+      "sha256": "410533a83e6ca048fb5ae258e1e0d48777340ddb5076d1098f93e67f41f4c604",
+      "bytes": 4049
     },
     {
       "path": "outputs/independent_review_20260916/execution/p1/audit_endpoints.py",
