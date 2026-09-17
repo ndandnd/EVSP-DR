@@ -1,0 +1,25 @@
+{
+  "roundtrip_route_checks": 5,
+  "roundtrip_passed": true,
+  "identity_mismatch_fields_rejected": [
+    "instance_sha256",
+    "prices_sha256",
+    "reference_sha256",
+    "deadhead_sha256",
+    "git_commit",
+    "battery_kwh",
+    "reserve_kwh",
+    "parx_kw",
+    "non_parx_kw",
+    "soc_step",
+    "block_min",
+    "max_station_wait_min",
+    "arc_mode",
+    "charge_start_cost"
+  ],
+  "corruption_rejected_before_unpickle": true,
+  "existing_cache_not_overwritten": true,
+  "source_sha256": "38bb0f05539c9bb659d7a5a434d6e08f4a9b93a3f2ef155abdcd0b231b3b68d7",
+  "cache_pickle_sha256": "06eba7e81c6b9f788aacc5527e856d3381f779006fae33ac3cec84760dbb1ffa",
+  "no_scheduler_calls": true
+}

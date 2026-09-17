@@ -1,0 +1,33 @@
+{
+  "tests": [
+    {
+      "test": "flat_window_reference_equivalence",
+      "cases": 600,
+      "passed": true
+    },
+    {
+      "test": "reference_explicit_vs_shortcut_explicit_vs_compact_fixed_sequences",
+      "cases": 35,
+      "passed": true
+    },
+    {
+      "test": "three_objective_reduced_cost_equivalence",
+      "cases": 225,
+      "passed": true
+    },
+    {
+      "test": "group_subset_event_lattice_equivalence_flat_tariff",
+      "cases": 5,
+      "passed": true
+    },
+    {
+      "test": "compact_rejects_shared_capacity",
+      "passed": true
+    }
+  ],
+  "source_sha256": {
+    "event_pricer_network.py": "3c4d59b59e91247b46b15689785606faeabe75e4a505407f5d7f50577fb7f575",
+    "run_capacity_speed_event_cg.py": "c2509109755732b7b951e8afb5b1ee618ee27dcb8926cc6967335eb2f04f6782"
+  },
+  "no_scheduler_calls": true
+}

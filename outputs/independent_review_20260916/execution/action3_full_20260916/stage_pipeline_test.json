@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "stages": [
+    {
+      "stage": "cache",
+      "returncode": 0
+    },
+    {
+      "stage": "cg",
+      "returncode": 0
+    },
+    {
+      "stage": "mip",
+      "returncode": 0
+    }
+  ],
+  "cg_certified": true,
+  "route_weight": 1,
+  "mip_fleet": 1,
+  "cache_completed_retry_valid": true,
+  "elapsed_s": 4.637870667036623,
+  "worker_sha256": "1b9874f6c5f48fd4fc2dabe8d71902988150da5681f572ede4dcd25bf5657dcf"
+}

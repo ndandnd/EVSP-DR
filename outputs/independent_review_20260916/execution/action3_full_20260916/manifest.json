@@ -1,0 +1,105 @@
+{
+  "schema": "action3-full-six-arms-v1",
+  "finding": "F4",
+  "authorization": "User explicitly approved six full single-factor arms; supersedes pilot-only hold. All254068sequences attempted in eacharm then survivorsinitializeCG.",
+  "created_date": "2026-09-16",
+  "execution_commit": "be624eb486a7c3a4137f8b0fe660f9bb273ddf98",
+  "code": "/home/nc437/ladder-lite/code_pins/action3_full_be624eb4",
+  "remote_root": "/home/nc437/ladder-lite/action3_full_20260916",
+  "storage_root": "/share/scaglione/nc437/evsp-dr/action3_full_20260916",
+  "source_sequences": "/home/nc437/ladder-lite/advisor_sequence_20260916/single_factor_pilot/runs/baseline/342321_r0/extracted/sequences.jsonl",
+  "source_sequences_sha256": "cdaae9f1f92fee3d2fac216917ca3a99478111e5c5c3a8ea7d9c9d6d843a69a4",
+  "source_ordered_pool_sha256": "a5a44b5c708286f914c6f6eec4680a8a7081c6015ee8e9c6f687e1c8e69eb5c6",
+  "source_status_sha256": "b438a1cc36981127c83020ddec86f6da14bf1b91dce73caf7c653145f89fda85",
+  "source_journal_sha256": "396e3d71e2269825785add62aa52a83721be81f875f381b64d62b3962d0a364a",
+  "source_sequences_count": 254068,
+  "trip_count": 716,
+  "arms": [
+    "baseline",
+    "parx60_only",
+    "reserve15_only",
+    "battery236p44_only",
+    "battery239p01_only",
+    "segregation_only"
+  ],
+  "physics": {
+    "baseline": {
+      "battery_kwh": 240.0,
+      "reserve_kwh": 0.0,
+      "parx_kw": 240.0,
+      "segregate": false
+    },
+    "parx60_only": {
+      "battery_kwh": 240.0,
+      "reserve_kwh": 0.0,
+      "parx_kw": 60.0,
+      "segregate": false
+    },
+    "reserve15_only": {
+      "battery_kwh": 240.0,
+      "reserve_kwh": 36.0,
+      "parx_kw": 240.0,
+      "segregate": false
+    },
+    "battery236p44_only": {
+      "battery_kwh": 236.44,
+      "reserve_kwh": 0.0,
+      "parx_kw": 240.0,
+      "segregate": false
+    },
+    "battery239p01_only": {
+      "battery_kwh": 239.01,
+      "reserve_kwh": 0.0,
+      "parx_kw": 240.0,
+      "segregate": false
+    },
+    "segregation_only": {
+      "battery_kwh": 240.0,
+      "reserve_kwh": 0.0,
+      "parx_kw": 240.0,
+      "segregate": true
+    }
+  },
+  "common": {
+    "soc_step_kwh": 2.5,
+    "event_block_min": 5,
+    "other_charger_kw": 240,
+    "tariff": "hourly_prices_flat.csv",
+    "charge_start_fee": 5,
+    "bus_cost": 100000,
+    "master": "set_covering",
+    "start_soc": "full",
+    "end_soc": "free above the arm reserve; no separate terminal-energy target",
+    "station_capacity": false,
+    "vehicle_type_availability_limits": false,
+    "max_station_wait_min": 1560
+  },
+  "chunk_size": 2048,
+  "shards_per_arm": 125,
+  "array_tasks": 750,
+  "global_replay_concurrency": 50,
+  "sequence_timeout_s": 120,
+  "replay_attempt_budget_s": 19800,
+  "prepared_manifest_sha256": "d34d041c2aa7dadb8ff6e0dcf6c0c5c0ab912599fc7f62397a344cc5d3e548bc",
+  "preprocessing_scope": "Full sequence coverage, not20pilot.125sharedlexicographicshards; each1CPUworkerreadsoneMB-scale shard. Sourcepool/extractionhashesverifiedonce; checkpointaftereachsequence; timeout/error retainedunknown.",
+  "resources": {
+    "partition": "default_partition",
+    "exclude": "scaglione-compute-01",
+    "replay_cpus": 1,
+    "replay_memory_gb": 4,
+    "replay_wall_hours": 6,
+    "preparation_memory_gb": 8
+  },
+  "tooling_sha256": {
+    "prepare_shards.py": "a90de3a4de30ad867ba7c45349542134ad2a59c6835e9d7140a9684411d9228c",
+    "replay_worker.py": "449075e01a5c8adeb974b40dce1ffa74abefedc8863ce36c046eeb2f64a28201",
+    "replay_journal.py": "490fafd1279df2361f972979a7ace0d49268ecba94367c7028a038c680b30f58",
+    "worker.sh": "65583bfd281d28cc18de111b371a08f63aa81b7a72849fc17317af797de814c7",
+    "submit_replay.py": "753d170cb3a6a3b2cb2f44364e33724102bcb69e00e31de2245debb3bc610906"
+  },
+  "independent_replay_review": {
+    "worker_sha256": "449075e01a5c8adeb974b40dce1ffa74abefedc8863ce36c046eeb2f64a28201",
+    "journal_sha256": "490fafd1279df2361f972979a7ace0d49268ecba94367c7028a038c680b30f58",
+    "restart_tests_passed": 11
+  }
+}

@@ -1,3 +1,9 @@
+Six full single-factor arms are submitted: [experiment settings, job IDs and monitoring](action3_full_20260916/README.md). Replay array342540 covers every254,068sequence in each arm,50tasks at once; dependent CG/MIP jobs342668–342681 are queued. Other submission holds remain.
+
+New post-hoc result: [mixed-group lambda in all102 LP endpoints](mixed_group_lp_20260916/README.md). F4 group mixing VERIFIED; F2 causal attribution UNRESOLVED. The9 k−1 cases average17.38% mixed weight versus8.28% in27 other k27–32 cases. No solver run.
+
+Current Doc replacement and dated finish-time audit: [before/after verification](doc_rewrite_20260916/README.md). Six full single-factor action3 arms now authorized; older pilot-only restrictions below are superseded for those arms only.
+
 # Independent review: execution and findings
 
 **Latest sequencing:** [one pilot then five only on success; action2 unsubmitted; fullCG held pending recovery/memory; gated four-result report](advisor_sequence_20260916/README.md). This supersedes the earlier blanket hold only for the named actions.

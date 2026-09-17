@@ -1,0 +1,61 @@
+{
+  "verified_utc": "2026-09-17T00:32:26.685637+00:00",
+  "checks": {
+    "102_instances": true,
+    "67_closed": true,
+    "35_open": true,
+    "128_replays": true,
+    "four_editable_tables": true,
+    "footer_html_preserved": true,
+    "history_unchanged": true,
+    "figures_unchanged": true,
+    "curves_unchanged": true,
+    "contains_22:22": true,
+    "contains_07:22": true,
+    "contains_21:55": true,
+    "contains_03:04": true,
+    "contains_07:04": true,
+    "contains_21 Sep, 13:24": true,
+    "contains_17 Sep, 22:37": true,
+    "contains_18 Sep, 18:12": true,
+    "contains_Held; no scheduled start": true,
+    "contains_Replay started 16 Sep, 20:22": true,
+    "contains_17.38%": true,
+    "contains_8.28%": true,
+    "contains_67": true,
+    "contains_35": true,
+    "contains_70": true,
+    "contains_128": true,
+    "replacement_prose_present": true,
+    "all_footer_links_in_export": true
+  },
+  "passed": true,
+  "missing_paragraphs": [],
+  "before": {
+    "current_export_sha256": "b3542c71a14ed2d7a4551e53603475cc450ba0d27564c7fd421901abb0878f59",
+    "current_html_sha256": "c37dba037a72792993acd95aa595ab44961b05dc81e50ab90304d7dac7e234e8"
+  },
+  "after": {
+    "current_export_sha256": "100df9b958584c8fb7ec58066e258b6de76ac8b0a09884c50a474325fcb363a1",
+    "current_html_sha256": "f5b1f449c3f491110e213d0e8c0ab0fb77212ff5fe34edeca7bd47571f8a0f83",
+    "saved_to_drive_observed": true,
+    "pdf_sha256": "5b036efa969fac72d23e60319af6b1cee510bf323406469d7c5fda2083d4a89a"
+  },
+  "sibling_exports": {
+    "history": {
+      "before": "3840e8beb7e50ad780a73161436a78f668e181f25b0e2833d65a28dcf5b080fb",
+      "after": "3840e8beb7e50ad780a73161436a78f668e181f25b0e2833d65a28dcf5b080fb"
+    },
+    "figures": {
+      "before": "e848a5de2cce2c92eb8eff7d5a82defc488bf8d627b97c1807b0f2ded5ff5ddf",
+      "after": "e848a5de2cce2c92eb8eff7d5a82defc488bf8d627b97c1807b0f2ded5ff5ddf"
+    },
+    "curves": {
+      "before": "6b0317fba680ea88c536e18240dc2d0e3f5e74c1515b55167697071ed12c8a90",
+      "after": "6b0317fba680ea88c536e18240dc2d0e3f5e74c1515b55167697071ed12c8a90"
+    }
+  },
+  "slides_edited": false,
+  "timing_evidence": "expected_by_job.csv + slurm_timing.txt",
+  "visual_check": "Five pages inspected; tables editable and readable; retained six source/tab footer links."
+}

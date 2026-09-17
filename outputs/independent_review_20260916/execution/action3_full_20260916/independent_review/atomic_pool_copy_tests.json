@@ -1,0 +1,22 @@
+{
+  "tests": [
+    {
+      "test": "complete_hash_matched_copy",
+      "passed": true
+    },
+    {
+      "test": "existing_destination_preserved",
+      "passed": true
+    },
+    {
+      "test": "interruption_before_replace_no_partial_pool",
+      "passed": true
+    },
+    {
+      "test": "concurrent_source_change_rejected",
+      "passed": true
+    }
+  ],
+  "helper_sha256": "a0fd5473f76fcfb5b78281d261d7721141b7924d60f4e827c6e7bcc4b160225d",
+  "no_solver_or_scheduler_calls": true
+}

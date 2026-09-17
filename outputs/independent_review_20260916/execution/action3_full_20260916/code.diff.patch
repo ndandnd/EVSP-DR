@@ -1,0 +1,175 @@
+diff --git a/src/action3_network_cache.py b/src/action3_network_cache.py
+new file mode 100644
+index 00000000..144c0cd7
+--- /dev/null
++++ b/src/action3_network_cache.py
+@@ -0,0 +1,28 @@
++"""Hash-gated compact graph cache for the six no-capacity sensitivity arms."""
++import json,os,pickle,time
++from pathlib import Path
++from run_capacity_speed_event_cg import ARMS,sha256_file,atomic_json
++from config import BUS_COST_KX,CHARGE_START_COST,charge_cost_premium
++from audit_giro_known_columns import HORIZON_MIN
++def cache_identity(args,prov):
++ return {'schema':'action3-event-network-v1',**{k:prov[k] for k in ['git_commit','instance_sha256','prices_sha256','reference_sha256','deadhead_sha256']},
++ 'battery_kwh':float(args.battery_kwh),'reserve_kwh':float(args.reserve_kwh),'non_parx_kw':float(args.non_parx_kw),
++ 'parx_kw':ARMS[args.arm]['parx_kw'],'capacity':ARMS[args.arm]['capacity'],'soc_step':args.soc_step,'block_min':args.block_min,
++ 'max_station_wait_min':args.max_station_wait_min,'arc_mode':args.network_arc_mode,'tariff_coverage_strict':False,
++ 'horizon_min':HORIZON_MIN,'bus_cost':BUS_COST_KX,'charge_start_cost':CHARGE_START_COST,'charge_cost_premium':charge_cost_premium}
++def write_cache(path,network,identity,build_s):
++ path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
++ if path.exists() or Path(str(path)+'.manifest.json').exists():raise FileExistsError('refusing to replace a graph cache')
++ temp=path.with_name('.'+path.name+f'.{os.getpid()}.tmp')
++ with open(temp,'wb') as f:pickle.dump(network,f,protocol=pickle.HIGHEST_PROTOCOL);f.flush();os.fsync(f.fileno())
++ os.replace(temp,path)
++ m={'identity':identity,'pickle_sha256':sha256_file(path),'pickle_bytes':path.stat().st_size,'network_metrics':network.metrics(),'build_s':build_s}
++ atomic_json(Path(str(path)+'.manifest.json'),m);return m
++def load_cache(path,expected):
++ from event_pricer_network import EventExpandedNetwork
++ path=Path(path);m=json.loads(Path(str(path)+'.manifest.json').read_text())
++ if m['identity']!=expected:raise ValueError('network-cache physics/input/code identity mismatch')
++ if sha256_file(path)!=m['pickle_sha256']:raise ValueError('network-cache bytes hash mismatch')
++ with open(path,'rb') as f:net=pickle.load(f)
++ if not isinstance(net,EventExpandedNetwork) or net.metrics()!=m['network_metrics']:raise ValueError('network-cache type/metrics mismatch')
++ return net,m
+diff --git a/src/event_pricer_network.py b/src/event_pricer_network.py
+index 4ea653c0..23852cf8 100644
+--- a/src/event_pricer_network.py
++++ b/src/event_pricer_network.py
+@@ -115,6 +115,18 @@ def _best_charge_window(
+     station_prices,
+     charge_kw,
+ ):
++    # Exact specialization already used by the scaling-ladder driver: with a
++    # constant tariff every feasible window has the same energy cost, and the
++    # earliest start is a deterministic minimizer. Capacity-adjusted pricing
++    # still uses _charge_window_options and its separate occupancy duals.
++    duration = float(energy) * 60.0 / float(charge_kw)
++    if float(deadline) - duration < float(arrival) - TOL:
++        return None
++    curve = station_prices[base_station_name(station)]
++    if len(set(curve.values())) == 1:
++        return (float(energy) * float(next(iter(curve.values())))
++                * float(charge_cost_premium), float(arrival),
++                float(arrival) + duration)
+     options = _charge_window_options(
+         station,
+         arrival,
+diff --git a/src/run_capacity_speed_event_cg.py b/src/run_capacity_speed_event_cg.py
+index a57ca349..f283d147 100644
+--- a/src/run_capacity_speed_event_cg.py
++++ b/src/run_capacity_speed_event_cg.py
+@@ -126,6 +126,7 @@ def checkpoint_id(args, problem, prov) -> str:
+         "non_parx_kw": args.non_parx_kw,
+         "parx_kw": ARMS[args.arm]["parx_kw"],
+         "capacity_enforced": ARMS[args.arm]["capacity"],
++        "network_arc_mode": getattr(args, "network_arc_mode", "explicit"),
+         "charger_counts": CHARGER_COUNTS if ARMS[args.arm]["capacity"] else {},
+         "capacity_grid_min": 1,
+         "max_station_wait_min": getattr(args, "max_station_wait_min", 220.0),
+@@ -223,6 +224,14 @@ def provenance(args, instance: Path, prices: Path, reference: Path) -> dict:
+ 
+ 
+ def build_network(args, problem, prices):
++    arc_mode = getattr(args, "network_arc_mode", "explicit")
++    if ARMS[args.arm]["capacity"] and arc_mode != "explicit":
++        raise ValueError("capacity duals require explicit station alternatives")
++    if getattr(args, "network_cache", None):
++        from action3_network_cache import cache_identity, load_cache
++        prov = provenance(args, args.instance, args.prices, args.reference_data_dir)
++        network, _manifest = load_cache(args.network_cache, cache_identity(args, prov))
++        return network
+     return EventExpandedNetwork(
+         problem,
+         prices,
+@@ -232,7 +241,7 @@ def build_network(args, problem, prices):
+         charge_kw=args.non_parx_kw,
+         reserve_kwh=args.reserve_kwh,
+         strict_tariff_coverage=False,
+-        arc_mode="explicit",
++        arc_mode=arc_mode,
+         station_charge_kw=station_power(args.arm),
+         capacity_selector=getattr(args, "capacity_selector", "reference"),
+     )
+@@ -391,6 +400,7 @@ def run_cg(
+         atomic_pool(pool_out, master.routes)
+     initial_pool_columns = len(master.routes)
+     checkpoint_writes = 0 if resume else 1
++    last_checkpoint_at = clock()
+     iterations = []
+     terminal_rc = None
+     stop_reason = None
+@@ -463,8 +473,10 @@ def run_cg(
+             raise RuntimeError("negative exact priced route already exists in master")
+         keys.add(key)
+         master.add_route(record)
+-        atomic_pool(pool_out, master.routes)
+-        checkpoint_writes += 1
++        if clock() - last_checkpoint_at >= getattr(args, "checkpoint_interval_s", 0.0):
++            atomic_pool(pool_out, master.routes)
++            checkpoint_writes += 1
++            last_checkpoint_at = clock()
+     if stop_reason is None:
+         stop_reason = "max_iters"
+     if stop_reason in {"cg_wall_limit", "max_iters"}:
+@@ -514,6 +526,8 @@ def run_cg(
+         "capacity_selector": getattr(args, "capacity_selector", "reference"),
+         "network": network.metrics(),
+         "network_build_s": network_build_s,
++        "network_cache": str(getattr(args, "network_cache", None)),
++        "checkpoint_interval_s": getattr(args, "checkpoint_interval_s", 0.0),
+         "gurobi_log": str(log_path),
+         "iterations": iterations,
+         "runtime_s": clock() - started,
+@@ -873,6 +887,10 @@ def parser():
+     value.add_argument("--block-min", type=int, default=5)
+     value.add_argument("--capacity-selector", choices=("reference", "prefix-memo"),
+                        default="reference", help="opt-in exact capacity window acceleration")
++    value.add_argument("--network-arc-mode", choices=("explicit", "lazy"),
++                       default="explicit", help="compact arcs for experiments without station-capacity coupling")
++    value.add_argument("--network-cache", type=Path)
++    value.add_argument("--checkpoint-interval-s", type=float, default=0.0)
+     value.add_argument("--rc-eps", type=float, default=1e-5)
+     value.add_argument("--max-iters", type=int, default=10000)
+     value.add_argument("--cg-wall-s", type=float, default=3600.0)
+diff --git a/tests/test_action3_compact.py b/tests/test_action3_compact.py
+new file mode 100644
+index 00000000..1514053f
+--- /dev/null
++++ b/tests/test_action3_compact.py
+@@ -0,0 +1,35 @@
++import sys,unittest
++from pathlib import Path
++from types import SimpleNamespace
++import pandas as pd
++sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
++from audit_giro_known_columns import ProblemData,STATIONS
++from run_capacity_speed_event_cg import build_network
++from event_pricer_network import _best_charge_window,_charge_window_options
++from utils_v2 import base_station_name
++class CompactTest(unittest.TestCase):
++ def test_flat_shortcut_matches_reference_enumeration(self):
++  for kw in [60,240]:
++   for arrival,end in [(59.5,150),(70,130),(70,71)]:
++    for energy in [2.5,60,120]:
++     args=dict(event_times={'PARX_1':list(range(0,1600,5))},station_prices={'PARX':{i:0.13 for i in range(27)}},charge_kw=kw)
++     expected=_charge_window_options('PARX_1',arrival,end,energy,**args)
++     actual=_best_charge_window('PARX_1',arrival,end,energy,**args)
++     self.assertEqual(actual is None,not expected)
++     if actual:self.assertAlmostEqual(actual[0],min(expected)[0],places=9)
++ def test_compact_preserves_fixed_sequences_and_reduced_cost_without_capacity(self):
++  p=ProblemData(pd.DataFrame(),(0,1),{'PARX_0':[(0,0.,0.,'depot_trip'),(1,0.,0.,'depot_trip')],0:[(1,0.,0.,'trip_trip'),('PARX_1',0.,0.,'trip_station'),('PARX_0',0.,0.,'trip_depot')],'PARX_1':[(1,0.,0.,'station_trip'),('PARX_0',0.,0.,'station_depot')],1:[('PARX_0',0.,0.,'trip_depot')]},{0:60.,1:130.},{0:70.,1:140.},{0:150.,1:150.})
++  prices={base_station_name(s):{i:0.1 for i in range(27)} for s in STATIONS}
++  for battery,reserve,arm in [(240,0,'baseline'),(240,0,'parx60'),(240,36,'baseline'),(236.44,0,'baseline'),(239.01,0,'baseline')]:
++   args=SimpleNamespace(soc_step=2.5,block_min=5,battery_kwh=battery,non_parx_kw=240,reserve_kwh=reserve,arm=arm)
++   args.network_arc_mode='explicit';explicit=build_network(args,p,prices)
++   args.network_arc_mode='lazy';compact=build_network(args,p,prices)
++   for seq in [(0,),(1,),(0,1)]:
++    a=explicit.fixed_sequence_record(seq);b=compact.fixed_sequence_record(seq)
++    self.assertEqual(a is None,b is None)
++    if a:self.assertAlmostEqual(a['cost'],b['cost'])
++   for dual in [{0:100000,1:100000},{0:50000,1:70000},{0:200001,1:0}]:
++    self.assertAlmostEqual(explicit.min_reduced_cost_route(dual)['rc'],compact.min_reduced_cost_route(dual)['rc'],places=6)
++ def test_capacity_cannot_use_compact_station_dominance(self):
++  with self.assertRaisesRegex(ValueError,'capacity duals'):build_network(SimpleNamespace(arm='capacity',network_arc_mode='lazy'),None,None)
++if __name__=='__main__':unittest.main()

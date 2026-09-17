@@ -1,0 +1,44 @@
+{
+  "status": "APPROVED_FOR_REVIEWED_HASHES",
+  "campaign_manifest_sha256": "eeacecec98edd54197cf888bad9a36e57b5bd2624833059318ae1c10f00080a2",
+  "continuation_manifest_sha256": "7af73bb9db920eec9d073f1bd49ad05ccd8208c9ec9ec643dce8cd11cb348ab1",
+  "stage_worker_sha256": "1b9874f6c5f48fd4fc2dabe8d71902988150da5681f572ede4dcd25bf5657dcf",
+  "submit_continuation_sha256": "2b768fa075b2d03f15be3037c7685a6def67b40e22370661cee270eea915e082",
+  "tooling_and_input_hashes_match": true,
+  "prepared_replay_manifest_still_frozen": true,
+  "per_arm_budgets_s": {
+    "baseline": {
+      "cg": 14400,
+      "mip": 3600
+    },
+    "parx60_only": {
+      "cg": 14400,
+      "mip": 3600
+    },
+    "reserve15_only": {
+      "cg": 14400,
+      "mip": 3600
+    },
+    "battery236p44_only": {
+      "cg": 14400,
+      "mip": 3600
+    },
+    "battery239p01_only": {
+      "cg": 14400,
+      "mip": 3600
+    },
+    "segregation_only": {
+      "cg": 14400,
+      "mip": 3600
+    }
+  },
+  "own_arm_replay_dependencies_verified": true,
+  "component_counts": {
+    "cache": 7,
+    "assembly": 6,
+    "cg": 7,
+    "mip": 7
+  },
+  "no_scheduler_calls": true,
+  "limits": "Runtime integration smoke is performed separately by implementing agent. No whole-job memory guarantee is inferred."
+}

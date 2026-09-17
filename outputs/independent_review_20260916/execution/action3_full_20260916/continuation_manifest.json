@@ -1,0 +1,87 @@
+{
+  "schema": "action3-full-continuation-v1",
+  "campaign_manifest_sha256": "eeacecec98edd54197cf888bad9a36e57b5bd2624833059318ae1c10f00080a2",
+  "execution_commit": "be624eb486a7c3a4137f8b0fe660f9bb273ddf98",
+  "cases": {
+    "baseline": {
+      "arm": "baseline",
+      "group": null,
+      "input": "inputs/w5_k31.csv",
+      "input_sha256": "83585a8fbcba73f0262ba2e32e389bd014874c7f2e51aea65183e6dbed6321df",
+      "trips": 716,
+      "cg_wall_s": 14400,
+      "mip_wall_s": 3600,
+      "cache_memory_gb": 96
+    },
+    "parx60_only": {
+      "arm": "parx60_only",
+      "group": null,
+      "input": "inputs/w5_k31.csv",
+      "input_sha256": "83585a8fbcba73f0262ba2e32e389bd014874c7f2e51aea65183e6dbed6321df",
+      "trips": 716,
+      "cg_wall_s": 14400,
+      "mip_wall_s": 3600,
+      "cache_memory_gb": 96
+    },
+    "reserve15_only": {
+      "arm": "reserve15_only",
+      "group": null,
+      "input": "inputs/w5_k31.csv",
+      "input_sha256": "83585a8fbcba73f0262ba2e32e389bd014874c7f2e51aea65183e6dbed6321df",
+      "trips": 716,
+      "cg_wall_s": 14400,
+      "mip_wall_s": 3600,
+      "cache_memory_gb": 96
+    },
+    "battery236p44_only": {
+      "arm": "battery236p44_only",
+      "group": null,
+      "input": "inputs/w5_k31.csv",
+      "input_sha256": "83585a8fbcba73f0262ba2e32e389bd014874c7f2e51aea65183e6dbed6321df",
+      "trips": 716,
+      "cg_wall_s": 14400,
+      "mip_wall_s": 3600,
+      "cache_memory_gb": 96
+    },
+    "battery239p01_only": {
+      "arm": "battery239p01_only",
+      "group": null,
+      "input": "inputs/w5_k31.csv",
+      "input_sha256": "83585a8fbcba73f0262ba2e32e389bd014874c7f2e51aea65183e6dbed6321df",
+      "trips": 716,
+      "cg_wall_s": 14400,
+      "mip_wall_s": 3600,
+      "cache_memory_gb": 96
+    },
+    "segregation_only_18E1": {
+      "arm": "segregation_only",
+      "group": "18E1",
+      "input": "inputs/18E1.csv",
+      "input_sha256": "c8338310e11df605a8404862808e8dfa9fb324acf2bde15387238f0acc1e51e2",
+      "trips": 172,
+      "cg_wall_s": 3459,
+      "mip_wall_s": 865,
+      "cache_memory_gb": 32
+    },
+    "segregation_only_18E2": {
+      "arm": "segregation_only",
+      "group": "18E2",
+      "input": "inputs/18E2.csv",
+      "input_sha256": "d7b73e239c3355731bb119221e387fcd1c6be33d4aef409fcc2a4e3679224640",
+      "trips": 544,
+      "cg_wall_s": 10941,
+      "mip_wall_s": 2735,
+      "cache_memory_gb": 64
+    }
+  },
+  "budget_scope": "4hCG+1hMIP nominal per arm; segregation total split by172/716 and544/716trips. Budgets are per attempt; preemption/restarts increase total charged computation. Record all attempts separately.",
+  "graph_build_budget": "40h separately, not part of nominal4hCG; historicalk31compactgraph18.83GBpacked/build11.1h. Compactrepresentationvalidatedwithoutcapacity.",
+  "checkpoint_scope": "Atomic pool snapshots after completed iterations at least300s after previous snapshot; longpricing/LP calls may lose more than5min. Replayjournal persequence.",
+  "baseline_anomaly_rule": "Any control replay infeasible/unknown must be highlighted as an audit anomaly, not a physical-tightening loss. Survivorinitializationremainsvalid but incomplete.",
+  "tooling_sha256": {
+    "stage_worker.py": "1b9874f6c5f48fd4fc2dabe8d71902988150da5681f572ede4dcd25bf5657dcf",
+    "atomic_pool_copy.py": "a0fd5473f76fcfb5b78281d261d7721141b7924d60f4e827c6e7bcc4b160225d",
+    "submit_continuation.py": "2b768fa075b2d03f15be3037c7685a6def67b40e22370661cee270eea915e082",
+    "worker.sh": "65583bfd281d28cc18de111b371a08f63aa81b7a72849fc17317af797de814c7"
+  }
+}

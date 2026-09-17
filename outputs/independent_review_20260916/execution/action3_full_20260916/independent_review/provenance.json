@@ -1,0 +1,26 @@
+{
+  "finalized_utc": "2026-09-17T00:27:37.101036+00:00",
+  "reviewed_code_commit": "be624eb486a7c3a4137f8b0fe660f9bb273ddf98",
+  "production_modified": false,
+  "scheduler_calls": 0,
+  "coordinated_helper_contribution": "../atomic_pool_copy.py",
+  "helper_sha256": "a0fd5473f76fcfb5b78281d261d7721141b7924d60f4e827c6e7bcc4b160225d",
+  "replay_review": "APPROVED_FOR_REVIEWED_HASHES",
+  "cg_stage_worker_review": "APPROVED_FOR_REVIEWED_HASHES",
+  "scientific_finding_F4": "UNRESOLVED_PENDING_PRODUCTION_RESULTS",
+  "files_sha256": {
+    "README.md": "c5dc8b10c9d116c34fde9b19338caf27c3273cb3f16a65bf892835d357ce9a23",
+    "atomic_pool_copy_tests.json": "ff6488399a9181f4e1975e229f1e1d21e5b0ef89f71b0fe84c02e12b6070b992",
+    "cache_tests.json": "55542faa1337200c2fc23b5318c6774c6871503b5fd97793db337c30da42c0b9",
+    "cache_tests.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "continuation_signoff.json": "f037dd7a5a8757b4117cf0d2a614c14b720657c1a56f9f9d7cdebcb64155456d",
+    "equivalence_tests.json": "00bfb6dd95489da03ae76f8501163bae1da951501cb7cbebc5b8c368c4dfa8d0",
+    "equivalence_tests.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "group_mapping_check.json": "c387887a631f5ce5ef48e8f4b5e08ae44ae173d3364f75ffada1cc8e91461732",
+    "recovery_tests.json": "e05ca609d458b8c4627d8d0b9cac770bd5f4b26b7405cc3db471138cb14bf9ea",
+    "test_atomic_pool_copy.py": "d7fe3a1197e16dea4d2db7eee6bee8a05ffb1ddd1529b659fbdb332dcd4a5b27",
+    "test_cache.py": "7df31fd54b7373925bcad37f066bd3f4de78d4fa4848dc527be5c3f4463c6399",
+    "test_independent.py": "32e172254b58f7b513975ed9dcc5a6c74ba5d072eeda40c2ca8efcefea48462c",
+    "test_replay_recovery.py": "7e5912dccaa8c8ea4a855614c8b55fcf423262a3a9b4522adea3dd1483854005"
+  }
+}

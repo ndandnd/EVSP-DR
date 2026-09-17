@@ -1,0 +1,11 @@
+{
+  "all_source_rows_preserved": true,
+  "disjoint_full_group_cover": true,
+  "group_trip_counts": {
+    "18E1": 172,
+    "18E2": 544
+  },
+  "full_trip_count": 716,
+  "ID_note": "CSV count_trip_id retains original IDs. Native build_problem resets row index and explicitly uses range(len(frame)); group-local mappings match that runtime convention.",
+  "source_manifest_sha256": "103ec57679555727037cbdcc3ca9a713a6d01ef3bf135fa71164586b9506000d"
+}

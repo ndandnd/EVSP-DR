@@ -3,6 +3,7 @@ from pathlib import Path
 import json,hashlib,re,gzip,datetime
 B=Path(__file__).resolve().parent;E=B/'execution';REPO=B.parents[1]
 EXACT={
+ 'action3_full_20260916/deploy.tar.gz':'redundant deployment archive; expanded hashed source files retained',
  'advisor_sequence_20260916/single_factor_pilot/deploy.tar.gz':'redundant deployment archive; expanded hashed source files retained',
  'f1/replay_results.json':'uncompressed replay; gzip retained',
  'f1/strict_arrival_replay_results.json':'uncompressed replay; archive retained separately',

@@ -1,3 +1,9 @@
+## Latest authorization — 16 September 20:00 EDT
+
+The user approved all six full action3 single-factor arms, superseding the pilot-only restriction below. Full-pool replay and downstream CG/MIP use the original C5 k31 trip-sequence pool under one changed factor per arm. Other submissions remain on hold. A read-only mixed-group LP-weight audit of all102 frozen endpoints is also requested; no solver is authorized for that audit.
+
+Current Doc was replaced from DOC_REWRITE.md; preserve its concise wording, four editable tables and unchanged figure/history tabs. Before/after verification: outputs/independent_review_20260916/execution/doc_rewrite_20260916/doc_verification.json. Counts remain128schedules/102cases/67boundmatches/35open;70GIROmatches is a separate count. Use the new source HTML rather than older dashboard wording.
+
 ## 16 September — approved sequencing (supersedes the earlier blanket submission hold)
 
 Only these new submissions are authorized: (a) one action3 timing pilot; after it passes source/physical/runtime gates, the remaining five timing-pilot arms. No full replay or downstream CG/MIP rollout is implied. (b) Action2 remains UNsubmitted: plan seed0 with afterok on each item10 CG; seeds1/2 only on valid seed0 target misses. (c) Hold p3_full CG/MIP; implement/test checkpoint fallback. Resubmit fullCG on Scaglione only if evidence supports memory request<=120G; otherwise keep held and report. Preserve graph work already running and all historical held/V2G jobs. (d) Keep Doc labels:67/102 numerical fleet-bound matches and35/102 open fleet gaps. (e) No other submissions until P1 items7/8/9 and action1 have endpoints; then notify with four results: fresh-k15 hits/18; C5k31 12h outcome; constrainedk5 three-arm costs; k32 seed outcomes/variance. Endpoints failing validation are reported separately, never counted as hits. This endpoint gate does not itself authorize action2 submission or an unspecified new campaign.

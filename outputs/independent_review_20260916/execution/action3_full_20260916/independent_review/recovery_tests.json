@@ -1,0 +1,54 @@
+{
+  "tests": [
+    {
+      "test": "complete_two_records",
+      "passed": true
+    },
+    {
+      "test": "valid_final_without_newline",
+      "passed": true
+    },
+    {
+      "test": "torn_final_repaired",
+      "passed": true
+    },
+    {
+      "test": "malformed_interior_rejected",
+      "passed": true
+    },
+    {
+      "test": "malformed_complete_final_rejected",
+      "passed": true
+    },
+    {
+      "test": "checksum_corruption_rejected",
+      "passed": true
+    },
+    {
+      "test": "out_of_order_rejected",
+      "passed": true
+    },
+    {
+      "test": "valid_atomic_completion",
+      "passed": true
+    },
+    {
+      "test": "torn_receipt_rejected",
+      "passed": true
+    },
+    {
+      "test": "wrong_count_rejected",
+      "passed": true
+    },
+    {
+      "test": "changed_output_rejected",
+      "passed": true
+    }
+  ],
+  "files_sha256": {
+    "replay_worker.py": "449075e01a5c8adeb974b40dce1ffa74abefedc8863ce36c046eeb2f64a28201",
+    "replay_journal.py": "490fafd1279df2361f972979a7ace0d49268ecba94367c7028a038c680b30f58",
+    "prepare_shards.py": "a90de3a4de30ad867ba7c45349542134ad2a59c6835e9d7140a9684411d9228c"
+  },
+  "no_solver_or_scheduler_calls": true
+}

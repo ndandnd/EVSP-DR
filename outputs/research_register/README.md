@@ -1,3 +1,13 @@
+Six full single-factor arms are submitted: [experiment settings, job IDs and monitoring](../independent_review_20260916/execution/action3_full_20260916/README.md). Replay array342540 covers every254,068sequence in each arm,50tasks at once; dependent CG/MIP jobs342668–342681 are queued. Other submission holds remain.
+
+Post-hoc LP group audit: [102-case results](../independent_review_20260916/execution/mixed_group_lp_20260916/README.md). Nine k−1 cases use17.38% mixed-group LP weight versus8.28% in size-matched other cases. No solver run. CurrentDoc includes the result; [replacement verification](../independent_review_20260916/execution/doc_rewrite_20260916/README.md).
+
+## Latest authorization — 16 September 20:00 EDT
+
+The user approved all six full action3 single-factor arms, superseding the pilot-only restriction below. Full-pool replay and downstream CG/MIP use the original C5 k31 trip-sequence pool under one changed factor per arm. Other submissions remain on hold. A read-only mixed-group LP-weight audit of all102 frozen endpoints is also requested; no solver is authorized for that audit.
+
+Current Doc was replaced from DOC_REWRITE.md; preserve its concise wording, four editable tables and unchanged figure/history tabs. Before/after verification: outputs/independent_review_20260916/execution/doc_rewrite_20260916/doc_verification.json. Counts remain128schedules/102cases/67boundmatches/35open;70GIROmatches is a separate count. Use the new source HTML rather than older dashboard wording.
+
 New verified pilot endpoints: [six single-factor timing tests](../independent_review_20260916/execution/advisor_sequence_20260916/single_factor_pilot/RESULTS.md). All completed; no full replay authorized. Four-result briefing still9/37ready.
 
 Current authorized sequence: [one-arm pilot, held full-CG recovery fix, conditional MIP plan and four-result gate](../independent_review_20260916/execution/advisor_sequence_20260916/README.md). No general cluster refill is authorized.

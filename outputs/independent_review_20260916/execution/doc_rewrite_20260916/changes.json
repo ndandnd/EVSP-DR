@@ -1,0 +1,21 @@
+{
+  "source_sha256": "45ae7c2f97ea38a33dc5f8a2ca384ed5e414ff2968e36672a7abcb3cb9ca8cc6",
+  "counts": {
+    "schedules": 128,
+    "instances": 102,
+    "bound_matched": 67,
+    "open": 35,
+    "target_matched": 70
+  },
+  "timing_basis": "ledger-referenced submitted job records + live Slurm starts/limits; EDT",
+  "corrections": [
+    "67 labelled lower-bound matches;70GIRO matches separate",
+    "0/42 replay clause removes unsupported sole-cause assertion",
+    "replaced outdated dates and held-job state",
+    "latest6fullarms authorization reflected"
+  ],
+  "source_footer_preserved": true,
+  "latest_user_request_update": "Inserted concise verified post-hoc group-weight result and source link at Question1; all102 LPs read without solving.",
+  "native_pagination": "Keep with next applied to Question4 heading and Decisions pending label; source text unchanged.",
+  "launched_arms": "Added actual replay start16Sep20:22EDT,750tasks/sixarms; full-pipeline finish remains unscheduled."
+}
