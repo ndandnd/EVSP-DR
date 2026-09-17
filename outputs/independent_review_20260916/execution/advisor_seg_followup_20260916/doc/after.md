@@ -6,11 +6,11 @@
 
 ## **In one paragraph**
 
-We optimize electric-bus schedules and charging for Transdev's Partille network (GIRO data) with column generation (CG) and a MIP, under time-varying electricity prices. **Fleet size:** in 93 of 102 test instances, our lower bound equals GIRO's own bus count, so GIRO's fleet is already optimal in our model there; we have matched that bound with a valid schedule in 67 of 102 and the rest are search gaps, not model gaps. In 9 instances the bound is one bus *below* GIRO — the only place our method could beat GIRO on fleet — and none has been closed yet. **Charging cost:** on one 5-duty instance, re-optimizing charging alone cuts GIRO's electricity bill by \~44%; also re-optimizing which bus does which trip saves a further 2–7%. Both numbers were obtained without GIRO's 15% reserve and 3-minute charging rules, and a rerun with those rules is in progress. **Next 48 hours** decide three things: whether the 1-bus savings are real, whether the charging gain survives realistic rules, and whether the warm-start method matters or the MIP just needed more time.
+We optimize electric-bus schedules and charging for Transdev's Partille network (GIRO data) with column generation (CG) and a MIP, under time-varying electricity prices. **Fleet size:** in 93 of 102 test instances, our lower bound equals GIRO's own bus count, so GIRO's fleet is optimal under the continuous baseline there; we have matched that bound with a valid schedule in 67 of 102 while 35 event-grid fleet gaps remain open. In 9 instances the bound is one bus *below* GIRO — the only place our method could beat GIRO on fleet — and none has been closed yet. **Charging cost:** on one 5-duty instance, re-optimizing charging alone cuts GIRO's electricity bill by \~44%; also re-optimizing which bus does which trip saves a further 2–7%. Both numbers were obtained without GIRO's 15% reserve and 3-minute charging rules, and a rerun with those rules is in progress. **Next 48 hours** decide three things: whether the 1-bus savings are real, whether the charging gain survives realistic rules, and whether the warm-start method matters or the MIP just needed more time.
 
 ## **Question 1 — Can we recover GIRO's fleet, and can we beat it?**
 
-**Answer so far: GIRO is fleet-optimal in our model in 93 of 102 instances; we match the lower bound in 67; possible 1-bus savings exist in 9 instances (chains 4 and 5, k ≥ 27\) and are unproven.**
+**Answer so far: GIRO is fleet-optimal under the continuous baseline in 93 of 102 instances; we match the lower bound in 67; possible 1-bus savings exist in 9 instances (chains 4 and 5, k ≥ 27\) and are unproven.**
 
 |  | Count |
 | ----- | ----- |

@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-09-17T01:32:48.166694+00:00",
+  "generated_utc": "2026-09-17T01:34:56.194475+00:00",
   "scope": "execution tree and explicit time_only_vsp_20260916 audit; no commit/copy performed",
   "included_files": 778,
-  "included_bytes": 28614584,
+  "included_bytes": 28615130,
   "excluded_files": 273,
   "credential_findings": [],
   "binary_git_bundles": [
@@ -737,18 +737,18 @@
     },
     {
       "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/doc/after.html",
-      "sha256": "e87f0e864c6451c93a300b4600771e0f7a2863c767f63ec7475b7fd2ce8b646f",
-      "bytes": 22905
+      "sha256": "b4af58c6b48db8a805f03b715f777df5ea6941f633d14ca144a4e3e082184e8f",
+      "bytes": 22929
     },
     {
       "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/doc/after.md",
-      "sha256": "b3e5da076073f96f97d85563f89edee3feee3bd5204631d7d701d445e434914b",
-      "bytes": 11274
+      "sha256": "47515587b0c1bd78719913f98d94502dae470b31b6483d4517723af50b2f57be",
+      "bytes": 11298
     },
     {
       "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/doc/after.pdf",
-      "sha256": "d56dcad733ce10a8a5be219beb40a13dd3d7a5b30634e5a486812b338ba5b8ff",
-      "bytes": 171147
+      "sha256": "9fda96aac25f5a3e7b1a9005d0dcde698c6357e669c72ba85afb643d54324be7",
+      "bytes": 171217
     },
     {
       "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/doc/before.html",
@@ -767,7 +767,7 @@
     },
     {
       "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/doc/doc_verification.json",
-      "sha256": "8909c5c4cd0785f12eec9ad8b712065e06fd64fa2f520588d2a20dc3920e1faa",
+      "sha256": "ba4402d205aaa625e17635877469ef96ac21429bbc7e7f6415aba09745e508aa",
       "bytes": 1791
     },
     {
@@ -782,8 +782,8 @@
     },
     {
       "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/doc/replacements.json",
-      "sha256": "2e2c8386753f717346b35ba17ec07749a84db0457a9d080a87a882661b331f8f",
-      "bytes": 3014
+      "sha256": "aec971a91c2ddaf84c8af4e49922b99cc9d5d5b9182ba59f1f4e98404b554389",
+      "bytes": 3418
     },
     {
       "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/predictions.json",
@@ -1327,8 +1327,8 @@
     },
     {
       "path": "outputs/independent_review_20260916/execution/doc/current.html",
-      "sha256": "e87f0e864c6451c93a300b4600771e0f7a2863c767f63ec7475b7fd2ce8b646f",
-      "bytes": 22905
+      "sha256": "b4af58c6b48db8a805f03b715f777df5ea6941f633d14ca144a4e3e082184e8f",
+      "bytes": 22929
     },
     {
       "path": "outputs/independent_review_20260916/execution/doc/verification.json",
@@ -2302,7 +2302,7 @@
     },
     {
       "path": "outputs/independent_review_20260916/execution/ledger.json",
-      "sha256": "05b39038949257855eccaa00af1daceb454b6751eae06c0dfa0bbebec37571b8",
+      "sha256": "4b7d69b34a4553d748cb1a6092ad1b0f4cb784e8fd7ef456906af420166359e2",
       "bytes": 32399
     },
     {
@@ -3802,7 +3802,7 @@
     },
     {
       "path": "outputs/independent_review_20260916/execution/publication_receipt.json",
-      "sha256": "597a7caa131cdc332703f9f377393acc344907c0576800eb991c67b41cdd3986",
+      "sha256": "9933714003e75e0803586898ff7e2823f287fe27ef6db1e2842f7e5f1936d6bb",
       "bytes": 530
     },
     {
