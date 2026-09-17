@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-09-17T01:34:56.194475+00:00",
+  "generated_utc": "2026-09-17T01:35:25.078353+00:00",
   "scope": "execution tree and explicit time_only_vsp_20260916 audit; no commit/copy performed",
   "included_files": 778,
-  "included_bytes": 28615130,
+  "included_bytes": 28615129,
   "excluded_files": 273,
   "credential_findings": [],
   "binary_git_bundles": [
@@ -3802,8 +3802,8 @@
     },
     {
       "path": "outputs/independent_review_20260916/execution/publication_receipt.json",
-      "sha256": "9933714003e75e0803586898ff7e2823f287fe27ef6db1e2842f7e5f1936d6bb",
-      "bytes": 530
+      "sha256": "7942681848f37a361b1b863579a6bf8105b99a1c683891df5b848db4c8cf71fe",
+      "bytes": 529
     },
     {
       "path": "outputs/independent_review_20260916/execution/table_join_validation.json",
