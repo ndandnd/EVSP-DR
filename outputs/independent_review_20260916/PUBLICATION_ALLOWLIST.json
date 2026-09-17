@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-09-17T03:55:54.660790+00:00",
+  "generated_utc": "2026-09-17T03:58:43.673889+00:00",
   "scope": "execution tree and explicit time_only_vsp_20260916 audit; no commit/copy performed",
-  "included_files": 825,
-  "included_bytes": 30607106,
+  "included_files": 836,
+  "included_bytes": 31272846,
   "excluded_files": 273,
   "credential_findings": [],
   "binary_git_bundles": [
@@ -294,6 +294,11 @@
       "path": "outputs/independent_review_20260916/execution/action3_full_20260916/snapshots/20260917T024541Z/status.json",
       "sha256": "2d491b24cc2e6377cbd70026c3f206aac1ce351c58e341cd33ac4571399804df",
       "bytes": 238021
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/action3_full_20260916/snapshots/20260917T035712Z/status.json",
+      "sha256": "3c063812902546ab185cb8861b484105d23fc197103e1239136d0ee9c7f7e746",
+      "bytes": 251921
     },
     {
       "path": "outputs/independent_review_20260916/execution/action3_full_20260916/stage_pipeline_test.json",
@@ -791,6 +796,16 @@
       "bytes": 977
     },
     {
+      "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/comparisons/20260917T035712Z/comparison.json",
+      "sha256": "bac07359fe283a6fbee0fce0b9b8d1f44f90fd6d703992dc415aeb95557aa82e",
+      "bytes": 13714
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/comparisons/20260917T035712Z/comparison.md",
+      "sha256": "42ea17e55ef035fc1211787eb402a6b0d01f1268357f7737d4c12c21dd6f5f4b",
+      "bytes": 977
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/doc/after.html",
       "sha256": "b4af58c6b48db8a805f03b715f777df5ea6941f633d14ca144a4e3e082184e8f",
       "bytes": 22929
@@ -1123,6 +1138,11 @@
     {
       "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T034416Z/readiness.json",
       "sha256": "8c64dc4c708fca220fae9259a503a86e2d4307aee9c81bff0a84e8c6e535ddba",
+      "bytes": 1656
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T035711Z/readiness.json",
+      "sha256": "edac045b4d5298c769cf8d57f5929101f063535dcb68d9c0e6b625f52b278fe2",
       "bytes": 1656
     },
     {
@@ -2856,8 +2876,43 @@
       "bytes": 4992
     },
     {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T035711Z/SUMMARY.md",
+      "sha256": "0a84bb9982787fe06952e00fe748a6c047c025596488221856911468c2a6b4fa",
+      "bytes": 1648
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T035711Z/frolunda_attempt_accounting.txt",
+      "sha256": "c2ea8cbdf701ff7372025bd8e9030fe7294d5d5afbd83ec160fd107d905fff94",
+      "bytes": 379
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T035711Z/frolunda_requeue.json",
+      "sha256": "44e749add071f877115c0c12dfa4c45621861dd8838fa58c7a5aafc1e7f506b8",
+      "bytes": 691
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T035711Z/receipt.json",
+      "sha256": "1fafee0a0cfc0ef117875bdf2fccab5b5e28d43f6517253adc8cd3d25693d8f6",
+      "bytes": 615
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T035711Z/sacct.txt",
+      "sha256": "a7336721d838a03c9a516fe71c154ae3e5d285c69fb873f64c959e9e16c7db80",
+      "bytes": 45403
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T035711Z/snapshot.json",
+      "sha256": "cddd44bc9a5096731d96d609f57fc1274f264c8e7d478e182d7155c7f6567ef3",
+      "bytes": 343739
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T035711Z/squeue.txt",
+      "sha256": "0ca63d602d9c217b126c5abffe612d5c7c0569d6f26db5cdec43b7f78aa57bd0",
+      "bytes": 4997
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/monitor/latest_path.txt",
-      "sha256": "5cc009f77c0af71697e8849e43ec2b360e635b244bc99e423169a26c1f2a0a83",
+      "sha256": "6be5ca7125659c807eab4f30f55671678954e7890dd01cde7b9f28f915ce21fb",
       "bytes": 118
     },
     {

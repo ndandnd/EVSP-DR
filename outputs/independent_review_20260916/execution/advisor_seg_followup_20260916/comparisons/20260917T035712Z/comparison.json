@@ -1,0 +1,301 @@
+{
+  "checked_utc": "2026-09-17T03:57:12.783036+00:00",
+  "snapshot_collected_utc": "2026-09-17T03:57:11.546839+00:00",
+  "predictions_sha256": "0b7eef916d933ba2fecc8e81f2c1deeb526fb578b11b49f62552c944792d15e7",
+  "source_readme_sha256": "038ae55d79b359f9a79aaa16731bf20e97291290f7f7f9e68fc146328d47f98d",
+  "arms": [
+    {
+      "arm": "baseline",
+      "prediction": {
+        "arm": "baseline",
+        "predicted_lp_route_weight": [
+          30
+        ],
+        "predicted_integer_fleet": ">=31"
+      },
+      "replay": {
+        "completed_shards": 14,
+        "expected_shards": 125,
+        "completed_sequence_counts": {
+          "feasible": 28672
+        },
+        "expected_sequences": 254068,
+        "partial_shard_work_not_counted": true,
+        "unexpected_nonfeasible_counts": {}
+      },
+      "settings_issues": [],
+      "lp": {
+        "status": "PENDING",
+        "route_weight": null,
+        "components": {
+          "baseline": {
+            "state": "PENDING"
+          }
+        },
+        "scope": "fractional route weight at weighted-objective optimum, not a fleet-only bound"
+      },
+      "mip": {
+        "status": "PENDING",
+        "fleet": null,
+        "components": {
+          "baseline": {
+            "state": "PENDING"
+          }
+        },
+        "proof_scope": "finite saved column pools only; neither certified weighted CG nor pool MIP alone proves global fleet optimality",
+        "independent_physical_replay": "NOT_REPORTED_BY_THIS_DRIVER"
+      }
+    },
+    {
+      "arm": "parx60_only",
+      "prediction": {
+        "arm": "parx60_only",
+        "predicted_lp_route_weight": [
+          30
+        ],
+        "predicted_integer_fleet": ">=31"
+      },
+      "replay": {
+        "completed_shards": 18,
+        "expected_shards": 125,
+        "completed_sequence_counts": {
+          "feasible": 35536,
+          "infeasible_in_fixed_sequence_event_model": 1328
+        },
+        "expected_sequences": 254068,
+        "partial_shard_work_not_counted": true
+      },
+      "settings_issues": [],
+      "lp": {
+        "status": "PENDING",
+        "route_weight": null,
+        "components": {
+          "parx60_only": {
+            "state": "PENDING"
+          }
+        },
+        "scope": "fractional route weight at weighted-objective optimum, not a fleet-only bound"
+      },
+      "mip": {
+        "status": "PENDING",
+        "fleet": null,
+        "components": {
+          "parx60_only": {
+            "state": "PENDING"
+          }
+        },
+        "proof_scope": "finite saved column pools only; neither certified weighted CG nor pool MIP alone proves global fleet optimality",
+        "independent_physical_replay": "NOT_REPORTED_BY_THIS_DRIVER"
+      }
+    },
+    {
+      "arm": "reserve15_only",
+      "prediction": {
+        "arm": "reserve15_only",
+        "predicted_lp_route_weight": [
+          30,
+          31
+        ],
+        "predicted_integer_fleet": null
+      },
+      "replay": {
+        "completed_shards": 17,
+        "expected_shards": 125,
+        "completed_sequence_counts": {
+          "feasible": 32954,
+          "infeasible_in_fixed_sequence_event_model": 1862
+        },
+        "expected_sequences": 254068,
+        "partial_shard_work_not_counted": true
+      },
+      "settings_issues": [],
+      "lp": {
+        "status": "PENDING",
+        "route_weight": null,
+        "components": {
+          "reserve15_only": {
+            "state": "PENDING"
+          }
+        },
+        "scope": "fractional route weight at weighted-objective optimum, not a fleet-only bound"
+      },
+      "mip": {
+        "status": "PENDING",
+        "fleet": null,
+        "components": {
+          "reserve15_only": {
+            "state": "PENDING"
+          }
+        },
+        "proof_scope": "finite saved column pools only; neither certified weighted CG nor pool MIP alone proves global fleet optimality",
+        "independent_physical_replay": "NOT_REPORTED_BY_THIS_DRIVER"
+      }
+    },
+    {
+      "arm": "battery236p44_only",
+      "prediction": {
+        "arm": "battery236p44_only",
+        "predicted_lp_route_weight": [
+          30
+        ],
+        "predicted_integer_fleet": null
+      },
+      "replay": {
+        "completed_shards": 15,
+        "expected_shards": 125,
+        "completed_sequence_counts": {
+          "feasible": 30716,
+          "infeasible_in_fixed_sequence_event_model": 4
+        },
+        "expected_sequences": 254068,
+        "partial_shard_work_not_counted": true
+      },
+      "settings_issues": [],
+      "lp": {
+        "status": "PENDING",
+        "route_weight": null,
+        "components": {
+          "battery236p44_only": {
+            "state": "PENDING"
+          }
+        },
+        "scope": "fractional route weight at weighted-objective optimum, not a fleet-only bound"
+      },
+      "mip": {
+        "status": "PENDING",
+        "fleet": null,
+        "components": {
+          "battery236p44_only": {
+            "state": "PENDING"
+          }
+        },
+        "proof_scope": "finite saved column pools only; neither certified weighted CG nor pool MIP alone proves global fleet optimality",
+        "independent_physical_replay": "NOT_REPORTED_BY_THIS_DRIVER"
+      }
+    },
+    {
+      "arm": "battery239p01_only",
+      "prediction": {
+        "arm": "battery239p01_only",
+        "predicted_lp_route_weight": [
+          30
+        ],
+        "predicted_integer_fleet": null
+      },
+      "replay": {
+        "completed_shards": 13,
+        "expected_shards": 125,
+        "completed_sequence_counts": {
+          "feasible": 26624
+        },
+        "expected_sequences": 254068,
+        "partial_shard_work_not_counted": true
+      },
+      "settings_issues": [],
+      "lp": {
+        "status": "PENDING",
+        "route_weight": null,
+        "components": {
+          "battery239p01_only": {
+            "state": "PENDING"
+          }
+        },
+        "scope": "fractional route weight at weighted-objective optimum, not a fleet-only bound"
+      },
+      "mip": {
+        "status": "PENDING",
+        "fleet": null,
+        "components": {
+          "battery239p01_only": {
+            "state": "PENDING"
+          }
+        },
+        "proof_scope": "finite saved column pools only; neither certified weighted CG nor pool MIP alone proves global fleet optimality",
+        "independent_physical_replay": "NOT_REPORTED_BY_THIS_DRIVER"
+      }
+    },
+    {
+      "arm": "segregation_only",
+      "prediction": {
+        "arm": "segregation_only",
+        "predicted_lp_route_weight": [
+          31
+        ],
+        "predicted_integer_fleet": "31",
+        "predicted_group_weights": {
+          "18E1": 12,
+          "18E2": 19
+        },
+        "requires_pricing_certificate": true
+      },
+      "replay": {
+        "completed_shards": 14,
+        "expected_shards": 125,
+        "completed_sequence_counts": {
+          "feasible": 19546,
+          "structurally_excluded_mixed_groups": 9126
+        },
+        "expected_sequences": 254068,
+        "partial_shard_work_not_counted": true
+      },
+      "settings_issues": [],
+      "lp": {
+        "status": "PENDING",
+        "route_weight": null,
+        "components": {
+          "18E1": {
+            "state": "PENDING"
+          },
+          "18E2": {
+            "state": "PENDING"
+          }
+        },
+        "scope": "fractional route weight at weighted-objective optimum, not a fleet-only bound"
+      },
+      "mip": {
+        "status": "PENDING",
+        "fleet": null,
+        "components": {
+          "18E1": {
+            "state": "PENDING"
+          },
+          "18E2": {
+            "state": "PENDING"
+          }
+        },
+        "proof_scope": "finite saved column pools only; neither certified weighted CG nor pool MIP alone proves global fleet optimality",
+        "independent_physical_replay": "NOT_REPORTED_BY_THIS_DRIVER"
+      }
+    }
+  ],
+  "qualification": "Numeric agreement is not causal proof. Certified route weight belongs to one weighted-objective LP optimum and need not be unique. Finite-pool integer proof does not establish the full-model integer minimum. Replay progress from completed shards excludes partial work.",
+  "scheduler": {
+    "returncode": 0,
+    "stdout": "342540_[66,70-71,75-76,146-749]|PENDING|(JobArrayTaskLimit)|0:00|\n342680|PENDING|(Dependency)|0:00|\n342676|PENDING|(Dependency)|0:00|\n342674|PENDING|(Dependency)|0:00|\n342672|PENDING|(Dependency)|0:00|\n342670|PENDING|(Dependency)|0:00|\n342668|PENDING|(Dependency)|0:00|\n342681|PENDING|(Dependency)|0:00|\n342679|PENDING|(Dependency)|0:00|\n342678|PENDING|(Dependency)|0:00|\n342677|PENDING|(Dependency)|0:00|\n342675|PENDING|(Dependency)|0:00|\n342673|PENDING|(Dependency)|0:00|\n342671|PENDING|(Dependency)|0:00|\n342669|PENDING|(Dependency)|0:00|\n342667|PENDING|(Dependency)|0:00|\n342666|PENDING|(Dependency)|0:00|\n342665|PENDING|(Dependency)|0:00|\n342664|PENDING|(Dependency)|0:00|\n342663|PENDING|(Dependency)|0:00|\n342662|PENDING|(Dependency)|0:00|\n342540_145|RUNNING|snavely-cpu-01|7:21|snavely-cpu-01\n342540_144|RUNNING|snavely-cpu-02|14:40|snavely-cpu-02\n342540_143|RUNNING|unicorn-cpu-01|17:59|unicorn-cpu-01\n342540_142|RUNNING|snavely-cpu-09|19:21|snavely-cpu-09\n342540_141|RUNNING|luxlab-cpu-03|20:59|luxlab-cpu-03\n342540_140|RUNNING|luxlab-cpu-02|22:59|luxlab-cpu-02\n342540_139|RUNNING|totient-cpu-02|26:00|totient-cpu-02\n342540_137|RUNNING|unicorn-cpu-01|28:00|unicorn-cpu-01\n342540_138|RUNNING|unicorn-cpu-01|28:00|unicorn-cpu-01\n342540_136|RUNNING|unicorn-cpu-01|30:00|unicorn-cpu-01\n342540_135|RUNNING|snavely-cpu-02|32:09|snavely-cpu-02\n342540_134|RUNNING|snavely-cpu-02|32:45|snavely-cpu-02\n342540_133|RUNNING|luxlab-cpu-03|46:02|luxlab-cpu-03\n342540_132|RUNNING|luxlab-cpu-03|56:02|luxlab-cpu-03\n342540_131|RUNNING|snavely-cpu-01|56:20|snavely-cpu-01\n342540_130|RUNNING|unicorn-cpu-01|1:00:07|unicorn-cpu-01\n342540_129|RUNNING|snavely-cpu-01|1:07:03|snavely-cpu-01\n342540_128|RUNNING|snavely-cpu-15|1:12:17|snavely-cpu-15\n342540_126|RUNNING|snavely-cpu-09|1:19:09|snavely-cpu-09\n342540_125|RUNNING|luxlab-cpu-02|1:28:12|luxlab-cpu-02\n342540_118|RUNNING|snavely-cpu-13|1:37:55|snavely-cpu-13\n342540_114|RUNNING|snavely-cpu-09|1:39:42|snavely-cpu-09\n342540_115|RUNNING|snavely-cpu-12|1:39:42|snavely-cpu-12\n342540_116|RUNNING|snavely-cpu-12|1:39:42|snavely-cpu-12\n342540_117|RUNNING|snavely-cpu-12|1:39:42|snavely-cpu-12\n342540_108|RUNNING|snavely-cpu-11|1:42:00|snavely-cpu-11\n342540_109|RUNNING|snavely-cpu-11|1:42:00|snavely-cpu-11\n342540_110|RUNNING|snavely-cpu-12|1:42:00|snavely-cpu-12\n342540_111|RUNNING|snavely-cpu-12|1:42:00|snavely-cpu-12\n342540_112|RUNNING|snavely-cpu-12|1:42:00|snavely-cpu-12\n342540_113|RUNNING|snavely-cpu-12|1:42:00|snavely-cpu-12\n342540_107|RUNNING|snavely-cpu-11|1:45:30|snavely-cpu-11\n342540_106|RUNNING|snavely-cpu-11|1:46:40|snavely-cpu-11\n342540_105|RUNNING|snavely-cpu-11|1:49:38|snavely-cpu-11\n342540_103|RUNNING|snavely-cpu-14|1:54:07|snavely-cpu-14\n342540_102|RUNNING|snavely-cpu-11|1:56:23|snavely-cpu-11\n342540_100|RUNNING|snavely-cpu-14|2:01:43|snavely-cpu-14\n342540_101|RUNNING|snavely-cpu-11|2:01:43|snavely-cpu-11\n342540_96|RUNNING|snavely-cpu-14|2:07:24|snavely-cpu-14\n342540_88|RUNNING|unicorn-cpu-75|2:26:14|unicorn-cpu-75\n342540_89|RUNNING|unicorn-cpu-75|2:26:14|unicorn-cpu-75\n342540_90|RUNNING|unicorn-cpu-75|2:26:14|unicorn-cpu-75\n342540_91|RUNNING|unicorn-cpu-75|2:26:14|unicorn-cpu-75\n342540_86|RUNNING|unicorn-cpu-75|2:28:14|unicorn-cpu-75\n342540_87|RUNNING|unicorn-cpu-75|2:28:14|unicorn-cpu-75\n342540_82|RUNNING|unicorn-cpu-75|2:30:14|unicorn-cpu-75\n342540_83|RUNNING|unicorn-cpu-75|2:30:14|unicorn-cpu-75\n342540_84|RUNNING|unicorn-cpu-75|2:30:14|unicorn-cpu-75\n342540_80|RUNNING|unicorn-cpu-75|2:32:14|unicorn-cpu-75\n342540_81|RUNNING|unicorn-cpu-75|2:32:14|unicorn-cpu-75\n342655|RUNNING|jingjie-cpu-22|3:26:16|jingjie-cpu-22\n342656|RUNNING|jingjie-cpu-19|3:26:16|jingjie-cpu-19\n342657|RUNNING|jingjie-cpu-18|3:26:16|jingjie-cpu-18\n342658|RUNNING|garg-cpu-01|3:26:16|garg-cpu-01\n342659|RUNNING|kim-cpu-01|3:26:16|kim-cpu-01\n342661|RUNNING|jingjie-cpu-21|3:26:16|jingjie-cpu-21\n",
+    "stderr": ""
+  },
+  "collection_errors": [
+    {
+      "stderr_path": "/home/nc437/ladder-lite/action3_full_20260916/logs/342540_66_replay.err",
+      "tail": "[2026-09-16T22:14:36.440] error: *** JOB 343046 ON totient-cpu-02 CANCELLED AT 2026-09-16T22:14:36 DUE TO PREEMPTION ***\n"
+    },
+    {
+      "stderr_path": "/home/nc437/ladder-lite/action3_full_20260916/logs/342540_70_replay.err",
+      "tail": "[2026-09-16T22:14:36.444] error: *** JOB 343050 ON totient-cpu-05 CANCELLED AT 2026-09-16T22:14:36 DUE TO PREEMPTION ***\n"
+    },
+    {
+      "stderr_path": "/home/nc437/ladder-lite/action3_full_20260916/logs/342540_71_replay.err",
+      "tail": "[2026-09-16T22:14:36.445] error: *** JOB 343051 ON totient-cpu-05 CANCELLED AT 2026-09-16T22:14:36 DUE TO PREEMPTION ***\n"
+    },
+    {
+      "stderr_path": "/home/nc437/ladder-lite/action3_full_20260916/logs/342540_75_replay.err",
+      "tail": "[2026-09-16T22:14:36.448] error: *** JOB 343062 ON totient-cpu-05 CANCELLED AT 2026-09-16T22:14:36 DUE TO PREEMPTION ***\n"
+    },
+    {
+      "stderr_path": "/home/nc437/ladder-lite/action3_full_20260916/logs/342540_76_replay.err",
+      "tail": "[2026-09-16T22:14:36.435] error: *** JOB 343063 ON totient-cpu-06 CANCELLED AT 2026-09-16T22:14:36 DUE TO PREEMPTION ***\n"
+    }
+  ],
+  "snapshot_path": "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/action3_full_20260916/snapshots/20260917T035712Z/status.json",
+  "snapshot_sha256": "3c063812902546ab185cb8861b484105d23fc197103e1239136d0ee9c7f7e746"
+}

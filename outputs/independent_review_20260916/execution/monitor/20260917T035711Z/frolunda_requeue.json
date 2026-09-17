@@ -1,0 +1,12 @@
+{
+  "job_id": "341413",
+  "event": "PREEMPTED then automatically requeued and running",
+  "preempted_EDT": "2026-09-16T23:48:08",
+  "restarted_EDT": "2026-09-16T23:51:14",
+  "interrupted_stage": "fdl_k15 cache construction",
+  "prior_attempt": "341413_r0",
+  "new_attempt": "341413_r1",
+  "completed_scientific_endpoints_changed": false,
+  "manual_action": false,
+  "interpretation": "A new private cache-build attempt is running. Previously completed cases are unchanged. Stale running label on r0 execution.json is not evidence of concurrent execution; Slurm marks that allocation preempted. Allocation elapsed includes completed earlier cases and must not all be counted as lost work."
+}
