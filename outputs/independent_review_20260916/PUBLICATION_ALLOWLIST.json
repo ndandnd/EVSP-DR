@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-09-17T03:58:58.711659+00:00",
+  "generated_utc": "2026-09-17T04:06:54.312589+00:00",
   "scope": "execution tree and explicit time_only_vsp_20260916 audit; no commit/copy performed",
-  "included_files": 836,
-  "included_bytes": 31272846,
+  "included_files": 839,
+  "included_bytes": 31284721,
   "excluded_files": 273,
   "credential_findings": [],
   "binary_git_bundles": [
@@ -22,8 +22,8 @@
   "files": [
     {
       "path": "outputs/independent_review_20260916/execution/MONITORING.md",
-      "sha256": "f9dd46b41fff8a66dd44ffabf241a3a9263195156be8a15b3dcc24d8b4c449a0",
-      "bytes": 10910
+      "sha256": "f0362211fe77cc67052b3511f20315e928dc7512d84793eaca6b573603119ac7",
+      "bytes": 11611
     },
     {
       "path": "outputs/independent_review_20260916/execution/README.md",
@@ -2391,6 +2391,11 @@
       "bytes": 1059
     },
     {
+      "path": "outputs/independent_review_20260916/execution/geography_review_handoff_20260917/README.md",
+      "sha256": "54ff7db76ce30952d936ede1b8781dcdfc760bd898724a625f818b742ae25f20",
+      "bytes": 5644
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/ledger.json",
       "sha256": "4b7d69b34a4553d748cb1a6092ad1b0f4cb784e8fd7ef456906af420166359e2",
       "bytes": 32399
@@ -2412,8 +2417,13 @@
     },
     {
       "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/README.md",
-      "sha256": "063e330205758bb04b7492107bf7adfae67c753dd5924633c2ead28e96cf0d2b",
-      "bytes": 3826
+      "sha256": "5313ea3a6bc125164ad9ab2cc92c51ffab11883bac901c1031d5d14d28e9e926",
+      "bytes": 3941
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/TABLE_AND_CONSTRAINTS.md",
+      "sha256": "ee7a8656a81fc689a75bfda9ffd0760826e0be7effe879c35d436075736f8ecf",
+      "bytes": 5023
     },
     {
       "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/constrained_k5_source_check.jsonl",
@@ -2454,6 +2464,11 @@
       "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/doc/replacements.json",
       "sha256": "6a45ea8e4aca4ddd6e17aea9e595a225b00471c3046580f0556a6f29761d859d",
       "bytes": 3908
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/monitoring_change.json",
+      "sha256": "e99c256a4a1f72cd0db95ca613ba64e9e78639c66e56735fc786dce93309650c",
+      "bytes": 392
     },
     {
       "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/p1_selected_results.json",

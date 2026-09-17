@@ -20,3 +20,5 @@ The sequential fleet results use 240 kWh / 240 kW, covering and inherited column
 **What to ask coauthors:** prioritize integer-aware column generation and realistic charging-cost evidence, or invest first in the larger pricing-graph redesign? Decomposition alone has not solved the integer difficulty. The code review proposes useful experiments, but its 10×/25-minute projections and “zero risk” stopping claim are not established. [Mathematical qualifications](CODE_REVIEW_RESPONSE.md).
 
 The current Google Doc has been updated in place. Figures/history and Slides were preserved; frozen 128/102/67/35 audit counts remain explicitly separate from the new seed results. No new solver jobs were submitted.
+
+[Budget definitions, why sequential helps, and what happened in the constraint pilots](TABLE_AND_CONSTRAINTS.md).

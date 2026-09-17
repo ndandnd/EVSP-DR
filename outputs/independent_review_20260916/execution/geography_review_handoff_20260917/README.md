@@ -1,0 +1,28 @@
+# Independent reviewer handoff: geographic decomposition
+
+The user asks whether geographic/timetable structure can improve decomposition of GIRO's larger trip sets. This is an independent, bounded analysis request. **Do not submit cluster jobs, change running campaigns, merge branches, or edit the Google Doc.** Save reproducible scripts, inputs/hashes, editable tables and maps locally. This handoff has been prepared for the user to relay to the external reviewer; it has not been sent to that reviewer automatically.
+
+## Questions to answer
+
+1. Are there groups of trips with strong internal compatibility and limited useful compatibility across groups? Compare geography, shared charging sites and timetable/energy-compatible connections. Distinguish actual vehicle-type restrictions from optional heuristic geographic cuts.
+2. Can partitions be constructed from trip attributes without knowing the GIRO duty assignments? Use GIRO duties only as a labelled benchmark, not hidden input to the proposed clustering method.
+3. Compare three or fewer candidate partitions on a fixed parent, including an existing four-by-eight-duty baseline. Balance computational difficulty using trip/state/connection estimates, not just duty count. State whether there is evidence for a better partition; a negative answer is useful.
+4. Quantify the price of each cut before EV solves: group sizes, cross-cut connection fractions, reachable charging sites, shared station-time coupling, and the sum of time-only fleet bounds versus the unpartitioned bound. A time-only path cover need not be energy feasible. Do not assume a small geometric cut means independent optimization problems.
+5. Recommend one subsequent matched experiment, with frozen physics, equal accounting of graph construction/CG/MIP, and both elapsed critical-path time and total core-hours. Consider overlapping boundary trips or targeted cross-cluster pricing after union if a strict partition excludes useful routes. No launch is authorized by this handoff.
+
+## Sources (all paths relative to /Users/nadan/Documents/projects/demandresponse)
+
+- Existing map and initial connectivity study: `outputs/post_meeting_20260910/decomposition/README.md`, `mapped_locations.csv`, `trip_nodes.csv`, `giro_endpoint_flows.csv`, `giro_charge_groups.csv`, `connections_30min_idle.csv`, `line_connection_counts_30min.csv`, and `sources/`.
+- Modelled vehicle groups: route 21/18E1 versus local/18E2. The map's 40-duty/948-trip cohort contains 14 route 21 and 26 local duties. Both use PARX. Opportunity charging sites differ.
+- **Map limitations:**838/948 trips mapped;110 have an unmapped endpoint; PARX's location was not verified. Markers are stop-area proxies; lines join endpoints, not road trajectories. Current OSM data are not a reconstruction of the historical road network. Do not silently fill unknown coordinates or label straight lines as routes.
+- **Screen limitations:** the old map screen found about 31.6% cross-group candidate links with 30-minute waiting and one connected component. It used minimum direct/PARX-detour durations from `Par_DHD_Updated.csv`, not the current solver's exact graph. It omitted energy, charging dwell and vehicle restrictions. This does not prove a sparse cut or refute useful overlapping decomposition.
+- Current source-aligned time-only graph and exact certificates: `outputs/independent_review_20260916/time_only_vsp_20260916/{README.md,time_only_vsp.py,independent_audit.py,per_case.csv,summary.json}`. Current production reference hashes: Ref_dict `7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0`, par_ref_dhd `5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c`. Use shortest-path closure rather than the raw direct matrix for a safe time-only EV lower bound.
+- Existing 32-duty/750-trip decomposition parent hash: `4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e`. Do not confuse this with the 948-trip map/full-Partille cohort or any chain's k 32 input.
+- Component source mapping and graph/CG/MIP artifacts: `outputs/decomposition_pool_union_20260914/source_index.json`; `outputs/decomposition_union_audit_20260914/audit.json` and `README.md`.
+- Selection designs: `outputs/decomposition_pool_union_20260914/README.md`; `outputs/decomposition_lp_support_union_20260914/README.md` and `lp_support_audit.json`.
+- Final results (prefer these to early campaign status files): `outputs/overnight_parallel_20260914/status_20260914T225805Z/CURRENT_STATUS.md` and `decomposition_allnine.csv`. Nine complete partitions produced 34–37 buses. Neither of the two 46-search recombination treatments improved on its best donor. All-nine selections both found 34; pool bounds 33 and 32 respectively. These are repeated treatments of one instance.
+- Remote artifacts: `/home/nc 437/ladder-lite/overnight_extension_20260912/`, `/home/nc 437/ladder-lite/decomposition_pool_union_20260914/`, `/home/nc 437/ladder-lite/decomposition_lp_support_union_20260914/`. Read-only access via `ssh nc 437@unicorn-login-01.coecis.cornell.edu` if needed; do not transfer licensed SE3 data.
+
+## Deliverables
+
+A short answer, one labelled map, one comparison table with at most three proposed partitions, and saved scripts/source hashes. Identify which conclusions follow mathematically, which are descriptive, and which require a future EV solve. Explain any graph-data mismatch before using the numbers. The global master must retain shared station-capacity coupling if that physics is included. Exact decomposed pricing needs all feasible route families covered; forbidding crossing routes is otherwise a heuristic restriction.

@@ -1,3 +1,7 @@
+## Monitoring cadence — user update, 17 September
+
+Use a four-hour heartbeat. Reuse a successful focused collection from the last90minutes unless a new reported issue warrants investigation. On unchanged/non-actionable state, save at most a small local receipt and stop: no report regeneration, Doc export, figures, commits/pushes/mirror, repeated narrative, or historical-log review. Batch publication with meaningful results/failures. Notify only meaningful new findings, access changes or required action; preserve the gated four-result briefing and all submission/privacy/proof restrictions below. Previously reported meeting results must not be announced again just because a heartbeat fires.
+
 ## Latest authorization — time-only VSP and full-Partille follow-up
 
 The user requested the per-group time-only VSP for all 102 audited instances and authorized reducing the full-Partille CG request to 12 hours on Scaglione with justified memory. This supersedes the earlier conditional full-CG hold, but not the held downstream MIP or unrelated submission restrictions. The existing six full action3 arms continue; do not duplicate them.
