@@ -1,0 +1,16 @@
+{
+  "job_id": "341179",
+  "case_id": "c4_k15_peak12_fixed",
+  "finding": "F6/F7 item10",
+  "state": "OUT_OF_MEMORY",
+  "request": "32G",
+  "batch_maxrss_KiB": 33404312,
+  "elapsed_s": 10762,
+  "ended_EDT": "2026-09-16T21:03:29",
+  "native_log": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/logs/dr3m_c4_k15_peak12_fixed_341179.err",
+  "native_log_confirmation": "Detected 1 oom_kill event in StepId=341179.batch; child return code -9",
+  "first_classified_utc": "2026-09-17T01:47:29.467096+00:00",
+  "already_present_in_previous_scheduler_snapshot": true,
+  "interpretation": "Resource failure; no scientific infeasibility or tariff result. Outside37-cellbriefinggate.",
+  "retry_submitted": false
+}

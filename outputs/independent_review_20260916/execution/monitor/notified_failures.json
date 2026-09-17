@@ -1,0 +1,15 @@
+{
+  "failures": {
+    "341187:OUT_OF_MEMORY": {
+      "case": "c5_k15_peak12_fixed",
+      "reported": "previous normal turn",
+      "evidence": "advisor_seg_followup_20260916/resource_failure.json"
+    },
+    "341179:OUT_OF_MEMORY": {
+      "case": "c4_k15_peak12_fixed",
+      "reported_heartbeat": "20260917T014543Z",
+      "notification_utc": "2026-09-17T01:47:29.467096+00:00",
+      "evidence": "monitor/20260917T014543Z/new_failure.json"
+    }
+  }
+}

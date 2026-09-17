@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-09-17T01:35:25.078353+00:00",
+  "generated_utc": "2026-09-17T01:47:31.718815+00:00",
   "scope": "execution tree and explicit time_only_vsp_20260916 audit; no commit/copy performed",
-  "included_files": 778,
-  "included_bytes": 28615129,
+  "included_files": 789,
+  "included_bytes": 29221923,
   "excluded_files": 273,
   "credential_findings": [],
   "binary_git_bundles": [
@@ -22,8 +22,8 @@
   "files": [
     {
       "path": "outputs/independent_review_20260916/execution/MONITORING.md",
-      "sha256": "21b7f99ba20fb199b5fe90a4264649185dd70f5d5d85d052c41c913a82201ca7",
-      "bytes": 10723
+      "sha256": "53a83280e3db5a1a64c50524332ed81262367a99c6ee5e7b4c609839a62c705b",
+      "bytes": 10880
     },
     {
       "path": "outputs/independent_review_20260916/execution/README.md",
@@ -284,6 +284,11 @@
       "path": "outputs/independent_review_20260916/execution/action3_full_20260916/snapshots/20260917T011953Z/status.json",
       "sha256": "07c7aa0a311ff5b8702a0b5884c89c7527512b543742253c93a2b6a0d0ddf3d8",
       "bytes": 195011
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/action3_full_20260916/snapshots/20260917T014544Z/status.json",
+      "sha256": "500e615a13303821647ea6e66446b94d63eaab50086ced1b85c508fd4bc17447",
+      "bytes": 209169
     },
     {
       "path": "outputs/independent_review_20260916/execution/action3_full_20260916/stage_pipeline_test.json",
@@ -736,6 +741,16 @@
       "bytes": 971
     },
     {
+      "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/comparisons/20260917T014544Z/comparison.json",
+      "sha256": "1e0f5b3e05d84dd4dc14946ba37c699decbfaea18cb164b841512bb29eb7fc98",
+      "bytes": 12336
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/comparisons/20260917T014544Z/comparison.md",
+      "sha256": "e21a4b436dd687180737bddbe277c043ffb8852909c63598ad8e55c4d1a84208",
+      "bytes": 971
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/doc/after.html",
       "sha256": "b4af58c6b48db8a805f03b715f777df5ea6941f633d14ca144a4e3e082184e8f",
       "bytes": 22929
@@ -1053,6 +1068,11 @@
     {
       "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T013134Z/readiness.json",
       "sha256": "9134dc60596ad45950e78f703a8d02a60a8a5c1479fe3b5254d05de228f5033d",
+      "bytes": 1497
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T014543Z/readiness.json",
+      "sha256": "5a05f705bcc33add57b18b737a1398058e488129ef5f08e678d9998038a1fdfc",
       "bytes": 1497
     },
     {
@@ -2626,9 +2646,44 @@
       "bytes": 5312
     },
     {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T014543Z/SUMMARY.md",
+      "sha256": "14e18fb5c6c189350991cd0cecfed57a2868bb273198015c21e22e4e5e9ec0b4",
+      "bytes": 1630
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T014543Z/new_failure.json",
+      "sha256": "f23b2296bb2f8fc83ce736c4d50a5c8e1af889ad85a4ace732db59241deddf62",
+      "bytes": 709
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T014543Z/receipt.json",
+      "sha256": "05776e1b6513234d49f86e00f880a887b791b73b64a5cbd219395f9db9885776",
+      "bytes": 614
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T014543Z/sacct.txt",
+      "sha256": "ae43b448091085c25d59c981271cf028db9c48867a8447da263ded1d4e8f1c71",
+      "bytes": 44046
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T014543Z/snapshot.json",
+      "sha256": "179d2a275a3be8942ec3ab6dc964dc333284e262ffe39f5aceaa8d5e1b0cfab7",
+      "bytes": 329957
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T014543Z/squeue.txt",
+      "sha256": "c04b6dfe52aa3bb19025eadc29b89b13249374d66585b6164f0289ce175e387e",
+      "bytes": 5251
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/monitor/latest_path.txt",
-      "sha256": "8abdabddf63ffaa5f2a2edd361cf5b895f32fe7b8cd7877689c354ed1c00df5b",
+      "sha256": "191a0b3f4aee8f65429fe3e47fb82799aea3d6a730b845edf904931104920fca",
       "bytes": 118
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/notified_failures.json",
+      "sha256": "953c079138c235b5569e08c283cf20970dc751387ceca3d3be725c5f5a0f5d9e",
+      "bytes": 457
     },
     {
       "path": "outputs/independent_review_20260916/execution/p1/README.md",
