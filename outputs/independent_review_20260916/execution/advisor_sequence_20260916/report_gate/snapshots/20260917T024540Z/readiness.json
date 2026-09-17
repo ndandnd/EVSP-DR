@@ -1,0 +1,34 @@
+{
+  "endpoint_cells": 35,
+  "integrity_errors": [],
+  "items": null,
+  "pending_cells": [
+    {
+      "campaign": "p1",
+      "case_id": "warm_w5_k31_seed0_12h",
+      "job_id": "340968",
+      "scheduler_state": "RUNNING",
+      "state": "pending"
+    }
+  ],
+  "ready": false,
+  "required_solver_cells": 37,
+  "sources": {
+    "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/advisor_followup_20260916/f6_k5/manifest.json": "4a3583b04d0acb1798a322f9ba3da2fe755318cb2e31449266c0196562f8608a",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/four_numbers.py": "5b8269a8849aa5b2b4570980eacb2be8c848e98ac66df9002a8f5896d1f45864",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/monitor/20260917T024540Z/snapshot.json": "cbb5569770743c221f50108a822532c0158f1572883f6a6944c92ea99b4fa491",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/p1/manifest.json": "1c165f9d225e96d91c5cb11e5341eb20d297fb33c971833bcd28bf4379e6b2ee"
+  },
+  "submission_policy": "No new submissions, retries, requeues, cancellations or partition changes. A ready report does not authorize new runs.",
+  "terminal_without_endpoint": [
+    {
+      "campaign": "f6_k5",
+      "case_id": "peak12_fixed",
+      "exit_code": "0:0",
+      "interpretation": "Censored; not a target miss or proof of infeasibility. No automatic retry.",
+      "job_id": "341685",
+      "scheduler_state": "TIMEOUT",
+      "state": "terminal_without_scientific_endpoint"
+    }
+  ]
+}

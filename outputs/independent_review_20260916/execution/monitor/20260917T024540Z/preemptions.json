@@ -1,0 +1,19 @@
+{
+  "array_job_id": "342540",
+  "tasks": [
+    66,
+    70,
+    71,
+    75,
+    76
+  ],
+  "preempted_EDT": "2026-09-16T22:14:36",
+  "checked_utc": "2026-09-17T02:50:48.640880+00:00",
+  "all_states": "PENDING",
+  "all_restarts": 1,
+  "all_requeue": 1,
+  "reason": "JobArrayTaskLimit",
+  "array_concurrency": 50,
+  "manual_requeues": 0,
+  "interpretation": "Automatically requeued; not yet restarted when checked. No claim that work has resumed or that saved progress has been recovered."
+}

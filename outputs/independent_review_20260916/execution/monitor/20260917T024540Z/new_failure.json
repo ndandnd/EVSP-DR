@@ -1,0 +1,18 @@
+{
+  "job_id": "341685",
+  "case_id": "peak12_fixed",
+  "finding": "F6 constrained k5",
+  "state": "TIMEOUT",
+  "elapsed_s": 10940,
+  "ended_EDT": "2026-09-16T21:57:49",
+  "native_log": "/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/logs/f6k5_peak12_fixed_341685.err",
+  "native_log_confirmation": "DUE TO TIME LIMIT",
+  "stdout_bytes": 0,
+  "case_directory_exists": false,
+  "worker_state_exists": false,
+  "license_preflight_pass_marker": false,
+  "interpretation": "Startup did not reach its first recorded worker state. Timeout is not evidence of charging-frontier difficulty or infeasibility. Exact startup cause unresolved; license/import/filesystem wait not established.",
+  "checkpoint_status": "No experiment case directory, result or checkpoint found at the declared output path.",
+  "retry_submitted": false,
+  "first_classified_utc": "2026-09-17T02:50:48.640880+00:00"
+}

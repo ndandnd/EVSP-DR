@@ -1,6 +1,6 @@
 ## Latest authorization — time-only VSP and full-Partille follow-up
 
-Before failure notifications, check `monitor/notified_failures.json`; jobs341179 and341187 OOM failures have been reported. Do not repeat unchanged alerts.
+Before failure notifications, check `monitor/notified_failures.json`; jobs341179 and341187 OOM failures and job341685 startup TIMEOUT have been reported. Do not repeat unchanged alerts.
 
 The user requested the per-group time-only VSP for all 102 audited instances and authorized reducing the full-Partille CG request to 12 hours on Scaglione with justified memory. This supersedes the earlier conditional full-CG hold, but not the held downstream MIP or unrelated submission restrictions. The existing six full action3 arms continue; do not duplicate them.
 
