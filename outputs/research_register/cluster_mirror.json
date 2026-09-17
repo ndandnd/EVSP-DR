@@ -1,15 +1,15 @@
 {
   "mirror_root": "/home/nc437/ladder-lite/research-register",
-  "verified_utc": "2026-09-17T03:55:52.628327+00:00",
-  "source_commit": "4486c9d707a19dcd6e83e31ba803846be409ef6b",
-  "verified_files": 5281,
+  "verified_utc": "2026-09-17T03:58:55.400574+00:00",
+  "source_commit": "9d2f93a2cd7e2df88a78c494d0b65d07c090077d",
+  "verified_files": 5292,
   "mismatch_count": 0,
   "errors": [],
-  "verification_scope": "Previous verified mirror plus 28 freshly hash-verified changed/new files",
+  "verification_scope": "Previous verified mirror plus 15 freshly hash-verified changed/new files",
   "previous_verification": {
-    "source_commit": "e2285013523cd014fd0da092e9a3bf9353d587a0",
-    "verified_utc": "2026-09-17T02:55:02.270556+00:00",
-    "verified_files": 5261
+    "source_commit": "4486c9d707a19dcd6e83e31ba803846be409ef6b",
+    "verified_utc": "2026-09-17T03:55:52.628327+00:00",
+    "verified_files": 5281
   },
   "files_sha256": {
     "outputs/01a07ecc-9b77-79b3-9782-e4308a80ba07/20260913T184244Z_verification.json": "23a6f0d7cadbe991a9525c5be2af2d786a466794ad28b51ecfffeef65da8a477",
@@ -4462,8 +4462,8 @@
     "outputs/zero_fee_validated_comparison_20260916/doc_before.md": "60fd7a499cb124eb9067e89463117a76c183b4f9ee6b3acdab598c00c9a4a5c7",
     "outputs/zero_fee_validated_comparison_20260916/doc_verification.json": "a2a0b65abb78695a1068811d44d6d853bd1f08c92446dc332ef6c0ca57627d2a",
     "outputs/zero_fee_validated_comparison_20260916/summarize.py": "cbf1c846a55036f675fbddbcee10f73df6cc7a0504977012f1f790ab5f8758a9",
-    "outputs/independent_review_20260916/PUBLICATION_ALLOWLIST.json": "f15a969c773800675bceed7d64e7149e9108a6a2985cf560308f7363a40ea0ae",
-    "outputs/independent_review_20260916/PUBLICATION_ALLOWLIST.txt": "2887f7e03efe701f1c537256dc727a9a04f98f6fae8bf4674796ab7ac077dc5b",
+    "outputs/independent_review_20260916/PUBLICATION_ALLOWLIST.json": "be9b2761b56ff8e0c55c2d7c136657388140b73b94ca9637575e0092746aef43",
+    "outputs/independent_review_20260916/PUBLICATION_ALLOWLIST.txt": "7ce7cf261d580eb814f9d6e639d358cb48ad3bacdbc3986d278d8156ddafdd33",
     "outputs/independent_review_20260916/REVIEW.md": "fb2350decd94760dd478e81a7518c6e19b0ae8626b3483c25bfb2438cc59bc90",
     "outputs/independent_review_20260916/build_publication_allowlist.py": "e77b50814b75581347e164db2186e6569cb07d53d9a0f48fd60cf61550f9b502",
     "outputs/independent_review_20260916/execution/MONITORING.md": "f9dd46b41fff8a66dd44ffabf241a3a9263195156be8a15b3dcc24d8b4c449a0",
@@ -4637,7 +4637,7 @@
     "outputs/independent_review_20260916/execution/monitor/20260916T221824Z/sacct.txt": "42e4c93585ebc0a6b9f603284246acc03744d5f6b9989fa0e2546a3d6a1b8e74",
     "outputs/independent_review_20260916/execution/monitor/20260916T221824Z/snapshot.json": "3d172281ba7b4d732e3478d1b8dc01d8f6aa4d80d69c44e9e042852c0abec39f",
     "outputs/independent_review_20260916/execution/monitor/20260916T221824Z/squeue.txt": "696a1ee0090f1b8eb9a860f14df2e734f4aeaf831da64b0277aa3697febb4b69",
-    "outputs/independent_review_20260916/execution/monitor/latest_path.txt": "5cc009f77c0af71697e8849e43ec2b360e635b244bc99e423169a26c1f2a0a83",
+    "outputs/independent_review_20260916/execution/monitor/latest_path.txt": "6be5ca7125659c807eab4f30f55671678954e7890dd01cde7b9f28f915ce21fb",
     "outputs/independent_review_20260916/execution/p1/README.md": "410533a83e6ca048fb5ae258e1e0d48777340ddb5076d1098f93e67f41f4c604",
     "outputs/independent_review_20260916/execution/p1/audit_endpoints.py": "8dadb2bfcd0ffc826db32a2e58d3785aeee7ddcdf23614de7f90b7929ae0d37c",
     "outputs/independent_review_20260916/execution/p1/case_jobs.json": "5d96fa7a6e334a2ef77a7952122a274871a22fdd1cd2522a327ab0d486f7d357",
@@ -4962,7 +4962,7 @@
     "outputs/independent_review_20260916/execution/monitor/20260916T230004Z/snapshot.json": "dce13e56b1aee7d1ea26a2115169c48f5997856db7756c3522de612de1405507",
     "outputs/independent_review_20260916/execution/monitor/20260916T230004Z/squeue.txt": "c44a925abdf1738bc719566eea3a51024d08f3b9372eddc634e8b102be6d3a97",
     "outputs/independent_review_20260916/execution/p3_frolunda/manifest_erratum.json": "3ac8a643492e41ec99b7f6a296ab80609780c7b80ff8ad33e968268481413a56",
-    "outputs/independent_review_20260916/execution/publication_receipt.json": "bd17a8c4514ec392b29ddc7395853b3832f525f42e91fb897edd4eb3a82def8a",
+    "outputs/independent_review_20260916/execution/publication_receipt.json": "abb2f6b32088244b540b71ad7532757d002187de93006dbdab43b788313dae99",
     "outputs/independent_review_20260916/execution/advisor_sequence_20260916/README.md": "fea2c436ab1fd4a3b5678413284127ebef0f9acadd6b3c82323d65323809cb08",
     "outputs/independent_review_20260916/execution/advisor_sequence_20260916/action2_plan_validation.json": "b035df41b2781b03cf0a629fde0540cfef28102078cf64cbcea4a1d88a4966c2",
     "outputs/independent_review_20260916/execution/advisor_sequence_20260916/checkpoint_fix/README.md": "a93dd2143c3cf09c357928ad7e9782b81724a5b9ac88fbb74c7aa4d98703d6de",
@@ -5292,6 +5292,17 @@
     "outputs/independent_review_20260916/execution/monitor/20260917T034416Z/receipt.json": "4b22e0db2b98c0cd25b265c6c5522de27d348594250ad6d38d3c0dba1b65975e",
     "outputs/independent_review_20260916/execution/monitor/20260917T034416Z/sacct.txt": "56f75bf0659cf2bca248c981fc29ea49ce6dbf054f3a51589d267adce8b2c901",
     "outputs/independent_review_20260916/execution/monitor/20260917T034416Z/snapshot.json": "741e45686c8e44e431826b81fb7e14f147db617da53071de989a5eca957c781e",
-    "outputs/independent_review_20260916/execution/monitor/20260917T034416Z/squeue.txt": "f400e8b9971bf874bb70f2a3505674bf263d0f4aab0c51623a32276ac2b80fe5"
+    "outputs/independent_review_20260916/execution/monitor/20260917T034416Z/squeue.txt": "f400e8b9971bf874bb70f2a3505674bf263d0f4aab0c51623a32276ac2b80fe5",
+    "outputs/independent_review_20260916/execution/action3_full_20260916/snapshots/20260917T035712Z/status.json": "3c063812902546ab185cb8861b484105d23fc197103e1239136d0ee9c7f7e746",
+    "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/comparisons/20260917T035712Z/comparison.json": "bac07359fe283a6fbee0fce0b9b8d1f44f90fd6d703992dc415aeb95557aa82e",
+    "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/comparisons/20260917T035712Z/comparison.md": "42ea17e55ef035fc1211787eb402a6b0d01f1268357f7737d4c12c21dd6f5f4b",
+    "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T035711Z/readiness.json": "edac045b4d5298c769cf8d57f5929101f063535dcb68d9c0e6b625f52b278fe2",
+    "outputs/independent_review_20260916/execution/monitor/20260917T035711Z/SUMMARY.md": "0a84bb9982787fe06952e00fe748a6c047c025596488221856911468c2a6b4fa",
+    "outputs/independent_review_20260916/execution/monitor/20260917T035711Z/frolunda_attempt_accounting.txt": "c2ea8cbdf701ff7372025bd8e9030fe7294d5d5afbd83ec160fd107d905fff94",
+    "outputs/independent_review_20260916/execution/monitor/20260917T035711Z/frolunda_requeue.json": "44e749add071f877115c0c12dfa4c45621861dd8838fa58c7a5aafc1e7f506b8",
+    "outputs/independent_review_20260916/execution/monitor/20260917T035711Z/receipt.json": "1fafee0a0cfc0ef117875bdf2fccab5b5e28d43f6517253adc8cd3d25693d8f6",
+    "outputs/independent_review_20260916/execution/monitor/20260917T035711Z/sacct.txt": "a7336721d838a03c9a516fe71c154ae3e5d285c69fb873f64c959e9e16c7db80",
+    "outputs/independent_review_20260916/execution/monitor/20260917T035711Z/snapshot.json": "cddd44bc9a5096731d96d609f57fc1274f264c8e7d478e182d7155c7f6567ef3",
+    "outputs/independent_review_20260916/execution/monitor/20260917T035711Z/squeue.txt": "0ca63d602d9c217b126c5abffe612d5c7c0569d6f26db5cdec43b7f78aa57bd0"
   }
 }
