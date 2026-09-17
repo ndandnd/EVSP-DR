@@ -1,0 +1,21 @@
+{
+  "jobs": [
+    {
+      "job": "341163",
+      "case": "c2_k15_peak12_fixed",
+      "elapsed_s": 32528,
+      "batch_MaxRSS_K": 10280
+    },
+    {
+      "job": "341165",
+      "case": "c2_k15_peak18_fixed",
+      "elapsed_s": 32529,
+      "batch_MaxRSS_K": 9984
+    }
+  ],
+  "state": "TIMEOUT",
+  "node": "jingjie-cpu-13",
+  "native_evidence": "Both case directories absent; stdout empty; stderr contains only Slurm time-limit cancellation. No worker or scientific endpoint. Same node as previously reported 341685 startup timeout.",
+  "interpretation": "Failure before recorded worker startup; root cause unestablished. Censor from scientific outcomes. Not evidence of hard charging optimization.",
+  "action": "No retries submitted under standing hold."
+}

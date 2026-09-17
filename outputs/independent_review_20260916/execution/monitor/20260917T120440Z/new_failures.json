@@ -1,0 +1,18 @@
+{
+  "failures": {
+    "341164:TIMEOUT": {
+      "case": "c2_k15_peak18_cg",
+      "evidence": "Empty stdout; no case directory; Slurm time limit on jingjie-cpu-13 after 46941s. No recorded worker startup."
+    },
+    "341166:TIMEOUT": {
+      "case": "internal_real_tariff_cg",
+      "evidence": "Scheduler only: TIMEOUT after46941s on jingjie-cpu-13; scientific data not transferred."
+    },
+    "341413:FAILED": {
+      "case": "fdl_k15",
+      "evidence": "Worker assertion rejects positive artificial mass. Saved cg.json final artificials=1.0, route_weight=14.99999999999991, iterations967, stop_reason=certified. No feasible CG endpoint or MIP published; cause of remaining artificial uninvestigated."
+    }
+  },
+  "new_submissions": 0,
+  "scientific_interpretation": "Censored; do not count as target misses or physical infeasibility proofs."
+}

@@ -108,7 +108,7 @@
       "evidence": "p3_frolunda/jobs.json"
     }
   ],
-  "updated_utc": "2026-09-17T01:34:53.898362+00:00",
+  "updated_utc": "2026-09-17T12:09:04.905101+00:00",
   "posthoc_mixed_group_audit": {
     "status": "completed_no_solver",
     "finding": "F4/F2",
@@ -1156,5 +1156,16 @@
     "counts_changed": false,
     "sibling_tabs_changed": false,
     "slides_edited": false
+  },
+  "four_result_gate_20260917": {
+    "ready": true,
+    "source": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T120440Z/readiness.json",
+    "result": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T120440Z/RESULTS.md",
+    "fresh_k15_hits": 0,
+    "fresh_k15_trials": 18,
+    "c5_k31_buses": 31,
+    "c5_k31_pool_bound": 30,
+    "terminal_cells_censored": 1,
+    "new_campaigns_authorized": false
   }
 }

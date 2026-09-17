@@ -1,0 +1,222 @@
+{
+  "verification": "PASS",
+  "cluster_submissions": 0,
+  "external_solver_calls": 0,
+  "partitions": [
+    {
+      "partition": "d00",
+      "component_minima": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "sum_minima": 32,
+      "increase": 0
+    },
+    {
+      "partition": "d01",
+      "component_minima": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "sum_minima": 32,
+      "increase": 0
+    },
+    {
+      "partition": "d02",
+      "component_minima": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "sum_minima": 32,
+      "increase": 0
+    },
+    {
+      "partition": "d03",
+      "component_minima": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "sum_minima": 32,
+      "increase": 0
+    },
+    {
+      "partition": "d04",
+      "component_minima": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "sum_minima": 32,
+      "increase": 0
+    },
+    {
+      "partition": "d05",
+      "component_minima": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "sum_minima": 32,
+      "increase": 0
+    },
+    {
+      "partition": "d06",
+      "component_minima": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "sum_minima": 32,
+      "increase": 0
+    },
+    {
+      "partition": "d07",
+      "component_minima": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "sum_minima": 32,
+      "increase": 0
+    },
+    {
+      "partition": "d08",
+      "component_minima": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "sum_minima": 32,
+      "increase": 0
+    },
+    {
+      "partition": "d09",
+      "component_minima": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "sum_minima": 32,
+      "increase": 0
+    },
+    {
+      "partition": "vehicle_group",
+      "component_minima": [
+        12,
+        20
+      ],
+      "sum_minima": 32,
+      "increase": 0
+    },
+    {
+      "partition": "charger_affinity",
+      "component_minima": [
+        12,
+        13,
+        9
+      ],
+      "sum_minima": 34,
+      "increase": 2
+    },
+    {
+      "partition": "spectral_2",
+      "component_minima": [
+        20,
+        20
+      ],
+      "sum_minima": 40,
+      "increase": 8
+    },
+    {
+      "partition": "spectral_4",
+      "component_minima": [
+        20,
+        16,
+        12,
+        20
+      ],
+      "sum_minima": 68,
+      "increase": 36
+    },
+    {
+      "partition": "time_split_AMPM",
+      "component_minima": [
+        32,
+        32
+      ],
+      "sum_minima": 64,
+      "increase": 32
+    },
+    {
+      "partition": "time_only_cover",
+      "component_minima": [
+        8,
+        8,
+        8,
+        8
+      ],
+      "sum_minima": 32,
+      "increase": 0
+    }
+  ],
+  "cg_count": 39,
+  "cg_stop_counts": {
+    "certified": 33,
+    "wall_limit": 6
+  },
+  "above_eight_route_weight": [
+    {
+      "case": "d04_g0",
+      "weight": "8.00201922535692"
+    }
+  ],
+  "mip_counts": [
+    {
+      "incumbent": 8,
+      "pool_bound": 8,
+      "count": 12
+    },
+    {
+      "incumbent": 9,
+      "pool_bound": 8,
+      "count": 12
+    },
+    {
+      "incumbent": 9,
+      "pool_bound": 9,
+      "count": 11
+    },
+    {
+      "incumbent": 10,
+      "pool_bound": 9,
+      "count": 1
+    },
+    {
+      "incumbent": 10,
+      "pool_bound": 8,
+      "count": 3
+    }
+  ],
+  "sources": {
+    "outputs/research_register/register.csv": "0ae2adc151e43d3d392c1ec2b97d301137f598227b700f51115a821480ad11f6",
+    "outputs/independent_review_20260916/advisor_geography_review_20260917/README.md": "dbaf8f2dc601f7ffb1908fb3d36b5a4fefda783fcb03265291dfdb83b8053dbd",
+    "outputs/independent_review_20260916/advisor_geography_review_20260917/partition_labels.json": "1c7e59fd3117ffa0f543bd47b630a2c44a6dbe0cfa8355ed095fc1454c3fa704",
+    "outputs/independent_review_20260916/advisor_geography_review_20260917/cover_partition.json": "0aeaeccf3dfa0a2eb2d40536ba0444e9836570eaeb6e22b502fbcc0141dec130",
+    "outputs/independent_review_20260916/advisor_geography_review_20260917/inputs/parent32.csv": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+    "outputs/independent_review_20260916/execution/geography_review_acceptance_20260917/verify.py": "f231c86fb1ccc58d50421213814d218b4042f24d6bf1e8d5613a66580ea0413e"
+  }
+}

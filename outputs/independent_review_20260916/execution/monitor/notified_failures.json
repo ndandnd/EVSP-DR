@@ -16,6 +16,36 @@
       "reported_heartbeat": "20260917T024540Z",
       "notification_utc": "2026-09-17T02:50:48.640880+00:00",
       "evidence": "monitor/20260917T024540Z/new_failure.json"
+    },
+    "341163:TIMEOUT": {
+      "case": "c2_k15_peak12_fixed",
+      "reported_heartbeat": "20260917T080414Z",
+      "notification_utc": "2026-09-17T08:06:09.057020+00:00",
+      "evidence": "monitor/20260917T080414Z/new_failures.json"
+    },
+    "341165:TIMEOUT": {
+      "case": "c2_k15_peak18_fixed",
+      "reported_heartbeat": "20260917T080414Z",
+      "notification_utc": "2026-09-17T08:06:09.057354+00:00",
+      "evidence": "monitor/20260917T080414Z/new_failures.json"
+    },
+    "341164:TIMEOUT": {
+      "case": "c2_k15_peak18_cg",
+      "reported_heartbeat": "20260917T120440Z",
+      "notification_utc": "2026-09-17T12:09:27.119805+00:00",
+      "evidence": "monitor/20260917T120440Z/new_failures.json"
+    },
+    "341166:TIMEOUT": {
+      "case": "internal_real_tariff_cg",
+      "reported_heartbeat": "20260917T120440Z",
+      "notification_utc": "2026-09-17T12:09:27.119805+00:00",
+      "evidence": "monitor/20260917T120440Z/new_failures.json"
+    },
+    "341413:FAILED": {
+      "case": "fdl_k15",
+      "reported_heartbeat": "20260917T120440Z",
+      "notification_utc": "2026-09-17T12:09:27.119805+00:00",
+      "evidence": "monitor/20260917T120440Z/new_failures.json"
     }
   }
 }

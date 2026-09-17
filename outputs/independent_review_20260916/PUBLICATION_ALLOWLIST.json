@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-09-17T04:07:21.513152+00:00",
+  "generated_utc": "2026-09-17T12:09:29.459986+00:00",
   "scope": "execution tree and explicit time_only_vsp_20260916 audit; no commit/copy performed",
-  "included_files": 839,
-  "included_bytes": 31284720,
+  "included_files": 868,
+  "included_bytes": 33279309,
   "excluded_files": 273,
   "credential_findings": [],
   "binary_git_bundles": [
@@ -299,6 +299,16 @@
       "path": "outputs/independent_review_20260916/execution/action3_full_20260916/snapshots/20260917T035712Z/status.json",
       "sha256": "3c063812902546ab185cb8861b484105d23fc197103e1239136d0ee9c7f7e746",
       "bytes": 251921
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/action3_full_20260916/snapshots/20260917T080433Z/status.json",
+      "sha256": "175070986560599030547860af2a42a65b776d38c1eba06562e2f397a9c3d924",
+      "bytes": 332538
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/action3_full_20260916/snapshots/20260917T120451Z/status.json",
+      "sha256": "9e8cc49186bbc5ff50546382f539d6aababaefecb10b538f05aa2a20cf96530e",
+      "bytes": 420629
     },
     {
       "path": "outputs/independent_review_20260916/execution/action3_full_20260916/stage_pipeline_test.json",
@@ -806,6 +816,26 @@
       "bytes": 977
     },
     {
+      "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/comparisons/20260917T080433Z/comparison.json",
+      "sha256": "505552168ca2ab350fc9fc3693c5060f9773979bad0b33ae19c98923735f92f3",
+      "bytes": 16522
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/comparisons/20260917T080433Z/comparison.md",
+      "sha256": "a2278446f41d81b27ce04d027e7acbdb2797728ae565bd146c9e64b694072621",
+      "bytes": 977
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/comparisons/20260917T120451Z/comparison.json",
+      "sha256": "5119377efe86e328581947298640789b93d9ef3bb3c4a0481ea46a22a4209d5f",
+      "bytes": 16530
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/comparisons/20260917T120451Z/comparison.md",
+      "sha256": "eda6fbe66cba9b19a28487266cbb73372f772c77b5d9799dd57ba2889a8c6d37",
+      "bytes": 977
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/advisor_seg_followup_20260916/doc/after.html",
       "sha256": "b4af58c6b48db8a805f03b715f777df5ea6941f633d14ca144a4e3e082184e8f",
       "bytes": 22929
@@ -1101,6 +1131,11 @@
       "bytes": 9413
     },
     {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/notification_receipt.json",
+      "sha256": "05c140a8c7f3d4772079a3b882b82f54473a1628a8c408373f3a850050ab48a3",
+      "bytes": 321
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260916T233436Z/readiness.json",
       "sha256": "09f87e7eee5c93510d547c02f3e511286efc9923b5ebc2eb81ed7e596b952d88",
       "bytes": 5726
@@ -1144,6 +1179,36 @@
       "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T035711Z/readiness.json",
       "sha256": "edac045b4d5298c769cf8d57f5929101f063535dcb68d9c0e6b625f52b278fe2",
       "bytes": 1656
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T080414Z/readiness.json",
+      "sha256": "54dca62d8dbcf0d708d14a453dfd0b80a38a3b3b47015a6b011cbe5d57a41eee",
+      "bytes": 1656
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T120440Z/RESULTS.md",
+      "sha256": "7425d8382a9a1f5bb2f1fc8b7fd8db5a828c648dd00a8d81ac03c2ab797b4907",
+      "bytes": 4026
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T120440Z/doc/after.md",
+      "sha256": "f172edc4403cfb5177bf7422087d6f350b62be63a66045938371f8b62d240c9f",
+      "bytes": 12830
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T120440Z/doc/before.md",
+      "sha256": "27d116ee33d152707d5e9250347f4060ae492652da516c75a3e46c5e403ec9f7",
+      "bytes": 12439
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T120440Z/doc/verification.json",
+      "sha256": "2b9e0efbde192554578117f2db17b52ef0588fea823efce46a76e9eb5b31fd1c",
+      "bytes": 372
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T120440Z/readiness.json",
+      "sha256": "b396deca62a72230286b5f0cb1b809f9795462f39d6a303d11bc4b898049e561",
+      "bytes": 41103
     },
     {
       "path": "outputs/independent_review_20260916/execution/advisor_sequence_20260916/report_gate/test_four_numbers.py",
@@ -1417,8 +1482,8 @@
     },
     {
       "path": "outputs/independent_review_20260916/execution/doc/current.html",
-      "sha256": "c82f1c49d8b3f87a380f983dff4d82379036d46b6143f89f1a42507d6bd9da21",
-      "bytes": 24059
+      "sha256": "6a80ea40ffb0f5b1c14eb97368e344ff3f86e73c9665f5a81e8e359dd7f22f7b",
+      "bytes": 24445
     },
     {
       "path": "outputs/independent_review_20260916/execution/doc/verification.json",
@@ -2391,14 +2456,34 @@
       "bytes": 1059
     },
     {
+      "path": "outputs/independent_review_20260916/execution/geography_review_acceptance_20260917/README.md",
+      "sha256": "a087694c3b76de1e9e9b267e2bca2ae38310e8b8e5dce5e6f98f690aede86cca",
+      "bytes": 4556
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/geography_review_acceptance_20260917/certificates.json",
+      "sha256": "541c6399cd872d7bf312315b7e252d4034315f386b6677361cd144b53d8df31c",
+      "bytes": 257208
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/geography_review_acceptance_20260917/verification.json",
+      "sha256": "e54486697195e394153bda56a3fe99e070875604cbf5707bbd5cb5b28c668f7d",
+      "bytes": 4265
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/geography_review_acceptance_20260917/verify.py",
+      "sha256": "f231c86fb1ccc58d50421213814d218b4042f24d6bf1e8d5613a66580ea0413e",
+      "bytes": 3929
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/geography_review_handoff_20260917/README.md",
       "sha256": "54ff7db76ce30952d936ede1b8781dcdfc760bd898724a625f818b742ae25f20",
       "bytes": 5644
     },
     {
       "path": "outputs/independent_review_20260916/execution/ledger.json",
-      "sha256": "4b7d69b34a4553d748cb1a6092ad1b0f4cb784e8fd7ef456906af420166359e2",
-      "bytes": 32399
+      "sha256": "d68949507311551f5108b12eab074f529d1d0bb62ffb0af6bc4fac47e7de35a2",
+      "bytes": 32916
     },
     {
       "path": "outputs/independent_review_20260916/execution/meeting_progress_20260917/CODE_REVIEW_RESPONSE.md",
@@ -2926,14 +3011,74 @@
       "bytes": 4997
     },
     {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T080414Z/heartbeat_receipt.json",
+      "sha256": "c931a3f6d1d785490b17b4cfcbc931ebdceed23e58ef05d965ba29ac04fab72f",
+      "bytes": 482
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T080414Z/new_failures.json",
+      "sha256": "796bee37305d3a5482f6bd0762708d34d6f0d15943c116811fc190f4ab811308",
+      "bytes": 760
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T080414Z/receipt.json",
+      "sha256": "ac8a2bfa35ca3c8308a5eee8d8678c3ed1f6e70df14192425a1213f9cc785e51",
+      "bytes": 614
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T080414Z/sacct.txt",
+      "sha256": "62516d9e104b6e788866a0e11f2a63a5065eb8aba6756f38ded0efc316786bd8",
+      "bytes": 47242
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T080414Z/snapshot.json",
+      "sha256": "f68ea39bb35c652a45f1f8b2bd572b3461665052999d83e33b368f0f4d080f2d",
+      "bytes": 365920
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T080414Z/squeue.txt",
+      "sha256": "cc867edce9bfb985cd6c9fd46f536ee700b2ea8a2bbf398a8ba27abf42415819",
+      "bytes": 4552
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T120440Z/heartbeat_receipt.json",
+      "sha256": "c96d8aa2224ee52de5b54d40be8545ff1bc1003409f9e40ff75243deeafea638",
+      "bytes": 226
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T120440Z/new_failures.json",
+      "sha256": "b6f992c53322d20d84276914c443ce177795dc625168df849893e9f588c25680",
+      "bytes": 851
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T120440Z/receipt.json",
+      "sha256": "e844f5e96b552ba9597c4965cf7913edbe771ae90fccd8e66d3c6ed92dc434e4",
+      "bytes": 614
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T120440Z/sacct.txt",
+      "sha256": "9f7efdf37c8e13f70ba1376c547b685b87e4a9711e478ab81394e495a0393172",
+      "bytes": 49585
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T120440Z/snapshot.json",
+      "sha256": "465fa68f5c2052fae82a34fe3eae30879122f421ad3a98ae9923bac112e3d041",
+      "bytes": 388263
+    },
+    {
+      "path": "outputs/independent_review_20260916/execution/monitor/20260917T120440Z/squeue.txt",
+      "sha256": "fb6a552546fd6df30b90e5152b3e05fd1234e213e34c25f88c627a4b60c878b8",
+      "bytes": 2506
+    },
+    {
       "path": "outputs/independent_review_20260916/execution/monitor/latest_path.txt",
-      "sha256": "6be5ca7125659c807eab4f30f55671678954e7890dd01cde7b9f28f915ce21fb",
+      "sha256": "fca0c3c55c29c4501f4a0d83759451b16382a788c32309dcb471bf8bb4ebb57e",
       "bytes": 118
     },
     {
       "path": "outputs/independent_review_20260916/execution/monitor/notified_failures.json",
-      "sha256": "b8c66741ed34a0ef19b103c8de6fe36e2248849b8e68f7dc78ac71f98e4dd536",
-      "bytes": 690
+      "sha256": "fdf69ca4fe056fe31897dc0e03483862b261e81ae77a606f1959c8ff75e281e6",
+      "bytes": 1883
     },
     {
       "path": "outputs/independent_review_20260916/execution/p1/README.md",

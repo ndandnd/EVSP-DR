@@ -1,0 +1,26 @@
+{
+  "ssh": "available",
+  "all_collectors": "success",
+  "report_gate": {
+    "ready": false,
+    "endpoints": 35,
+    "pending": 1,
+    "terminal_without_endpoint": 1,
+    "integrity_errors": []
+  },
+  "new_failures": [
+    "341163",
+    "341165"
+  ],
+  "action3_replay_shards": [
+    28,
+    32,
+    32,
+    28,
+    27,
+    30
+  ],
+  "new_submissions": 0,
+  "publication": "Batch with next scientific publication; no Doc export or mirror in this check.",
+  "decision": "NOTIFY"
+}
