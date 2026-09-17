@@ -1,3 +1,5 @@
+**17 September external audit received:** the reviewer independently reproduces36 group/mixed values on12 inputs and checks all102 input identities. Its corrected proof scope agrees with our structural result. [Acceptance, remaining wording issues and reproducibility request](../advisor_audit_acceptance_20260917/README.md). The original assessment below is historical.
+
 # Assessment of the independent reviewer
 
 **Update after the new computation:** the exact time-only bounds now establish that group separation rules out k−1 in all nine cases. This supplies the lower-bound proof that the reviewer’s saved-pool experiment alone did not provide. The review below assesses the original experiment on its own evidence. See ../../time_only_vsp_20260916/independent_review.md for the new result and its continuous/event-grid scope.

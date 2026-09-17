@@ -1,5 +1,7 @@
 # Exact time-only fleet bounds for 102 chain instances
 
+External audit received17September: independent recomputation on12instances and consistency checks on all102 agree. [Scope, archived reports and remaining qualifications](../execution/advisor_audit_acceptance_20260917/README.md).
+
 **F4/F2 VERIFIED:** keeping the two GIRO vehicle groups separate requires at least **k buses in every one of the 102 instances**, even after removing energy and charging constraints. Each group's bound equals its own GIRO duty count. If groups may mix, the time-only minimum is **k−1 in exactly the same nine cases** and k in the other 93.
 
 These are exact combinatorial results for a declared relaxation of the production travel model, not another restricted-column LP solve. All computation ran locally; no cluster jobs or commercial optimizer were used.

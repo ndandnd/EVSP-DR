@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "sources": [
+    {
+      "source": "advisor_time_only_audit_20260917/README.md",
+      "archive": "execution/advisor_audit_acceptance_20260917/reviewer_source/advisor_time_only_audit_20260917/README.md",
+      "sha256": "dd714792d0864b6b278debc511a2193438ed8a3f176d0fc53d176cf0d1a06c48"
+    },
+    {
+      "source": "advisor_seg_lp_20260916/README.md",
+      "archive": "execution/advisor_audit_acceptance_20260917/reviewer_source/advisor_seg_lp_20260916/README.md",
+      "sha256": "010626c809c428250199a322f2d8e9b9e51eb5451976db991385c1961713cc9e"
+    }
+  ],
+  "data_sha256": {
+    "time_only_vsp_20260916/per_case.csv": "822be44fb41a5d675a55112623ae94d479665f2eb84c558d2a805f5d267744b1",
+    "execution/audited_chain_results.csv": "7589df0ed25c77002d9da2ff5a68d9deac3d4890c37aa9660d8e3a7ffdce53f9"
+  },
+  "input_hash_matches": 102,
+  "separated_bound_equals_k": 102,
+  "mixed_bound_equals_k": 93,
+  "mixed_bound_equals_k_minus_one": 9,
+  "external_recomputation_scope": "Reviewer reports independent matching recomputation on 12 instances / 36 group cells; code and transcript not supplied as files.",
+  "scope_of_this_check": "CSV identities/counts and verbatim source preservation. No optimizer, certificate recomputation, physical replay or cluster job.",
+  "numeric_headlines_changed": false
+}
