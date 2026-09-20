@@ -1,0 +1,85 @@
+#!/bin/bash
+# Control arm: the trusted pool MIP on the UNMODIFIED frozen fresh pool.
+#
+#   sbatch --partition=default_partition --exclude=scaglione-compute-01 \
+#          --cpus-per-task=8 --mem=24G --time=<wall> \
+#          control_mip.sub <work> <case_id> <arm_a|arm_b>
+#
+# Replays the cumulative_budget_20260913 mip_base command verbatim except for
+# --timelimit/--stage1-timelimit (taken from the preregistered budget arm) and
+# the output paths.  Refuses to start if the frozen source bytes moved since
+# the manifest was generated.
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONHASHSEED=0
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+
+WORK=$1; CASE=$2; ARM=$3
+MANIFEST=$WORK/manifest.json
+PY=$(python3 - "$MANIFEST" <<'PYEOF'
+import json,sys; print(json.load(open(sys.argv[1]))['python'])
+PYEOF
+)
+read -r CODE MIP_COMMIT RESULT RESULT_SHA JOURNAL JOURNAL_SHA TL STAGE1 SEED THREADS \
+  < <($PY - "$MANIFEST" "$CASE" "$ARM" <<'PYEOF'
+import json, sys
+m = json.load(open(sys.argv[1])); c = m['cases'][sys.argv[2]]
+key = {'arm_a': 'arm_a_shared_prerequisite', 'arm_b': 'arm_b_graph_charged'}[sys.argv[3]]
+b = c['budget'][key]
+print(m['code'], m['mip_execution_commit'],
+      c['fresh_cg_result'], c['fresh_cg_result_sha256'],
+      c['fresh_journal'], c['fresh_journal_sha256'],
+      b['control_mip_timelimit_s'], b['control_stage1_timelimit_s'],
+      m['preregistered']['seed'], m['preregistered']['mip_threads'])
+PYEOF
+)
+# The pool MIP runs from the pinned execution checkout: the historical
+# campaign commit 871d057e predates --seed, so a seeded control/treatment
+# pair is impossible with it. $MIP_COMMIT is that checkout's HEAD.
+MIP=$CODE/src/run_exact_pool_mip.py
+
+# Re-hash at job start: the frozen inputs must be byte-identical to the manifest.
+test "$(sha256sum "$RESULT"  | cut -d' ' -f1)" = "$RESULT_SHA"
+test "$(sha256sum "$JOURNAL" | cut -d' ' -f1)" = "$JOURNAL_SHA"
+
+OUT=$WORK/results/$CASE/control_$ARM/${SLURM_JOB_ID}_r${SLURM_RESTART_COUNT:-0}
+mkdir -p "$OUT"
+export EVSP_EXPECTED_COMMIT=$MIP_COMMIT EVSP_REQUIRE_DETACHED=1 \
+       EVSP_MIP_EXPECTED_RESULT_SHA256=$RESULT_SHA \
+       EVSP_MIP_EXPECTED_JOURNAL_SHA256=$JOURNAL_SHA
+ARGV=("$PY" "$MIP" --result "$RESULT" --data-dir "$CODE/data"
+      --reference-data-dir "$CODE/data" --cover --two-stage
+      --timelimit "$TL" --stage1-timelimit "$STAGE1" --threads "$THREADS"
+      --mipgap 0.0001 --seed "$SEED"
+      --gurobi-log "$OUT/gurobi.log" --out "$OUT/result.json")
+printf '%s\n' "${ARGV[@]}" > "$OUT/argv.txt"
+START=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+cat > "$OUT/execution.json" <<JSON
+{"track":"diving_pricing_20260919","case_id":"$CASE","arm":"control_$ARM",
+ "slurm_job_id":"$SLURM_JOB_ID","restart_count":"${SLURM_RESTART_COUNT:-0}",
+ "host":"$(hostname -f)","cpus_on_node":"${SLURM_CPUS_ON_NODE:-}",
+ "mem_per_node":"${SLURM_MEM_PER_NODE:-}","started_utc":"$START",
+ "result":"$RESULT","result_sha256":"$RESULT_SHA",
+ "journal":"$JOURNAL","journal_sha256":"$JOURNAL_SHA",
+ "mip_commit":"$MIP_COMMIT","timelimit_s":"$TL","status":"running"}
+JSON
+cd "$CODE"
+set +e
+"${ARGV[@]}" > "$OUT/stdout.log" 2> "$OUT/stderr.log"
+RC=$?
+set -e
+# The source pool is an immutable input: prove this job did not touch it.
+test "$(sha256sum "$RESULT"  | cut -d' ' -f1)" = "$RESULT_SHA"
+test "$(sha256sum "$JOURNAL" | cut -d' ' -f1)" = "$JOURNAL_SHA"
+END=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+RSHA=$([ -f "$OUT/result.json" ] && sha256sum "$OUT/result.json" | cut -d' ' -f1 || echo missing)
+$PY - "$OUT/execution.json" "$RC" "$END" "$RSHA" <<'PYEOF'
+import json,sys
+p=sys.argv[1]; d=json.load(open(p))
+d.update(status='finished' if sys.argv[2]=='0' else 'failed',
+         returncode=int(sys.argv[2]), ended_utc=sys.argv[3],
+         result_sha256_out=sys.argv[4], source_immutable=True)
+json.dump(d, open(p,'w'), indent=1)
+PYEOF
+exit $RC
