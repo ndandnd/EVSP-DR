@@ -1,0 +1,28 @@
+{
+  "paired_cases": 24,
+  "measured_targets": [
+    5,
+    8,
+    10,
+    15
+  ],
+  "maximum_weighted_lp_absolute_difference": 1.0617077350616455e-06,
+  "maximum_weighted_lp_relative_difference": 7.075132124442677e-13,
+  "maximum_weighted_lp_relative_difference_percent": 7.075132124442677e-11,
+  "maximum_fractional_route_weight_difference": 2.8421709430404007e-13,
+  "maximum_charging_component_absolute_difference": 1.0458752512931824e-06,
+  "all_48_endpoints_pricing_certified": true,
+  "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+  "rc_eps": 0.0001,
+  "fresh_min_rc_range": [
+    -6.593571537027998e-05,
+    -2.38362218851762e-10
+  ],
+  "sequential_min_rc_range": [
+    -9.095508949519271e-05,
+    -1.610835909104935e-10
+  ],
+  "worst_case": "c2_k15",
+  "new_solver_calls": 0,
+  "interpretation": "numerically indistinguishable weighted LP values, not equality of route supports or a continuous-charging certificate"
+}

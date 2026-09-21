@@ -1,0 +1,25 @@
+{
+  "same_cohort_coverage": {
+    "w6_k05_fee0": {
+      "trip_count": 79,
+      "all_exactly_once": true,
+      "selected_routes": 5,
+      "charge_starts": 34
+    },
+    "w6_k05_fee5": {
+      "trip_count": 79,
+      "all_exactly_once": true,
+      "selected_routes": 5,
+      "charge_starts": 7
+    }
+  },
+  "viewed_images": [
+    "original_13309_full_day.png",
+    "w6_k05_fee0_full_day.png",
+    "w6_k05_fee5_full_day.png",
+    "comparison_same_cohort.png"
+  ],
+  "pdf_page1_rendered_and_inspected": "complete_itineraries.pdf",
+  "arc_adjustment": "Separated Partille-to-Jons empty arcs from reverse passenger arcs after visual review.",
+  "limits": "No new energy feasibility or shared capacity proof."
+}

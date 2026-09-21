@@ -1,0 +1,3452 @@
+{
+ "absolute_cost_gap": null,
+ "buses": 18,
+ "charging_cost": 676.2160000000149,
+ "charging_cost_semantics": "expanded_grid_cost",
+ "conservative_grid_charging_cost": 676.2160000000149,
+ "conservative_grid_cost_availability": "available_for_all_selected_routes",
+ "conservative_grid_mip_obj": 1800676.216,
+ "continuous_cost_pricing_certified": false,
+ "continuous_realized_charging_cost": 646.5896195985842,
+ "continuous_realized_mip_obj": 1800646.5896195986,
+ "cross_route_charger_capacity_validated": false,
+ "duplicate_trip_removal_validated": false,
+ "end_to_end_before_publication_s": 3652.447717624018,
+ "experiment_arm": "B",
+ "extra_route_sources": [],
+ "fleet_bound": 15.000000000000052,
+ "fleet_proven": false,
+ "gurobi_optimize_stage_wall_s": [
+  1800.173379466869,
+  1798.9482913590036
+ ],
+ "gurobi_optimize_wall_s": 3599.1216708258726,
+ "incumbent_found": true,
+ "incumbent_source": "stage2_solver",
+ "instance": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p03_20260908.csv",
+ "master_cost_semantics": "expanded_grid_cost",
+ "mip_bound": null,
+ "mip_bound_scope": "charging_related_objective_under_fleet_cap",
+ "mip_gap": 0.3352738006730157,
+ "mip_obj": 1800676.216,
+ "mip_provenance": {
+  "arguments": {
+   "cover": true,
+   "initial_partition_routes": null,
+   "mipgap": 0.0001,
+   "threads": 8,
+   "timelimit": 3600,
+   "two_stage": true,
+   "verified_expanded_initial_partition": false
+  },
+  "expected_git_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "final_observed_git_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "git_branch": "",
+  "git_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "git_detached": true,
+  "git_dirty": false,
+  "gurobi": "12.0.3",
+  "gurobi_parameters": {
+   "MIPGap": 0.0001,
+   "Seed": 0,
+   "Threads": 8,
+   "TimeLimit_s": 3600,
+   "seed_explicitly_set": false,
+   "seed_source": "gurobi_default"
+  },
+  "host": "unicorn-cpu-01.coecis.cornell.edu",
+  "observed_git_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "python": "3.12.13",
+  "tracked_clean_at_end": true
+ },
+ "mip_start": {
+  "assigned_variable_count": 38130,
+  "assignment_complete": true,
+  "expected_full_objective": 10000621.167999996,
+  "kind": "greedy_pool_partition",
+  "selected_variable_count": 100,
+  "solver_acceptance": {
+   "accepted": true,
+   "messages": [
+    "Loaded user MIP start with objective 100"
+   ],
+   "rejection_observed": false,
+   "status": "accepted"
+  },
+  "source": null,
+  "source_sha256": null,
+  "validated": true,
+  "validated_bus_count": 100
+ },
+ "mip_start_assigned": true,
+ "mip_start_buses": 100,
+ "mip_start_used": true,
+ "node_count": 17545.0,
+ "optimal_scope": "none",
+ "overcovered_trips": 87,
+ "partitioning": false,
+ "physical_pool_audit": {
+  "accepted_columns": 38130,
+  "added_giro_route_count": 0,
+  "added_giro_route_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "assigned_mip_start_route_count": 100,
+  "augmented_pool_column_count": 38130,
+  "augmented_pool_ordered_sha256": "c2b617feddc9befa15ec67ebe14fd782dc8d6c7212b140ba0c4252a1579634eb",
+  "base_pool_column_count": 38130,
+  "base_pool_ordered_sha256": "c2b617feddc9befa15ec67ebe14fd782dc8d6c7212b140ba0c4252a1579634eb",
+  "continuous_cost_pricing_certified": false,
+  "deterministically_repaired": 0,
+  "input_hashes": {
+   "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+   "instance_sha256": "44d91ad2cd6604441b3ea36dfb77cda9f89901d14755ec30d502887f0efb3490",
+   "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+  },
+  "master_cost_semantics": "expanded_grid_cost_unchanged",
+  "master_sense": "cover",
+  "mip_ordered_pool_sha256": "c2b617feddc9befa15ec67ebe14fd782dc8d6c7212b140ba0c4252a1579634eb",
+  "mip_unique_accepted_columns": 38130,
+  "persisted_charging_block_count": 157704,
+  "persisted_charging_block_payload_bytes": 31785934,
+  "post_augmentation_columns": 38130,
+  "post_augmentation_master_cost_semantics": "expanded_grid_cost",
+  "preparation_wall_s": 50.378061229828745,
+  "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+  "rejected_columns": 0,
+  "rejected_samples": [],
+  "rejected_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "repaired_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "schema": "evsp-dr-strict-pool-physical-gate-v1",
+  "source_pricing_certified": true,
+  "source_reference_hashes_bound": true,
+  "total_columns": 38130,
+  "valid_as_recorded": 38130,
+  "valid_set_sha256": "79363495cb1acabb15bc222a8607849a501688ab147de45c11886bfca2409a70"
+ },
+ "physical_pool_preparation_wall_s": 50.378061229828745,
+ "physical_replay_scope": "selected_routes_individually_plus_at_least_once_trip_coverage",
+ "physical_replay_validated": true,
+ "physics": {
+  "block_min": 5,
+  "charge_kw": 240.0,
+  "g_kwh": 240.0,
+  "min_soc_frac": 0.0,
+  "prices_csv": "hourly_prices_flat.csv",
+  "soc_step": 2.5
+ },
+ "pool_columns": 38130,
+ "pool_preparation": null,
+ "pricer_provenance": {
+  "args": {
+   "augmentation_label": null,
+   "block_min": 5,
+   "charge_kw": 240.0,
+   "checkpoint_every": 25,
+   "column_candidate_multiplier": 4,
+   "column_diversity_weight": 0.0,
+   "column_selection": "reduced_cost",
+   "columns_per_iter": 30,
+   "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p03_20260908.csv",
+   "diversify_delta": 0.15,
+   "diversify_rounds": 0,
+   "event_arc_mode": "lazy",
+   "event_network_cache": "/home/nc437/ladder-lite/cumulative_budget_20260913/inputs/c3_k15/network.pkl",
+   "event_network_cache_mode": "require",
+   "event_network_cache_only": false,
+   "fixed_sequence_index": true,
+   "g_kwh": 240.0,
+   "gurobi_log": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/base/135643_r0/cg.json.gurobi.log",
+   "inherit_event_pool_from": null,
+   "inherit_event_pool_workers": 1,
+   "inherit_max_columns": 0,
+   "inherit_time_limit_s": 0,
+   "initial_pool": "singletons",
+   "master_backend": "gurobi",
+   "master_sense": "cover",
+   "max_iters": 50000,
+   "min_soc_frac": 0.0,
+   "out": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/base/135643_r0/cg.json",
+   "prices_csv": "hourly_prices_flat.csv",
+   "rc_eps": 0.0001,
+   "resume": false,
+   "skip_gurobi_incidence": false,
+   "snapshot_at_minutes": null,
+   "soc_step": 2.5,
+   "stall_obj_frac": 1e-05,
+   "stall_rc_frac": 0.05,
+   "stall_window_min": null,
+   "strict_tariff_coverage": false,
+   "time_model": "event",
+   "validated_seed_routes": null,
+   "wall_limit_s": 59740
+  },
+  "charging_realization_schema": "evsp-dr-expanded-path-continuous-realization-v1",
+  "column_pool_treatment": "RAW",
+  "continuous_cost_pricing_certified": false,
+  "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+  "git_branch": "",
+  "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+  "git_dirty": true,
+  "gurobi_license_file": "/share/apps/software/gurobi/gurobi.lic",
+  "gurobi_version": "12.0.3",
+  "inherited_event_pool_status_sha256": null,
+  "instance_sha256": "44d91ad2cd6604441b3ea36dfb77cda9f89901d14755ec30d502887f0efb3490",
+  "master_backend": "gurobi",
+  "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+  "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+  "pricing_cost_semantics": "conservative_expanded_grid_cost",
+  "python": "3.12.13",
+  "rc_eps": 0.0001,
+  "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+  "scipy": "1.13.1",
+  "validated_seed_routes_sha256": null
+ },
+ "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+ "progress": null,
+ "requested_mip_gap": 0.0001,
+ "runtime_s": 3601.559746026993,
+ "selected_charging_block_hashes": [
+  "ff91d249f8b8c1209cd5147f63f645679cf15fa6de2337ef2fb9f3c141911e5b",
+  "233cdecb3dfba474dae8459c4cd0f0bd1e00dfd752a6c42aaeb0944c45a38b58",
+  "b5d367dfbe258da0650e8eba0ac53bc0741fc88482da5e4308ba8f2dae83b509",
+  "54e9677290a3f8bd965787a5910b46c0d240eef93469b382b1399cf6cce6169f",
+  "dca8b7243b472cdc85131fbbdb054560bceadc1ba8067abafb75d703554d5b45",
+  "47f17a45e612e49e2d804cb921693bfd66e8df9434affbf00db87363e9cac751",
+  "a737814462509a4b406e0e028edfe839b77a1affc374f2d134bf6de22b908049",
+  "e79aeadde3eb6b9ba8f2460b17499bd8587c00ff0846e13b797ba0d9d923e998",
+  "1dc95d2c985f24ba4351da9c16141b661b5e4bfb8a40c83658dd5c42566e8369",
+  "a1848a77153271edd92973eefba86b2b2f7c388a0d2f992db77c0ff5dc1585c1",
+  "3d31e98ea9d09ead7a781432f1cbf12ba5d5006f972f4e63e90013327beff7e3",
+  "7a14ede59092e05983328a8c4c63e0a28124e288bbd47e0c917bb4fe16755753",
+  "593e7f118b314d744b09f70633e0a51aa17f3a582163332b710279199af2cfbf",
+  "d3fe2f182fd13d83b33020f3b40ed3098d9d99e9dfdd00a219c48c1a832bdfff",
+  "e9316055e08b99f9aa1cdee01de36d7ed89bca2f5c9325210e5a28a8e4b1b0a8",
+  "78e65b7138aa6d0364e3f26bcdedf1fa7d11a3f5bb6388004c40c52896e9c1d0",
+  "5d32bd8c42f11eded355fb66ba24e949d29d390ee15d6ab7bdfff4c53dc838a0",
+  "f0470c8c082d2e2b02c11857314a8984b4b6e1cc1fc2a754b9f4b47d84b53eb6"
+ ],
+ "selected_charging_block_set_sha256": "56e48fabc1b54c0074d65f2c553e02e9abd0d77f5c697e96f448206108453960",
+ "selected_route_hashes": [
+  "c7ff2159216ef018efb4e605e7edd55a5f544808bdd45d8acb12f1a6b4cb7953",
+  "88db99cdcc801f23883e7589560150ddace1d86966ab0296512e3c43724a0371",
+  "899d9379291d48f1783846a9268666fcb35738632cae5b8395e11dfe15444d14",
+  "60466303bc3c499923454629afa753b0001ed9398066ba9cec2f54da05b17f4a",
+  "48d782692cc7744c6c6f4495c2b729c3be3371da3827c43e7c6c6b87a5fc9a8d",
+  "1a6a83e3024a3fa13fdf8f92320ae09ca65e7ec3139d5ff99361ae80e5682d4a",
+  "5812a94e9572046cc793b7303321d3412d58690abedd4f050cec75c833a8f018",
+  "8e36643159d3d1dc868d8fb0a50153f93dc89d640fd0496c080b376831687afe",
+  "32ecae56e45e6eaac9404532e033a203c38d777563820f9fdb5a1cf979c69b49",
+  "f100dec2b502343cc3b0af27e51956338dbe77a87c8791516ce864d94c1980d7",
+  "97c992dc94619cf8fb9f625030c8363aa6f0c39e664714d0f2e92e0dbe018c6d",
+  "0a58da97da5c6305e4e967aaabaf9a77ccced30803d7e4322373827a36451507",
+  "91cb8a387ac111e7f3e56f0288962bd22ed867fffad5703dfe4b1ff8e23fd896",
+  "db0f5beb91371b378be2e2097408c7f3626e2679d8e8cf844400e7017bb49e2c",
+  "695639946a49d58ca3446733a9aee503ae982490c5a632a8173a2ce2fc2efc53",
+  "08f4889c90308a9deaa95ea8b77d1904810999a90d738fd54ea8cf5cdb101bf4",
+  "3e21c97d9124dd0e8e194713b65609859c6bfad9b50a79545cc73d2c5090407b",
+  "6dbae8e6e797442617483108ad3b3b6d079571616bb0c8a203484db5e1bd54d3"
+ ],
+ "selected_route_set_sha256": "9ccdd31f7e65ba45e84e9acf6595010bab7f1b1c7faf7809f16886e1ca740d70",
+ "selected_routes": [
+  {
+   "charges_started": 2,
+   "charging_stops": {
+    "cet": [
+     615.75,
+     1124.625
+    ],
+    "cst": [
+     572.0,
+     1074.0
+    ],
+    "kwh": [
+     161.8429988,
+     187.34499726
+    ],
+    "stations": [
+     "PARX_1",
+     "JON_A_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 600.0,
+     "expanded_grid_kwh": 112.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 112.0,
+     "start_min": 572.0,
+     "station": "PARX_1",
+     "stop_index": 0,
+     "tariff_hour": 9,
+     "tariff_key": "PARX:9"
+    },
+    {
+     "block_index": 1,
+     "end_min": 615.75,
+     "expanded_grid_kwh": 63.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 49.842998800000004,
+     "start_min": 600.0,
+     "station": "PARX_1",
+     "stop_index": 0,
+     "tariff_hour": 10,
+     "tariff_key": "PARX:10"
+    },
+    {
+     "block_index": 0,
+     "end_min": 1080.0,
+     "expanded_grid_kwh": 24.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 24.0,
+     "start_min": 1074.0,
+     "station": "JON_A_0",
+     "stop_index": 1,
+     "tariff_hour": 17,
+     "tariff_key": "JON_A:17"
+    },
+    {
+     "block_index": 1,
+     "end_min": 1124.625,
+     "expanded_grid_kwh": 178.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 163.34499726,
+     "start_min": 1080.0,
+     "station": "JON_A_0",
+     "stop_index": 1,
+     "tariff_hour": 18,
+     "tariff_key": "JON_A:18"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 811,
+   "continuous_realized_cost": 100044.63944920915,
+   "cost": 100047.44799999999,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     615.75,
+     1124.625
+    ],
+    "cst": [
+     572.0,
+     1074.0
+    ],
+    "kwh": [
+     175.0,
+     202.5
+    ],
+    "stations": [
+     "PARX_1",
+     "JON_A_0"
+    ]
+   },
+   "expanded_grid_cost": 100047.44799999999,
+   "found_iter": 546,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "ff91d249f8b8c1209cd5147f63f645679cf15fa6de2337ef2fb9f3c141911e5b",
+    "continuous_terminal_soc_kwh": 12.493000400000007,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100044.63944920915,
+     "expanded_minus_realized_cost": 2.8085507908479954,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100047.448,
+     "stored_expanded_grid_cost": 100047.44799999999
+    },
+    "discarded_grid_residual_kwh": 39.41100414000002,
+    "expanded_grid_terminal_soc_kwh": 1.3940002000000016,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "58ba3a474d2202cbfa491659591eeeceb6ec2390a1ac2fb2436cb1475b45e99f",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "12ce583908e269dbaaa11e9d8e3ea3bf9fb277dc68c11150bce71ad6a645de97",
+    "realized_total_kwh": 349.18799606000005,
+    "recorded_charging_sha256": "4c51e754cec8a03c09c98b36d0b330369625023a4522689adc548128cceaea16",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "c7ff2159216ef018efb4e605e7edd55a5f544808bdd45d8acb12f1a6b4cb7953",
+    "recorded_total_kwh": 377.5,
+    "route_nodes_sha256": "43695851676d981b51ac997f631197aa832d970f48fac1edb668ecef65db4b12",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "05575e43f0d58fc7ac42569ad3dd525eaf61936d15caa71b624bdf5360e371e8"
+   },
+   "route_nodes": [
+    "PARX_0",
+    0,
+    4,
+    10,
+    27,
+    38,
+    55,
+    75,
+    "PARX_1",
+    93,
+    104,
+    109,
+    118,
+    121,
+    129,
+    148,
+    163,
+    178,
+    184,
+    187,
+    203,
+    214,
+    "JON_A_0",
+    235,
+    240,
+    246,
+    251,
+    254,
+    263,
+    271,
+    274,
+    281,
+    290,
+    "PARX_0"
+   ],
+   "trips": [
+    0,
+    4,
+    10,
+    27,
+    38,
+    55,
+    75,
+    93,
+    104,
+    109,
+    118,
+    121,
+    129,
+    148,
+    163,
+    178,
+    184,
+    187,
+    203,
+    214,
+    235,
+    240,
+    246,
+    251,
+    254,
+    263,
+    271,
+    274,
+    281,
+    290
+   ]
+  },
+  {
+   "charges_started": 1,
+   "charging_stops": {
+    "cet": [
+     805.5
+    ],
+    "cst": [
+     748.0
+    ],
+    "kwh": [
+     206.64299846
+    ],
+    "stations": [
+     "3127L_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 780.0,
+     "expanded_grid_kwh": 128.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 128.0,
+     "start_min": 748.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 12,
+     "tariff_key": "3127L:12"
+    },
+    {
+     "block_index": 1,
+     "end_min": 805.5,
+     "expanded_grid_kwh": 102.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 78.64299846,
+     "start_min": 780.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 13,
+     "tariff_key": "3127L:13"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 403,
+   "continuous_realized_cost": 100025.49898544724,
+   "cost": 100027.81599999999,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     805.5
+    ],
+    "cst": [
+     748.0
+    ],
+    "kwh": [
+     230.0
+    ],
+    "stations": [
+     "3127L_0"
+    ]
+   },
+   "expanded_grid_cost": 100027.81599999999,
+   "found_iter": 735,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "233cdecb3dfba474dae8459c4cd0f0bd1e00dfd752a6c42aaeb0944c45a38b58",
+    "continuous_terminal_soc_kwh": 15.3150024,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100025.49898544724,
+     "expanded_minus_realized_cost": 2.3170145527680006,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100027.816,
+     "stored_expanded_grid_cost": 100027.81599999999
+    },
+    "discarded_grid_residual_kwh": 37.71000444000003,
+    "expanded_grid_terminal_soc_kwh": 0.9619994999999992,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "4ae5fd5e0066e07440061e30a4e4044a2dae425ec31fc850e355f5dc65c925a1",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "0b26760f0a787acb77a02e29267457c871b51b66758cc62cce1b54291bcdfaa9",
+    "realized_total_kwh": 206.64299846,
+    "recorded_charging_sha256": "0c869cf0367ae0f1eaafb62bac32f0c97cde69626c61703905706eed718e280a",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "88db99cdcc801f23883e7589560150ddace1d86966ab0296512e3c43724a0371",
+    "recorded_total_kwh": 230.0,
+    "route_nodes_sha256": "f79850af36584e12d9a769258ad3825c3fa135faa2759053e669d27dccd49018",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "5210ec04ea6a3b2fb76b1815fe54e02d2c9fe09cde27c32e3fccb2ba3bac5e08"
+   },
+   "route_nodes": [
+    "PARX_0",
+    5,
+    7,
+    11,
+    14,
+    26,
+    35,
+    53,
+    62,
+    78,
+    89,
+    96,
+    105,
+    "3127L_0",
+    134,
+    147,
+    161,
+    174,
+    180,
+    191,
+    202,
+    215,
+    232,
+    "PARX_0"
+   ],
+   "trips": [
+    5,
+    7,
+    11,
+    14,
+    26,
+    35,
+    53,
+    62,
+    78,
+    89,
+    96,
+    105,
+    134,
+    147,
+    161,
+    174,
+    180,
+    191,
+    202,
+    215,
+    232
+   ]
+  },
+  {
+   "charges_started": 2,
+   "charging_stops": {
+    "cet": [
+     807.75,
+     1172.125
+    ],
+    "cst": [
+     759.0,
+     1149.0
+    ],
+    "kwh": [
+     191.259999,
+     90.1899985
+    ],
+    "stations": [
+     "2190L_0",
+     "4808_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 780.0,
+     "expanded_grid_kwh": 84.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 84.0,
+     "start_min": 759.0,
+     "station": "2190L_0",
+     "stop_index": 0,
+     "tariff_hour": 12,
+     "tariff_key": "2190L:12"
+    },
+    {
+     "block_index": 1,
+     "end_min": 807.75,
+     "expanded_grid_kwh": 111.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 107.259999,
+     "start_min": 780.0,
+     "station": "2190L_0",
+     "stop_index": 0,
+     "tariff_hour": 13,
+     "tariff_key": "2190L:13"
+    },
+    {
+     "block_index": 0,
+     "end_min": 1172.125,
+     "expanded_grid_kwh": 92.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 90.1899985,
+     "start_min": 1149.0,
+     "station": "4808_0",
+     "stop_index": 1,
+     "tariff_hour": 19,
+     "tariff_key": "4808:19"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 605,
+   "continuous_realized_cost": 100037.919839752,
+   "cost": 100038.51999999999,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     807.75,
+     1172.125
+    ],
+    "cst": [
+     759.0,
+     1149.0
+    ],
+    "kwh": [
+     195.0,
+     92.5
+    ],
+    "stations": [
+     "2190L_0",
+     "4808_0"
+    ]
+   },
+   "expanded_grid_cost": 100038.51999999999,
+   "found_iter": 809,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "b5d367dfbe258da0650e8eba0ac53bc0741fc88482da5e4308ba8f2dae83b509",
+    "continuous_terminal_soc_kwh": 0.47000050000000204,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100037.919839752,
+     "expanded_minus_realized_cost": 0.6001602480000017,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100038.52,
+     "stored_expanded_grid_cost": 100038.51999999999
+    },
+    "discarded_grid_residual_kwh": 6.050002500000019,
+    "expanded_grid_terminal_soc_kwh": 0.47000050000000204,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "d067122f6dff910beae0ef09133674d276df0883eb4f42bfeb1c809bf9ceec39",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "f3128e69c044b71a0dc4009193a94abb32d6c149141dd756411796e486350e91",
+    "realized_total_kwh": 281.4499975,
+    "recorded_charging_sha256": "944f1fc4eef561c47d8bd2f2b4301dda9bdd286684778244eb0586b876ff7afb",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "899d9379291d48f1783846a9268666fcb35738632cae5b8395e11dfe15444d14",
+    "recorded_total_kwh": 287.5,
+    "route_nodes_sha256": "ee78d5ea449043b2a8248705f327131377bab287c2c47716f209abfb394e2865",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "916ed21eda530ded675ced9bf00e688a43e5cf2c036b936da4a5880f26e1fd74"
+   },
+   "route_nodes": [
+    "PARX_0",
+    29,
+    58,
+    76,
+    91,
+    103,
+    "2190L_0",
+    133,
+    152,
+    179,
+    205,
+    227,
+    "4808_0",
+    249,
+    266,
+    "PARX_0"
+   ],
+   "trips": [
+    29,
+    58,
+    76,
+    91,
+    103,
+    133,
+    152,
+    179,
+    205,
+    227,
+    249,
+    266
+   ]
+  },
+  {
+   "charges_started": 2,
+   "charging_stops": {
+    "cet": [
+     741.75,
+     1125.0
+    ],
+    "cst": [
+     683.0,
+     1070.0
+    ],
+    "kwh": [
+     219.5110008,
+     207.6129987
+    ],
+    "stations": [
+     "3127L_0",
+     "JON_A_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 720.0,
+     "expanded_grid_kwh": 148.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 148.0,
+     "start_min": 683.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 11,
+     "tariff_key": "3127L:11"
+    },
+    {
+     "block_index": 1,
+     "end_min": 741.75,
+     "expanded_grid_kwh": 87.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 71.5110008,
+     "start_min": 720.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 12,
+     "tariff_key": "3127L:12"
+    },
+    {
+     "block_index": 0,
+     "end_min": 1080.0,
+     "expanded_grid_kwh": 40.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 40.0,
+     "start_min": 1070.0,
+     "station": "JON_A_0",
+     "stop_index": 1,
+     "tariff_hour": 17,
+     "tariff_key": "JON_A:17"
+    },
+    {
+     "block_index": 1,
+     "end_min": 1125.0,
+     "expanded_grid_kwh": 180.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 167.6129987,
+     "start_min": 1080.0,
+     "station": "JON_A_0",
+     "stop_index": 1,
+     "tariff_hour": 18,
+     "tariff_key": "JON_A:18"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 806,
+   "continuous_realized_cost": 100052.3707007504,
+   "cost": 100055.13600000001,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     741.75,
+     1125.0
+    ],
+    "cst": [
+     683.0,
+     1070.0
+    ],
+    "kwh": [
+     235.0,
+     220.0
+    ],
+    "stations": [
+     "3127L_0",
+     "JON_A_0"
+    ]
+   },
+   "expanded_grid_cost": 100055.13600000001,
+   "found_iter": 882,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "54e9677290a3f8bd965787a5910b46c0d240eef93469b382b1399cf6cce6169f",
+    "continuous_terminal_soc_kwh": 15.327002740000001,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100052.3707007504,
+     "expanded_minus_realized_cost": 2.765299249599998,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100055.136,
+     "stored_expanded_grid_cost": 100055.13600000001
+    },
+    "discarded_grid_residual_kwh": 38.39000333999995,
+    "expanded_grid_terminal_soc_kwh": 4.812999899999998,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "3eabf0ca6a097e357d9551a4f0cc88ecfb372191fecaea03ebcedf00a7ef66d9",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "aeb3107e1da03fa29004b1a1604e0ef201975480cbcadd8d048a55803cfcb47d",
+    "realized_total_kwh": 427.12399949999997,
+    "recorded_charging_sha256": "9c94452e7077ec6fa311ccd321de4f47e1802a178383928916df6940cd60db98",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "60466303bc3c499923454629afa753b0001ed9398066ba9cec2f54da05b17f4a",
+    "recorded_total_kwh": 455.0,
+    "route_nodes_sha256": "9c7839c06f147c37af6675dc1406ff5e320fb57af5b053bbc9a1de058a64bd41",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "fa65a961650c76d98f58af9311d348e282d5b44d88edcc8a8458216dfeb796f1"
+   },
+   "route_nodes": [
+    "PARX_0",
+    0,
+    7,
+    18,
+    21,
+    30,
+    36,
+    43,
+    48,
+    60,
+    69,
+    83,
+    87,
+    93,
+    "3127L_0",
+    111,
+    121,
+    129,
+    138,
+    149,
+    158,
+    175,
+    190,
+    211,
+    "JON_A_0",
+    235,
+    242,
+    248,
+    252,
+    268,
+    279,
+    283,
+    288,
+    294,
+    298,
+    300,
+    301,
+    "PARX_0"
+   ],
+   "trips": [
+    0,
+    7,
+    18,
+    21,
+    30,
+    36,
+    43,
+    48,
+    60,
+    69,
+    83,
+    87,
+    93,
+    111,
+    121,
+    129,
+    138,
+    149,
+    158,
+    175,
+    190,
+    211,
+    235,
+    242,
+    248,
+    252,
+    268,
+    279,
+    283,
+    288,
+    294,
+    298,
+    300,
+    301
+   ]
+  },
+  {
+   "charges_started": 1,
+   "charging_stops": {
+    "cet": [
+     1009.125
+    ],
+    "cst": [
+     961.0
+    ],
+    "kwh": [
+     176.73599917
+    ],
+    "stations": [
+     "3127L_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 1009.125,
+     "expanded_grid_kwh": 192.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 176.73599917,
+     "start_min": 961.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 16,
+     "tariff_key": "3127L:16"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 209,
+   "continuous_realized_cost": 100022.53221111766,
+   "cost": 100024.096,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     1009.125
+    ],
+    "cst": [
+     961.0
+    ],
+    "kwh": [
+     192.5
+    ],
+    "stations": [
+     "3127L_0"
+    ]
+   },
+   "expanded_grid_cost": 100024.096,
+   "found_iter": 929,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "dca8b7243b472cdc85131fbbdb054560bceadc1ba8067abafb75d703554d5b45",
+    "continuous_terminal_soc_kwh": 12.055002300000012,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100022.53221111766,
+     "expanded_minus_realized_cost": 1.5637888823359987,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100024.096,
+     "stored_expanded_grid_cost": 100024.096
+    },
+    "discarded_grid_residual_kwh": 25.90300353,
+    "expanded_grid_terminal_soc_kwh": 1.9159996000000001,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "afeeb2de98f0b7eab10ec32f11d7bdd9944e24e1eef3e0f9e7950f3c0c21ca03",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "e22b9a067510b29a09d07582d80770f6dc00c62697b872358a57e65bd1b12719",
+    "realized_total_kwh": 176.73599917,
+    "recorded_charging_sha256": "a1856f76a9766e1db20424c7e4a03eb274dadd49402d55ba4fef7d5cc0ecf111",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "48d782692cc7744c6c6f4495c2b729c3be3371da3827c43e7c6c6b87a5fc9a8d",
+    "recorded_total_kwh": 192.5,
+    "route_nodes_sha256": "3351f05a9d97103e60104f163b003154e481f60ba7865ae6fd541b275ebd2c52",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "bf172d7c411a05531ab96696f8bda6e83b8ea2cb8bc30faf8d40e6715e0e7d11"
+   },
+   "route_nodes": [
+    "PARX_0",
+    39,
+    57,
+    74,
+    78,
+    89,
+    96,
+    109,
+    123,
+    137,
+    147,
+    162,
+    "3127L_0",
+    199,
+    209,
+    221,
+    232,
+    243,
+    253,
+    270,
+    275,
+    284,
+    292,
+    295,
+    "PARX_0"
+   ],
+   "trips": [
+    39,
+    57,
+    74,
+    78,
+    89,
+    96,
+    109,
+    123,
+    137,
+    147,
+    162,
+    199,
+    209,
+    221,
+    232,
+    243,
+    253,
+    270,
+    275,
+    284,
+    292,
+    295
+   ]
+  },
+  {
+   "charges_started": 1,
+   "charging_stops": {
+    "cet": [
+     807.375
+    ],
+    "cst": [
+     748.0
+    ],
+    "kwh": [
+     221.658999
+    ],
+    "stations": [
+     "3127L_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 780.0,
+     "expanded_grid_kwh": 128.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 128.0,
+     "start_min": 748.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 12,
+     "tariff_key": "3127L:12"
+    },
+    {
+     "block_index": 1,
+     "end_min": 807.375,
+     "expanded_grid_kwh": 109.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 93.658999,
+     "start_min": 780.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 13,
+     "tariff_key": "3127L:13"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 403,
+   "continuous_realized_cost": 100026.9885727008,
+   "cost": 100028.56,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     807.375
+    ],
+    "cst": [
+     748.0
+    ],
+    "kwh": [
+     237.5
+    ],
+    "stations": [
+     "3127L_0"
+    ]
+   },
+   "expanded_grid_cost": 100028.56,
+   "found_iter": 940,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "47f17a45e612e49e2d804cb921693bfd66e8df9434affbf00db87363e9cac751",
+    "continuous_terminal_soc_kwh": 15.842001040000003,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100026.9885727008,
+     "expanded_minus_realized_cost": 1.5714272991999998,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100028.56,
+     "stored_expanded_grid_cost": 100028.56
+    },
+    "discarded_grid_residual_kwh": 29.762002339999988,
+    "expanded_grid_terminal_soc_kwh": 1.9209996999999994,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "8b0006bbe15bf4cf06b24b8ce13ea4f1badd236c3960757ba2cebcf9375feaff",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "831df4f13b516503315c598cd0fac77dd83033280b1abc46f5131683e1aaeab2",
+    "realized_total_kwh": 221.658999,
+    "recorded_charging_sha256": "7439b3de448c776312067c2ab296129a47fd0612d39f2418e1532df5f5a20d4e",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "1a6a83e3024a3fa13fdf8f92320ae09ca65e7ec3139d5ff99361ae80e5682d4a",
+    "recorded_total_kwh": 237.5,
+    "route_nodes_sha256": "63594e73511954c1ab550659240537ad3c36998b099b581e45d5e25f334b01b6",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "afb796a67422a0db386c518fc2d36f0b24dc2fd590789fa7cd895a43b9ab061e"
+   },
+   "route_nodes": [
+    "PARX_0",
+    14,
+    25,
+    33,
+    42,
+    59,
+    67,
+    75,
+    79,
+    84,
+    95,
+    100,
+    105,
+    "3127L_0",
+    156,
+    166,
+    183,
+    192,
+    206,
+    214,
+    224,
+    230,
+    233,
+    238,
+    243,
+    250,
+    255,
+    257,
+    "PARX_0"
+   ],
+   "trips": [
+    14,
+    25,
+    33,
+    42,
+    59,
+    67,
+    75,
+    79,
+    84,
+    95,
+    100,
+    105,
+    156,
+    166,
+    183,
+    192,
+    206,
+    214,
+    224,
+    230,
+    233,
+    238,
+    243,
+    250,
+    255,
+    257
+   ]
+  },
+  {
+   "charges_started": 2,
+   "charging_stops": {
+    "cet": [
+     542.75,
+     1160.375
+    ],
+    "cst": [
+     504.0,
+     1101.0
+    ],
+    "kwh": [
+     141.9479999,
+     222.21899806
+    ],
+    "stations": [
+     "3127L_0",
+     "3127L_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 540.0,
+     "expanded_grid_kwh": 144.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 141.9479999,
+     "start_min": 504.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 8,
+     "tariff_key": "3127L:8"
+    },
+    {
+     "block_index": 1,
+     "end_min": 542.75,
+     "expanded_grid_kwh": 11.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 0.0,
+     "start_min": 540.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 9,
+     "tariff_key": "3127L:9"
+    },
+    {
+     "block_index": 0,
+     "end_min": 1140.0,
+     "expanded_grid_kwh": 156.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 156.0,
+     "start_min": 1101.0,
+     "station": "3127L_0",
+     "stop_index": 1,
+     "tariff_hour": 18,
+     "tariff_key": "3127L:18"
+    },
+    {
+     "block_index": 1,
+     "end_min": 1160.375,
+     "expanded_grid_kwh": 81.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 66.21899805999999,
+     "start_min": 1140.0,
+     "station": "3127L_0",
+     "stop_index": 1,
+     "tariff_hour": 19,
+     "tariff_key": "3127L:19"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 810,
+   "continuous_realized_cost": 100046.12536619764,
+   "cost": 100048.93599999999,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     542.75,
+     1160.375
+    ],
+    "cst": [
+     504.0,
+     1101.0
+    ],
+    "kwh": [
+     155.0,
+     237.5
+    ],
+    "stations": [
+     "3127L_0",
+     "3127L_0"
+    ]
+   },
+   "expanded_grid_cost": 100048.93599999999,
+   "found_iter": 975,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "a737814462509a4b406e0e028edfe839b77a1affc374f2d134bf6de22b908049",
+    "continuous_terminal_soc_kwh": 12.989000599999995,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100046.12536619764,
+     "expanded_minus_realized_cost": 2.8106338023679953,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100048.936,
+     "stored_expanded_grid_cost": 100048.93599999999
+    },
+    "discarded_grid_residual_kwh": 39.160003539999984,
+    "expanded_grid_terminal_soc_kwh": 2.161999100000001,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "4cce0fe9371620deb4accaa2e950072335df6b7019871eefc3f655fd2b839aa5",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "1686aa4d60d7202f7071b2454830a9719da0e4bbe3d1e2c60f4ff49a317e73fb",
+    "realized_total_kwh": 364.16699796,
+    "recorded_charging_sha256": "19c38c03313baebfc24223a39f768d8c7a4817042fc9d546a046f76dab13cf78",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "5812a94e9572046cc793b7303321d3412d58690abedd4f050cec75c833a8f018",
+    "recorded_total_kwh": 392.5,
+    "route_nodes_sha256": "ec9a1bbf82676911958646cfc93f8c1986a301ca0cfd14d15d50126e02927d75",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "f108fa8abd6c13934cc23e5f5a26e2b585ce39d8bdddd00547b5e768e1b21400"
+   },
+   "route_nodes": [
+    "PARX_0",
+    0,
+    4,
+    10,
+    17,
+    20,
+    28,
+    41,
+    52,
+    "3127L_0",
+    104,
+    117,
+    126,
+    132,
+    139,
+    143,
+    150,
+    155,
+    164,
+    171,
+    185,
+    197,
+    206,
+    218,
+    "3127L_0",
+    247,
+    253,
+    258,
+    261,
+    265,
+    267,
+    276,
+    280,
+    282,
+    285,
+    290,
+    293,
+    296,
+    299,
+    "PARX_0"
+   ],
+   "trips": [
+    0,
+    4,
+    10,
+    17,
+    20,
+    28,
+    41,
+    52,
+    104,
+    117,
+    126,
+    132,
+    139,
+    143,
+    150,
+    155,
+    164,
+    171,
+    185,
+    197,
+    206,
+    218,
+    247,
+    253,
+    258,
+    261,
+    265,
+    267,
+    276,
+    280,
+    282,
+    285,
+    290,
+    293,
+    296,
+    299
+   ]
+  },
+  {
+   "charges_started": 2,
+   "charging_stops": {
+    "cet": [
+     593.375,
+     1187.0
+    ],
+    "cst": [
+     554.0,
+     1127.0
+    ],
+    "kwh": [
+     148.5229975,
+     230.3499976
+    ],
+    "stations": [
+     "JON_A_0",
+     "3127L_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 593.375,
+     "expanded_grid_kwh": 157.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 148.5229975,
+     "start_min": 554.0,
+     "station": "JON_A_0",
+     "stop_index": 0,
+     "tariff_hour": 9,
+     "tariff_key": "JON_A:9"
+    },
+    {
+     "block_index": 0,
+     "end_min": 1140.0,
+     "expanded_grid_kwh": 52.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 52.0,
+     "start_min": 1127.0,
+     "station": "3127L_0",
+     "stop_index": 1,
+     "tariff_hour": 18,
+     "tariff_key": "3127L:18"
+    },
+    {
+     "block_index": 1,
+     "end_min": 1187.0,
+     "expanded_grid_kwh": 188.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 178.3499976,
+     "start_min": 1140.0,
+     "station": "3127L_0",
+     "stop_index": 1,
+     "tariff_hour": 19,
+     "tariff_key": "3127L:19"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 609,
+   "continuous_realized_cost": 100047.58420111392,
+   "cost": 100049.43200000002,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     593.375,
+     1187.0
+    ],
+    "cst": [
+     554.0,
+     1127.0
+    ],
+    "kwh": [
+     157.5,
+     240.0
+    ],
+    "stations": [
+     "JON_A_0",
+     "3127L_0"
+    ]
+   },
+   "expanded_grid_cost": 100049.43200000002,
+   "found_iter": 1010,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "e79aeadde3eb6b9ba8f2460b17499bd8587c00ff0846e13b797ba0d9d923e998",
+    "continuous_terminal_soc_kwh": 11.404000699999994,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100047.58420111392,
+     "expanded_minus_realized_cost": 1.8477988860799996,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100049.432,
+     "stored_expanded_grid_cost": 100049.43200000002
+    },
+    "discarded_grid_residual_kwh": 28.512005399999943,
+    "expanded_grid_terminal_soc_kwh": 1.5190002000000007,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "ddc5c00ac21ce316425368d4a52285cc125181548583b90992ebf81eb61d80be",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "3ea46c23168916ac8c0c5fd3a5caa648a1a471176e6c97c6e53e03bea9ee865c",
+    "realized_total_kwh": 378.8729951,
+    "recorded_charging_sha256": "26522324734742e9c8f9b18f61f5ea04012dbf83ba37e32506e70ae540d47e42",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "8e36643159d3d1dc868d8fb0a50153f93dc89d640fd0496c080b376831687afe",
+    "recorded_total_kwh": 397.5,
+    "route_nodes_sha256": "b187b82836a78b03fbf97e14a82142c9ebf2cfba9d61a1fdba3fa75a5fcbf01f",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "a30c7125415f84c0ca8dd33288ea384fea2178e775fcb224232acbf73ef17469"
+   },
+   "route_nodes": [
+    "PARX_0",
+    9,
+    16,
+    31,
+    44,
+    63,
+    74,
+    "JON_A_0",
+    112,
+    116,
+    123,
+    132,
+    139,
+    144,
+    151,
+    157,
+    172,
+    181,
+    195,
+    209,
+    221,
+    229,
+    "3127L_0",
+    253,
+    258,
+    261,
+    265,
+    269,
+    278,
+    281,
+    286,
+    288,
+    294,
+    297,
+    "PARX_0"
+   ],
+   "trips": [
+    9,
+    16,
+    31,
+    44,
+    63,
+    74,
+    112,
+    116,
+    123,
+    132,
+    139,
+    144,
+    151,
+    157,
+    172,
+    181,
+    195,
+    209,
+    221,
+    229,
+    253,
+    258,
+    261,
+    265,
+    269,
+    278,
+    281,
+    286,
+    288,
+    294,
+    297
+   ]
+  },
+  {
+   "charges_started": 2,
+   "charging_stops": {
+    "cet": [
+     607.125,
+     1099.375
+    ],
+    "cst": [
+     564.0,
+     1060.0
+    ],
+    "kwh": [
+     168.959999,
+     155.1899985
+    ],
+    "stations": [
+     "2190L_0",
+     "4808_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 600.0,
+     "expanded_grid_kwh": 144.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 144.0,
+     "start_min": 564.0,
+     "station": "2190L_0",
+     "stop_index": 0,
+     "tariff_hour": 9,
+     "tariff_key": "2190L:9"
+    },
+    {
+     "block_index": 1,
+     "end_min": 607.125,
+     "expanded_grid_kwh": 28.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 24.95999900000001,
+     "start_min": 600.0,
+     "station": "2190L_0",
+     "stop_index": 0,
+     "tariff_hour": 10,
+     "tariff_key": "2190L:10"
+    },
+    {
+     "block_index": 0,
+     "end_min": 1080.0,
+     "expanded_grid_kwh": 80.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 80.0,
+     "start_min": 1060.0,
+     "station": "4808_0",
+     "stop_index": 1,
+     "tariff_hour": 17,
+     "tariff_key": "4808:17"
+    },
+    {
+     "block_index": 1,
+     "end_min": 1099.375,
+     "expanded_grid_kwh": 77.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 75.1899985,
+     "start_min": 1080.0,
+     "station": "4808_0",
+     "stop_index": 1,
+     "tariff_hour": 18,
+     "tariff_key": "4808:18"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 808,
+   "continuous_realized_cost": 100042.155679752,
+   "cost": 100042.73599999999,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     607.125,
+     1099.375
+    ],
+    "cst": [
+     564.0,
+     1060.0
+    ],
+    "kwh": [
+     172.5,
+     157.5
+    ],
+    "stations": [
+     "2190L_0",
+     "4808_0"
+    ]
+   },
+   "expanded_grid_cost": 100042.73599999999,
+   "found_iter": 1013,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "1dc95d2c985f24ba4351da9c16141b661b5e4bfb8a40c83658dd5c42566e8369",
+    "continuous_terminal_soc_kwh": 2.770000500000009,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100042.155679752,
+     "expanded_minus_realized_cost": 0.5803202479999996,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100042.736,
+     "stored_expanded_grid_cost": 100042.73599999999
+    },
+    "discarded_grid_residual_kwh": 6.620003000000047,
+    "expanded_grid_terminal_soc_kwh": 2.0,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "605b9ee246b3d0e0825758fe176bb2c5cec92c2d2baa7531dad3f3069a35a24a",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "cf423fb052edf547d96c20c240b9119b2c3297fe78edefc2c61026eda99063a0",
+    "realized_total_kwh": 324.14999750000004,
+    "recorded_charging_sha256": "6914585c1f755f916ba2712d61a5ff9c3005928d85f45774931096787f11b3cd",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "32ecae56e45e6eaac9404532e033a203c38d777563820f9fdb5a1cf979c69b49",
+    "recorded_total_kwh": 330.0,
+    "route_nodes_sha256": "d810efb3892892230a5a259c1cc7620049a6e13fb3fc582bcdd1d4789278d95c",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "fd50e92176fef5bbf308395b21b0abe4f4ed815e36c670dfb35e371b2d65f400"
+   },
+   "route_nodes": [
+    "PARX_0",
+    1,
+    12,
+    40,
+    65,
+    "2190L_0",
+    110,
+    127,
+    145,
+    169,
+    194,
+    "4808_0",
+    239,
+    259,
+    277,
+    "PARX_0"
+   ],
+   "trips": [
+    1,
+    12,
+    40,
+    65,
+    110,
+    127,
+    145,
+    169,
+    194,
+    239,
+    259,
+    277
+   ]
+  },
+  {
+   "charges_started": 2,
+   "charging_stops": {
+    "cet": [
+     543.125,
+     867.5
+    ],
+    "cst": [
+     505.0,
+     820.0
+    ],
+    "kwh": [
+     144.55699983,
+     186.459999
+    ],
+    "stations": [
+     "PARX_1",
+     "2190L_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 540.0,
+     "expanded_grid_kwh": 140.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 140.0,
+     "start_min": 505.0,
+     "station": "PARX_1",
+     "stop_index": 0,
+     "tariff_hour": 8,
+     "tariff_key": "PARX:8"
+    },
+    {
+     "block_index": 1,
+     "end_min": 543.125,
+     "expanded_grid_kwh": 12.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 4.556999829999995,
+     "start_min": 540.0,
+     "station": "PARX_1",
+     "stop_index": 0,
+     "tariff_hour": 9,
+     "tariff_key": "PARX:9"
+    },
+    {
+     "block_index": 0,
+     "end_min": 840.0,
+     "expanded_grid_kwh": 80.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 80.0,
+     "start_min": 820.0,
+     "station": "2190L_0",
+     "stop_index": 1,
+     "tariff_hour": 13,
+     "tariff_key": "2190L:13"
+    },
+    {
+     "block_index": 1,
+     "end_min": 867.5,
+     "expanded_grid_kwh": 110.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 106.45999900000001,
+     "start_min": 840.0,
+     "station": "2190L_0",
+     "stop_index": 1,
+     "tariff_hour": 14,
+     "tariff_key": "2190L:14"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 809,
+   "continuous_realized_cost": 100042.83688628394,
+   "cost": 100043.97599999998,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     543.125,
+     867.5
+    ],
+    "cst": [
+     505.0,
+     820.0
+    ],
+    "kwh": [
+     152.5,
+     190.0
+    ],
+    "stations": [
+     "PARX_1",
+     "2190L_0"
+    ]
+   },
+   "expanded_grid_cost": 100043.97599999998,
+   "found_iter": 1029,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "a1848a77153271edd92973eefba86b2b2f7c388a0d2f992db77c0ff5dc1585c1",
+    "continuous_terminal_soc_kwh": 2.01000150000002,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100042.83688628394,
+     "expanded_minus_realized_cost": 1.1391137160640028,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100043.976,
+     "stored_expanded_grid_cost": 100043.97599999998
+    },
+    "discarded_grid_residual_kwh": 13.02300217000004,
+    "expanded_grid_terminal_soc_kwh": 0.47000050000000204,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "d337033f306fb4beb96f1489d3ddfaf408e0ad8e6b58384c02340c6e78f9ae7e",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "75001cf3325610d9deab02e13779543cce39b50bf7c65d3756fa907abcc0baa5",
+    "realized_total_kwh": 331.01699883000003,
+    "recorded_charging_sha256": "6530dd1df1e67ddc997ef3536d8c6cc44eeb06e7f6ee8b2e5ddbb255eed4cd30",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "f100dec2b502343cc3b0af27e51956338dbe77a87c8791516ce864d94c1980d7",
+    "recorded_total_kwh": 342.5,
+    "route_nodes_sha256": "b04f79664b8ae7ed02a6851fd2dcc169ef93e35d1656e7191ddec138d8741963",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "e0cf1c329276efdfde2d5e5e9d89bab1c028c6770799244230dd2836217d346d"
+   },
+   "route_nodes": [
+    "PARX_0",
+    3,
+    6,
+    15,
+    22,
+    34,
+    51,
+    55,
+    "PARX_1",
+    80,
+    90,
+    101,
+    115,
+    "2190L_0",
+    145,
+    169,
+    194,
+    217,
+    237,
+    "PARX_0"
+   ],
+   "trips": [
+    3,
+    6,
+    15,
+    22,
+    34,
+    51,
+    55,
+    80,
+    90,
+    101,
+    115,
+    145,
+    169,
+    194,
+    217,
+    237
+   ]
+  },
+  {
+   "charges_started": 2,
+   "charging_stops": {
+    "cet": [
+     596.5,
+     1069.5
+    ],
+    "cst": [
+     554.0,
+     1042.0
+    ],
+    "kwh": [
+     156.3879985,
+     99.29300052
+    ],
+    "stations": [
+     "JON_A_0",
+     "PARX_1"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 596.5,
+     "expanded_grid_kwh": 170.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 156.3879985,
+     "start_min": 554.0,
+     "station": "JON_A_0",
+     "stop_index": 0,
+     "tariff_hour": 9,
+     "tariff_key": "JON_A:9"
+    },
+    {
+     "block_index": 0,
+     "end_min": 1069.5,
+     "expanded_grid_kwh": 110.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 99.29300052,
+     "start_min": 1042.0,
+     "station": "PARX_1",
+     "stop_index": 1,
+     "tariff_hour": 17,
+     "tariff_key": "PARX:17"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 407,
+   "continuous_realized_cost": 100035.36355510278,
+   "cost": 100037.77599999998,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     596.5,
+     1069.5
+    ],
+    "cst": [
+     554.0,
+     1042.0
+    ],
+    "kwh": [
+     170.0,
+     110.0
+    ],
+    "stations": [
+     "JON_A_0",
+     "PARX_1"
+    ]
+   },
+   "expanded_grid_cost": 100037.77599999998,
+   "found_iter": 1032,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "3d31e98ea9d09ead7a781432f1cbf12ba5d5006f972f4e63e90013327beff7e3",
+    "continuous_terminal_soc_kwh": 4.970000499999998,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100035.36355510278,
+     "expanded_minus_realized_cost": 2.412444897215998,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100037.776,
+     "stored_expanded_grid_cost": 100037.77599999998
+    },
+    "discarded_grid_residual_kwh": 27.28900148000001,
+    "expanded_grid_terminal_soc_kwh": 2.0,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "17b27b40a4fda909f9dc5ea4b495a43567d98645b2aecc26481794cf29a99ab5",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "256f635b65f6dcb8ba1688bb1dc82bd96f784d7b1cb67d9153c7ceb285c0ad1d",
+    "realized_total_kwh": 255.68099902,
+    "recorded_charging_sha256": "5011ad1c89f25efdfc8dd812d14f68cb9c13f059564d395a2bff15f768558e74",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "97c992dc94619cf8fb9f625030c8363aa6f0c39e664714d0f2e92e0dbe018c6d",
+    "recorded_total_kwh": 280.0,
+    "route_nodes_sha256": "2aab996d71c90876410215e54743b0a7b87e2effbbb4d6bddfb05667fab61a3b",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "a198e346121913db8ae90ae06414aab3ebb0dace06d812b403215e2557bcde8c"
+   },
+   "route_nodes": [
+    "PARX_0",
+    2,
+    8,
+    16,
+    31,
+    46,
+    59,
+    66,
+    71,
+    74,
+    "JON_A_0",
+    119,
+    128,
+    130,
+    136,
+    141,
+    150,
+    154,
+    176,
+    201,
+    "PARX_1",
+    222,
+    245,
+    260,
+    "PARX_0"
+   ],
+   "trips": [
+    2,
+    8,
+    16,
+    31,
+    46,
+    59,
+    66,
+    71,
+    74,
+    119,
+    128,
+    130,
+    136,
+    141,
+    150,
+    154,
+    176,
+    201,
+    222,
+    245,
+    260
+   ]
+  },
+  {
+   "charges_started": 3,
+   "charging_stops": {
+    "cet": [
+     580.875,
+     904.625,
+     1160.375
+    ],
+    "cst": [
+     534.0,
+     869.0,
+     1101.0
+    ],
+    "kwh": [
+     179.0199991,
+     136.959999,
+     232.3789998
+    ],
+    "stations": [
+     "PARX_1",
+     "PARX_1",
+     "3127L_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 540.0,
+     "expanded_grid_kwh": 24.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 24.0,
+     "start_min": 534.0,
+     "station": "PARX_1",
+     "stop_index": 0,
+     "tariff_hour": 8,
+     "tariff_key": "PARX:8"
+    },
+    {
+     "block_index": 1,
+     "end_min": 580.875,
+     "expanded_grid_kwh": 163.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 155.0199991,
+     "start_min": 540.0,
+     "station": "PARX_1",
+     "stop_index": 0,
+     "tariff_hour": 9,
+     "tariff_key": "PARX:9"
+    },
+    {
+     "block_index": 0,
+     "end_min": 900.0,
+     "expanded_grid_kwh": 124.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 124.0,
+     "start_min": 869.0,
+     "station": "PARX_1",
+     "stop_index": 1,
+     "tariff_hour": 14,
+     "tariff_key": "PARX:14"
+    },
+    {
+     "block_index": 1,
+     "end_min": 904.625,
+     "expanded_grid_kwh": 18.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 12.95999900000001,
+     "start_min": 900.0,
+     "station": "PARX_1",
+     "stop_index": 1,
+     "tariff_hour": 15,
+     "tariff_key": "PARX:15"
+    },
+    {
+     "block_index": 0,
+     "end_min": 1140.0,
+     "expanded_grid_kwh": 156.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 156.0,
+     "start_min": 1101.0,
+     "station": "3127L_0",
+     "stop_index": 2,
+     "tariff_hour": 18,
+     "tariff_key": "3127L:18"
+    },
+    {
+     "block_index": 1,
+     "end_min": 1160.375,
+     "expanded_grid_kwh": 81.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 76.3789998,
+     "start_min": 1140.0,
+     "station": "3127L_0",
+     "stop_index": 2,
+     "tariff_hour": 19,
+     "tariff_key": "3127L:19"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 1206,
+   "continuous_realized_cost": 100069.39721259168,
+   "cost": 100071.29600000002,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     580.875,
+     904.625,
+     1160.375
+    ],
+    "cst": [
+     534.0,
+     869.0,
+     1101.0
+    ],
+    "kwh": [
+     187.5,
+     142.5,
+     237.5
+    ],
+    "stations": [
+     "PARX_1",
+     "PARX_1",
+     "3127L_0"
+    ]
+   },
+   "expanded_grid_cost": 100071.29600000002,
+   "found_iter": 1051,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "7a14ede59092e05983328a8c4c63e0a28124e288bbd47e0c917bb4fe16755753",
+    "continuous_terminal_soc_kwh": 11.230000980000021,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100069.39721259168,
+     "expanded_minus_realized_cost": 1.898787408320004,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100071.296,
+     "stored_expanded_grid_cost": 100071.29600000002
+    },
+    "discarded_grid_residual_kwh": 29.96100304000001,
+    "expanded_grid_terminal_soc_kwh": 0.4100000400000008,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "e1c5c4e3a91ba636143958d8e3b99fe6c98dbaa76fa8e99b1942e977254b728f",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "2f4431dbadf4cfa5474204201352b7369b275d65ad07ee62598fda9b113cd18d",
+    "realized_total_kwh": 548.3589979000001,
+    "recorded_charging_sha256": "be87c22a3df3d55315f04c5693486b5b07c5b71105cde6a2e9a3b182da517487",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "0a58da97da5c6305e4e967aaabaf9a77ccced30803d7e4322373827a36451507",
+    "recorded_total_kwh": 567.5,
+    "route_nodes_sha256": "b71d8c4847e6237b645feff92eba3330dabf8ecd734bb32fc9bd7d7898a36ee0",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "bb29eedadfcc9473b908bc3990d7d3960767133dc67730e70f9e29201bd9bdcf"
+   },
+   "route_nodes": [
+    "PARX_0",
+    8,
+    13,
+    23,
+    33,
+    42,
+    64,
+    "PARX_1",
+    85,
+    98,
+    107,
+    122,
+    "PARX_1",
+    160,
+    173,
+    186,
+    210,
+    218,
+    "3127L_0",
+    244,
+    250,
+    255,
+    261,
+    265,
+    269,
+    273,
+    275,
+    286,
+    289,
+    294,
+    298,
+    300,
+    "PARX_0"
+   ],
+   "trips": [
+    8,
+    13,
+    23,
+    33,
+    42,
+    64,
+    85,
+    98,
+    107,
+    122,
+    160,
+    173,
+    186,
+    210,
+    218,
+    244,
+    250,
+    255,
+    261,
+    265,
+    269,
+    273,
+    275,
+    286,
+    289,
+    294,
+    298,
+    300
+   ]
+  },
+  {
+   "charges_started": 1,
+   "charging_stops": {
+    "cet": [
+     539.0
+    ],
+    "cst": [
+     514.0
+    ],
+    "kwh": [
+     96.5799987
+    ],
+    "stations": [
+     "3127L_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 539.0,
+     "expanded_grid_kwh": 100.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 96.5799987,
+     "start_min": 514.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 8,
+     "tariff_key": "3127L:8"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 202,
+   "continuous_realized_cost": 100014.58073587104,
+   "cost": 100014.92,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     539.0
+    ],
+    "cst": [
+     514.0
+    ],
+    "kwh": [
+     100.0
+    ],
+    "stations": [
+     "3127L_0"
+    ]
+   },
+   "expanded_grid_cost": 100014.92,
+   "found_iter": 1060,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "593e7f118b314d744b09f70633e0a51aa17f3a582163332b710279199af2cfbf",
+    "continuous_terminal_soc_kwh": 11.619004400000001,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100014.58073587104,
+     "expanded_minus_realized_cost": 0.33926412896,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100014.92,
+     "stored_expanded_grid_cost": 100014.92
+    },
+    "discarded_grid_residual_kwh": 13.6450055,
+    "expanded_grid_terminal_soc_kwh": 1.3940002000000016,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "96025b96c10516c821c377e873d69b4d6c12a715efa719c1b444a48d929b2ae2",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "114c94762584accbeb49c5924f0bd77cabf06e4587560e1abb88a2c7fad6d3d5",
+    "realized_total_kwh": 96.5799987,
+    "recorded_charging_sha256": "c968833d66d3f7145536245e24e75422a845683b555fb416acfffd694eded12d",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "91cb8a387ac111e7f3e56f0288962bd22ed867fffad5703dfe4b1ff8e23fd896",
+    "recorded_total_kwh": 100.0,
+    "route_nodes_sha256": "df482173893d540332a3264e1ea137a9d6e0e662a7bd06a87fcb69faaf32e9f2",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "747e3bacc50d5b125ef35248f15f7ee44210eeab90e4d2740ca2d97d8aadf13f"
+   },
+   "route_nodes": [
+    "PARX_0",
+    23,
+    32,
+    47,
+    56,
+    "3127L_0",
+    146,
+    153,
+    168,
+    181,
+    199,
+    208,
+    213,
+    225,
+    234,
+    242,
+    248,
+    "PARX_0"
+   ],
+   "trips": [
+    23,
+    32,
+    47,
+    56,
+    146,
+    153,
+    168,
+    181,
+    199,
+    208,
+    213,
+    225,
+    234,
+    242,
+    248
+   ]
+  },
+  {
+   "charges_started": 2,
+   "charging_stops": {
+    "cet": [
+     625.125,
+     1093.125
+    ],
+    "cst": [
+     582.0,
+     1070.0
+    ],
+    "kwh": [
+     168.959999,
+     90.1899985
+    ],
+    "stations": [
+     "2190L_0",
+     "4808_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 600.0,
+     "expanded_grid_kwh": 72.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 72.0,
+     "start_min": 582.0,
+     "station": "2190L_0",
+     "stop_index": 0,
+     "tariff_hour": 9,
+     "tariff_key": "2190L:9"
+    },
+    {
+     "block_index": 1,
+     "end_min": 625.125,
+     "expanded_grid_kwh": 100.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 96.95999900000001,
+     "start_min": 600.0,
+     "station": "2190L_0",
+     "stop_index": 0,
+     "tariff_hour": 10,
+     "tariff_key": "2190L:10"
+    },
+    {
+     "block_index": 0,
+     "end_min": 1080.0,
+     "expanded_grid_kwh": 40.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 40.0,
+     "start_min": 1070.0,
+     "station": "4808_0",
+     "stop_index": 1,
+     "tariff_hour": 17,
+     "tariff_key": "4808:17"
+    },
+    {
+     "block_index": 1,
+     "end_min": 1093.125,
+     "expanded_grid_kwh": 52.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 50.1899985,
+     "start_min": 1080.0,
+     "station": "4808_0",
+     "stop_index": 1,
+     "tariff_hour": 18,
+     "tariff_key": "4808:18"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 807,
+   "continuous_realized_cost": 100035.707679752,
+   "cost": 100036.28799999999,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     625.125,
+     1093.125
+    ],
+    "cst": [
+     582.0,
+     1070.0
+    ],
+    "kwh": [
+     172.5,
+     92.5
+    ],
+    "stations": [
+     "2190L_0",
+     "4808_0"
+    ]
+   },
+   "expanded_grid_cost": 100036.28799999999,
+   "found_iter": 1103,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "d3fe2f182fd13d83b33020f3b40ed3098d9d99e9dfdd00a219c48c1a832bdfff",
+    "continuous_terminal_soc_kwh": 0.47000050000000204,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100035.707679752,
+     "expanded_minus_realized_cost": 0.580320247999996,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100036.288,
+     "stored_expanded_grid_cost": 100036.28799999999
+    },
+    "discarded_grid_residual_kwh": 5.850002500000038,
+    "expanded_grid_terminal_soc_kwh": 0.47000050000000204,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "b1334343127e1f5f21702b246b29224f59c3ebd55d13a47732ec51b338e0d469",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "736bc969d983052486271b277c6760b11bbfc1101a60ebaa97125b59b8e48ec7",
+    "realized_total_kwh": 259.14999750000004,
+    "recorded_charging_sha256": "0cb76f8731dd3b6df6fc629b05a48d81c43cdab94c7eebcbddb3b1f5875accd6",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "db0f5beb91371b378be2e2097408c7f3626e2679d8e8cf844400e7017bb49e2c",
+    "recorded_total_kwh": 265.0,
+    "route_nodes_sha256": "1cb86861ca2532861f099af046197427a1862d2c2c4223dfd66fe82a6a3f346b",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "bfeb5ecacd9ea54973ffb77521132096c18a0e032a4dfe691b0e75eccad9fb37"
+   },
+   "route_nodes": [
+    "PARX_0",
+    1,
+    24,
+    49,
+    72,
+    "2190L_0",
+    101,
+    122,
+    140,
+    165,
+    198,
+    "4808_0",
+    241,
+    256,
+    "PARX_0"
+   ],
+   "trips": [
+    1,
+    24,
+    49,
+    72,
+    101,
+    122,
+    140,
+    165,
+    198,
+    241,
+    256
+   ]
+  },
+  {
+   "charges_started": 1,
+   "charging_stops": {
+    "cet": [
+     880.125
+    ],
+    "cst": [
+     822.0
+    ],
+    "kwh": [
+     214.43100076
+    ],
+    "stations": [
+     "3127L_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 840.0,
+     "expanded_grid_kwh": 72.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 72.0,
+     "start_min": 822.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 13,
+     "tariff_key": "3127L:13"
+    },
+    {
+     "block_index": 1,
+     "end_min": 880.125,
+     "expanded_grid_kwh": 160.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 142.43100076,
+     "start_min": 840.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 14,
+     "tariff_key": "3127L:14"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 404,
+   "continuous_realized_cost": 100026.2715552754,
+   "cost": 100028.064,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     880.125
+    ],
+    "cst": [
+     822.0
+    ],
+    "kwh": [
+     232.5
+    ],
+    "stations": [
+     "3127L_0"
+    ]
+   },
+   "expanded_grid_cost": 100028.064,
+   "found_iter": 1111,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "e9316055e08b99f9aa1cdee01de36d7ed89bca2f5c9325210e5a28a8e4b1b0a8",
+    "continuous_terminal_soc_kwh": 14.876001480000003,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100026.2715552754,
+     "expanded_minus_realized_cost": 1.7924447246080035,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100028.064,
+     "stored_expanded_grid_cost": 100028.064
+    },
+    "discarded_grid_residual_kwh": 31.024001019999996,
+    "expanded_grid_terminal_soc_kwh": 1.9209996999999994,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "a31c96041242a15d180aca06d92444c7c79f20c42d0aa6e36ccf13fe8081100e",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "2e5f9d373e0873b14dcae07b19dc51fa3a658491050b6b3a7d0679804fff99fa",
+    "realized_total_kwh": 214.43100076,
+    "recorded_charging_sha256": "4b3edcc02afa831248b6340096cb4b1d6e9f5d314aa5f002acfbe835bf875a3c",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "695639946a49d58ca3446733a9aee503ae982490c5a632a8173a2ce2fc2efc53",
+    "recorded_total_kwh": 232.5,
+    "route_nodes_sha256": "e6055523f9d736a2d4a90dfee4e0fa269a5c1ed4cfb40a0e38812888d43e9ebf",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "12f7d282921c3623d07ec8f3cdaef6c77b91d2a7f5fcf1f550f0a68f715aad2b"
+   },
+   "route_nodes": [
+    "PARX_0",
+    21,
+    43,
+    54,
+    63,
+    73,
+    77,
+    88,
+    92,
+    97,
+    102,
+    108,
+    114,
+    120,
+    "3127L_0",
+    159,
+    170,
+    177,
+    188,
+    200,
+    204,
+    212,
+    223,
+    228,
+    238,
+    243,
+    250,
+    255,
+    264,
+    "PARX_0"
+   ],
+   "trips": [
+    21,
+    43,
+    54,
+    63,
+    73,
+    77,
+    88,
+    92,
+    97,
+    102,
+    108,
+    114,
+    120,
+    159,
+    170,
+    177,
+    188,
+    200,
+    204,
+    212,
+    223,
+    228,
+    238,
+    243,
+    250,
+    255,
+    264
+   ]
+  },
+  {
+   "charges_started": 1,
+   "charging_stops": {
+    "cet": [
+     927.375
+    ],
+    "cst": [
+     868.0
+    ],
+    "kwh": [
+     211.8470012
+    ],
+    "stations": [
+     "3127L_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 900.0,
+     "expanded_grid_kwh": 128.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 128.0,
+     "start_min": 868.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 14,
+     "tariff_key": "3127L:14"
+    },
+    {
+     "block_index": 1,
+     "end_min": 927.375,
+     "expanded_grid_kwh": 109.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 83.8470012,
+     "start_min": 900.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 15,
+     "tariff_key": "3127L:15"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 404,
+   "continuous_realized_cost": 100026.01522251904,
+   "cost": 100028.55999999998,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     927.375
+    ],
+    "cst": [
+     868.0
+    ],
+    "kwh": [
+     237.5
+    ],
+    "stations": [
+     "3127L_0"
+    ]
+   },
+   "expanded_grid_cost": 100028.55999999998,
+   "found_iter": 1131,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "78e65b7138aa6d0364e3f26bcdedf1fa7d11a3f5bb6388004c40c52896e9c1d0",
+    "continuous_terminal_soc_kwh": 14.034001500000002,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100026.01522251904,
+     "expanded_minus_realized_cost": 2.5447774809600006,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100028.56,
+     "stored_expanded_grid_cost": 100028.55999999998
+    },
+    "discarded_grid_residual_kwh": 37.75300009999999,
+    "expanded_grid_terminal_soc_kwh": 1.9340002000000007,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "2d4ae6895c4ec9d6ea38bc3a38c6160131444e7277d144761fabec894717a115",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "ca6d75e751b3ab85fba076d20041cb728e26919f64ed1dce0c763c3f7c507b9f",
+    "realized_total_kwh": 211.8470012,
+    "recorded_charging_sha256": "f7ee568881c9fab48d5b678088501a0c89494392951bcf0cd25221542a6e5f49",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "08f4889c90308a9deaa95ea8b77d1904810999a90d738fd54ea8cf5cdb101bf4",
+    "recorded_total_kwh": 237.5,
+    "route_nodes_sha256": "3791fa9d7ad2f689a5d1e96b2a5abe4d845ff6f099596ab6970774a04f78fc6b",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "ae4892faf1e2546eb8fe0fe55713d7d26db3e9d036961515734f88e1299fd76c"
+   },
+   "route_nodes": [
+    "PARX_0",
+    37,
+    50,
+    61,
+    75,
+    83,
+    87,
+    99,
+    106,
+    113,
+    119,
+    124,
+    131,
+    135,
+    "3127L_0",
+    172,
+    182,
+    189,
+    196,
+    216,
+    226,
+    235,
+    246,
+    262,
+    272,
+    278,
+    287,
+    291,
+    293,
+    296,
+    "PARX_0"
+   ],
+   "trips": [
+    37,
+    50,
+    61,
+    75,
+    83,
+    87,
+    99,
+    106,
+    113,
+    119,
+    124,
+    131,
+    135,
+    172,
+    182,
+    189,
+    196,
+    216,
+    226,
+    235,
+    246,
+    262,
+    272,
+    278,
+    287,
+    291,
+    293,
+    296
+   ]
+  },
+  {
+   "charges_started": 1,
+   "charging_stops": {
+    "cet": [
+     759.625
+    ],
+    "cst": [
+     709.0
+    ],
+    "kwh": [
+     198.759999
+    ],
+    "stations": [
+     "2190L_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 720.0,
+     "expanded_grid_kwh": 44.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 44.0,
+     "start_min": 709.0,
+     "station": "2190L_0",
+     "stop_index": 0,
+     "tariff_hour": 11,
+     "tariff_key": "2190L:11"
+    },
+    {
+     "block_index": 1,
+     "end_min": 759.625,
+     "expanded_grid_kwh": 158.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 154.759999,
+     "start_min": 720.0,
+     "station": "2190L_0",
+     "stop_index": 0,
+     "tariff_hour": 12,
+     "tariff_key": "2190L:12"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 402,
+   "continuous_realized_cost": 100024.7169919008,
+   "cost": 100025.088,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     759.625
+    ],
+    "cst": [
+     709.0
+    ],
+    "kwh": [
+     202.5
+    ],
+    "stations": [
+     "2190L_0"
+    ]
+   },
+   "expanded_grid_cost": 100025.088,
+   "found_iter": 1169,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "5d32bd8c42f11eded355fb66ba24e949d29d390ee15d6ab7bdfff4c53dc838a0",
+    "continuous_terminal_soc_kwh": 2.01000150000002,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100024.7169919008,
+     "expanded_minus_realized_cost": 0.3710080992000009,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100025.088,
+     "stored_expanded_grid_cost": 100025.088
+    },
+    "discarded_grid_residual_kwh": 5.280002000000017,
+    "expanded_grid_terminal_soc_kwh": 0.47000050000000204,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "ca79854ce729e213b712c8e7e2380a3bd9c9e2f04d6d71832befbafb4290a36f",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "4344038cc38330b293d73520206ed14a4e5bc5a9f592b5e02fd67f2292caea83",
+    "realized_total_kwh": 198.759999,
+    "recorded_charging_sha256": "0fffa353767eda5143c3260fb65ffc393e7d2719b46ad62c6d17d69f3bc13f59",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "3e21c97d9124dd0e8e194713b65609859c6bfad9b50a79545cc73d2c5090407b",
+    "recorded_total_kwh": 202.5,
+    "route_nodes_sha256": "a894e39bb95746b5c517ad11fc4b06a35eba4350704111fd8b5346563ee18068",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "9f8874a456ab2ef475394d73b2444dcec267ffec3413acc05c82de30d85abe86"
+   },
+   "route_nodes": [
+    "PARX_0",
+    19,
+    45,
+    68,
+    82,
+    94,
+    "2190L_0",
+    125,
+    142,
+    167,
+    193,
+    220,
+    "PARX_0"
+   ],
+   "trips": [
+    19,
+    45,
+    68,
+    82,
+    94,
+    125,
+    142,
+    167,
+    193,
+    220
+   ]
+  },
+  {
+   "charges_started": 1,
+   "charging_stops": {
+    "cet": [
+     804.875
+    ],
+    "cst": [
+     748.0
+    ],
+    "kwh": [
+     210.5319986
+    ],
+    "stations": [
+     "3127L_0"
+    ]
+   },
+   "continuous_cost_pricing_certified": false,
+   "continuous_realized_charging_blocks": [
+    {
+     "block_index": 0,
+     "end_min": 780.0,
+     "expanded_grid_kwh": 128.0,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 128.0,
+     "start_min": 748.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 12,
+     "tariff_key": "3127L:12"
+    },
+    {
+     "block_index": 1,
+     "end_min": 804.875,
+     "expanded_grid_kwh": 99.5,
+     "price_per_kwh": 0.0992,
+     "realized_kwh": 82.53199860000001,
+     "start_min": 780.0,
+     "station": "3127L_0",
+     "stop_index": 0,
+     "tariff_hour": 13,
+     "tariff_key": "3127L:13"
+    }
+   ],
+   "continuous_realized_charging_blocks_json_bytes": 410,
+   "continuous_realized_cost": 100025.88477426113,
+   "cost": 100027.56799999998,
+   "cost_semantics": "expanded_grid_cost",
+   "cost_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+   "expanded_grid_charging_stops": {
+    "cet": [
+     804.875
+    ],
+    "cst": [
+     748.0
+    ],
+    "kwh": [
+     227.5
+    ],
+    "stations": [
+     "3127L_0"
+    ]
+   },
+   "expanded_grid_cost": 100027.56799999998,
+   "found_iter": 1204,
+   "master_cost_semantics": "expanded_grid_cost",
+   "origin": "event_time_pricing",
+   "physical_realization": {
+    "block_min": 5,
+    "changed": true,
+    "charge_kw": 240.0,
+    "charging_windows_preserved": true,
+    "continuous_cost_pricing_certified": false,
+    "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+    "continuous_realized_charging_blocks_sha256": "f0470c8c082d2e2b02c11857314a8984b4b6e1cc1fc2a754b9f4b47d84b53eb6",
+    "continuous_terminal_soc_kwh": 9.459004599999997,
+    "costs": {
+     "continuous_cost_pricing_certified": false,
+     "continuous_realized_cost": 100025.88477426113,
+     "expanded_minus_realized_cost": 1.6832257388799974,
+     "master_cost_changed": false,
+     "master_cost_semantics": "expanded_grid_cost",
+     "recomputed_expanded_grid_cost": 100027.568,
+     "stored_expanded_grid_cost": 100027.56799999998
+    },
+    "discarded_grid_residual_kwh": 25.55500510000001,
+    "expanded_grid_terminal_soc_kwh": 0.8720009000000006,
+    "irregular_charging_windows_accepted": true,
+    "mapping_sha256": "acaad2ef2bf6083b9294c693f60e4ac1edab82614c2f6c5b2005d7f4f327510d",
+    "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+    "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+    "realized_charging_sha256": "ba4ae0914ac2abd8de8fa912c5f853dec3312554f4bab4f3e7834539317dc7e7",
+    "realized_total_kwh": 210.5319986,
+    "recorded_charging_sha256": "fbda464be415162efd5a6ca002cf821d3371a1bd3b33b1340fac0a322aaba478",
+    "recorded_replay_reason": null,
+    "recorded_route_sha256": "6dbae8e6e797442617483108ad3b3b6d079571616bb0c8a203484db5e1bd54d3",
+    "recorded_total_kwh": 227.5,
+    "route_nodes_sha256": "122f7067bafdaf15e26ee9ead3f0574111e7c01fb48a901a4d7d74fe49a15bf2",
+    "schema": "evsp-dr-event-path-continuous-realization-v1",
+    "station_choice_preserved": true,
+    "status": "valid_as_recorded_mapped",
+    "time_model": "event",
+    "trip_sequence_preserved": true,
+    "trip_sequence_sha256": "914edb40203b125cae0b08c338aadfccea36106d725549584a6a6923c004bfc6"
+   },
+   "route_nodes": [
+    "PARX_0",
+    13,
+    23,
+    37,
+    50,
+    61,
+    70,
+    81,
+    86,
+    95,
+    100,
+    105,
+    "3127L_0",
+    156,
+    166,
+    185,
+    197,
+    207,
+    219,
+    231,
+    236,
+    247,
+    252,
+    268,
+    "PARX_0"
+   ],
+   "trips": [
+    13,
+    23,
+    37,
+    50,
+    61,
+    70,
+    81,
+    86,
+    95,
+    100,
+    105,
+    156,
+    166,
+    185,
+    197,
+    207,
+    219,
+    231,
+    236,
+    247,
+    252,
+    268
+   ]
+  }
+ ],
+ "singleton_partition_columns": 302,
+ "solution_count": 19,
+ "solver_incumbent_found": true,
+ "source_cg_iterations": 1281,
+ "source_cg_wall_s": 4601.5689735182095,
+ "source_hashing_wall_s": 0.4631850740406662,
+ "source_journal": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/base/135643_r0/cg.json.columns.jsonl",
+ "source_journal_sha256": "8fc224ddb3f0c9109f38549bc39d8f63749c8fa425a52a473c3d2d13319abb48",
+ "source_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/base/135643_r0/cg.json",
+ "source_result_sha256": "ee81a8b2d5215e8c00dcd88739426365d78ea6fd724f0b6f22ac132e2ce662eb",
+ "source_snapshot_mark_minutes": null,
+ "stage1_incumbent_validated": true,
+ "stage1_time_limit_s": 1800.0,
+ "stage2_fleet_cap": 18,
+ "stage2_fleet_cap_proven": false,
+ "stage2_fleet_constraint": "at_most",
+ "stage2_objective_semantics": "charging_related_route_cost_including_charge_start_fee",
+ "stage2_variable_absolute_gap": 226.71749896980168,
+ "status": 9,
+ "status_name": "TIME_LIMIT",
+ "two_stage": {
+  "fleet_proven": false,
+  "stage1_bound": 15.000000000000052,
+  "stage1_buses": 18,
+  "stage1_charging_related_objective": 758.2159999999567,
+  "stage1_gap": 0.1666666666666638,
+  "stage1_incumbent_source": "solver",
+  "stage1_incumbent_validated": true,
+  "stage1_node_count": 8705.0,
+  "stage1_runtime_s": 1801.145069360733,
+  "stage1_selected_route_indices": [
+   10865,
+   16681,
+   22347,
+   23020,
+   24551,
+   26117,
+   26737,
+   26899,
+   29175,
+   29525,
+   30573,
+   31161,
+   31520,
+   31806,
+   32064,
+   32718,
+   33651,
+   34797
+  ],
+  "stage1_solution_count": 10,
+  "stage1_solver_has_solution": true,
+  "stage1_status": 9,
+  "stage1_status_name": "TIME_LIMIT",
+  "stage1_time_limit_s": 1800.0,
+  "stage1_total_objective": 1800758.216,
+  "stage1_validation_reason": null,
+  "stage2_absolute_gap": null,
+  "stage2_available_time_s": 1798.854930639267,
+  "stage2_executed": true,
+  "stage2_fleet_cap": 18,
+  "stage2_fleet_cap_proven": false,
+  "stage2_fleet_constraint": "at_most",
+  "stage2_has_solution": true,
+  "stage2_incumbent_validated": true,
+  "stage2_node_count": 8840.0,
+  "stage2_objective": "charging_related_route_cost_including_charge_start_fee",
+  "stage2_reported_incumbent_source": "stage2_solver",
+  "stage2_reserved_time_s": 1800.0,
+  "stage2_skip_reason": null,
+  "stage2_solution_count": 9,
+  "stage2_solver_has_solution": true,
+  "stage2_start_acceptance": {
+   "accepted": true,
+   "messages": [
+    "Loaded user MIP start with objective 758.216",
+    "MIP start from previous solve did not produce a new incumbent solution"
+   ],
+   "rejection_observed": false,
+   "status": "accepted"
+  },
+  "stage2_status": 9,
+  "stage2_status_name": "TIME_LIMIT",
+  "stage2_validation_reason": null,
+  "stage2_variable_absolute_gap": 226.71749896980168,
+  "stage2_variable_bound": 449.49847291555807,
+  "stage2_variable_obj": 676.2159718853597
+ },
+ "variable_route_cost": 676.2160000000149
+}

@@ -1,0 +1,9 @@
+# 21 September follow-up: route 13309, battery rounding and chain comparisons
+
+This is a posthoc audit and visualization of saved results. No new solver runs or cluster submissions were made.
+
+- [Duty 13309 and actual algorithm counterparts](duty13309/README.md): full-day original and fee0/fee5 routes from the same C6 k5 79-trip input. Shared original trips are 22/22 and 11/22; displayed-route charging starts are 4 / 7 / 1. Historical algorithm physics differ from the original. Complete itinerary, exact trip identity, overlap ranking, source hashes and editable figures accompany the report.
+- [One chart per chain, plus an overview](chain_comparison/README.md): paired k5,8,10,15 data on all six chains. Accumulated sequential CG takes more time and produces better integer pools. Both methods certify numerically indistinguishable event-grid LP objectives: maximum difference 1.0617e-6 cost units, relative 7.0751e-13. The chart subtracts the common 100000*k term solely to magnify charging differences.
+- [Capacity-only replay](battery_rounding/README.md): 3.93 GiB is computer memory, not vehicle energy. In 48 saved MIP solutions, 40/487 route occurrences fail if every battery and initial charge become 239.01 kWh, and 195/487 fail at 236.44 kWh, with all other energy flows frozen. These are sensitivity scenarios, not observed actual vehicle assignments. They show failure of saved charging schedules, not impossibility of repairing the trip routes. The two selected 13309 counterparts both pass 239.01 kWh under their historical zero-reserve assumptions.
+
+Raw sources, execution commits, hashes, settings, proof scopes and reproducible scripts are in the three linked folders. No CG certificate, finite-pool proof, GIRO target claim or strict-physics status was upgraded by plotting or replaying these results. Google Slides remain untouched.
