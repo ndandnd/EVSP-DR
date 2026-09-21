@@ -1,0 +1,19 @@
+{
+  "job_id": "661175",
+  "argv": [
+    "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+    "--parsable",
+    "--partition=default_partition",
+    "--exclude=scaglione-compute-01",
+    "--cpus-per-task=2",
+    "--mem=8G",
+    "--time=00:15:00",
+    "--no-requeue",
+    "--job-name=drX40_native_validate",
+    "--output=/home/nc437/ladder-lite/chain_extension_33_40_20260921/logs/native_validation_%j.out",
+    "--error=/home/nc437/ladder-lite/chain_extension_33_40_20260921/logs/native_validation_%j.err",
+    "/home/nc437/ladder-lite/chain_extension_33_40_20260921/validate.sub"
+  ],
+  "submitted_utc": "2026-09-21T18:30:57.207374+00:00",
+  "research_result": false
+}

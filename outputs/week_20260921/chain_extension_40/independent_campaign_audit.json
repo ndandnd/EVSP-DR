@@ -1,0 +1,119 @@
+{
+  "schema": "independent-campaign-audit-v1",
+  "reviewed_utc": "2026-09-21T18:38:16.715986+00:00",
+  "reviewer": "cleanup_physics independent read-only subagent",
+  "status": "passed",
+  "blocking_findings": [],
+  "manifest_sha256": "e3d7164834a388b69def78840acf6038129d9aa8dddc18f9db3bcfe6e575046e",
+  "comparison_manifest_sha256": "c05a9337f232d9b21acdeafeb5e9311630b28d88674c9b312ff97d7165f2e735",
+  "checks": [
+    {
+      "name": "unchanged_scientific_configuration",
+      "status": "passed",
+      "detail": "CG and MIP execution commits, all Python source hashes, physical/objective/discretization settings, and tariff/reference/deadhead input hashes exactly equal the k31\u201332 manifest.",
+      "evidence": "manifest.json; outputs/chain_extension_31_32_20260915/manifest.json"
+    },
+    {
+      "name": "frozen_tooling",
+      "status": "passed",
+      "detail": "All four manifest-pinned tooling files match their SHA256. Prelaunch additionally requires validator, manifest and input-validation hashes to match the native receipt.",
+      "evidence": "campaign.py:383; manifest.json"
+    },
+    {
+      "name": "per_chain_predecessors",
+      "status": "passed",
+      "detail": "All48 cases have the correct previous-k case, input hash and published CG path. First predecessors are the six authenticated k32 parents; scheduler links preserve CG-to-CG dependence and same-case CG-to-MIP only.",
+      "evidence": "campaign.py:265-283; campaign.py:438-450; manifest.json"
+    },
+    {
+      "name": "safe_cache_aliasing",
+      "status": "passed",
+      "detail": "44 graph owners cover48 cases. Every alias has identical input SHA256 and owner path; graph identity also checks solver commit, tariff/reference/deadhead hashes and physical/discretization options. No CG status or column journal is shared between chains.",
+      "evidence": "campaign.py:171-181; exact_pricer_expanded.py at a0e0bb7681c8451e3cbbbfa06aef390026d9af4b; validate.py:62-71"
+    },
+    {
+      "name": "stage2_fleet_cap",
+      "status": "passed",
+      "detail": "Pinned MIP source explicitly adds sum(route binaries) <= validated stage1_buses. A validated fallback may supply that cap; proof flags retain whether the fleet bound established optimality.",
+      "evidence": "src/run_exact_pool_mip.py:2502-2745 at 871d057e1067411f09581e37d78f7c1ca43f68bb"
+    },
+    {
+      "name": "resources_and_exclusion",
+      "status": "passed",
+      "detail": "CG8CPU/96G/5h and MIP8CPU/24G/2h unchanged. Graph2CPU/96G/37h supports36h native watchdog, justified by51.30GiB prior peak and78.17GiB/24.37h extrapolation. All44 independent graph tasks eligible; all CPU jobs explicitly exclude scaglione-compute-01 on default_partition.",
+      "evidence": "campaign.py:371-380; parent_graph_accounting.txt; resource_scaling.json; outputs/meeting_20260910/SCAGLIONE_RESOURCE_POLICY.md"
+    },
+    {
+      "name": "requeue_and_failure_handling",
+      "status": "passed",
+      "detail": "Scheduler preemption requeue uses unique job/restart directories; only successful authenticated outputs publish. CG copies an identity-checked checkpoint and journal; native resume includes prior elapsed time in the4h budget. Unpublished graph restarts and MIP restarts a fresh tree. Signals/watchdog/nonzero exit preserve unsuccessful attempts and fail downstream afterok.",
+      "evidence": "campaign.py:239-364; exact_pricer_expanded.py:1362-1737,1806-1807,2491-2497 at pinned CG commit"
+    },
+    {
+      "name": "publication_scope",
+      "status": "passed",
+      "detail": "A published CG requires zero artificials and at least one iteration, not a pricing certificate. Certificate and stop reason remain separate in provenance. MIP publication requires physical_replay_validated true. These remain baseline physics and finite-pool proofs, not strict GIRO validation.",
+      "evidence": "campaign.py:231-233,354-364; manifest scientific_settings"
+    },
+    {
+      "name": "duplicate_and_launch_gates",
+      "status": "passed",
+      "detail": "Submission refuses existing campaign jobs.json, rechecks immutable sources and six parents, and scans cross-campaign job maps/live queue for equivalent cases. Each successful submission is recorded before continuing.",
+      "evidence": "campaign.py:383-450; duplicate_gate.py"
+    },
+    {
+      "name": "native_validation",
+      "status": "passed",
+      "detail": [
+        "immutable CG/MIP sources, borrowed object stores and independent frozen previous-input gate checked",
+        "six frozen k32 inputs and published parent gates checked",
+        "48 frozen case inputs match manifest",
+        "96 production CG/cache command lines pass actual parser",
+        "2001-variable native Gurobi optimization passes size-unrestricted license",
+        "instrumented/uninstrumented four-trip graphs have identical pickle SHA256",
+        "native cache-required CG and full-pool inheritance both return usable LPs",
+        "byte-identical input under a distinct case path safely reuses authenticated graph cache",
+        "two-stage MIP with source hashes and physical replay passes"
+      ],
+      "evidence": "validation.json"
+    }
+  ],
+  "case_count": 48,
+  "graph_owner_count": 44,
+  "cache_alias_groups": {
+    "w1_k40": [
+      "w1_k40",
+      "w4_k40"
+    ],
+    "w2_k39": [
+      "w2_k39",
+      "w3_k39"
+    ],
+    "w2_k40": [
+      "w2_k40",
+      "w3_k40",
+      "w6_k40"
+    ]
+  },
+  "operational_notes": [
+    "If submission stops partway, jobs.json blocks blind rerun. Reconcile existing submitted jobs and genuine dependencies explicitly; do not delete the record or repeat the whole campaign.",
+    "A corrupt newest CG checkpoint fails closed instead of silently choosing an older one. Manual authenticated recovery may be required.",
+    "Native validation is a four-trip integration/cache-alias test, not evidence that large graphs will fit the projected resources.",
+    "Post-submission scheduler and dependency verification is a separate gate; no production scheduler state is claimed by this static audit."
+  ],
+  "file_sha256": {
+    "campaign.py": "0a5d29eb33b5cb5958b09602168e4ebe337960de050c9333249f2a29d441c264",
+    "validate.py": "e68fc2da06de36597c4e96b68a3d7fb8b873518cc604ef0be4ce37d56ade0810",
+    "graph_entry.py": "463973a0aff2dfb59979f9a5f40baeac29ee2e31d25a63a5844e9e08647c43ee",
+    "worker.sub": "ab6b51e1d506bc4ed76bd23112fc6eb2e9d6194ad7d88e016ea9d6a85b0055c5",
+    "duplicate_gate.py": "43e91ff9829db60817469524feb15975d2a8b1d4b17d7901db13d46212643c90",
+    "verify_launch.py": "5bd4fbfed529bbf33eee9e03833a1b4c5fa5c8cc9434c8a09340943896075deb",
+    "parent_input_audit.json": "6eed890398c08a7860adbc1be7c578ca9e9f885b9dbd4e24e7307e5bc63c7471",
+    "input_validation.json": "c7f6e376fa1c4af1970344c442f8b705afbf6b5583816b8a1bdc7e5ff5c6f0f9",
+    "resource_scaling.json": "3b3723e8f2c293fb8b38333ce4b9c012a5c13c67292afffbf7a4a5ab200e8d16"
+  },
+  "actions": "Read source/configuration and wrote only independent_campaign_audit.json/.md; no campaign edits or submissions.",
+  "native_validation_receipt_sha256": "e22ec15cd2fd25cabc3788ab69803210d35e32a74d198e23f08c3ac4672beb6c",
+  "native_validation_job": "661175",
+  "native_receipt_identity_hashes_verified": true
+}

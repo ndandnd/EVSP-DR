@@ -1,3 +1,39 @@
+## 21 September, afternoon: all six baseline chains extended toward40
+
+[Launch, frozen inputs, resources and job receipts](../week_20260921/chain_extension_40/README.md). Submitted48 cases for k33–40:44 distinct graph builds (array661616),48 CGs and48 dependent MIPs. At14:40EDT five new graph tasks were running; all96 solver stages retained true input dependencies. Baseline physics/source and4h CG/1h MIP budgets are unchanged; measured k32 graph costs justify96G and36h graph watchdog. Existing full40 inputs preserve each chain's compatible duty variants (946/947/948 trips), with exact-byte graph reuse and separate column pools. Native9-check validation and independent launch audit passed;48 MIPs registered. Full40 is the40-base-duty frozen universe, not a43-duty comparison. No new k33+ scientific endpoints yet; graph preparation and sequential CG make completion a roughly two-day prospect under favorable scheduling. Held historical jobs remain untouched.
+
+## 21 September: weekly journal, full solver evidence and constraint repairs
+
+[Concise journal and eight-job table](../week_20260921/RESEARCH_JOURNAL.md) · [Weekly entry point](../week_20260921/README.md). All eight previous jobs reached scheduler completion, with distinct scientific outcomes. Four fresh k8 pool proofs are verified directly from complete Gurobi logs; C1's own-incumbent follow-up now proves8. All twelve k15 charging stages are finished, but15-bus feasibility remains unresolved. [35 full logs, exact source paths,193 file hashes and numerical WHY analysis](../week_20260921/evidence/README.md). [Capacity acceleration results and strict packed-graph recovery](../week_20260921/capacity_strict/README.md) separate pricing certificates, finite-pool fleet proofs, physical checks and verified small-case benchmark646674, running k16 recovery646675 and dependent MIP646676. [Actual duplicate-service repair](../week_20260921/cleanup_physics/cleanup_result/summary.json) is validated under its historical physics; [replacement k5 figure and matched settings](../week_20260921/cleanup_physics/manifest.json) correct the older figure. [Completed matched charging reoptimization](../week_20260921/cleanup_physics/joint_validation.json) validates five buses and 62 exactly-once trips with one-charger site limits; fee0/fee5 use42/30 starts on different inherited trip sequences and station paths, so this is not a fee-only causal comparison. This is post-hoc saved-sequence charging, not fresh CG or complete GIRO validation. Original artifacts, failures and superseded interpretations are retained; Google Doc/Slides publication is tracked by the weekly task separately.
+
+## 21 September: pilot results recovered; parallel capacity campaign launched
+
+[Audited results and live-job ledger](../research_execution_20260921/README.md). Correction: diving pilot586633–586644 already completed; previous not-launched reports were stale. Final MIP target8 in3/4treatments, controls9; physical replay passed, dispatch-cleanup and timing qualifications recorded. C1 own-incumbent follow-up628441queued. Six matched capacityCGs plus strict256Grecovery verified running; six dependent MIPs queued. Single-factor outcomes audited against predictions. No connected document-control session; Doc update pending.
+
+## 20 September: idle queue recovery submitted
+
+[Recovery ledger](../queue_recovery_20260920/README.md). Replacement605655 at128G; two direct dependencies repaired; later same-group pending CG memory increased based on measured predecessor peak. Scientific settings unchanged.
+
+## 20 September: queue idle after next strict-chain memory failure; six-chain slides updated
+
+[Status and verified slide update](../meeting_update_20260920/README.md). Zero running;25strict-chain jobs blocked after341286 exhausted48G. Recovery jobs completed; six single-factor pipelines reached scheduler endpoints, requiring scientific audit. No new submissions. All-six fresh and sequential results added to the user-selected historical deck, preserving historical figures and separating budgets. Better-column benchmark not submitted. Current Google Doc not updated in this turn.
+
+## 19 September: blocked experiments recovered
+
+[Recovery receipts and column-generation implementation plan](../recovery_and_diving_20260919/README.md). All13recovery jobs confirmed running: replay585496(11tasks), strictCG585509/585510(128G). All11replay timeouts were on unicorn-cpu-75 and left no worker journals; retries exclude it.739completed shards preserved. Six assembly and three strict successor dependencies repaired. Scientific settings unchanged; no new scientific endpoint claimed. Claude coding integer-directed pricing; pilot not yet submitted.
+
+## 18 September, late evening: fresh k15 twelve-hour fleet stages
+
+[Current research summary](../research_day_20260918/RESEARCH_STATE.md). All12fleet stages in454004 ended without target15: plain18/17/17/19/16/18; heuristic-focused18/17/16/17/16/17. Every bound remains15. Charging stages still run; this is a log-verified fleet-stage result, not final validated schedules. [Timestamped source excerpts and hashes](../research_day_20260918/longmip_fleet_stage_snapshot.json). No submissions or dependency changes.
+
+## 18 September: matched three-bus fee comparison completed
+
+[Results, figures and provenance](../research_day_20260918/matched_k3/README.md). Array480390 completed both arms. Same39trips, GIRO-sequence initialization, 240kWh/350kW, zero reserve, no shared capacity, 08:00 tariff and aggregate return-energy floor170.4984kWh. CG pricing certified in7.54/6.23minutes for fee0/5; both saved-pool MIPs found and proved3buses. Charging starts: original34, fee0 30, fee5 16. Physical exact-once validation passed. No duplicated trips occurred, so duplicate cleanup produced zero driving/energy savings. Figures preserve source dataset trip IDs. This is not fresh-start or stricter-physics evidence. See the receipt for execution commit, source hashes, resource requests and the failed superseded indexing attempt.
+
+**18 September live operational check:** 12 long-MIP tasks running; action3 replay739/750completed,11timeouts block all6assembly stages. Strict18E2 k11CG failed with out-of-memory. No new scientific endpoint inferred. [Today’s priorities, queue evidence and monitoring](../research_day_20260918/README.md).
+
+**17 September, noon fixed-duty retry verified:** Job 353252 finished at 12:56 EDT; optimizer wall time 160.3 s. Five buses, 62 trips exactly once; reserve/minimum-charge/terminal-energy physical audit passed. Continuous repriced cost 195.072088; grid objective 198.898418. Fresh-CG noon cost 195.213807 is 0.073% higher and still requires duplicate-trip dispatch validation. Sources: [summary](../meeting_20260917/noon_fixed_retry/verified/summary.json), [physical audit](../meeting_20260917/noon_fixed_retry/verified/independent_physical_audit.json). Slides unchanged.
+
 **Four-result gate completed, 17 September 08:04 EDT:** fresh-k15 0/18; C5 k31 twelve-hour search 31 buses/bound30; constrained-k5 costs and k32 seed variability audited. [Four results, source hashes and validation limits](../independent_review_20260916/execution/advisor_sequence_20260916/report_gate/snapshots/20260917T120440Z/RESULTS.md). Current Doc status rows updated in place; frozen cohort unchanged. No new submissions.
 
 **Meeting update, 16 September 23:44 EDT snapshot:** sequential pools now have 32-bus results at target 32 on all six chains, including selected longer searches and seed repeats. Fresh-k15 repeats: 0/18 hits after 3h fleet search; all gaps remain open. Stricter-k5 morning charging cost: 1.93% lower than the tested fixed-duty comparator. [Concise meeting summary, source tables and qualifications](../independent_review_20260916/execution/meeting_progress_20260917/README.md). Current Doc updated; frozen audit counts retained.

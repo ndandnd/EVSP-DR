@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "checked_utc": "2026-09-21T18:45:57.790699+00:00",
+  "checks": {
+    "current_existing_entries_preserved": true,
+    "figure_archive_existing_text_preserved": true,
+    "current_original_image_count": 2,
+    "current_final_image_count": 2,
+    "figure_archive_original_image_count": 5,
+    "figure_archive_final_image_count": 7,
+    "all_old_current_links_retained": true,
+    "placeholders_absent": true,
+    "graph_array_recorded": true,
+    "physics_scope_recorded": true,
+    "forty_variant_trip_counts_recorded": true,
+    "model_time_discrepancies_recorded": true
+  },
+  "normalization": "Ignore Markdown bold markers, whitespace, empty heading paragraphs introduced by page breaks, and renumbered image references.",
+  "visual_QA": "Current tab all7pages checked; figure tab new3pages and preserved5historicalpages checked. Tables kept together; source links and map captions remain editable. Images verified by reference counts and visual inspection, not bytewise comparison.",
+  "slides_modified": false,
+  "files": {
+    "current_before.md": "982954f82185ae5e4244b86265efad6a628517a5c6684c03cb6243d5d3a342e4",
+    "figures_before.md": "e848a5de2cce2c92eb8eff7d5a82defc488bf8d627b97c1807b0f2ded5ff5ddf",
+    "figures_after.pdf": "586e27c8214d85a0ec7e4504e91927e2f76ac43f84b0b2f4017f61188e18aa6b",
+    "current_after.pdf": "b44bf27f00cbf03413000ae64c257d1b58a46a446538764ba62f064d43c816b5",
+    "figures_after.md": "5ae1b8082b0de39e4ed022fca97d1c6637272cae2649ea08297c6a2bb64df61f",
+    "current_after.md": "65f156edb498ced8730cc70df90a5255060b17d25f113af6509e8d00158855c5"
+  }
+}

@@ -1,0 +1,1024 @@
+{
+  "checked_utc": "2026-09-21T18:46:43.345448+00:00",
+  "new_campaign_states": {
+    "PENDING": 126,
+    "RUNNING": 14
+  },
+  "new_campaign_pending_reasons": {
+    "BeginTime": 1,
+    "Resources": 29,
+    "Dependency": 96
+  },
+  "other_strict_jobs": [
+    {
+      "job_id": "646676",
+      "name": "pack21_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "646675",
+      "name": "pack21_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "luxlab-cpu-02"
+    }
+  ],
+  "rows": [
+    {
+      "job_id": "661616_6",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "BeginTime",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_15",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_16",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_17",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_18",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_19",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_20",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_21",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_22",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_23",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_24",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_25",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_26",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_27",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_28",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_29",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_30",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_31",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_32",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_33",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_34",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_35",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_36",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_37",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_38",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_39",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_40",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_41",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_42",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_43",
+      "name": "drX_graphs",
+      "state": "PENDING",
+      "reason": "Resources",
+      "nodes": ""
+    },
+    {
+      "job_id": "661741",
+      "name": "drX_w6_k40_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661739",
+      "name": "drX_w6_k39_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661736",
+      "name": "drX_w6_k38_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661733",
+      "name": "drX_w6_k37_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661731",
+      "name": "drX_w6_k36_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661729",
+      "name": "drX_w6_k35_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661727",
+      "name": "drX_w6_k34_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661724",
+      "name": "drX_w6_k33_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661721",
+      "name": "drX_w5_k40_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661719",
+      "name": "drX_w5_k39_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661717",
+      "name": "drX_w5_k38_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661715",
+      "name": "drX_w5_k37_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661713",
+      "name": "drX_w5_k36_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661711",
+      "name": "drX_w5_k35_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661709",
+      "name": "drX_w5_k34_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661707",
+      "name": "drX_w5_k33_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661705",
+      "name": "drX_w4_k40_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661703",
+      "name": "drX_w4_k39_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661701",
+      "name": "drX_w4_k38_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661699",
+      "name": "drX_w4_k37_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661697",
+      "name": "drX_w4_k36_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661695",
+      "name": "drX_w4_k35_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661693",
+      "name": "drX_w4_k34_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661691",
+      "name": "drX_w4_k33_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661686",
+      "name": "drX_w3_k40_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661684",
+      "name": "drX_w3_k39_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661682",
+      "name": "drX_w3_k38_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661680",
+      "name": "drX_w3_k37_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661678",
+      "name": "drX_w3_k36_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661676",
+      "name": "drX_w3_k35_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661670",
+      "name": "drX_w3_k34_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661668",
+      "name": "drX_w3_k33_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661650",
+      "name": "drX_w2_k40_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661648",
+      "name": "drX_w2_k39_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661646",
+      "name": "drX_w2_k38_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661644",
+      "name": "drX_w2_k37_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661642",
+      "name": "drX_w2_k36_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661640",
+      "name": "drX_w2_k35_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661638",
+      "name": "drX_w2_k34_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661636",
+      "name": "drX_w2_k33_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661633",
+      "name": "drX_w1_k40_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661631",
+      "name": "drX_w1_k39_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661629",
+      "name": "drX_w1_k38_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661627",
+      "name": "drX_w1_k37_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661625",
+      "name": "drX_w1_k36_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661622",
+      "name": "drX_w1_k35_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661620",
+      "name": "drX_w1_k34_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661618",
+      "name": "drX_w1_k33_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661742",
+      "name": "drX_w6_k40_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661740",
+      "name": "drX_w6_k39_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661738",
+      "name": "drX_w6_k38_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661735",
+      "name": "drX_w6_k37_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661732",
+      "name": "drX_w6_k36_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661730",
+      "name": "drX_w6_k35_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661728",
+      "name": "drX_w6_k34_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661726",
+      "name": "drX_w6_k33_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661722",
+      "name": "drX_w5_k40_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661720",
+      "name": "drX_w5_k39_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661718",
+      "name": "drX_w5_k38_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661716",
+      "name": "drX_w5_k37_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661714",
+      "name": "drX_w5_k36_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661712",
+      "name": "drX_w5_k35_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661710",
+      "name": "drX_w5_k34_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661708",
+      "name": "drX_w5_k33_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661706",
+      "name": "drX_w4_k40_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661704",
+      "name": "drX_w4_k39_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661702",
+      "name": "drX_w4_k38_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661700",
+      "name": "drX_w4_k37_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661698",
+      "name": "drX_w4_k36_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661696",
+      "name": "drX_w4_k35_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661694",
+      "name": "drX_w4_k34_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661692",
+      "name": "drX_w4_k33_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661687",
+      "name": "drX_w3_k40_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661685",
+      "name": "drX_w3_k39_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661683",
+      "name": "drX_w3_k38_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661681",
+      "name": "drX_w3_k37_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661679",
+      "name": "drX_w3_k36_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661677",
+      "name": "drX_w3_k35_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661671",
+      "name": "drX_w3_k34_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661669",
+      "name": "drX_w3_k33_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661651",
+      "name": "drX_w2_k40_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661649",
+      "name": "drX_w2_k39_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661647",
+      "name": "drX_w2_k38_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661645",
+      "name": "drX_w2_k37_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661643",
+      "name": "drX_w2_k36_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661641",
+      "name": "drX_w2_k35_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661639",
+      "name": "drX_w2_k34_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661637",
+      "name": "drX_w2_k33_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661634",
+      "name": "drX_w1_k40_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661632",
+      "name": "drX_w1_k39_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661630",
+      "name": "drX_w1_k38_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661628",
+      "name": "drX_w1_k37_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661626",
+      "name": "drX_w1_k36_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661623",
+      "name": "drX_w1_k35_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661621",
+      "name": "drX_w1_k34_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661619",
+      "name": "drX_w1_k33_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "646676",
+      "name": "pack21_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": ""
+    },
+    {
+      "job_id": "661616_10",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "unicorn-cpu-73"
+    },
+    {
+      "job_id": "661616_11",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "lodi-cpu-01"
+    },
+    {
+      "job_id": "661616_12",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "dean-cpu-01"
+    },
+    {
+      "job_id": "661616_13",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "dean-cpu-01"
+    },
+    {
+      "job_id": "661616_14",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "lin-cpu-01"
+    },
+    {
+      "job_id": "661616_8",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "sablab-cpu-01"
+    },
+    {
+      "job_id": "661616_9",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "sablab-cpu-01"
+    },
+    {
+      "job_id": "661616_7",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "kim-cpu-02"
+    },
+    {
+      "job_id": "661616_5",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "cliprelabs-cpu-01"
+    },
+    {
+      "job_id": "661616_3",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "kim-cpu-05"
+    },
+    {
+      "job_id": "661616_4",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "petro-cpu-01"
+    },
+    {
+      "job_id": "661616_0",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "garg-cpu-01"
+    },
+    {
+      "job_id": "661616_1",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "kim-cpu-02"
+    },
+    {
+      "job_id": "661616_2",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "sablab-cpu-01"
+    },
+    {
+      "job_id": "646675",
+      "name": "pack21_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "luxlab-cpu-02"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "scope": "Only add chain_extension_33_40_20260921 to collection and register campaign lists; preserve unrelated dirty root changes by patching isolated branch originals",
+  "files": [
+    {
+      "path": "outputs/meeting_20260910/collect_remote.py",
+      "isolated_base_sha256": "93223c09180acacf9d4048cc316e6e9fc5ebc993c1e8e0d976c7b5a1539b2ba2",
+      "patched_sha256": "8e8d6b556cda0519ea1d050bf651bd131657e66ede545cf7f8b54c6f2de6db11",
+      "new_campaign_occurrences": 6,
+      "root_dirty_file_not_copied": true,
+      "ast_parse_passed": true
+    },
+    {
+      "path": "outputs/research_register/build_register.py",
+      "isolated_base_sha256": "b8321854a6d1696b4db1df2e84ac3f3c854dbfc99d1fd1f76d8cd76b468698f6",
+      "patched_sha256": "62b1e93e01d62a7cf1a287fe1dcf9c48037a359662bf4c7b52f20b2739e13f08",
+      "new_campaign_occurrences": 1,
+      "root_dirty_file_not_copied": true,
+      "ast_parse_passed": true
+    }
+  ]
+}

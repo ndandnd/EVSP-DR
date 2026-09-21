@@ -1,0 +1,17 @@
+{
+  "model": "quadratic trip-count extrapolation for operational sizing; not a measured scaling law",
+  "peak_k32_kib": 53792496,
+  "peak_case_trips": 768,
+  "full_case_trips": 948,
+  "memory_projection_gib": 78.16566329821944,
+  "duration_reference_hours": 15.21562093032731,
+  "duration_reference_trips": 749,
+  "duration_projection_hours": 24.374893079636,
+  "graph_request_gib": 96,
+  "graph_watchdog_hours": 36,
+  "slurm_allocation_hours": 37,
+  "scientific_CG_budget_hours": 4,
+  "scientific_MIP_budget_hours": 1,
+  "independent_graph_tasks": 44,
+  "array_concurrency": 44
+}

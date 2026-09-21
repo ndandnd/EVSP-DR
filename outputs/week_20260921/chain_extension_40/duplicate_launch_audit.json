@@ -1,0 +1,544 @@
+{
+  "status": "passed",
+  "checked_utc": "2026-09-21T18:38:38.028922+00:00",
+  "manifest_sha256": "e3d7164834a388b69def78840acf6038129d9aa8dddc18f9db3bcfe6e575046e",
+  "scanned": [
+    {
+      "path": "/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/case_jobs.json",
+      "sha256": "c01a04385f9ace1e206fc5e6038ed83bc9427bb7b36a6856d20a962a8badaf52",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/case_jobs.json",
+      "sha256": "4b6f8fb5141604508f975a18e8f1e1a0302c97d3a387e6cca7b6fdfb720e7135",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/case_jobs.json",
+      "sha256": "6e8dae58cd3f64f0388d10c422b595edd047ebd397b617172817de9b90b69185",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/chain_extension_20260915/case_jobs.json",
+      "sha256": "456448380ab1d97be28f989ccaa9e6e420ad3095bd319916d4015274e7533a65",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/chain_extension_31_32_20260915/case_jobs.json",
+      "sha256": "abd1ccd4df0075b545e028fcf6074607e98172ce0267d783ca92f969b4744a3f",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/case_jobs.json",
+      "sha256": "6a2b5cefc493636311a6732e4e980c2da25dd52a0818f6929743660e9d303f24",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/compact_pool_union_20260915/case_jobs.json",
+      "sha256": "97278ddf8fecd15d5e704ef002412b7e5a59af3f106ea065fd618c70aeeaaf28",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/case_jobs.json",
+      "sha256": "330ac0b8113f0ab2da9caf35c23975f85889e099417158a0cf862c796c72e017",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gap_20260915/case_jobs.json",
+      "sha256": "5855c5aec8033fbdf6a2c046680ff6ed5961e42e8c31e49ecf93fb69ca752192",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps10_20260916/case_jobs.json",
+      "sha256": "54a0712f05bead6c790d4b3719ee0d4c33f9e90ae8739a7ffe7dd72339337eb0",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps11_20260916/case_jobs.json",
+      "sha256": "f3b5acb24028c9dd8b9c8c4c6af20c4b016fca33afbd6a3e8beb7c45acd88c03",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps12_20260916/case_jobs.json",
+      "sha256": "71a7f98876f08c54e07274d001a27e993bd2572cf3fd8695d67aec39cae6916b",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps13_20260916/case_jobs.json",
+      "sha256": "6e476a5c7d8357a22ef61846a9fafb1e1235818acd58489dfa0affca19b1c20b",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps14_20260916/case_jobs.json",
+      "sha256": "49c1e3acaaee69db5a5ee8f06590af8db96507240390a638bb468ee9fdf8438d",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps15_20260916/case_jobs.json",
+      "sha256": "5a4e7b59aa2a499b7a7d02a172a4cd98f4d0fabc6fbaa69f29ef5c2453dd77d6",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps2_20260915/case_jobs.json",
+      "sha256": "949b230ad7ac7abd6dd7df603ef6db93345ef82518ed3988a9bc7248de2e036d",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps3_20260915/case_jobs.json",
+      "sha256": "79c82ad5af3dc6038e89c71e6463f32d66b5a2a0b0dcab1c8a96de41d8e500ed",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps4_20260915/case_jobs.json",
+      "sha256": "65580bc0b15820c12ceb7d3851b1217fa2fd9995d95575926fb6e7c4646c5408",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps5_20260916/case_jobs.json",
+      "sha256": "f040b63dd4baaa9b1768208c218f1ff985e2cee3a58cd225c2e376c4ad953966",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps6_20260916/case_jobs.json",
+      "sha256": "413df564d959e1572118000d250139fc332a8195351af363ac08218d2142185c",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps7_20260916/case_jobs.json",
+      "sha256": "979d67c9c2e121d4d8c8361c0b5e28bd65b9b0912103a10b6c4082c8cf1f0e89",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps8_20260916/case_jobs.json",
+      "sha256": "4044d9359dd83bd0e0940249118880764ca8ab62e690a2bcd60f3614c769b5d1",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps9_20260916/case_jobs.json",
+      "sha256": "3fd4ab862af4cac767f24b46676359272a408051b6148c3b18d18b6c87dbec1f",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/case_jobs.json",
+      "sha256": "546a4351d20b5deed8701176c7547d574ea79be501f564f0af17e29cdba7d964",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/final_chain_gap_20260915/case_jobs.json",
+      "sha256": "2077d79776d6e16ee630e60a747d8faecff061a5cc710e581cd3262501c69120",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/case_jobs.json",
+      "sha256": "c49679936fd206690909a7f86983f7fa7d52f33f174218153178f4d084d80238",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_recovery_20260912/case_jobs.json",
+      "sha256": "e2a8716e0e6f0829f173e361a369707856b2c0e50597fa4653e978db80ace9f2",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/case_jobs.json",
+      "sha256": "9a14b6d59b937219c97dc8549bd6ef9810db73086dd78c2f8948996b003114be",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_timeout_gates_20260914/case_jobs.json",
+      "sha256": "7f6a0955ba4f7d360cb5f9b725ab8aefb167875a322145ec4c382810ff5ecd6e",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_timeout_gates_v2_20260914/case_jobs.json",
+      "sha256": "f49b18102fff9570d7eb668851d250bf4e79ddbcf1fd24661ed1e7fccf563903",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/case_jobs.json",
+      "sha256": "a314b64f9bc672063062b2de213f1bf5f636d7789557394799bfe8238dfba5e8",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/case_jobs.json",
+      "sha256": "ae84504188f2e3a40180ccbe0745ec71b35a28f5089d8e515389abcc957d092d",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/case_jobs.json",
+      "sha256": "9501d0e24b84171f425ee0f3cad5945572215c32a8750171c678e2b7c6325d56",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/case_jobs.json",
+      "sha256": "2fe45ba59138ea79e9223129a363984fd3a3d8d5963c8b665aee1f9ee3f8b0eb",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/case_jobs.json",
+      "sha256": "a75f4028389525e10d6a5431502c5412d4527edf01fc0495e1c798c1885d7e1b",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_unions_20260914/case_jobs.json",
+      "sha256": "bfecafffb26349d2e2ce420b4412cf5240d52274a1c9c487055334c5113af325",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/random_trip_groups_c1_20260916/case_jobs.json",
+      "sha256": "5e8ab6ee9b0f237cfb23d7935fae7ea74a1d03afd1d966a6d549dfbca2c87ee1",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/case_jobs.json",
+      "sha256": "616aa013d8b3c92e163e2abd1018ed3944059c5e0cb7c58b50baedd5cb844f9a",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/case_jobs.json",
+      "sha256": "1b68df50ba2148db4ab4975e95574f8cb7e0df1f490887d9f0f3df62d064ed5d",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/case_jobs.json",
+      "sha256": "d35f2a3cfb323863928fc7fc0737281078f0fe74919773405b2ff546afdc496f",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/review_full40_20260916/case_jobs.json",
+      "sha256": "cde78b8b8c0c48af61f84ecf596a169aaa3d250d28da26bc489272c764417895",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/review_p1_mip_20260916/case_jobs.json",
+      "sha256": "5d96fa7a6e334a2ef77a7952122a274871a22fdd1cd2522a327ab0d486f7d357",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/advisor_f6_k5_reserve_20260916/jobs.json",
+      "sha256": "fdfcce8ed08f8fa49af2860503c805c7ab279ea7b3924d5ae77e03b294acf841",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/capacity_fixed_dual_20260914/jobs.json",
+      "sha256": "daf87ed927b1b835778c4ce4443ec3b9fb7da57f63bf6f9f427b04909a365dd3",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/capacity_fixed_dual_retry_20260914/jobs.json",
+      "sha256": "9814708c5710629151f65d0e15a1b1ab10227ca5bbf06c256e8b69d128645d23",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/capacity_loop_20260921/jobs.json",
+      "sha256": "c612b3044617f3e24fecbef176de90ec9ce0c7bccc6dae2f94cf45f06e3bf6ae",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/jobs.json",
+      "sha256": "e070bc4002c5e487dda46ee22c5fb86b1472d4b11f615f2a9a38d0777ca6c0c9",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/jobs.json",
+      "sha256": "662f3372d43255c0312ead8e7d3223fc72c258977648e1a375470f9f3befd0e1",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/jobs.json",
+      "sha256": "6fa027cdf3c7b696b4a85588fb46912833853b43cbde6c818bba3841f1645148",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/chain_extension_20260915/jobs.json",
+      "sha256": "fe9e0be5db9adb4e15dc29632914e3adeff7e26b06e788a00f1269e510238065",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/chain_extension_31_32_20260915/jobs.json",
+      "sha256": "2a5d9d35c532108bcdd69d3170a5ee97242bfbed6f0f3f7401d3b38337bd54f7",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/compact_large_seed_20260914/jobs.json",
+      "sha256": "3c8f083251142c6a41fa1f89f2a25b79bef2e810ea5cde0688181f3e91af4b1d",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/compact_large_seed_20260914_smoke/jobs.json",
+      "sha256": "b7b895938ab0b179c3c9fdd065e22f6a8d15a9c13ab4a07e106d138bedadffbd",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/compact_pool_union_20260915/jobs.json",
+      "sha256": "7802f1cc3800d8f5736e74d865e4cdaea48c5252ac56b0245dcee9baa02f033d",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914/jobs.json",
+      "sha256": "e9fe1764cd103a6120d9c684ad41bae3e6a9421babd394d44cb345e0fdb08013",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/compact_seed_support_20260914_smoke/jobs.json",
+      "sha256": "ad1b945abcd64bd1aaebcf92a2c97e5e021525fb64ea3bb36c038443bbb2a660",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gap_20260915/jobs.json",
+      "sha256": "077012f060766882226c2912bb015e7151730a82b9a27a68079fdafc45be5f1c",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps10_20260916/jobs.json",
+      "sha256": "c3ba42a44177c640ca155fe63281fed78af5f608903e16244475d47c8a617d0f",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps11_20260916/jobs.json",
+      "sha256": "aa76b9ac137821bac39f1fefeece3a03680a08480923f9f840483473909763c5",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps12_20260916/jobs.json",
+      "sha256": "0b122b4dfd8ca576370531094b3c5283a6d46e11425a74de3d0fa15577e1de5c",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps13_20260916/jobs.json",
+      "sha256": "6f26392ea6a0d3fe2298b075db66e1f32f28b4214dbbcb8ab47062bef8b1f8d5",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps14_20260916/jobs.json",
+      "sha256": "260f8064a96e0f0929bdafb680201d64ea51d2562044ea455e372ac7f2a00334",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps15_20260916/jobs.json",
+      "sha256": "a12296887669cca8964f0cf5dd2b95459593e860e07608cfb2e5345a38a0d4fe",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps2_20260915/jobs.json",
+      "sha256": "faaa9a73619819f64ea00e383c31f3457d0ced67a5d13b2487d4b573cf51013d",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps3_20260915/jobs.json",
+      "sha256": "66d7b8de2d966c94f88345938e93eba7457256cc09465b78c5d7fa217e3399c9",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps4_20260915/jobs.json",
+      "sha256": "3951db0e8e9c3d801298a97dec25a4dd977a940bba411667d5563514a6ce204b",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps5_20260916/jobs.json",
+      "sha256": "cb30424d42a493a9e7aa17c18455822e834ab77e82d5a83f8cc4f5ce93b134c9",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps6_20260916/jobs.json",
+      "sha256": "4cf650025c759fa62f69fd465641188c604eaff728455293f8a3375134bdbc9f",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps7_20260916/jobs.json",
+      "sha256": "66dd92964266ae65121c611ff46dc2f3d356cd3ba99341d771bfab7527deb331",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps8_20260916/jobs.json",
+      "sha256": "8a0c029ab1a2a041d9bf76ed1c8df67fecd107d28d15b18c30ad89f9898200b1",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/continuation_gaps9_20260916/jobs.json",
+      "sha256": "8d1d7ebbf6441678cd17ac3466bf8180b93a5d961d2cae108a2da42bacc5a282",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/jobs.json",
+      "sha256": "e6e9b39d08fe51f6d8e2bfc92d0f0ad0509bdf522224b8a67965628197e55eec",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/jobs.json",
+      "sha256": "f9cb29bfb518ffabd30caa16b6dc7d8f4e2468bbdccb9c3a20fe98364612aad5",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/decomposition_lp_support_union_20260914/jobs.json",
+      "sha256": "1e45f1d86fd2fe6da6e3e7bea67d263a9d681661e1ebddbf64a77fc09f824a26",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/decomposition_pool_union_20260914/jobs.json",
+      "sha256": "0cd1a29220dfd59e385156ebb246a9d3a23618b8626c3b71272fb084bee23a82",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/jobs.json",
+      "sha256": "1f61a0ab24be8736a80c33801ce59fc5dc1a875bb3ed555fc17fc51198873734",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/jobs.json",
+      "sha256": "9edafb0b11c79bb9ee1124483f9ab24a5bcca4ea9534988ab8f49dabdc0bbc24",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/final_chain_gap_20260915/jobs.json",
+      "sha256": "705811dde49792e45fb725db24271849152eeecf7d64e9f30c188a69b2117f58",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/jobs.json",
+      "sha256": "d512302890693c5633f61bdf0aaf719283859ab97b96a2f2cd996573c2c78f90",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/jobs.json",
+      "sha256": "2c6cc95c546c3b91eac583d819474d98a10897120d9512727a57a92ed4e7ee94",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_recovery_20260912/jobs.json",
+      "sha256": "a0d495f7e594e448b2821c4c3cf7dda75dc243fa5b17f90bb0a16e5e17b332ff",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/jobs.json",
+      "sha256": "505866604b3ef32470bab00cfc5fc73be569a974f1e2cf2880ded3693c5d69d5",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_timeout_gates_20260914/jobs.json",
+      "sha256": "18acea25bb4982ce9d93d0418a86f320bf1335e800b27de4d135f4712a01f7ad",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_timeout_gates_v2_20260914/jobs.json",
+      "sha256": "c6263b0f3dd4740f104200caa249b0c4869adf45c3e3f092f5d1f261b0a8ea31",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914/jobs.json",
+      "sha256": "427667729531392225d24da8ba24edd4cea508b054feed6336bc90e5a4a797fa",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/lp_support_pool_diagnostic_20260914_smoke/jobs.json",
+      "sha256": "bb1cb45266cbdb6e99e6e5eed75694fdb4f012aa2f6a5486cd43650dba2f1ef5",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/jobs.json",
+      "sha256": "77b21a76f26327dbe67c58c6c0b6565fc86252b70d75a92ade2e29627cf16217",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/jobs.json",
+      "sha256": "bbbb23c3e798a7b83749d14f2a9fa7cd3c45a97ec7513fd044eceae76a0a90d8",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/jobs.json",
+      "sha256": "9e77b06442212854c885efcef0f93ec40d7eb1282f211007ec5e505bb13ade53",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/jobs.json",
+      "sha256": "f93391a1e62cf6976424ccb93b13b85c2d19dbbd41014eb3ee2e5fc827f72135",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/jobs.json",
+      "sha256": "5e8e8b7727bc67719218a4a859f3a0488ec49faadcb85cd1399943617f474197",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/jobs.json",
+      "sha256": "c388c30b714ae9b215ddb398c8f5d627b96d59d501677810da2102241e922747",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_unions_20260914/jobs.json",
+      "sha256": "86cddad1f179f5743884503e8b248c2b87aab60e1a9727eb2e4e008290820316",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/random_trip_groups_c1_20260916/jobs.json",
+      "sha256": "8e50d6bed75499458a991411d4dc84c9e5c5cefd100e612136de499d5433c96e",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/jobs.json",
+      "sha256": "67db5b698af20f22c7809123b91d860250bcdff9093b4927723d2127aa30f49a",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/reserve_feasibility_screen_20260914/jobs.json",
+      "sha256": "f12e93ca89e2208ad405166407e7f56122f9056047dfd89766bf95ebd97b5332",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/jobs.json",
+      "sha256": "6635e046d0cbba681b0a04337b0e38b7f7e2870ecbbc84cba55d50a18b7cab9e",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/review_dr_mincharge_20260916/jobs.json",
+      "sha256": "1d82cb6490bae3520458f2a780174be86e0fb99c794aeba0162b2d3dcd92545f",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/review_frolunda_20260916/jobs.json",
+      "sha256": "3f35308f1c2be07d0c477b19990b0fed379f272b0940f58b6697ecaebfbfb42f",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/review_full40_20260916/jobs.json",
+      "sha256": "d027d4b4f810d5b4ccbaded76251f4a36205444f8c352d8bb5fd7db4d5cf7f0c",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/review_p1_mip_20260916/jobs.json",
+      "sha256": "cd449dd0ee56d56d601b9e9fe7e9549279a3c997f3fdf49960b8555c8f5f877d",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/review_strict_c5_20260916/jobs.json",
+      "sha256": "01cbb196be5afa2e7f9032f0209418d5860c9840be2825a898860c3f2ab01cc1",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/review_witness_columns_20260917/jobs.json",
+      "sha256": "d4d1711444cb4549729434a15cfa3d24c4227d7d755430accf8e742fa57179c0",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/jobs.json",
+      "sha256": "729837681d0412628a807a39eba0e39c79e35c2b262b4cef505a079241039903",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/jobs.json",
+      "sha256": "abe5f7a10c15332f7353d6bacf1149ef30e440a69151bf62c7a2785e92980cb1",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/strict_packed_20260921/jobs.json",
+      "sha256": "f747f811cd04be858b1e75308b930b7a00ecde536c0be702bcb8615278cf12f3",
+      "overlap": []
+    },
+    {
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/jobs.json",
+      "sha256": "c3ac8e11d83b0ce0cf482ec40d1a19aef8d37ba551e7ce3cb6810531dee48116",
+      "overlap": []
+    }
+  ],
+  "queue_raw": "646676|pack21_mip|PENDING|/home/nc437|/home/nc437/ladder-lite/strict_packed_20260921/worker.sh\n341319|rvS29_18E2mip|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341318|rvS29_18E2cg|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341315|rvS27_18E2mip|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341314|rvS27_18E2cg|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341311|rvS25_18E2mip|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341310|rvS25_18E2cg|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341309|rvS24_18E2mip|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341308|rvS24_18E2cg|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341307|rvS23_18E2mip|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341306|rvS23_18E2cg|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341305|rvS22_18E2mip|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341304|rvS22_18E2cg|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341303|rvS21_18E2mip|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341302|rvS21_18E2cg|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341301|rvS20_18E2mip|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341300|rvS20_18E2cg|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341299|rvS19_18E2mip|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341298|rvS19_18E2cg|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341295|rvS17_18E2mip|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341294|rvS17_18E2cg|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n341293|rvS16_18E2mip|PENDING|/home/nc437/ladder-lite/review_strict_c5_20260916|/home/nc437/ladder-lite/review_strict_c5_20260916/worker.sh\n646675|pack21_cg|RUNNING|/home/nc437|/home/nc437/ladder-lite/strict_packed_20260921/worker.sh\n537227_[36-68%8]|tpmR2d7a25b33|PENDING|/home/nc437/ladder-lite/repo-manager|/home/nc437/ladder-lite/execution/2d7a21a07ef0b89f6e34e8504bf0638bee61113a/scripts/event_uniform_envelope/threshold_pool_mip8h.sub\n",
+  "collisions": []
+}
