@@ -115,6 +115,7 @@ def checkpoint_id(args, problem, prov) -> str:
         "rc_eps": args.rc_eps,
         "trips": list(problem.trips),
         "implementation_git_commit": prov["git_commit"],
+        "arc_mode": getattr(args, "arc_mode", "explicit"),
         "instance_sha256": prov["instance_sha256"],
         "prices_sha256": prov["prices_sha256"],
         "reference_sha256": prov["reference_sha256"],
@@ -223,6 +224,9 @@ def provenance(args, instance: Path, prices: Path, reference: Path) -> dict:
 
 
 def build_network(args, problem, prices):
+    arc_mode = getattr(args, "arc_mode", "explicit")
+    if arc_mode == "lazy" and ARMS[args.arm]["capacity"]:
+        raise ValueError("packed lazy arcs cannot be used with shared capacity")
     return EventExpandedNetwork(
         problem,
         prices,
@@ -232,7 +236,7 @@ def build_network(args, problem, prices):
         charge_kw=args.non_parx_kw,
         reserve_kwh=args.reserve_kwh,
         strict_tariff_coverage=False,
-        arc_mode="explicit",
+        arc_mode=arc_mode,
         station_charge_kw=station_power(args.arm),
         capacity_selector=getattr(args, "capacity_selector", "reference"),
     )
@@ -366,6 +370,7 @@ def run_cg(
                     "capacity_enforced": ARMS[args.arm]["capacity"],
                     "max_station_wait_min": getattr(args, "max_station_wait_min", 220.0)},
                 child_provenance=prov, new_checkpoint_id=identity,
+                compatible_parent_commit=getattr(args, "inherit_compatible_commit", None),
                 route_validator=lambda route: validate_injected_route(
                     problem, route, args.battery_kwh, args.non_parx_kw,
                     args.reserve_kwh, HORIZON_MIN, arrival_grace_min=0.0,
@@ -865,6 +870,11 @@ def parser():
     value.add_argument("--inherit-status", type=Path)
     value.add_argument("--inherit-pool", type=Path)
     value.add_argument("--inherit-instance", type=Path)
+    value.add_argument("--inherit-compatible-commit", choices=(
+        "50ceb6c095a580f79f87b53bef536cac31f81963",
+    ), help="audited strict explicit-graph parent; input/physics/replay gates remain")
+    value.add_argument("--arc-mode", choices=("explicit", "lazy"), default="explicit",
+                       help="lazy packs non-capacity transitions; capacity requires explicit")
     value.add_argument("--max-station-wait-min", type=float, default=220.0)
     value.add_argument("--battery-kwh", type=float, default=240.0)
     value.add_argument("--non-parx-kw", type=float, default=240.0)

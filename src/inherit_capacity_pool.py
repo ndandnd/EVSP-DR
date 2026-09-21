@@ -38,11 +38,17 @@ def remap_route(route,mapping,new_checkpoint_id):
             out['physical_realization']['realization_mapping_sha256']=realization['mapping_sha256']
     return out
 
-def inherit_pool(parent_status,parent_pool,parent_csv,child_csv,*,expected_physics,child_provenance,new_checkpoint_id,route_validator):
+def inherit_pool(parent_status,parent_pool,parent_csv,child_csv,*,expected_physics,child_provenance,new_checkpoint_id,route_validator,compatible_parent_commit=None):
     status=json.loads(Path(parent_status).read_text());prov=status['provenance']
     if status['pool_sha256']!=sha(parent_pool):raise ValueError('parent pool hash mismatch')
     if prov['instance_sha256']!=sha(parent_csv):raise ValueError('parent instance hash mismatch')
-    for key in ('git_commit','prices_sha256','reference_sha256','deadhead_sha256'):
+    if prov['git_commit'] != child_provenance['git_commit'] and prov['git_commit'] != compatible_parent_commit:
+        raise ValueError('parent model/input provenance mismatch: git_commit')
+    if compatible_parent_commit is not None and compatible_parent_commit != '50ceb6c095a580f79f87b53bef536cac31f81963':
+        raise ValueError('unaudited compatible parent commit')
+    if prov['git_commit'] != child_provenance['git_commit'] and expected_physics.get('capacity_enforced') is not False:
+        raise ValueError('compatible parent is audited only without shared capacity')
+    for key in ('prices_sha256','reference_sha256','deadhead_sha256'):
         if prov[key]!=child_provenance[key]:raise ValueError(f'parent model/input provenance mismatch: {key}')
     for key,value in expected_physics.items():
         if status['physics'].get(key)!=value:raise ValueError(f'parent physics mismatch: {key}')
@@ -57,4 +63,4 @@ def inherit_pool(parent_status,parent_pool,parent_csv,child_csv,*,expected_physi
         reason=route_validator(new)
         if reason is not None:raise ValueError(f'inherited route physical replay failed: {reason}')
         routes.append(new)
-    return routes,{'parent_status':str(parent_status),'parent_status_sha256':sha(parent_status),'parent_pool':str(parent_pool),'parent_pool_sha256':sha(parent_pool),'parent_instance_sha256':sha(parent_csv),'inherited_columns':len(routes),'trip_mapping_sha256':canonical(mapping),'every_inherited_route_replayed':True}
+    return routes,{'parent_status':str(parent_status),'parent_status_sha256':sha(parent_status),'parent_pool':str(parent_pool),'parent_pool_sha256':sha(parent_pool),'parent_instance_sha256':sha(parent_csv),'inherited_columns':len(routes),'trip_mapping_sha256':canonical(mapping),'every_inherited_route_replayed':True,'parent_execution_commit':prov['git_commit'],'child_execution_commit':child_provenance['git_commit'],'audited_compatible_parent_commit':compatible_parent_commit if prov['git_commit'] != child_provenance['git_commit'] else None}
