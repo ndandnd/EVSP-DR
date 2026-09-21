@@ -33,6 +33,8 @@ def main():
     args = parser.parse_args()
     started = time.monotonic()
     manifest = json.loads((args.work / "manifest.json").read_text())
+    total_budget = manifest.get("budget", {}).get("shared_dive_wall_plus_solver_s", 3600)
+    dive_limit = manifest.get("budget", {}).get("dive_wall_limit_s", 2400)
     case = manifest["cases"][args.case]
     code = Path(manifest["code"])
     source = Path(case["fresh_cg_result"])
@@ -47,7 +49,7 @@ def main():
                "execution_commit": manifest["execution_commit"], "source_hashes": expected,
                "status": "running", "global_certificate": None,
                "external_witness_columns_used": False,
-               "budget_scope": "3600s dive subprocess wall plus MIP solver time; MIP setup/replay overhead external",
+               "budget_scope": f"{total_budget}s dive subprocess wall plus MIP solver time; MIP setup/replay overhead external",
                "original_graph_build_s": case.get("target_external_graph_build_s"),
                "graph_policy": "verified reusable graph prerequisite; original build not repeated or hidden"}
     (out / "execution.json").write_text(json.dumps(receipt, indent=1))
@@ -69,7 +71,7 @@ def main():
         p = manifest["preregistered"]
         argv = [sys.executable, str(code / "src/diving_pricing_pilot.py"), "--result", str(source),
                 "--out-dir", str(out / "dive"), "--data-dir", str(code / "data"),
-                "--fleet-cap", str(case["target_k"]), "--wall-limit-s", "2400", "--reserve-s", "60",
+                "--fleet-cap", str(case["target_k"]), "--wall-limit-s", str(dive_limit), "--reserve-s", "60",
                 "--event-network-cache", case["event_network_cache"], "--cache-commit-bridge",
                 "--seed", str(args.seed), "--gurobi-log", str(out / "dive_gurobi.log")]
         for flag, key in [("rc-eps", "rc_eps"), ("columns-per-iter", "columns_per_iter"),
@@ -89,7 +91,7 @@ def main():
         receipt["dive_integer_buses"] = (dive["dive"].get("integer_solution") or {}).get("buses")
         receipt["columns_generated"] = dive["dive"]["columns_generated"]
         charged = receipt["dive_wall_s"]
-    limit = remaining_solver_budget(3600, charged)
+    limit = remaining_solver_budget(total_budget, charged)
     receipt["mip_solver_budget_s"] = limit
     env.update(EVSP_MIP_EXPECTED_RESULT_SHA256=sha(source), EVSP_MIP_EXPECTED_JOURNAL_SHA256=sha(journal))
     if limit:
@@ -112,7 +114,7 @@ def main():
         receipt["mip_skipped"] = "shared budget exhausted; no floor extension"
     assert [sha(case["fresh_cg_result"]), sha(case["fresh_journal"])] == expected
     receipt.update(status="finished", source_immutable=True, actual_end_to_end_wall_s=time.monotonic() - started,
-                   shared_budget_s=3600, charged_dive_wall_s=charged,
+                   shared_budget_s=total_budget, charged_dive_wall_s=charged,
                    strict_end_to_end_budget_claim=False)
     receipt["output_sha256"] = {str(p.relative_to(out)): sha(p) for p in out.rglob("*") if p.is_file() and p.name != "execution.json"}
     (out / "execution.json").write_text(json.dumps(receipt, indent=1))
