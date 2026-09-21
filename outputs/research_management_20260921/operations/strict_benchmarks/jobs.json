@@ -1,0 +1,42 @@
+{
+  "w5_k04_18E2": {
+    "job": "668478",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=4",
+      "--mem=16G",
+      "--time=02:00:00",
+      "--job-name=packB_w5_k04_18E2",
+      "--output=/home/nc437/ladder-lite/strict_representation_benchmarks_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/strict_representation_benchmarks_20260921/%j.err",
+      "/home/nc437/ladder-lite/strict_representation_benchmarks_20260921/benchmark.sh",
+      "/home/nc437/ladder-lite/strict_representation_benchmarks_20260921",
+      "w5_k04_18E2"
+    ],
+    "verified": "JobId=668478 JobName=packB_w5_k04_18E2 UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14318 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-21T15:56:57 EligibleTime=2026-09-21T15:56:57 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-21T15:56:57 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3143110 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=4,mem=16G,node=1,billing=4 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=4 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/strict_representation_benchmarks_20260921/benchmark.sh WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/strict_representation_benchmarks_20260921/668478.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/strict_representation_benchmarks_20260921/668478.out TresPerTask=cpu=4 \n"
+  },
+  "w5_k06_18E2": {
+    "job": "668479",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=4",
+      "--mem=48G",
+      "--time=04:00:00",
+      "--job-name=packB_w5_k06_18E2",
+      "--output=/home/nc437/ladder-lite/strict_representation_benchmarks_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/strict_representation_benchmarks_20260921/%j.err",
+      "/home/nc437/ladder-lite/strict_representation_benchmarks_20260921/benchmark.sh",
+      "/home/nc437/ladder-lite/strict_representation_benchmarks_20260921",
+      "w5_k06_18E2"
+    ],
+    "verified": "JobId=668479 JobName=packB_w5_k06_18E2 UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14318 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:00:00 TimeMin=N/A SubmitTime=2026-09-21T15:56:58 EligibleTime=2026-09-21T15:56:58 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-21T15:56:58 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3143110 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=4,mem=48G,node=1,billing=4 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=4 MinMemoryNode=48G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/strict_representation_benchmarks_20260921/benchmark.sh WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/strict_representation_benchmarks_20260921/668479.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/strict_representation_benchmarks_20260921/668479.out TresPerTask=cpu=4 \n"
+  }
+}

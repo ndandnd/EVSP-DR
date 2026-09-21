@@ -1,0 +1,84 @@
+{
+  "created_unix": 1790020616.9358168,
+  "cases": [
+    {
+      "id": "w5_k04_18E2",
+      "global_target_k": 4,
+      "group": "18E2",
+      "group_reference_duties": 2,
+      "duties": [
+        "13322",
+        "13319"
+      ],
+      "trip_count": 53,
+      "input": "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k04_18E2.csv",
+      "input_sha256": "c52b8ff90e487c4120c9a345abbee4f13c131c154d36a92fdccc8d66ed20bc1c",
+      "previous_group_case": "w5_k03_18E2",
+      "arm": "parx60",
+      "non_parx_kw": 240,
+      "battery_kwh": 239.01,
+      "reserve_kwh": 35.8515,
+      "cg_wall_s": 14400,
+      "max_iters": 100000,
+      "mip_wall_s": 3600,
+      "threads": 8
+    },
+    {
+      "id": "w5_k06_18E2",
+      "global_target_k": 6,
+      "group": "18E2",
+      "group_reference_duties": 3,
+      "duties": [
+        "13322",
+        "13319",
+        "13317"
+      ],
+      "trip_count": 90,
+      "input": "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k06_18E2.csv",
+      "input_sha256": "7a71b6473715025d6d6328b7e0bb352cb01f08c04b7641a4ce874a426874d406",
+      "previous_group_case": "w5_k04_18E2",
+      "arm": "parx60",
+      "non_parx_kw": 240,
+      "battery_kwh": 239.01,
+      "reserve_kwh": 35.8515,
+      "cg_wall_s": 14400,
+      "max_iters": 100000,
+      "mip_wall_s": 3600,
+      "threads": 8
+    }
+  ],
+  "old_code": "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0",
+  "new_code": "/home/nc437/ladder-lite/strict_packed_20260921/code",
+  "code_commits": {
+    "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0": "50ceb6c095a580f79f87b53bef536cac31f81963",
+    "/home/nc437/ladder-lite/strict_packed_20260921/code": "35770aae2c08e7d5a356cc3b673e67608e5b1036"
+  },
+  "input_hashes": {
+    "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k04_18E2.csv": "c52b8ff90e487c4120c9a345abbee4f13c131c154d36a92fdccc8d66ed20bc1c",
+    "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k06_18E2.csv": "7a71b6473715025d6d6328b7e0bb352cb01f08c04b7641a4ce874a426874d406",
+    "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "/home/nc437/ladder-lite/strict_packed_20260921/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "/home/nc437/ladder-lite/strict_packed_20260921/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "/home/nc437/ladder-lite/strict_packed_20260921/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+  },
+  "tooling_sha256": {
+    "benchmark_launch.py": "f7b1ac51f7c9bacb1349f57c530db05193bcbf9f7f38cd9ba9f0728864cff0e8",
+    "benchmark_variant.py": "e291c3ceeffe452567a558eb8100e269e3734051b9052a4dc799ea7a463d7b44",
+    "benchmark_worker.py": "a72967bc477d77e6630400f0d2f98785923141c893cbe61ade58246eda897ef7"
+  },
+  "physics": "18E2 battery239.01kWh/reserve35.8515kWh,nonPARX240kW,PARX60kW,no sharedcapacity,2.5kWhSOC/5min event,1560min maxstationwait",
+  "objective": "five deterministic combined-cost reducedcost queries; noCGcertificate orMIP result",
+  "comparison": "original explicit/newexplicit/packed runsequentially on samenode percase, separateprocesses; sameeventlattice/inputhash and5reducedcosts required; all15routes physicallyreplayed",
+  "initialization": "noinheritedpool orGIROcolumns; fixeddualvectors with RNGseed20260921",
+  "resources": {
+    "w5_k04_18E2": "4CPU/16G/2h",
+    "w5_k06_18E2": "4CPU/48G/4h"
+  },
+  "resource_reason": "26tripcontrol measured2.063GiB and9m16s allvariants. Quadratic53tripmemory8.57GiB,90tripmemory24.72GiB;16G/48Gprovide1.87x/1.94xheadroom. Runtimeallocations exceedquadraticallvariant extrapolation. Bothindependenteligibleconcurrently.",
+  "excluded_nodes": [
+    "scaglione-compute-01"
+  ],
+  "partition": "default_partition"
+}

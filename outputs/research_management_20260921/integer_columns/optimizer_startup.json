@@ -1,0 +1,146 @@
+[
+ {
+  "case": "c1_k08",
+  "arm": "control",
+  "seed": 20260921,
+  "optimizer_started": true,
+  "logs": [
+   "mip_gurobi.log"
+  ]
+ },
+ {
+  "case": "c1_k08",
+  "arm": "control",
+  "seed": 20260922,
+  "optimizer_started": true,
+  "logs": [
+   "mip_gurobi.log"
+  ]
+ },
+ {
+  "case": "c1_k08",
+  "arm": "treatment",
+  "seed": 20260921,
+  "optimizer_started": true,
+  "logs": [
+   "dive_gurobi.log"
+  ]
+ },
+ {
+  "case": "c1_k08",
+  "arm": "treatment",
+  "seed": 20260922,
+  "optimizer_started": true,
+  "logs": [
+   "dive_gurobi.log"
+  ]
+ },
+ {
+  "case": "c3_k08",
+  "arm": "control",
+  "seed": 20260921,
+  "optimizer_started": true,
+  "logs": [
+   "mip_gurobi.log"
+  ]
+ },
+ {
+  "case": "c3_k08",
+  "arm": "control",
+  "seed": 20260922,
+  "optimizer_started": true,
+  "logs": [
+   "mip_gurobi.log"
+  ]
+ },
+ {
+  "case": "c3_k08",
+  "arm": "treatment",
+  "seed": 20260921,
+  "optimizer_started": true,
+  "logs": [
+   "dive_gurobi.log"
+  ]
+ },
+ {
+  "case": "c3_k08",
+  "arm": "treatment",
+  "seed": 20260922,
+  "optimizer_started": true,
+  "logs": [
+   "dive_gurobi.log"
+  ]
+ },
+ {
+  "case": "c4_k08",
+  "arm": "control",
+  "seed": 20260921,
+  "optimizer_started": true,
+  "logs": [
+   "mip_gurobi.log"
+  ]
+ },
+ {
+  "case": "c4_k08",
+  "arm": "control",
+  "seed": 20260922,
+  "optimizer_started": true,
+  "logs": [
+   "mip_gurobi.log"
+  ]
+ },
+ {
+  "case": "c4_k08",
+  "arm": "treatment",
+  "seed": 20260921,
+  "optimizer_started": true,
+  "logs": [
+   "dive_gurobi.log"
+  ]
+ },
+ {
+  "case": "c4_k08",
+  "arm": "treatment",
+  "seed": 20260922,
+  "optimizer_started": true,
+  "logs": [
+   "dive_gurobi.log"
+  ]
+ },
+ {
+  "case": "c5_k08",
+  "arm": "control",
+  "seed": 20260921,
+  "optimizer_started": true,
+  "logs": [
+   "mip_gurobi.log"
+  ]
+ },
+ {
+  "case": "c5_k08",
+  "arm": "control",
+  "seed": 20260922,
+  "optimizer_started": true,
+  "logs": [
+   "mip_gurobi.log"
+  ]
+ },
+ {
+  "case": "c5_k08",
+  "arm": "treatment",
+  "seed": 20260921,
+  "optimizer_started": true,
+  "logs": [
+   "dive_gurobi.log"
+  ]
+ },
+ {
+  "case": "c5_k08",
+  "arm": "treatment",
+  "seed": 20260922,
+  "optimizer_started": true,
+  "logs": [
+   "dive_gurobi.log"
+  ]
+ }
+]

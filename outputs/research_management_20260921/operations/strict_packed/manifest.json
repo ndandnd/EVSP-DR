@@ -1,0 +1,72 @@
+{
+  "created_unix": 1790002598.691363,
+  "original_campaign": "/home/nc437/ladder-lite/review_strict_c5_20260916",
+  "original_code": "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0",
+  "code": "/home/nc437/ladder-lite/strict_packed_20260921/code",
+  "execution_commit": "35770aae2c08e7d5a356cc3b673e67608e5b1036",
+  "base_commit": "50ceb6c095a580f79f87b53bef536cac31f81963",
+  "case": {
+    "id": "w5_k16_18E2",
+    "global_target_k": 16,
+    "group": "18E2",
+    "group_reference_duties": 9,
+    "duties": [
+      "13322",
+      "13319",
+      "13317",
+      "13320",
+      "13316uwt",
+      "13312",
+      "13314",
+      "13305",
+      "13304"
+    ],
+    "trip_count": 256,
+    "input": "inputs/w5_k16_18E2.csv",
+    "input_sha256": "8f895e07bc7dab9bc6b3ed3744ec36beb9a3efed7e48fbe0a2e32f24a85ba730",
+    "previous_group_case": "w5_k15_18E2",
+    "arm": "parx60",
+    "non_parx_kw": 240,
+    "battery_kwh": 239.01,
+    "reserve_kwh": 35.8515,
+    "cg_wall_s": 14400,
+    "max_iters": 100000,
+    "mip_wall_s": 3600,
+    "threads": 8
+  },
+  "input_hashes": {
+    "/home/nc437/ladder-lite/review_strict_c5_20260916/manifest.json": "63f6b4de393954bf1619f73e5a5ad20c6c92179f773b2d3b1efea2f41d815d61",
+    "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k16_18E2.csv": "8f895e07bc7dab9bc6b3ed3744ec36beb9a3efed7e48fbe0a2e32f24a85ba730",
+    "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k15_18E2.csv": "457f61e1d002a552b0c75e27ca817a6422b095fa53353de9921068acc86ac346",
+    "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k03_18E2.csv": "45db8842c78f81d68d071ff21cc657ef2e2aac7f5d142551c638a5e26eda77e1",
+    "/home/nc437/ladder-lite/review_strict_c5_20260916/cases/w5_k15_18E2/cg.json": "f90997efa057ab1a4f612136a9e20d7b5012da4d2c06b8964da87a7f5637399a",
+    "/home/nc437/ladder-lite/review_strict_c5_20260916/cases/w5_k15_18E2/pool.jsonl": "3d80187a87901792a5999c7f4fdb2fd368b74ed4c6dfbf7b95d86337b95677a8",
+    "/home/nc437/ladder-lite/strict_packed_20260921/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "/home/nc437/ladder-lite/strict_packed_20260921/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "/home/nc437/ladder-lite/strict_packed_20260921/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+  },
+  "objective": "CG combined cost 100000*fleet+charging; final MIP lexicographic fleet/charging",
+  "master": "set covering",
+  "physics": "unchanged original 18E2 strict parx60 single-factor; not full GIRO constraints",
+  "initialization": "exact original k15 inherited pool with trip remapping and full physical replay, plus new trip singletons",
+  "algorithm_changes": [
+    "packed lazy no-capacity graph",
+    "exact deferred JSON tie-key construction"
+  ],
+  "compatibility_audit_sha256": "c99b1a4e5e2f43d01db05dabda96f7a235c4048090bf396b2432289a762a31d6",
+  "resource_reason": "old k15:260658942 Python arc objects,153.8GiB; old k16:211.9GiB+6h timeout. Packed arcs are16bytes each and no per-arc Python action dicts;64G leaves substantial headroom above roughly4-6GiB packed-edge storage estimate. This is an estimate pending measured benchmark; graph budget/physics unchanged.",
+  "resources": {
+    "benchmark": "4CPU/32G/2h",
+    "cg": "8CPU/64G/6h allocation;4h CG including graph",
+    "mip": "8CPU/24G/75m allocation;1h MIP"
+  },
+  "dependencies": "benchmark exact fixed-dual agreement -> k16 CG -> saved-pool MIP. True inherited k15 input is complete; no arbitrary throttle. Original blocked descendants preserved and held pending migration.",
+  "excluded_nodes": [
+    "scaglione-compute-01"
+  ],
+  "tooling_sha256": {
+    "worker.py": "237321edd5936cf2adca0370eed1ddc1c6b49f565d8817e8efa72c3114805f9a",
+    "worker.sh": "0de45e7ecc138c1efe36623daab06f4f2f0d0b78d1c18d0bea14d80bd2f270c4",
+    "benchmark_variant.py": "3e399c95f8330b96968e834ed5f7bbe44117078ae5a8bdb81215bad8cfd357ea"
+  }
+}

@@ -1,0 +1,19 @@
+[
+  "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+  "--parsable",
+  "--partition=default_partition",
+  "--exclude=scaglione-compute-01",
+  "--requeue",
+  "--cpus-per-task=8",
+  "--mem=16G",
+  "--time=06:00:00",
+  "--job-name=packS_w5_k19_18E2__cg",
+  "--output=/home/nc437/ladder-lite/strict_packed_successors_20260921/%j.out",
+  "--error=/home/nc437/ladder-lite/strict_packed_successors_20260921/%j.err",
+  "--dependency=afterok:668430",
+  "--kill-on-invalid-dep=yes",
+  "/home/nc437/ladder-lite/strict_packed_successors_20260921/worker.sh",
+  "/home/nc437/ladder-lite/strict_packed_successors_20260921",
+  "cg",
+  "w5_k19_18E2"
+]

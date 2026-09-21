@@ -1,0 +1,51 @@
+{
+  "base_commit": "50ceb6c095a580f79f87b53bef536cac31f81963",
+  "unchanged_physics_and_validation_files": [
+    {
+      "file": "src/config.py",
+      "sha256": "afda984ccfc503f51dfc042f68d28716947ff9f78bf835038f9c20b9c2e62b06",
+      "byte_identical_to_base": true
+    },
+    {
+      "file": "src/audit_giro_known_columns.py",
+      "sha256": "690b66ff3047894d5a142caddf7604d8df153b86838aeadac40859f5f5b6762f",
+      "byte_identical_to_base": true
+    },
+    {
+      "file": "src/run_exact_pool_mip.py",
+      "sha256": "d4a1c194f779ac6caae4b00cfb6f7cb7ec924da025a57086d424793c24f60a96",
+      "byte_identical_to_base": true
+    },
+    {
+      "file": "src/utils_v2.py",
+      "sha256": "9bb5f7d29144c6c7436380c6cbb3cfe98f3b1ae4b7adf6d570008ff1685bfd90",
+      "byte_identical_to_base": true
+    },
+    {
+      "file": "src/exact_pricer_expanded.py",
+      "sha256": "39e1b950d97041a9a24b285cf9f837d1268135d2b8b66b0133e28b2290a0e720",
+      "byte_identical_to_base": true
+    },
+    {
+      "file": "data/Ref_dict.csv",
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "byte_identical_to_base": true
+    },
+    {
+      "file": "data/par_ref_dhd.csv",
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "byte_identical_to_base": true
+    },
+    {
+      "file": "data/hourly_prices_flat.csv",
+      "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "byte_identical_to_base": true
+    }
+  ],
+  "event_network_changed_methods": [
+    "_add",
+    "_finalize_source"
+  ],
+  "all_other_network_methods_ast_identical": true,
+  "semantic_gate": "deferred tie keys compared bit-exactly against eager oracle; packed/explcit minimum reduced costs and physical routes compared at strict reserve and power in tests; shared-capacity packed mode rejected"
+}

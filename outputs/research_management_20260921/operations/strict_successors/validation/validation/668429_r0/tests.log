@@ -1,0 +1,11 @@
+test_rejects_changed_trip (test_inherit_capacity_pool.InheritanceTests.test_rejects_changed_trip) ... ok
+test_rejects_corrupt_pool (test_inherit_capacity_pool.InheritanceTests.test_rejects_corrupt_pool) ... ok
+test_rejects_physics_change (test_inherit_capacity_pool.InheritanceTests.test_rejects_physics_change) ... ok
+test_rejects_replay_failure (test_inherit_capacity_pool.InheritanceTests.test_rejects_replay_failure) ... ok
+test_rejects_tariff_change (test_inherit_capacity_pool.InheritanceTests.test_rejects_tariff_change) ... ok
+test_remaps_and_resets_iteration_without_mutating_source (test_inherit_capacity_pool.InheritanceTests.test_remaps_and_resets_iteration_without_mutating_source) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.023s
+
+OK

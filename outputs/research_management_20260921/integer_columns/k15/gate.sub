@@ -1,0 +1,4 @@
+#!/bin/bash
+# Bounded continuation only: all16 native k8 jobs must complete successfully.
+# The gate independently checks actual own-incumbent handoff and physical replay.
+exec bash /home/nc437/ladder-lite/integer_columns_k15_20260921/submit_wave.sh

@@ -1,0 +1,905 @@
+{
+  "collected_utc": "2026-09-21T20:08:21.937811+00:00",
+  "verified_case_count": 48,
+  "unique_graphs": 44,
+  "preempted_attempts": [
+    [
+      "661616_6",
+      "drX_graphs",
+      "PREEMPTED",
+      "00:04:07",
+      "",
+      "96G",
+      "0:0",
+      "yin-cpu-01",
+      "2026-09-21T14:41:41",
+      "2026-09-21T14:45:48",
+      "2"
+    ],
+    [
+      "661616_14",
+      "drX_graphs",
+      "PREEMPTED",
+      "00:09:31",
+      "",
+      "96G",
+      "0:0",
+      "lin-cpu-01",
+      "2026-09-21T14:45:48",
+      "2026-09-21T14:55:19",
+      "2"
+    ],
+    [
+      "661616_26",
+      "drX_graphs",
+      "PREEMPTED",
+      "00:01:04",
+      "",
+      "96G",
+      "0:0",
+      "lisbeth",
+      "2026-09-21T14:49:46",
+      "2026-09-21T14:50:50",
+      "2"
+    ],
+    [
+      "661616_27",
+      "drX_graphs",
+      "PREEMPTED",
+      "00:01:36",
+      "",
+      "96G",
+      "0:0",
+      "lisbeth",
+      "2026-09-21T14:49:46",
+      "2026-09-21T14:51:22",
+      "2"
+    ],
+    [
+      "661616_37",
+      "drX_graphs",
+      "PREEMPTED",
+      "00:57:57",
+      "",
+      "96G",
+      "0:0",
+      "kuleshov-compute-01",
+      "2026-09-21T14:49:46",
+      "2026-09-21T15:47:43",
+      "2"
+    ],
+    [
+      "661616_41",
+      "drX_graphs",
+      "PREEMPTED",
+      "00:10:21",
+      "",
+      "96G",
+      "0:0",
+      "davis-compute-02",
+      "2026-09-21T14:49:46",
+      "2026-09-21T15:00:07",
+      "2"
+    ]
+  ],
+  "preemption_lost_wall_s": 5076,
+  "current_graph_progress": {
+    "w1_k33": {
+      "elapsed_s": 5292.63865243597,
+      "event": "progress",
+      "finished_sources": 4849,
+      "peak_rss_kib": 4953948,
+      "phase": "_build_arcs",
+      "pid": 4171652,
+      "source": 4849,
+      "stored_arcs": 204291878,
+      "total_sources": 69144,
+      "modified_unix": 1790021276.656184,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k33/cache/661665_r0/progress.jsonl"
+    },
+    "w1_k34": {
+      "elapsed_s": 5295.283567537088,
+      "event": "progress",
+      "finished_sources": 4340,
+      "peak_rss_kib": 4719832,
+      "phase": "_build_arcs",
+      "pid": 3194005,
+      "source": 4340,
+      "stored_arcs": 193455719,
+      "total_sources": 72380,
+      "modified_unix": 1790021285.5644522,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k34/cache/661666_r0/progress.jsonl"
+    },
+    "w1_k35": {
+      "elapsed_s": 5286.588496364187,
+      "event": "progress",
+      "finished_sources": 5419,
+      "peak_rss_kib": 5772024,
+      "phase": "_build_arcs",
+      "pid": 1662079,
+      "source": 5419,
+      "stored_arcs": 242003994,
+      "total_sources": 73420,
+      "modified_unix": 1790021270.0989866,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k35/cache/661667_r0/progress.jsonl"
+    },
+    "w1_k36": {
+      "elapsed_s": 5231.666998309083,
+      "event": "progress",
+      "finished_sources": 4135,
+      "peak_rss_kib": 4746972,
+      "phase": "_build_arcs",
+      "pid": 693971,
+      "source": 4135,
+      "stored_arcs": 195558479,
+      "total_sources": 76761,
+      "modified_unix": 1790021282.2903538,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k36/cache/661746_r0/progress.jsonl"
+    },
+    "w1_k37": {
+      "elapsed_s": 5205.2893432122655,
+      "event": "progress",
+      "finished_sources": 6864,
+      "peak_rss_kib": 7853828,
+      "phase": "_build_arcs",
+      "pid": 1938714,
+      "source": 6864,
+      "stored_arcs": 327126871,
+      "total_sources": 79113,
+      "modified_unix": 1790021255.0835345,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k37/cache/661747_r0/progress.jsonl"
+    },
+    "w1_k38": {
+      "elapsed_s": 5155.72214146005,
+      "event": "progress",
+      "finished_sources": 5012,
+      "peak_rss_kib": 5805340,
+      "phase": "_build_arcs",
+      "pid": 2731305,
+      "source": 5012,
+      "stored_arcs": 245492038,
+      "total_sources": 80233,
+      "modified_unix": 1790021265.9148607,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k38/cache/661761_r0/progress.jsonl"
+    },
+    "w1_k39": {
+      "elapsed_s": 4680.362727030006,
+      "event": "progress",
+      "finished_sources": 4724,
+      "peak_rss_kib": 5671736,
+      "phase": "_build_arcs",
+      "pid": 2458526,
+      "source": 4724,
+      "stored_arcs": 235546056,
+      "total_sources": 81433,
+      "modified_unix": 1790021279.9562833,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k39/cache/661762_r1/progress.jsonl"
+    },
+    "w1_k40": {
+      "elapsed_s": 5070.3441454707645,
+      "event": "progress",
+      "finished_sources": 3637,
+      "peak_rss_kib": 4583564,
+      "phase": "_build_arcs",
+      "pid": 3194534,
+      "source": 3637,
+      "stored_arcs": 188193424,
+      "total_sources": 83395,
+      "modified_unix": 1790021293.3096855,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k40/cache/661791_r0/progress.jsonl"
+    },
+    "w2_k33": {
+      "elapsed_s": 4979.459441661369,
+      "event": "progress",
+      "finished_sources": 5334,
+      "peak_rss_kib": 5516068,
+      "phase": "_build_arcs",
+      "pid": 1664311,
+      "source": 5334,
+      "stored_arcs": 225552240,
+      "total_sources": 69463,
+      "modified_unix": 1790021263.2497804,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k33/cache/661813_r0/progress.jsonl"
+    },
+    "w2_k34": {
+      "elapsed_s": 4976.593425184023,
+      "event": "progress",
+      "finished_sources": 4775,
+      "peak_rss_kib": 5237004,
+      "phase": "_build_arcs",
+      "pid": 1664312,
+      "source": 4775,
+      "stored_arcs": 213917899,
+      "total_sources": 72804,
+      "modified_unix": 1790021260.3836942,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k34/cache/661814_r0/progress.jsonl"
+    },
+    "w2_k35": {
+      "elapsed_s": 4894.744227188174,
+      "event": "progress",
+      "finished_sources": 2901,
+      "peak_rss_kib": 3480788,
+      "phase": "_build_arcs",
+      "pid": 3673559,
+      "source": 2901,
+      "stored_arcs": 134691030,
+      "total_sources": 74164,
+      "modified_unix": 1790021246.4182737,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k35/cache/661833_r0/progress.jsonl"
+    },
+    "w2_k36": {
+      "elapsed_s": 4915.420360093005,
+      "event": "progress",
+      "finished_sources": 4922,
+      "peak_rss_kib": 5610808,
+      "phase": "_build_arcs",
+      "pid": 1303184,
+      "source": 4922,
+      "stored_arcs": 234413432,
+      "total_sources": 77472,
+      "modified_unix": 1790021273.137078,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k36/cache/661834_r0/progress.jsonl"
+    },
+    "w2_k37": {
+      "elapsed_s": 4917.968306033872,
+      "event": "progress",
+      "finished_sources": 5320,
+      "peak_rss_kib": 6387848,
+      "phase": "_build_arcs",
+      "pid": 1330354,
+      "source": 5320,
+      "stored_arcs": 262549999,
+      "total_sources": 80181,
+      "modified_unix": 1790021276.318174,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k37/cache/661835_r0/progress.jsonl"
+    },
+    "w2_k38": {
+      "elapsed_s": 4920.338080612011,
+      "event": "progress",
+      "finished_sources": 5412,
+      "peak_rss_kib": 6537344,
+      "phase": "_build_arcs",
+      "pid": 1330355,
+      "source": 5412,
+      "stored_arcs": 270599151,
+      "total_sources": 81381,
+      "modified_unix": 1790021278.6422439,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k38/cache/661836_r0/progress.jsonl"
+    },
+    "w2_k39": {
+      "elapsed_s": 4156.0833280021325,
+      "event": "progress",
+      "finished_sources": 2944,
+      "peak_rss_kib": 3810860,
+      "phase": "_build_arcs",
+      "pid": 719966,
+      "source": 2944,
+      "stored_arcs": 152419703,
+      "total_sources": 82421,
+      "modified_unix": 1790021285.7644582,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k39/cache/661837_r1/progress.jsonl"
+    },
+    "w2_k40": {
+      "elapsed_s": 4846.919648971874,
+      "event": "progress",
+      "finished_sources": 2993,
+      "peak_rss_kib": 3931400,
+      "phase": "_build_arcs",
+      "pid": 127339,
+      "source": 2993,
+      "stored_arcs": 155883138,
+      "total_sources": 83301,
+      "modified_unix": 1790021258.487637,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k40/cache/661858_r0/progress.jsonl"
+    },
+    "w3_k33": {
+      "elapsed_s": 4845.5079943863675,
+      "event": "progress",
+      "finished_sources": 6595,
+      "peak_rss_kib": 6670488,
+      "phase": "_build_arcs",
+      "pid": 3887008,
+      "source": 6595,
+      "stored_arcs": 266450147,
+      "total_sources": 67564,
+      "modified_unix": 1790021254.537518,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k33/cache/661859_r0/progress.jsonl"
+    },
+    "w3_k34": {
+      "elapsed_s": 4809.291741208173,
+      "event": "progress",
+      "finished_sources": 4114,
+      "peak_rss_kib": 4491444,
+      "phase": "_build_arcs",
+      "pid": 606536,
+      "source": 4114,
+      "stored_arcs": 177123207,
+      "total_sources": 69988,
+      "modified_unix": 1790021278.6712446,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k34/cache/661882_r0/progress.jsonl"
+    },
+    "w3_k35": {
+      "elapsed_s": 4818.455168144312,
+      "event": "progress",
+      "finished_sources": 3701,
+      "peak_rss_kib": 4190924,
+      "phase": "_build_arcs",
+      "pid": 3135896,
+      "source": 3701,
+      "stored_arcs": 166531875,
+      "total_sources": 72697,
+      "modified_unix": 1790021292.9146736,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k35/cache/661883_r0/progress.jsonl"
+    },
+    "w3_k36": {
+      "elapsed_s": 4744.8075362071395,
+      "event": "progress",
+      "finished_sources": 3958,
+      "peak_rss_kib": 4488860,
+      "phase": "_build_arcs",
+      "pid": 2123318,
+      "source": 3958,
+      "stored_arcs": 182313589,
+      "total_sources": 74854,
+      "modified_unix": 1790021276.18517,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k36/cache/661898_r0/progress.jsonl"
+    },
+    "w3_k37": {
+      "elapsed_s": 4747.277077667881,
+      "event": "progress",
+      "finished_sources": 4320,
+      "peak_rss_kib": 4949556,
+      "phase": "_build_arcs",
+      "pid": 1236257,
+      "source": 4320,
+      "stored_arcs": 202908472,
+      "total_sources": 76292,
+      "modified_unix": 1790021277.4592083,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k37/cache/661899_r0/progress.jsonl"
+    },
+    "w3_k38": {
+      "elapsed_s": 4729.0091783287935,
+      "event": "progress",
+      "finished_sources": 6449,
+      "peak_rss_kib": 7346740,
+      "phase": "_build_arcs",
+      "pid": 1940734,
+      "source": 6449,
+      "stored_arcs": 301818333,
+      "total_sources": 77492,
+      "modified_unix": 1790021257.520608,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k38/cache/661900_r0/progress.jsonl"
+    },
+    "w4_k33": {
+      "elapsed_s": 4667.047482115217,
+      "event": "progress",
+      "finished_sources": 5383,
+      "peak_rss_kib": 5597084,
+      "phase": "_build_arcs",
+      "pid": 3325489,
+      "source": 5383,
+      "stored_arcs": 226690280,
+      "total_sources": 69070,
+      "modified_unix": 1790021260.514698,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k33/cache/661934_r0/progress.jsonl"
+    },
+    "w4_k34": {
+      "elapsed_s": 4664.709154181648,
+      "event": "progress",
+      "finished_sources": 6358,
+      "peak_rss_kib": 6821588,
+      "phase": "_build_arcs",
+      "pid": 4168996,
+      "source": 6358,
+      "stored_arcs": 276381370,
+      "total_sources": 71897,
+      "modified_unix": 1790021255.534548,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k34/cache/661935_r0/progress.jsonl"
+    },
+    "w4_k35": {
+      "elapsed_s": 4662.341739130905,
+      "event": "progress",
+      "finished_sources": 6508,
+      "peak_rss_kib": 7050868,
+      "phase": "_build_arcs",
+      "pid": 1782533,
+      "source": 6508,
+      "stored_arcs": 286462916,
+      "total_sources": 73017,
+      "modified_unix": 1790021259.3486629,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k35/cache/661936_r0/progress.jsonl"
+    },
+    "w4_k36": {
+      "elapsed_s": 4653.117813732009,
+      "event": "progress",
+      "finished_sources": 6328,
+      "peak_rss_kib": 7011480,
+      "phase": "_build_arcs",
+      "pid": 1782534,
+      "source": 6328,
+      "stored_arcs": 286847924,
+      "total_sources": 75091,
+      "modified_unix": 1790021250.1043847,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k36/cache/661937_r0/progress.jsonl"
+    },
+    "w4_k37": {
+      "elapsed_s": 4392.055497821886,
+      "event": "progress",
+      "finished_sources": 3741,
+      "peak_rss_kib": 4507324,
+      "phase": "_build_arcs",
+      "pid": 999508,
+      "source": 3741,
+      "stored_arcs": 182362879,
+      "total_sources": 78432,
+      "modified_unix": 1790021285.5644522,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k37/cache/661938_r1/progress.jsonl"
+    },
+    "w4_k38": {
+      "elapsed_s": 4388.335933521856,
+      "event": "progress",
+      "finished_sources": 3450,
+      "peak_rss_kib": 4257468,
+      "phase": "_build_arcs",
+      "pid": 3312122,
+      "source": 3450,
+      "stored_arcs": 170033181,
+      "total_sources": 79312,
+      "modified_unix": 1790021279.5542712,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k38/cache/661939_r1/progress.jsonl"
+    },
+    "w4_k39": {
+      "elapsed_s": 4649.727073148126,
+      "event": "progress",
+      "finished_sources": 3282,
+      "peak_rss_kib": 4151816,
+      "phase": "_build_arcs",
+      "pid": 4139333,
+      "source": 3282,
+      "stored_arcs": 168081202,
+      "total_sources": 82035,
+      "modified_unix": 1790021248.224328,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k39/cache/661940_r0/progress.jsonl"
+    },
+    "w5_k33": {
+      "elapsed_s": 4695.128455149941,
+      "event": "progress",
+      "finished_sources": 4117,
+      "peak_rss_kib": 4357144,
+      "phase": "_build_arcs",
+      "pid": 3131656,
+      "source": 4117,
+      "stored_arcs": 170626554,
+      "total_sources": 67466,
+      "modified_unix": 1790021292.9846756,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k33/cache/661941_r0/progress.jsonl"
+    },
+    "w5_k34": {
+      "elapsed_s": 4681.712668372318,
+      "event": "progress",
+      "finished_sources": 2130,
+      "peak_rss_kib": 2555884,
+      "phase": "_build_arcs",
+      "pid": 1513231,
+      "source": 2130,
+      "stored_arcs": 94134455,
+      "total_sources": 70293,
+      "modified_unix": 1790021279.5692718,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k34/cache/661942_r0/progress.jsonl"
+    },
+    "w5_k35": {
+      "elapsed_s": 4678.006304459181,
+      "event": "progress",
+      "finished_sources": 4766,
+      "peak_rss_kib": 5193868,
+      "phase": "_build_arcs",
+      "pid": 63850,
+      "source": 4766,
+      "stored_arcs": 210356724,
+      "total_sources": 72255,
+      "modified_unix": 1790021274.4841187,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k35/cache/661943_r0/progress.jsonl"
+    },
+    "w5_k36": {
+      "elapsed_s": 4681.700315895025,
+      "event": "progress",
+      "finished_sources": 4495,
+      "peak_rss_kib": 5043096,
+      "phase": "_build_arcs",
+      "pid": 2747274,
+      "source": 4495,
+      "stored_arcs": 203066893,
+      "total_sources": 73615,
+      "modified_unix": 1790021278.4252372,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k36/cache/661944_r0/progress.jsonl"
+    },
+    "w5_k37": {
+      "elapsed_s": 4696.934115109965,
+      "event": "progress",
+      "finished_sources": 4131,
+      "peak_rss_kib": 4935532,
+      "phase": "_build_arcs",
+      "pid": 2385376,
+      "source": 4131,
+      "stored_arcs": 199908462,
+      "total_sources": 78131,
+      "modified_unix": 1790021294.0367074,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k37/cache/661945_r0/progress.jsonl"
+    },
+    "w5_k38": {
+      "elapsed_s": 4696.607278228272,
+      "event": "progress",
+      "finished_sources": 4134,
+      "peak_rss_kib": 4930020,
+      "phase": "_build_arcs",
+      "pid": 2385379,
+      "source": 4134,
+      "stored_arcs": 202577854,
+      "total_sources": 79251,
+      "modified_unix": 1790021293.7096975,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k38/cache/661946_r0/progress.jsonl"
+    },
+    "w5_k39": {
+      "elapsed_s": 4694.121384124272,
+      "event": "progress",
+      "finished_sources": 3943,
+      "peak_rss_kib": 4867060,
+      "phase": "_build_arcs",
+      "pid": 2385377,
+      "source": 3943,
+      "stored_arcs": 199775351,
+      "total_sources": 81960,
+      "modified_unix": 1790021291.2256227,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k39/cache/661947_r0/progress.jsonl"
+    },
+    "w5_k40": {
+      "elapsed_s": 4694.908338243142,
+      "event": "progress",
+      "finished_sources": 3865,
+      "peak_rss_kib": 4854088,
+      "phase": "_build_arcs",
+      "pid": 2385378,
+      "source": 3865,
+      "stored_arcs": 199001641,
+      "total_sources": 83207,
+      "modified_unix": 1790021292.0126464,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k40/cache/661948_r0/progress.jsonl"
+    },
+    "w6_k33": {
+      "elapsed_s": 977.9420607900247,
+      "event": "progress",
+      "finished_sources": 997,
+      "peak_rss_kib": 1315980,
+      "phase": "_build_arcs",
+      "pid": 3499064,
+      "source": 997,
+      "stored_arcs": 43858413,
+      "total_sources": 70029,
+      "modified_unix": 1790021300.3088963,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k33/cache/661949_r1/progress.jsonl"
+    },
+    "w6_k34": {
+      "elapsed_s": 4653.465671800077,
+      "event": "progress",
+      "finished_sources": 6975,
+      "peak_rss_kib": 7208808,
+      "phase": "_build_arcs",
+      "pid": 2336429,
+      "source": 6975,
+      "stored_arcs": 294241561,
+      "total_sources": 70738,
+      "modified_unix": 1790021246.3052702,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k34/cache/661950_r0/progress.jsonl"
+    },
+    "w6_k35": {
+      "elapsed_s": 4658.13372829603,
+      "event": "progress",
+      "finished_sources": 7067,
+      "peak_rss_kib": 7530136,
+      "phase": "_build_arcs",
+      "pid": 4073891,
+      "source": 7067,
+      "stored_arcs": 308851996,
+      "total_sources": 73162,
+      "modified_unix": 1790021254.8795283,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k35/cache/661951_r0/progress.jsonl"
+    },
+    "w6_k36": {
+      "elapsed_s": 4657.869985105004,
+      "event": "progress",
+      "finished_sources": 6983,
+      "peak_rss_kib": 7487868,
+      "phase": "_build_arcs",
+      "pid": 4073892,
+      "source": 6983,
+      "stored_arcs": 309373284,
+      "total_sources": 74122,
+      "modified_unix": 1790021254.6175206,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k36/cache/661952_r0/progress.jsonl"
+    },
+    "w6_k37": {
+      "elapsed_s": 3887.7575370790437,
+      "event": "progress",
+      "finished_sources": 2998,
+      "peak_rss_kib": 3718976,
+      "phase": "_build_arcs",
+      "pid": 990793,
+      "source": 2998,
+      "stored_arcs": 144858467,
+      "total_sources": 77430,
+      "modified_unix": 1790021260.384694,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k37/cache/661953_r1/progress.jsonl"
+    },
+    "w6_k38": {
+      "elapsed_s": 4700.590618242044,
+      "event": "progress",
+      "finished_sources": 3713,
+      "peak_rss_kib": 4526400,
+      "phase": "_build_arcs",
+      "pid": 1228375,
+      "source": 3713,
+      "stored_arcs": 183038034,
+      "total_sources": 79392,
+      "modified_unix": 1790021296.8867931,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k38/cache/661954_r0/progress.jsonl"
+    },
+    "w6_k39": {
+      "elapsed_s": 4675.737228089012,
+      "event": "progress",
+      "finished_sources": 4642,
+      "peak_rss_kib": 5574264,
+      "phase": "_build_arcs",
+      "pid": 2458525,
+      "source": 4642,
+      "stored_arcs": 233942813,
+      "total_sources": 82101,
+      "modified_unix": 1790021275.3181438,
+      "source_path": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k39/cache/661616_r0/progress.jsonl"
+    }
+  },
+  "checks": [
+    {
+      "case": "w1_k33",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w1_k34",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w1_k35",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w1_k36",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w1_k37",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w1_k38",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w1_k39",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w1_k40",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w2_k33",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w2_k34",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w2_k35",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w2_k36",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w2_k37",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w2_k38",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w2_k39",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w2_k40",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w3_k33",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w3_k34",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w3_k35",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w3_k36",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w3_k37",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w3_k38",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w3_k39",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w3_k40",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w4_k33",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w4_k34",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w4_k35",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w4_k36",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w4_k37",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w4_k38",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w4_k39",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w4_k40",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w5_k33",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w5_k34",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w5_k35",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w5_k36",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w5_k37",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w5_k38",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w5_k39",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w5_k40",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w6_k33",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w6_k34",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w6_k35",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w6_k36",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w6_k37",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w6_k38",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w6_k39",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    },
+    {
+      "case": "w6_k40",
+      "dependencies_verified": true,
+      "resources_policy_verified": true
+    }
+  ],
+  "all_active_dependencies_preserved": true,
+  "all_cpu_jobs_exclude_reserved_node": true,
+  "graph_endpoints_available": 0
+}

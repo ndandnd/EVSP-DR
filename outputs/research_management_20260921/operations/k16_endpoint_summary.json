@@ -1,0 +1,71 @@
+{
+  "parent_global_prefix": 16,
+  "group": "18E2",
+  "group_reference_target": 9,
+  "trip_count": 256,
+  "scheduler_state": "COMPLETED",
+  "scheduler_elapsed_s": 3609,
+  "batch_maxrss_kib": 1614492,
+  "batch_maxrss_GiB": 1.5396995544433594,
+  "pricing_certificate": false,
+  "fractional_route_weight": 9,
+  "weighted_rmp": 900393.1896050631,
+  "pool_mip_fleet": 10,
+  "pool_mip_bound": 10.0,
+  "pool_fleet_proven": true,
+  "charging_related_cost": 736.1840000000084,
+  "charging_cost_bound": 452.1368666939559,
+  "charging_gap": 0.3858371457489558,
+  "charging_status": "TIME_LIMIT",
+  "individual_route_replay": {
+    "all_pool_routes": 3086,
+    "passed": true,
+    "validation_job": "668429",
+    "scope": "authenticated parent-to-child trip remapping preserving original physics"
+  },
+  "extra_trip_assignments": 57,
+  "overcovered_trips": 53,
+  "exact_once": false,
+  "shared_station_capacity_valid": false,
+  "shared_station_capacity_enforced": false,
+  "giro_subgroup_target_attained": false,
+  "full_giro_dispatch_validated": false,
+  "source_path": "outputs/research_management_20260921/operations/strict_packed/mip/646676_r0/result.json",
+  "source_sha256": "6a64de7003cc57a3e31ffc5f043666fd874ce224fac393e0216faf3f98be16d6",
+  "physical_station_capacity_audit": {
+    "half_open_intervals": true,
+    "stations": {
+      "2190L": {
+        "documented_chargers": 1,
+        "peak_simultaneous_connections": 0,
+        "peak_time_min": null,
+        "valid": true
+      },
+      "3127L": {
+        "documented_chargers": 2,
+        "peak_simultaneous_connections": 2,
+        "peak_time_min": 520.0,
+        "valid": true
+      },
+      "4808": {
+        "documented_chargers": 1,
+        "peak_simultaneous_connections": 0,
+        "peak_time_min": null,
+        "valid": true
+      },
+      "7880C": {
+        "documented_chargers": 1,
+        "peak_simultaneous_connections": 3,
+        "peak_time_min": 1141.0,
+        "valid": false
+      },
+      "JON_A": {
+        "documented_chargers": 1,
+        "peak_simultaneous_connections": 2,
+        "peak_time_min": 542.0,
+        "valid": false
+      }
+    },
+    "valid": false
+  }
+}

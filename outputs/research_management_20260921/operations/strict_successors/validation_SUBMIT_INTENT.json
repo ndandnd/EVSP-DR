@@ -1,0 +1,16 @@
+[
+  "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+  "--parsable",
+  "--partition=default_partition",
+  "--exclude=scaglione-compute-01",
+  "--requeue",
+  "--cpus-per-task=2",
+  "--mem=8G",
+  "--time=00:15:00",
+  "--job-name=packS_validation",
+  "--output=/home/nc437/ladder-lite/strict_packed_successors_20260921/%j.out",
+  "--error=/home/nc437/ladder-lite/strict_packed_successors_20260921/%j.err",
+  "/home/nc437/ladder-lite/strict_packed_successors_20260921/worker.sh",
+  "/home/nc437/ladder-lite/strict_packed_successors_20260921",
+  "validation"
+]

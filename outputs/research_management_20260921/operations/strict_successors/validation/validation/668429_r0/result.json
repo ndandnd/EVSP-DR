@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "checks": {
+    "w5_k17_18E2": 3086,
+    "w5_k17_18E2_mapped_trips": 256,
+    "w5_k19_18E2_mapped_trips": 277
+  },
+  "inheritance": {
+    "parent_status": "/home/nc437/ladder-lite/strict_packed_20260921/cg/646675_r0/result.json",
+    "parent_status_sha256": "1ce2024a745b91b9809cfed57dd5665a37978156ae6b2aa2a17618a22d9226ee",
+    "parent_pool": "/home/nc437/ladder-lite/strict_packed_20260921/cg/646675_r0/pool.jsonl",
+    "parent_pool_sha256": "b31a713a57991b17d688454a00be668e4e9d1b98cb8d5be9d295fd6ff302f736",
+    "parent_instance_sha256": "8f895e07bc7dab9bc6b3ed3744ec36beb9a3efed7e48fbe0a2e32f24a85ba730",
+    "inherited_columns": 3086,
+    "trip_mapping_sha256": "79fc548eacab073ccd635d728fde8dbad5dd2a493dd3decdd89dbabc9a3d9e48",
+    "every_inherited_route_replayed": true,
+    "parent_execution_commit": "35770aae2c08e7d5a356cc3b673e67608e5b1036",
+    "child_execution_commit": "35770aae2c08e7d5a356cc3b673e67608e5b1036",
+    "audited_compatible_parent_commit": null
+  },
+  "solver_source_changed": false,
+  "compatibility_exception_needed": false
+}
