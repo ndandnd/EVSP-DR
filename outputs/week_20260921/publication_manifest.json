@@ -12,23 +12,23 @@
   "included_files": [
     {
       "path": "README.md",
-      "bytes": 4054,
-      "sha256": "ab4c9c0b3279d2a4ff871ef914583fed5d51bf97efdeb0662e811a166f7f9a10"
+      "bytes": 4178,
+      "sha256": "1bb3f68abcb1ffe8be8144b37b2f634895e46f5d1ddff5dd1dbb2b889d875e23"
     },
     {
       "path": "RESEARCH_JOURNAL.html",
-      "bytes": 9234,
-      "sha256": "de5042643573ba2778f1bb2c90c7f5c876570ac34acc57b40d80574eb07a9800"
+      "bytes": 9370,
+      "sha256": "2d5f9059112c7692bc3ebde2f575be0296e8be50d73c5f506d0067748eb6f817"
     },
     {
       "path": "RESEARCH_JOURNAL.md",
-      "bytes": 7078,
-      "sha256": "2561a1d8f234bc8e1c913cad540da85f0908217c0311c97c120bf20e38781bfb"
+      "bytes": 7201,
+      "sha256": "f9f4907cc74bd0788efc78c6598377a4bcf8387faf1bef0a06d41e0275650b41"
     },
     {
       "path": "RESEARCH_JOURNAL_BODY.html",
-      "bytes": 8574,
-      "sha256": "683c17bd476baecb9be74c8b3ae0b9200317ec16c38617f25671fcd49cf55bbe"
+      "bytes": 8710,
+      "sha256": "2c82d8cda4733c3a5b7544b81be6cf249dbc7320f7c3b094ac8605c99bc4eb96"
     },
     {
       "path": "capacity_strict/README.md",
@@ -722,13 +722,13 @@
     },
     {
       "path": "cleanup_physics/README.md",
-      "bytes": 8578,
-      "sha256": "16923eaaa072de664b1e9bd66952619464bb62eb20eeecc222b25d07d0efadd6"
+      "bytes": 8753,
+      "sha256": "9953e335572142ebe672c912c703988c62c5d3e582d2358c8e3dd934b66f6f04"
     },
     {
       "path": "cleanup_physics/artifact_manifest.json",
-      "bytes": 16615,
-      "sha256": "f104e77b19d5caa7c5badd62fb5f9c597b70678a15f5fdb855fead46e0d979e1"
+      "bytes": 16770,
+      "sha256": "f13eee0bb58ac251228eba9e1d4d7375b7116cf5434102ddb58ec35d6896165f"
     },
     {
       "path": "cleanup_physics/baseline.json",
@@ -1017,13 +1017,13 @@
     },
     {
       "path": "doc_verification/README.md",
-      "bytes": 2027,
-      "sha256": "6a188049e986767798b7f86f378b8dc729ff96c446c3fbccafc4df7f07519c9a"
+      "bytes": 2214,
+      "sha256": "0619b3e22cde165cd3c9352f0488edc59527acc2ba571bb200ce6fa2d26be0c0"
     },
     {
       "path": "doc_verification/after.pdf",
-      "bytes": 455688,
-      "sha256": "d4cdf189ae565eae1fab24922dc954514126f315d00df3556c5ecc6674842b37"
+      "bytes": 455709,
+      "sha256": "a62293e2443f250f6a8a9e8c3d29f77bc34b5d08e3b9557a00d6e02b086b339f"
     },
     {
       "path": "doc_verification/before.md",
@@ -1032,8 +1032,8 @@
     },
     {
       "path": "doc_verification/verification.json",
-      "bytes": 1014,
-      "sha256": "f311b68e890161e8a909bb4142870f7b6e0585b8039ab13ec04a87d41fc53217"
+      "bytes": 1068,
+      "sha256": "fa4550433b7acf5db48eb6ac4c5b10759cba3cf433c8f081a272deb99a066083"
     },
     {
       "path": "evidence/LOG_EXCERPTS.md",
@@ -2082,13 +2082,13 @@
     },
     {
       "path": "slides/weekly_deck.pdf",
-      "bytes": 336547,
-      "sha256": "2365065286ba08ab55becc12310c93b271a30b35c64b0d1f573b866709880157"
+      "bytes": 336572,
+      "sha256": "b1eb4100f18bfa659d3e7f27193c1f7b382628fcf0f3f91e110616a8f1c8cfc4"
     },
     {
       "path": "slides/weekly_deck.pptx",
-      "bytes": 432142,
-      "sha256": "88d4d1806df6a5b55bd1db6bdb3c1fac6ea04e09adbf00f7f7c009157775d41e"
+      "bytes": 432152,
+      "sha256": "40491f35fe5c32e3b2ae9a48f76a3eccddd51993812538926c7b0931ed8f9003"
     },
     {
       "path": "strict_packed_source.patch",
@@ -8598,6 +8598,13 @@
     "Code changes are represented by exact commit references and source patches; they are not merged into this documentation branch.",
     "The evidence manifest includes source locations for files intentionally retained locally; omission is disclosed here."
   ],
-  "updated_utc": "2026-09-21T15:19:44.099609+00:00",
-  "update_note": "Final verified 14-slide deck PDF/PPTX, six-page document snapshot, and publication/history-preservation receipt added. Six original footer links retained; slide notes carry direct evidence links."
+  "updated_utc": "2026-09-21T15:22:35.699412+00:00",
+  "update_note": "Final clarified exports: fee0/fee5 use different inherited sequences and station paths; session counts are descriptive, not a fee-only causal effect. Original solver results unchanged.",
+  "superseded_publications": [
+    {
+      "commit": "82a206dfca385edff5eb839e6b9e28ffc999cdf9",
+      "scope": "Document and slide wording/exports",
+      "reason": "Superseded by explicit different-sequence/fee-only causal-scope clarification; numerical solver evidence unchanged."
+    }
+  ]
 }

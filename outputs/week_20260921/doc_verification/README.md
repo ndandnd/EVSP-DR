@@ -4,7 +4,7 @@ Updated 21 September 2026. Only the current-results tab (`t.79m3d3x4h45m`) was r
 
 Before: dated 17 September, about 1,945 words in the exported current tab, including stale running statuses. `before.md` preserves the export.
 
-After: about 1,275 words, six rendered pages including two figures, two editable tables, dated journal entries and direct immutable GitHub log links. All eight jobs are recorded. Twelve long-search charging stages are marked finished. Finite-pool proofs, pricing certificates, physical validation and target attainment are distinguished. The small packed-graph benchmark is measured; the large k16 result remains pending. `after.md` and `after.pdf` preserve the exact final content.
+After: about 1,295 words, six rendered pages including two figures, two editable tables, dated journal entries and direct immutable GitHub log links. All eight jobs are recorded. Twelve long-search charging stages are marked finished. Finite-pool proofs, pricing certificates, physical validation and target attainment are distinguished. The small packed-graph benchmark is measured; the large k16 result remains pending. `after.md` and `after.pdf` preserve the exact final content.
 
 The new user-designated weekly deck has 14 slides. Slides 3, 7, 8 and 14 have native editable tables. Slide 4 explains the C1 Gurobi fleet proof and carries full log URLs in its notes; slide 8 links the twelve long-search results. Figures are on slides 9 and 12, with explanations in editable text and explicit model scope. No other presentation was edited.
 
@@ -15,3 +15,5 @@ Google Doc: https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4b
 Weekly deck: https://docs.google.com/presentation/d/1F6udjgkiPH51vMUcku7ZT3PhZPAxsQwUCi3TK9vFRDM/edit
 
 Final layout separates each figure and its editable caption onto a dedicated page; four pages of journal text and tables precede the two figure pages.
+
+The final comparison explicitly states that the two saved solutions have different trip sequences and station paths; the 42 versus 30 starts are not a controlled fee-only causal effect.

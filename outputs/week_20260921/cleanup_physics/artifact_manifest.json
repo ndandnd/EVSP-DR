@@ -27,7 +27,7 @@
     "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/joint_recharge_execution.log": "5734092de27822fa3c469ba40569d6b735c2de316f7187fb5b6055648ac9afb3",
     "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/one_bus_k5_joint_matched.pdf": "9515d2f9e50803843bfff82839adf308bddeb9762bc3257c9a4ef26f854633c9",
     "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/replay_saved_sequences.py": "abd72f52f049b0f1111e99aec6d7cc7342e35d5aa7885fa1fb182e3b4e469659",
-    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/README.md": "16923eaaa072de664b1e9bd66952619464bb62eb20eeecc222b25d07d0efadd6",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/README.md": "9953e335572142ebe672c912c703988c62c5d3e582d2358c8e3dd934b66f6f04",
     "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/joint_sequence_charging.py": "f48188c37c2ae909dc31219a4e2b479d57b7a4991878b7d52b3015c8d0f99889",
     "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/matched_execution.log": "851819d341ba5dffaa2f7a1e2e102671b72eff8448f90c241096ee869c9d9bfa",
     "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/baseline.json": "9c2d180a99b1fa80782183358d0d003f835da1e1d272ab1bc27e13b69ee5bf24",
@@ -170,5 +170,6 @@
     "mip_budget_seconds": 2,
     "source_raw_immutable": true,
     "receipt": "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/integration_smoke/dispatch_cleanup_receipt.json"
-  }
+  },
+  "causal_scope": "fee0vsfee5jointarms have different savedtripsequences and reconstructedstationpaths;42to30starts is descriptive,notfee-onlycausaltest"
 }
