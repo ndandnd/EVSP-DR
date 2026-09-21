@@ -16,8 +16,9 @@ mechanism this pilot exercises:
 Scope and safety rules encoded here:
 
 * **Never a global claim.**  Every LP solved is a *restricted* LP over a
-  *dive node*.  An exhausted node is recorded as ``node_infeasible``, which
-  means "infeasible under these fixings and this fleet cap" and nothing else.
+  *dive node*.  A node retaining artificials is recorded as ``node_artificials_remain``.
+  This is a heuristic backtrack, not an infeasibility proof: no sufficient
+  big-M penalty bound has been established.
   The manifest carries ``global_certificate: null`` unconditionally.
 * **Original columns are preserved.**  The source status/journal are opened
   read-only, hashed on entry and re-hashed on exit; the augmented journal
@@ -72,7 +73,7 @@ FORBIDDEN_PATH_PATTERN = re.compile(
 
 NODE_INTEGRAL = "node_integral"
 NODE_FRACTIONAL = "node_fractional"
-NODE_INFEASIBLE = "node_infeasible"
+NODE_ARTIFICIAL_REMAINS = "node_artificials_remain"
 NODE_UNCERTIFIED = "node_uncertified"
 
 
@@ -650,8 +651,8 @@ class DivePilot:
                 break
         if certified:
             if lp.artificial_total > ARTIFICIAL_TOL:
-                outcome = NODE_INFEASIBLE
-                stop = "certified_artificials_remain"
+                outcome = NODE_ARTIFICIAL_REMAINS
+                stop = "penalized_pricing_closed_artificials_remain"
             elif self.is_integral(lp):
                 outcome = NODE_INTEGRAL
                 stop = "certified_integral"
@@ -802,12 +803,12 @@ class DivePilot:
             if self.covers_everything(fixed):
                 self.record_integer_solution(lp, fixed, from_fixings=True)
                 return False, max_depth
-            # Only a *certified* node with surviving artificials is infeasible
-            # under the current fixings.  An uncertified node is simply a
+            # Surviving artificials trigger heuristic backtracking, not a proof
+            # of infeasibility for the unpenalized problem. An uncertified node is a
             # heuristic column generator that ran out of its per-node
             # allowance: if its coverage is complete we may still branch on it,
             # and it is never called infeasible.
-            retreat = outcome == NODE_INFEASIBLE
+            retreat = outcome == NODE_ARTIFICIAL_REMAINS
             if outcome == NODE_UNCERTIFIED and (
                 lp is None or lp.artificial_total > ARTIFICIAL_TOL
             ):

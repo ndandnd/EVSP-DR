@@ -318,12 +318,12 @@ class FeasibilitySemanticsTests(unittest.TestCase):
         }
         pilot, master = run_stub_pilot(trips, pool, universe, fleet_cap=2)
         outcomes = [row["outcome"] for row in pilot.node_outcomes]
-        self.assertNotIn(dive.NODE_INFEASIBLE, outcomes)
+        self.assertNotIn(dive.NODE_ARTIFICIAL_REMAINS, outcomes)
         self.assertIsNotNone(pilot.integer_solution)
         self.assertEqual(pilot.integer_solution["buses"], 2)
         self.assertGreater(len(pilot.generated), 0)
 
-    def test_certified_artificials_mean_node_infeasible_only(self):
+    def test_penalized_artificials_trigger_heuristic_backtrack(self):
         """No column universe can cover 4 trips with 1 bus: node infeasible."""
 
         trips = [0, 1, 2, 3]
@@ -331,7 +331,7 @@ class FeasibilitySemanticsTests(unittest.TestCase):
         universe = {frozenset({t}): ((t,), 1000.0) for t in trips}
         pilot, _master = run_stub_pilot(trips, pool, universe, fleet_cap=1)
         self.assertIn(
-            dive.NODE_INFEASIBLE,
+            dive.NODE_ARTIFICIAL_REMAINS,
             [row["outcome"] for row in pilot.node_outcomes],
         )
         self.assertIsNone(pilot.integer_solution)
