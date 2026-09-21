@@ -1,0 +1,9 @@
+from_code,to_code,travel_min,energy_kwh,model_source,model_source_lines,model_lookup,model_basis
+PARX,4808,7.0,7.8,/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/par_ref_dhd.csv,16,symmetric unordered reference pair 13801<->4808,static symmetric reference DHD; minimum-duration row
+4808,PARX,7.0,7.8,/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/par_ref_dhd.csv,16,symmetric unordered reference pair 4808<->13801,static symmetric reference DHD; minimum-duration row
+PARX,2190,19.0,28.0,/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/par_ref_dhd.csv,4,symmetric unordered reference pair 13801<->2190,static symmetric reference DHD; minimum-duration row
+2190,PARX,19.0,28.0,/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/par_ref_dhd.csv,4,symmetric unordered reference pair 2190<->13801,static symmetric reference DHD; minimum-duration row
+2190,4808,22.0,37.6,/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/par_ref_dhd.csv,3,symmetric unordered reference pair 2190<->4808,static symmetric reference DHD; minimum-duration row
+4808,2190,22.0,37.6,/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/par_ref_dhd.csv,3,symmetric unordered reference pair 4808<->2190,static symmetric reference DHD; minimum-duration row
+2190,2190L,0.0,0.0,/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/Ref_dict.csv,9;10,2190->2190;2190L->2190;same-reference zero arc,static reference graph: coincident reference nodes
+2190L,2190,0.0,0.0,/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/Ref_dict.csv,10;9,2190L->2190;2190->2190;same-reference zero arc,static reference graph: coincident reference nodes

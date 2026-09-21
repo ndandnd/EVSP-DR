@@ -1,0 +1,9 @@
+From → to,Movement,Original GIRO min,Fee0 / model min,Energy kWh,Interpretation
+PARX → 4808,Empty departure from depot,8,7,7.8 in both,Original 06:43–06:51; fee0 uses static reference duration.
+4808 → 2190,Passenger service,53–59,51–60,42.50,Scheduled passenger trip duration; not empty-driving time.
+2190 → 4808,Passenger service,55–63,57–63,41.73,Scheduled passenger trip duration; not empty-driving time.
+2190 → 2190L,Local movement to charger,1,0,Original 0.4; model 0,Same-reference model collapse omits the outward movement.
+2190L → 2190,Local movement from charger,0,0,0,Directional source permits zero return movement.
+4808 → PARX,Empty return to depot,7,Not used,7.8,Original and fee5 return via Merkuriusgatan.
+2190 → PARX,Empty return to depot,Not used,19,28.0,Fee0 finishes at Eketrägatan; returns 19:49–20:08.
+4808 ↔ 2190,Optional empty-driving reference,Not a service trip,22,37.6,Not used as passenger-service duration; model alternative only.

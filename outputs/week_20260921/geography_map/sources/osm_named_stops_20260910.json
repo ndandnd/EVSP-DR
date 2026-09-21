@@ -1,0 +1,2296 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-09-10T20:05:51Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 96546423,
+  "lat": 57.7167011,
+  "lon": 11.9101366,
+  "tags": {
+    "name": "Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "ref": "B",
+    "tram": "yes",
+    "wikidata": "Q107999052"
+  }
+},
+{
+  "type": "node",
+  "id": 165201423,
+  "lat": 57.6839930,
+  "lon": 11.9720289,
+  "tags": {
+    "name": "Guldheden",
+    "place": "suburb",
+    "population": "10809",
+    "wikidata": "Q10510520",
+    "wikipedia": "sv:Guldheden"
+  }
+},
+{
+  "type": "node",
+  "id": 241780711,
+  "lat": 57.7170023,
+  "lon": 11.9103268,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "L"
+  }
+},
+{
+  "type": "node",
+  "id": 286385228,
+  "lat": 57.7159074,
+  "lon": 11.9106363,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "H"
+  }
+},
+{
+  "type": "node",
+  "id": 320761709,
+  "lat": 57.6891249,
+  "lon": 11.9672746,
+  "tags": {
+    "addr:city": "Göteborg",
+    "addr:country": "SE",
+    "addr:housenumber": "1",
+    "addr:place": "Guldhedstorget",
+    "addr:postcode": "413 21",
+    "air_conditioning": "yes",
+    "branch": "Tempo",
+    "brand": "Tempo",
+    "brand:wikidata": "Q10692628",
+    "changing_table": "no",
+    "check_date:opening_hours": "2026-06-19",
+    "currency:SEK": "yes",
+    "diet:fish": "yes",
+    "diet:gluten_free": "yes",
+    "diet:halal": "no",
+    "diet:lactose_free": "yes",
+    "diet:meat": "yes",
+    "diet:pescetarian": "yes",
+    "diet:vegan": "yes",
+    "diet:vegetarian": "yes",
+    "internet_access:ssid": "Tempo Guest WiFi",
+    "name": "Tempo Guldheden",
+    "opening_hours": "Mo-Sa 09:00-21:00; Su 10:00-21:00",
+    "organic": "yes",
+    "payment:cash": "yes",
+    "payment:credit_cards": "yes",
+    "phone": "+46 31 18 69 66",
+    "shop": "supermarket",
+    "stroller": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 648217190,
+  "lat": 57.7620108,
+  "lon": 12.0703756,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Merkuriusgatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "A"
+  }
+},
+{
+  "type": "node",
+  "id": 663680768,
+  "lat": 57.7159829,
+  "lon": 11.9104422,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "G"
+  }
+},
+{
+  "type": "node",
+  "id": 663680772,
+  "lat": 57.7161030,
+  "lon": 11.9099312,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "K"
+  }
+},
+{
+  "type": "node",
+  "id": 663680775,
+  "lat": 57.7157931,
+  "lon": 11.9099594,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "J"
+  }
+},
+{
+  "type": "node",
+  "id": 663682636,
+  "lat": 57.7165208,
+  "lon": 11.9103786,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "C"
+  }
+},
+{
+  "type": "node",
+  "id": 1241293701,
+  "lat": 57.7024223,
+  "lon": 11.9789581,
+  "tags": {
+    "name": "Heden",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1353920448,
+  "lat": 57.6840119,
+  "lon": 11.9716879,
+  "tags": {
+    "addr:city": "Göteborg",
+    "addr:country": "SE",
+    "addr:housenumber": "4",
+    "addr:street": "Doktor Fries Torg",
+    "air_conditioning": "yes",
+    "branch": "Hemköp",
+    "brand": "Hemköp",
+    "brand:wikidata": "Q10521746",
+    "currency:SEK": "yes",
+    "diet:gluten_free": "yes",
+    "email": "info.goteborg-jiffy@hemkop.se",
+    "name": "Hemköp Göteborg Guldheden",
+    "old_name": "Jiffy",
+    "opening_hours": "Mo-Fr 08:00-22:00; Sa,Su 08:00-21:00",
+    "organic": "yes",
+    "payment:cash": "yes",
+    "payment:mastercard": "yes",
+    "payment:visa": "yes",
+    "phone": "+46 70 480 59 48",
+    "shop": "supermarket",
+    "stroller": "yes",
+    "website": "https://www.hemkop.se/butik/4532",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 1517531668,
+  "lat": 57.7164903,
+  "lon": 11.9099118,
+  "tags": {
+    "name": "Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "ref": "A",
+    "tram": "yes",
+    "wikidata": "Q107999052"
+  }
+},
+{
+  "type": "node",
+  "id": 1705302962,
+  "lat": 57.7024561,
+  "lon": 11.9749202,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "D"
+  }
+},
+{
+  "type": "node",
+  "id": 1753201873,
+  "lat": 57.7160527,
+  "lon": 11.9104407,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "F"
+  }
+},
+{
+  "type": "node",
+  "id": 1753201875,
+  "lat": 57.7161241,
+  "lon": 11.9104249,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "E"
+  }
+},
+{
+  "type": "node",
+  "id": 1753201876,
+  "lat": 57.7161963,
+  "lon": 11.9104249,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "D"
+  }
+},
+{
+  "type": "node",
+  "id": 1783327130,
+  "lat": 57.7616180,
+  "lon": 12.0706962,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Merkuriusgatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "B"
+  }
+},
+{
+  "type": "node",
+  "id": 2088942964,
+  "lat": 57.7020495,
+  "lon": 11.9746356,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "B"
+  }
+},
+{
+  "type": "node",
+  "id": 2088942977,
+  "lat": 57.7022380,
+  "lon": 11.9743486,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "A"
+  }
+},
+{
+  "type": "node",
+  "id": 2097238852,
+  "lat": 57.7458096,
+  "lon": 12.1745464,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Jons väg",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "A"
+  }
+},
+{
+  "type": "node",
+  "id": 2139221243,
+  "lat": 57.7003541,
+  "lon": 11.9814894,
+  "tags": {
+    "addr:city": "Göteborg",
+    "addr:housenumber": "59",
+    "addr:postcode": "412 52",
+    "addr:street": "Engelbrektsgatan",
+    "amenity": "doctors",
+    "contact:email": "info@akutlakarna.se",
+    "contact:facebook": "https://www.facebook.com/akutlakarna/",
+    "contact:instagram": "https://www.instagram.com/Akutlakarna",
+    "contact:linkedin": "https://www.linkedin.com/company/akutl%C3%A4karna-specialistkliniken-heden-ab",
+    "contact:phone": "+46 31 208 22 0",
+    "contact:twitter": "https://twitter.com/akutlakarnaspe",
+    "contact:website": "https://www.mehranmonemi.se",
+    "healthcare": "doctor",
+    "healthcare:speciality": "gastroenterology",
+    "name": "Akutläkarna Specialistkliniken Heden",
+    "opening_hours": "Mo-Th 07:30-12:00,12:45-17:00; Fr-Su off",
+    "payment:cash": "yes",
+    "payment:credit_cards": "yes",
+    "payment:debit_cards": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 2139221258,
+  "lat": 57.7004716,
+  "lon": 11.9818033,
+  "tags": {
+    "female": "yes",
+    "male": "yes",
+    "name": "Hedens Beauty Center",
+    "shop": "hairdresser"
+  }
+},
+{
+  "type": "node",
+  "id": 2139221259,
+  "lat": 57.7008942,
+  "lon": 11.9827564,
+  "tags": {
+    "addr:city": "Göteborg",
+    "addr:housenumber": "67",
+    "addr:postcode": "412 52",
+    "addr:street": "Engelbrektsgatan",
+    "air_conditioning": "yes",
+    "check_date:opening_hours": "2026-04-29",
+    "contact:email": "info@hedensfotvard.com",
+    "contact:facebook": "https://www.facebook.com/profile.php/",
+    "contact:phone": "+46 31 814 44 3",
+    "contact:website": "https://hedensfotvard.com/",
+    "name": "Hedens Fotvård",
+    "opening_hours": "Mo-Fr 08:00-18:00; Sa 08:00-14:00; Su off",
+    "opening_hours:signed": "no",
+    "payment:cash": "yes",
+    "payment:credit_cards": "yes",
+    "payment:debit_cards": "yes",
+    "shop": "beauty"
+  }
+},
+{
+  "type": "node",
+  "id": 2139221279,
+  "lat": 57.7007638,
+  "lon": 11.9824415,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Hyaku - Sushi Heden",
+    "opening_hours": "Mo-Th 11:30-21:00; Fr 11:30-22:00; Sa 13:00-22:00; Su 14:00-21:00"
+  }
+},
+{
+  "type": "node",
+  "id": 2157588153,
+  "lat": 57.7020582,
+  "lon": 11.9824100,
+  "tags": {
+    "addr:city": "Göteborg",
+    "addr:country": "SE",
+    "addr:housenumber": "16",
+    "addr:postcode": "411 39",
+    "addr:street": "Sten Sturegatan",
+    "branch": "Göteborg",
+    "brand": "ICA Nära",
+    "brand:wikidata": "Q1663776",
+    "brand:wikipedia": "sv:Ica",
+    "name": "ICA Nära Heden",
+    "opening_hours": "Mo-Su 08:00-22:00",
+    "payment:mastercard": "yes",
+    "payment:visa": "yes",
+    "post_office": "post_partner",
+    "shop": "supermarket",
+    "website": "https://www.ica.se/",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 2177682791,
+  "lat": 57.7022523,
+  "lon": 11.9751489,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "C"
+  }
+},
+{
+  "type": "node",
+  "id": 2177682792,
+  "lat": 57.7028556,
+  "lon": 11.9748289,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "E"
+  }
+},
+{
+  "type": "node",
+  "id": 2193422966,
+  "lat": 57.7165417,
+  "lon": 12.0798274,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Soldatheden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "B"
+  }
+},
+{
+  "type": "node",
+  "id": 2193422967,
+  "lat": 57.7166914,
+  "lon": 12.0797576,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Soldatheden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "A"
+  }
+},
+{
+  "type": "node",
+  "id": 2214581054,
+  "lat": 57.7453475,
+  "lon": 12.1735481,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Jons väg",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "B"
+  }
+},
+{
+  "type": "node",
+  "id": 2234355026,
+  "lat": 57.7025997,
+  "lon": 11.9725358,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "G"
+  }
+},
+{
+  "type": "node",
+  "id": 2923394047,
+  "lat": 57.7000110,
+  "lon": 11.9815778,
+  "tags": {
+    "addr:city": "Göteborg",
+    "addr:country": "SE",
+    "addr:housenumber": "4",
+    "addr:postcode": "412 53",
+    "addr:street": "Wadmansgatan",
+    "amenity": "fast_food",
+    "contact:phone": "+46 31 20 70 95",
+    "contact:website": "https://www.pizzeriaheden.se/",
+    "cuisine": "pizza",
+    "diet:gluten_free": "yes",
+    "diet:vegetarian": "yes",
+    "name": "Hedens Pizza Butik",
+    "opening_hours": "Mo-Su 11:00-22:00",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 2925853694,
+  "lat": 57.6768791,
+  "lon": 12.0046104,
+  "tags": {
+    "name": "Heden Bil",
+    "shop": "car",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 3123485837,
+  "lat": 57.6840198,
+  "lon": 11.9724696,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "regional",
+    "diet:vegan": "yes",
+    "diet:vegetarian": "yes",
+    "indoor_seating": "yes",
+    "name": "Guldhedens kvarterskrog",
+    "opening_hours": "Mo 16:00-21:00; We-Fr 16:00-22:00; Sa 14:00-22:00; Su 14:00-21:00; Tu off",
+    "outdoor_seating": "yes",
+    "payment:cryptocurrencies": "no",
+    "payment:mastercard": "yes",
+    "payment:visa": "yes",
+    "smoking": "no",
+    "toilets": "yes",
+    "toilets:menstrual_products": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 3181521162,
+  "lat": 57.7007376,
+  "lon": 11.9768985,
+  "tags": {
+    "name": "Hedens Guld",
+    "opening_hours": "We-Fr 11:00-18:00; Sa 11:00-15:00",
+    "shop": "jewelry"
+  }
+},
+{
+  "type": "node",
+  "id": 3733319220,
+  "lat": 57.6834651,
+  "lon": 11.9717114,
+  "tags": {
+    "access": "yes",
+    "air_conditioning": "yes",
+    "amenity": "library",
+    "check_date:opening_hours": "2026-03-14",
+    "internet_access": "wlan",
+    "internet_access:fee": "customers",
+    "name": "Guldhedens bibliotek",
+    "opening_hours": "Mo,Tu,Th 10:00-19:00; We,Fr 10:00-16:00; Sa 10:00-15:00",
+    "operator": "Göteborgs Stad",
+    "polling_station": "yes",
+    "wheelchair": "yes",
+    "wikidata": "Q61751859"
+  }
+},
+{
+  "type": "node",
+  "id": 5141420233,
+  "lat": 57.7218142,
+  "lon": 12.0524687,
+  "tags": {
+    "artist_name": "Inga-Louise Lindgren",
+    "artwork_type": "statue",
+    "name": "Barnmorskan Johanna Heden",
+    "tourism": "artwork",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 6002985394,
+  "lat": 57.6839028,
+  "lon": 11.9722586,
+  "tags": {
+    "currency:SEK": "yes",
+    "description": "Skomakeri - Kemtvätt - Nyckelservice",
+    "name": "Guldhedens skomakeri & nyckelservice",
+    "opening_hours": "Mo-Fr 10:00-18:00; Sa 10:00-14:00",
+    "payment:mastercard": "yes",
+    "payment:visa": "yes",
+    "shop": "shoe_repair"
+  }
+},
+{
+  "type": "node",
+  "id": 6002985432,
+  "lat": 57.6843854,
+  "lon": 11.9735500,
+  "tags": {
+    "name": "Guldhedens begravningsbyrå",
+    "shop": "funeral_directors"
+  }
+},
+{
+  "type": "node",
+  "id": 10748983656,
+  "lat": 57.7028095,
+  "lon": 11.9798540,
+  "tags": {
+    "addr:country": "SE",
+    "addr:housenumber": "1",
+    "addr:street": "Sten Sturegatan",
+    "amenity": "cafe",
+    "name": "Cykelfiket Heden",
+    "operator": "Cykelfiket",
+    "service:bicycle:repair": "yes",
+    "shop": "bicycle",
+    "website": "https://cykelfiket.se/pages/heden"
+  }
+},
+{
+  "type": "node",
+  "id": 10822314730,
+  "lat": 57.6891029,
+  "lon": 11.9663436,
+  "tags": {
+    "addr:city": "Göteborg",
+    "addr:country": "SE",
+    "addr:housenumber": "4",
+    "addr:street": "Reutersgatan",
+    "amenity": "social_facility",
+    "name": "Hemtjänsten Guldheden",
+    "operator:type": "public",
+    "social_facility": "ambulatory_care",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12799798095,
+  "lat": 57.6832689,
+  "lon": 11.9715733,
+  "tags": {
+    "addr:city": "Göteborg",
+    "addr:housenumber": "6",
+    "addr:postcode": "413 23",
+    "addr:street": "Doktor Fries Torg",
+    "amenity": "clinic",
+    "healthcare": "clinic",
+    "name": "Nötkärnan Guldheden Familjeläkare och BVC",
+    "opening_hours": "Mo-Fr 08:00-14:00"
+  }
+},
+{
+  "type": "node",
+  "id": 14013821717,
+  "lat": 57.7618089,
+  "lon": 12.0706762,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Merkuriusgatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "C"
+  }
+},
+{
+  "type": "way",
+  "id": 9095112,
+  "center": {
+    "lat": 57.7022353,
+    "lon": 11.9782254
+  },
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:surface": "asphalt",
+    "foot": "designated",
+    "footway:surface": "asphalt",
+    "highway": "path",
+    "lit": "yes",
+    "name": "Exercisheden",
+    "oneway:bicycle": "no",
+    "segregated": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 10573079,
+  "center": {
+    "lat": 57.6809655,
+    "lon": 11.9823775
+  },
+  "tags": {
+    "leisure": "sports_centre",
+    "lit": "yes",
+    "name": "Guldheden Södra",
+    "sport": "multi"
+  }
+},
+{
+  "type": "way",
+  "id": 11390669,
+  "center": {
+    "lat": 57.7125761,
+    "lon": 11.9088643
+  },
+  "tags": {
+    "highway": "residential",
+    "lit": "yes",
+    "maxspeed": "30",
+    "name": "Eketrägatan",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 24569201,
+  "center": {
+    "lat": 57.7616678,
+    "lon": 12.0715005
+  },
+  "tags": {
+    "highway": "residential",
+    "maxspeed": "50",
+    "name": "Merkuriusgatan"
+  }
+},
+{
+  "type": "way",
+  "id": 24569202,
+  "center": {
+    "lat": 57.7618655,
+    "lon": 12.0705360
+  },
+  "tags": {
+    "highway": "residential",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Merkuriusgatan"
+  }
+},
+{
+  "type": "way",
+  "id": 24569207,
+  "center": {
+    "lat": 57.7623619,
+    "lon": 12.0706366
+  },
+  "tags": {
+    "highway": "residential",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Merkuriusgatan",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 26151898,
+  "center": {
+    "lat": 57.7157605,
+    "lon": 11.9105508
+  },
+  "tags": {
+    "access": "no",
+    "bus": "yes",
+    "highway": "service",
+    "lit": "yes",
+    "name": "Eketrägatan",
+    "oneway": "yes",
+    "psv": "designated",
+    "surface": "sett"
+  }
+},
+{
+  "type": "way",
+  "id": 28100620,
+  "center": {
+    "lat": 57.6855019,
+    "lon": 11.9729133
+  },
+  "tags": {
+    "highway": "service",
+    "name": "Guldhedens kyrkbacke",
+    "service": "driveway"
+  }
+},
+{
+  "type": "way",
+  "id": 28517391,
+  "center": {
+    "lat": 57.7165821,
+    "lon": 11.9109040
+  },
+  "tags": {
+    "access": "no",
+    "bus": "yes",
+    "highway": "service",
+    "lit": "yes",
+    "name": "Eketrägatan",
+    "oneway": "yes",
+    "psv": "designated",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 50825595,
+  "center": {
+    "lat": 57.7618352,
+    "lon": 12.0693857
+  },
+  "tags": {
+    "highway": "residential",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Merkuriusgatan",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 50825596,
+  "center": {
+    "lat": 57.7618399,
+    "lon": 12.0706718
+  },
+  "tags": {
+    "highway": "residential",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Merkuriusgatan"
+  }
+},
+{
+  "type": "way",
+  "id": 56692641,
+  "center": {
+    "lat": 57.7004422,
+    "lon": 11.9806462
+  },
+  "tags": {
+    "access": "yes",
+    "amenity": "parking",
+    "fee": "yes",
+    "name": "Heden",
+    "parking": "surface"
+  }
+},
+{
+  "type": "way",
+  "id": 56692655,
+  "center": {
+    "lat": 57.7000404,
+    "lon": 11.9795483
+  },
+  "tags": {
+    "addr:city": "Göteborg",
+    "addr:country": "SE",
+    "addr:housenumber": "34D",
+    "addr:postcode": "411 37",
+    "addr:street": "Engelbrektsgatan",
+    "amenity": "fast_food",
+    "building": "yes",
+    "check_date": "2026-07-19",
+    "cuisine": "burger;sausage",
+    "email": "lassepaheden@live.se",
+    "name": "Lasse på Heden",
+    "opening_hours": "Mo-Th 10:30-23:00; Fr-Sa 10:30-05:00; Su 11:00-23:00",
+    "phone": "+4631168662",
+    "website": "https://www.lassepaheden.se/",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 59560869,
+  "center": {
+    "lat": 57.7460465,
+    "lon": 12.1706471
+  },
+  "tags": {
+    "highway": "unclassified",
+    "name": "Jons väg",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 70912935,
+  "center": {
+    "lat": 57.7024191,
+    "lon": 11.9834333
+  },
+  "tags": {
+    "building": "apartments",
+    "building:levels": "6",
+    "height": "24.6",
+    "name": "Öster om Heden",
+    "source": "local_knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 91323119,
+  "center": {
+    "lat": 57.6818218,
+    "lon": 11.9749608
+  },
+  "tags": {
+    "building": "dormitory",
+    "building:levels": "3",
+    "contact:website": "http://guldheden.com",
+    "name": "Guldhedens Studiehem",
+    "roof:colour": "#7B706E",
+    "roof:orientation": "along",
+    "roof:shape": "gabled",
+    "start_date": "1955"
+  }
+},
+{
+  "type": "way",
+  "id": 132922898,
+  "center": {
+    "lat": 57.8166724,
+    "lon": 11.9082234
+  },
+  "tags": {
+    "highway": "service",
+    "maxspeed": "70",
+    "name": "Jons Väg"
+  }
+},
+{
+  "type": "way",
+  "id": 163651117,
+  "center": {
+    "lat": 57.7161849,
+    "lon": 11.9108002
+  },
+  "tags": {
+    "access": "no",
+    "bus": "yes",
+    "highway": "service",
+    "lit": "yes",
+    "name": "Eketrägatan",
+    "oneway": "yes",
+    "psv": "designated",
+    "surface": "sett"
+  }
+},
+{
+  "type": "way",
+  "id": 163651128,
+  "center": {
+    "lat": 57.7163294,
+    "lon": 11.9106945
+  },
+  "tags": {
+    "access": "no",
+    "bus": "yes",
+    "highway": "service",
+    "lit": "yes",
+    "name": "Eketrägatan",
+    "psv": "designated",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 163651129,
+  "center": {
+    "lat": 57.7162576,
+    "lon": 11.9107024
+  },
+  "tags": {
+    "access": "no",
+    "bus": "yes",
+    "highway": "service",
+    "lit": "yes",
+    "name": "Eketrägatan",
+    "psv": "designated",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 163651130,
+  "center": {
+    "lat": 57.7162227,
+    "lon": 11.9107031
+  },
+  "tags": {
+    "access": "no",
+    "bus": "yes",
+    "highway": "service",
+    "lit": "yes",
+    "name": "Eketrägatan",
+    "psv": "designated",
+    "surface": "sett"
+  }
+},
+{
+  "type": "way",
+  "id": 163651131,
+  "center": {
+    "lat": 57.7162933,
+    "lon": 11.9106945
+  },
+  "tags": {
+    "access": "no",
+    "bus": "yes",
+    "highway": "service",
+    "lit": "yes",
+    "name": "Eketrägatan",
+    "psv": "designated",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 352733367,
+  "center": {
+    "lat": 57.6993878,
+    "lon": 12.0167701
+  },
+  "tags": {
+    "highway": "service",
+    "name": "Sonya Hedenbratts Gata",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 617471094,
+  "center": {
+    "lat": 57.6814505,
+    "lon": 11.9716886
+  },
+  "tags": {
+    "garden:type": "community",
+    "leisure": "garden",
+    "name": "Odla Guldheden",
+    "website": "http://odlaguldheden.blogspot.se/"
+  }
+},
+{
+  "type": "way",
+  "id": 713875505,
+  "center": {
+    "lat": 57.7595833,
+    "lon": 12.0696489
+  },
+  "tags": {
+    "addr:city": "Göteborg",
+    "addr:country": "SE",
+    "addr:housenumber": "75",
+    "addr:postcode": "415 19",
+    "addr:street": "Merkuriusgatan",
+    "amenity": "kindergarten",
+    "education": "kindergarten",
+    "name": "Merkuriusgatan 75 förskola",
+    "operator": "Göteborgs Stad",
+    "operator:type": "public",
+    "pedagogy": "mainstream",
+    "website": "https://goteborg.se/wps/portal?uri=gbglnk%3a2015623152922132"
+  }
+},
+{
+  "type": "way",
+  "id": 997268888,
+  "center": {
+    "lat": 57.7609015,
+    "lon": 12.0707440
+  },
+  "tags": {
+    "highway": "residential",
+    "maxspeed": "50",
+    "name": "Merkuriusgatan"
+  }
+},
+{
+  "type": "way",
+  "id": 997520764,
+  "center": {
+    "lat": 57.7619803,
+    "lon": 12.0693686
+  },
+  "tags": {
+    "highway": "service",
+    "name": "Merkuriusgatan",
+    "service": "parking_aisle",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1180300880,
+  "center": {
+    "lat": 57.6884596,
+    "lon": 11.9648238
+  },
+  "tags": {
+    "name": "Norra Guldheden",
+    "old_name": "Landalahöjden",
+    "place": "neighbourhood",
+    "population": "1400",
+    "wikidata": "Q119174355"
+  }
+},
+{
+  "type": "way",
+  "id": 1364776457,
+  "center": {
+    "lat": 57.7009525,
+    "lon": 11.9820562
+  },
+  "tags": {
+    "access": "yes",
+    "amenity": "parking",
+    "fee": "yes",
+    "name": "Heden",
+    "parking": "surface"
+  }
+},
+{
+  "type": "way",
+  "id": 1369195133,
+  "center": {
+    "lat": 57.7088387,
+    "lon": 11.9057039
+  },
+  "tags": {
+    "highway": "residential",
+    "lit": "yes",
+    "maxspeed": "30",
+    "name": "Eketrägatan",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1369195134,
+  "center": {
+    "lat": 57.7091889,
+    "lon": 11.9065311
+  },
+  "tags": {
+    "highway": "residential",
+    "lit": "yes",
+    "maxspeed": "30",
+    "name": "Eketrägatan",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1537830602,
+  "center": {
+    "lat": 57.7614538,
+    "lon": 12.0707097
+  },
+  "tags": {
+    "highway": "residential",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Merkuriusgatan"
+  }
+},
+{
+  "type": "way",
+  "id": 1538963893,
+  "center": {
+    "lat": 57.7617135,
+    "lon": 12.0706862
+  },
+  "tags": {
+    "highway": "residential",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Merkuriusgatan"
+  }
+},
+{
+  "type": "way",
+  "id": 1539517924,
+  "center": {
+    "lat": 57.7621035,
+    "lon": 12.0706526
+  },
+  "tags": {
+    "highway": "residential",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Merkuriusgatan",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "relation",
+  "id": 55371,
+  "center": {
+    "lat": 57.6996733,
+    "lon": 11.9568185
+  },
+  "tags": {
+    "colour": "#c7df8e",
+    "from": "Lindholmen",
+    "name": "Spårvagn 10: Lindholmen - Guldheden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "se:Västtrafik",
+    "operator": "Göteborgs Spårvägar",
+    "operator:wikidata": "Q10512910",
+    "operator:wikipedia": "sv:Göteborgs spårvägar (företag)",
+    "public_transport:version": "2",
+    "ref": "10",
+    "route": "tram",
+    "to": "Guldheden",
+    "type": "route",
+    "wikidata": "Q106921203"
+  }
+},
+{
+  "type": "relation",
+  "id": 1110271,
+  "center": {
+    "lat": 57.7016448,
+    "lon": 11.9813433
+  },
+  "tags": {
+    "addr:city": "Göteborg",
+    "addr:country": "SE",
+    "addr:housenumber": "1",
+    "addr:postcode": "411 39",
+    "addr:street": "Sten Sturegatan",
+    "building": "hotel",
+    "name": "Hotel Liseberg Heden",
+    "rooms": "179",
+    "toilets:wheelchair": "yes",
+    "tourism": "hotel",
+    "type": "multipolygon",
+    "website": "https://www.liseberg.se/en/home/Accommodation/Hotel/Hotell-Liseberg-Heden/",
+    "wheelchair": "yes",
+    "wheelchair:description": "Hotel Liseberg Heden has two wheelchair accessible rooms with w/c accessible bathrooms (with shower stools). It is easy to get into a gym and unisex sauna premises in a wheelchair."
+  }
+},
+{
+  "type": "relation",
+  "id": 1517094,
+  "center": {
+    "lat": 57.6838673,
+    "lon": 11.9720885
+  },
+  "tags": {
+    "admin_level": "10",
+    "boundary": "administrative",
+    "name": "Guldheden",
+    "population": "10809",
+    "ref": "113",
+    "type": "boundary",
+    "wikidata": "Q10510520",
+    "wikipedia": "sv:Guldheden"
+  }
+},
+{
+  "type": "relation",
+  "id": 1517104,
+  "center": {
+    "lat": 57.6996209,
+    "lon": 11.9841935
+  },
+  "tags": {
+    "admin_level": "10",
+    "boundary": "administrative",
+    "name": "Heden",
+    "ref": "118",
+    "type": "boundary",
+    "wikidata": "Q10519130"
+  }
+},
+{
+  "type": "relation",
+  "id": 1674926,
+  "center": {
+    "lat": 57.6746504,
+    "lon": 12.0109831
+  },
+  "tags": {
+    "from": "Heden",
+    "name": "Buss 753: Heden - Mölndal - Chalmers - Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "note": "Helenedal-Heden",
+    "public_transport:version": "2",
+    "ref": "753",
+    "route": "bus",
+    "to": "Heden",
+    "type": "route",
+    "via": "Fässbergshemmet"
+  }
+},
+{
+  "type": "relation",
+  "id": 1674930,
+  "center": {
+    "lat": 57.6712581,
+    "lon": 11.9795705
+  },
+  "tags": {
+    "from": "Heden",
+    "name": "Buss 758: Heden - Mölndal - Marklandsgatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "758",
+    "route": "bus",
+    "to": "Marklandsgatan",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 1863556,
+  "center": {
+    "lat": 57.7164037,
+    "lon": 11.9102068
+  },
+  "tags": {
+    "name": "Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "operator": "Västtrafik",
+    "public_transport": "stop_area",
+    "public_transport:version": "2",
+    "type": "public_transport"
+  }
+},
+{
+  "type": "relation",
+  "id": 2187831,
+  "center": {
+    "lat": 57.6868006,
+    "lon": 11.9430590
+  },
+  "tags": {
+    "colour": "#007f52",
+    "from": "Heden",
+    "name": "Buss 64: Heden - Sahlgrenska - Högsbohöjd",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "64",
+    "route": "bus",
+    "to": "Fyrktorget",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 2190164,
+  "center": {
+    "lat": 57.6861219,
+    "lon": 11.9430354
+  },
+  "tags": {
+    "from": "Fyrktorget",
+    "name": "Buss 64: Högsbohöjd - Sahlgrenska - Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "64",
+    "route": "bus",
+    "to": "Heden",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 2209176,
+  "center": {
+    "lat": 57.6840282,
+    "lon": 11.9028602
+  },
+  "tags": {
+    "from": "Eketrägatan",
+    "name": "Buss 30: Eketrägatan - Kungssten - Frölunda Torg",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "30",
+    "route": "bus",
+    "to": "Frölunda Torg",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 2224520,
+  "center": {
+    "lat": 57.6914311,
+    "lon": 11.9702314
+  },
+  "tags": {
+    "duration": "00:50",
+    "from": "Heden",
+    "name": "Buss 63: Heden - Guldheden - Linnéplatsen",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "63",
+    "route": "bus",
+    "to": "Linnéplatsen",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 2224910,
+  "center": {
+    "lat": 57.7323921,
+    "lon": 11.9933465
+  },
+  "tags": {
+    "from": "Eketrägatan",
+    "name": "Buss 21: Eketrägatan - Kortedala - Bergsjön",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "21",
+    "route": "bus",
+    "to": "Merkuriusgatan",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 2224976,
+  "center": {
+    "lat": 57.7618835,
+    "lon": 12.0705160
+  },
+  "tags": {
+    "name": "Merkuriusgatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "operator": "Västtrafik",
+    "public_transport": "stop_area",
+    "public_transport:version": "2",
+    "type": "public_transport"
+  }
+},
+{
+  "type": "relation",
+  "id": 2230135,
+  "center": {
+    "lat": 57.7174355,
+    "lon": 11.8752661
+  },
+  "tags": {
+    "from": "Eketrägatan",
+    "name": "Buss 27: Eketrägatan - Volvo Torslanda - Sörredsmotet",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "public_transport:version": "2",
+    "ref": "27",
+    "route": "bus",
+    "to": "Sörredsmotet",
+    "type": "route",
+    "via": "Volvo Torslanda"
+  }
+},
+{
+  "type": "relation",
+  "id": 2230297,
+  "center": {
+    "lat": 57.7052104,
+    "lon": 11.8597630
+  },
+  "tags": {
+    "from": "Sörredsmotet",
+    "name": "Buss 32: Sörredsmotet - Arendal - Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "32",
+    "route": "bus",
+    "to": "Eketrägatan",
+    "type": "route",
+    "via": "Arendal"
+  }
+},
+{
+  "type": "relation",
+  "id": 2376338,
+  "center": {
+    "lat": 57.7205060,
+    "lon": 12.0396904
+  },
+  "tags": {
+    "from": "Partille Centrum",
+    "name": "Buss 513: Partille - Sävedelen - Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "operator": "Keolis",
+    "public_transport:version": "2",
+    "ref": "513",
+    "route": "bus",
+    "to": "Heden",
+    "type": "route",
+    "via": "Sävedalen"
+  }
+},
+{
+  "type": "relation",
+  "id": 2376403,
+  "center": {
+    "lat": 57.7207231,
+    "lon": 12.0403098
+  },
+  "tags": {
+    "from": "Heden",
+    "name": "Buss 513: Heden - Sävedalen - Partille",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "513",
+    "route": "bus",
+    "to": "Partille Centrum",
+    "type": "route",
+    "via": "Sävedalen"
+  }
+},
+{
+  "type": "relation",
+  "id": 2387128,
+  "center": {
+    "lat": 57.7202851,
+    "lon": 12.0530475
+  },
+  "tags": {
+    "from": "Furulund",
+    "name": "Buss 503: Furulund - Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "503",
+    "route": "bus",
+    "to": "Heden",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 2387131,
+  "center": {
+    "lat": 57.7201806,
+    "lon": 12.0538580
+  },
+  "tags": {
+    "from": "Heden",
+    "name": "Buss 503: Heden - Furulund",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "503",
+    "route": "bus",
+    "to": "Fritidsvägen",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 2412808,
+  "center": {
+    "lat": 57.6747660,
+    "lon": 12.0107748
+  },
+  "tags": {
+    "from": "Heden",
+    "name": "Buss 753: Heden - Chalmers - Mölndal - Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "753",
+    "route": "bus",
+    "to": "Heden",
+    "type": "route",
+    "via": "Fässbergshemmet"
+  }
+},
+{
+  "type": "relation",
+  "id": 2413329,
+  "center": {
+    "lat": 57.6998062,
+    "lon": 11.9567692
+  },
+  "tags": {
+    "colour": "#B4E16E",
+    "from": "Guldheden",
+    "name": "Spårvagn 10: Guldheden - Lindholmen",
+    "operator:wikipedia": "sv:Göteborgs spårvägar (företag)",
+    "public_transport:version": "2",
+    "ref": "10",
+    "route": "tram",
+    "to": "Lindholmen",
+    "type": "route",
+    "wikidata": "Q106921203"
+  }
+},
+{
+  "type": "relation",
+  "id": 2765655,
+  "center": {
+    "lat": 57.6841475,
+    "lon": 11.9040086
+  },
+  "tags": {
+    "from": "Frölunda Torg",
+    "name": "Buss 30: Frölunda Torg - Kungssten - Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "30",
+    "route": "bus",
+    "to": "Eketrägatan",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 2766184,
+  "center": {
+    "lat": 57.7024271,
+    "lon": 11.9738211
+  },
+  "tags": {
+    "name": "Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "operator": "Västtrafik",
+    "public_transport": "stop_area",
+    "public_transport:version": "2",
+    "type": "public_transport"
+  }
+},
+{
+  "type": "relation",
+  "id": 2810643,
+  "center": {
+    "lat": 57.7166095,
+    "lon": 12.0797856
+  },
+  "tags": {
+    "name": "Soldatheden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_area",
+    "public_transport:version": "2",
+    "type": "public_transport"
+  }
+},
+{
+  "type": "relation",
+  "id": 2833560,
+  "center": {
+    "lat": 57.7455905,
+    "lon": 12.1740225
+  },
+  "tags": {
+    "name": "Jons väg",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_area",
+    "public_transport:version": "2",
+    "type": "public_transport"
+  }
+},
+{
+  "type": "relation",
+  "id": 2896838,
+  "center": {
+    "lat": 57.6916608,
+    "lon": 11.9702021
+  },
+  "tags": {
+    "duration": "00:50",
+    "from": "Linnéplatsen",
+    "name": "Buss 63: Linnéplatsen - Guldheden - Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "63",
+    "route": "bus",
+    "to": "Heden",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 2897186,
+  "center": {
+    "lat": 57.7174355,
+    "lon": 11.8756778
+  },
+  "tags": {
+    "from": "Sörredsmotet",
+    "name": "Buss 27: Sörredsmotet - Volvo Torslanda - Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "27",
+    "route": "bus",
+    "to": "Eketrägatan",
+    "type": "route",
+    "via": "Volvo Torslanda"
+  }
+},
+{
+  "type": "relation",
+  "id": 2941693,
+  "center": {
+    "lat": 57.6715765,
+    "lon": 11.9795369
+  },
+  "tags": {
+    "from": "Marklandsgatan",
+    "name": "Buss 758: Marklandsgatan - Mölndal - Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "758",
+    "route": "bus",
+    "to": "Heden",
+    "type": "route",
+    "via": "Mölndal station"
+  }
+},
+{
+  "type": "relation",
+  "id": 2965106,
+  "center": {
+    "lat": 57.7322832,
+    "lon": 11.9930309
+  },
+  "tags": {
+    "from": "Merkuriusgatan",
+    "name": "Buss 21: Bergsjön - Kortedala - Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "21",
+    "route": "bus",
+    "to": "Eketrägatan",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 2994050,
+  "center": {
+    "lat": 57.7260257,
+    "lon": 12.0752458
+  },
+  "tags": {
+    "from": "Heden",
+    "name": "Buss 519: Heden - Utby - Jonsered",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "519",
+    "route": "bus",
+    "to": "Jons väg",
+    "type": "route",
+    "via": "Utby"
+  }
+},
+{
+  "type": "relation",
+  "id": 2994458,
+  "center": {
+    "lat": 57.7260823,
+    "lon": 12.0738838
+  },
+  "tags": {
+    "from": "Jons väg",
+    "name": "Buss 519: Jonsered - Utby - Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "519",
+    "route": "bus",
+    "to": "Heden",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 2998512,
+  "center": {
+    "lat": 57.7349027,
+    "lon": 11.8926273
+  },
+  "tags": {
+    "colour": "#003273",
+    "from": "Eketrägatan",
+    "name": "Buss 141: Eketrägatan - Volvo Tuve",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "141",
+    "route": "bus",
+    "to": "Volvo Tuve L B",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 2998513,
+  "center": {
+    "lat": 57.7347622,
+    "lon": 11.8919986
+  },
+  "tags": {
+    "colour": "#003273",
+    "from": "Volvo Tuve L A",
+    "name": "Buss 141: Volvo Tuve - Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "141",
+    "route": "bus",
+    "to": "Eketrägatan",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 3099003,
+  "center": {
+    "lat": 57.7565723,
+    "lon": 12.0044214
+  },
+  "tags": {
+    "from": "Heden",
+    "name": "Buss 173: Heden - Gårdsten - Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "173",
+    "route": "bus",
+    "to": "Heden",
+    "type": "route",
+    "via": "Gårdsten"
+  }
+},
+{
+  "type": "relation",
+  "id": 3232967,
+  "center": {
+    "lat": 57.7053336,
+    "lon": 11.8602572
+  },
+  "tags": {
+    "from": "Eketrägatan",
+    "name": "Buss 32: Eketrägatan - Arendal - Sörredsmotet",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "32",
+    "route": "bus",
+    "to": "Sörredsmotet",
+    "type": "route",
+    "via": "Arendal"
+  }
+},
+{
+  "type": "relation",
+  "id": 10356045,
+  "center": {
+    "lat": 57.7027231,
+    "lon": 11.9755232
+  },
+  "tags": {
+    "amenity": "bus_station",
+    "bus": "yes",
+    "name": "Heden",
+    "public_transport": "station",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "relation",
+  "id": 12688494,
+  "center": {
+    "lat": 57.7021409,
+    "lon": 11.9781210
+  },
+  "tags": {
+    "access": "yes",
+    "email": "heden@stadsbyggnad.goteborg.se",
+    "fee": "no",
+    "leisure": "sports_centre",
+    "name": "Heden",
+    "official_name": "Exercisheden",
+    "operator": "Göteborgs Stad",
+    "operator:type": "public",
+    "phone": "+46 31 368 20 00",
+    "sport": "soccer;running",
+    "type": "multipolygon",
+    "website": "https://goteborg.se/wps/portal/start/goteborg-vaxer/hitta-projekt/stadsomrade-centrum/centrum/heden",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 17794418,
+  "center": {
+    "lat": 57.7614331,
+    "lon": 11.9892463
+  },
+  "tags": {
+    "from": "Eketrägatan",
+    "name": "Buss X76: Eketrägatan - Hjalmar Brantingsplatsen - Rannebergen",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "X76",
+    "route": "bus",
+    "to": "Rannebergen",
+    "type": "route",
+    "via": "Hjalmar Brantingsplatsen"
+  }
+},
+{
+  "type": "relation",
+  "id": 17840605,
+  "center": {
+    "lat": 57.7107862,
+    "lon": 11.8147431
+  },
+  "tags": {
+    "from": "Hjuvik",
+    "name": "Buss 34: Hjuvik - Amhult - Eketrägatan - Volvo Lundby",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "34",
+    "route": "bus",
+    "to": "Ramberget",
+    "type": "route",
+    "via": "Amhult Resecentrum"
+  }
+},
+{
+  "type": "relation",
+  "id": 17840606,
+  "center": {
+    "lat": 57.7112072,
+    "lon": 11.8146265
+  },
+  "tags": {
+    "from": "Ramberget",
+    "name": "Buss 34: Volvo Lundby - Eketrägatan - Amhult - Hjuvik",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "34",
+    "route": "bus",
+    "to": "Hjuvik",
+    "type": "route",
+    "via": "Amhult Resecentrum"
+  }
+},
+{
+  "type": "relation",
+  "id": 17854749,
+  "center": {
+    "lat": 57.7614331,
+    "lon": 11.9927548
+  },
+  "tags": {
+    "from": "Rannebergen Centrum",
+    "name": "Buss X76: Rannebergen - Hjalmar Brantingsplatsen - Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "X76",
+    "route": "bus",
+    "to": "Eketrägatan",
+    "type": "route",
+    "via": "Hjalmar Brantingsplatsen"
+  }
+},
+{
+  "type": "relation",
+  "id": 19996526,
+  "center": {
+    "lat": 57.7395054,
+    "lon": 11.9450442
+  },
+  "tags": {
+    "colour": "#003273",
+    "duration": "00:58",
+    "from": "Eketrägatan",
+    "name": "Buss 44: Eketrägatan - Hjalmar Brantingsplatsen - Backatorp - Tuve",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "44",
+    "route": "bus",
+    "to": "Hinnebäcksgatan",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 19996527,
+  "center": {
+    "lat": 57.7397938,
+    "lon": 11.9452321
+  },
+  "tags": {
+    "duration": "00:58",
+    "from": "Hinnebäcksgatan",
+    "name": "Buss 44: Tuve - Backatorp - Hjalmar Brantingsplatsen - Eketrägatan",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "44",
+    "route": "bus",
+    "to": "Eketrägatan",
+    "type": "route"
+  }
+},
+{
+  "type": "relation",
+  "id": 21081353,
+  "center": {
+    "lat": 57.6961256,
+    "lon": 11.9650165
+  },
+  "tags": {
+    "from": "Heden",
+    "name": "Buss 61: Heden - Johanneberg - Stenpiren - Masthugget",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "operator": "Västtrafik",
+    "public_transport:version": "2",
+    "ref": "61",
+    "route": "bus",
+    "to": "Masthugget",
+    "type": "route",
+    "via": "Stenpiren"
+  }
+},
+{
+  "type": "relation",
+  "id": 21087831,
+  "center": {
+    "lat": 57.6960655,
+    "lon": 11.9653325
+  },
+  "tags": {
+    "from": "Masthugget",
+    "name": "Buss 61: Masthugget - Stenpiren - Johanneberg - Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "public_transport:version": "2",
+    "ref": "61",
+    "route": "bus",
+    "to": "Heden",
+    "type": "route",
+    "via": "Stenpiren"
+  }
+},
+{
+  "type": "relation",
+  "id": 21238578,
+  "center": {
+    "lat": 57.6821662,
+    "lon": 11.9173950
+  },
+  "tags": {
+    "from": "Beatrice Lesslies Gata",
+    "name": "Buss 199: Södra Änggården - Eketrägatan - Lindholmsallén",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "public_transport:version": "2",
+    "ref": "199",
+    "route": "bus",
+    "to": "Pumpgatan",
+    "type": "route",
+    "via": "Radiomotet"
+  }
+},
+{
+  "type": "relation",
+  "id": 21240526,
+  "center": {
+    "lat": 57.6818059,
+    "lon": 11.9171602
+  },
+  "tags": {
+    "from": "Pumpgatan",
+    "name": "Buss 199: Lindholmsallén - Eketrägatan - Södra Änggården",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "public_transport:version": "2",
+    "ref": "199",
+    "route": "bus",
+    "to": "Beatrice Lesslies Gata",
+    "type": "route",
+    "via": "Radiomotet"
+  }
+},
+{
+  "type": "relation",
+  "id": 21297559,
+  "center": {
+    "lat": 57.6802417,
+    "lon": 12.0161342
+  },
+  "tags": {
+    "from": "Heden",
+    "name": "Buss 754: Heden–Helenedal–Mölndal",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "754",
+    "route": "bus",
+    "to": "Mölndals bro",
+    "type": "route",
+    "via": "Helenedal"
+  }
+},
+{
+  "type": "relation",
+  "id": 21300519,
+  "center": {
+    "lat": 57.6804091,
+    "lon": 12.0156397
+  },
+  "tags": {
+    "from": "Mölndals bro",
+    "name": "Buss 754: Mölndal-Helenedal-Heden",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport:version": "2",
+    "ref": "754",
+    "route": "bus",
+    "to": "Heden",
+    "type": "route",
+    "via": "Helenedal"
+  }
+}
+
+  ]
+}

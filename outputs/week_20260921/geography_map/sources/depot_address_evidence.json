@@ -1,0 +1,15 @@
+{
+  "retrieved": "2026-09-21",
+  "operator_address_source": "https://transdev.se/wp-content/uploads/2024/12/Certifikat_Transdev-Sverige-AB_ms_2024-12-03-2026-05-31-002.pdf",
+  "operator_address_pdf_page": 2,
+  "operator_address": "Transdev Sverige AB, Järnringen 5, 433 30 Partille",
+  "geocode_source": "https://www.hitta.se/v%C3%A4stra%2Bg%C3%B6talands%2Bl%C3%A4n/partille/j%C3%A4rnringen%2B5/omr%C3%A5de/57.737614:12.086805",
+  "geocode_latitude": 57.737614,
+  "geocode_longitude": 12.086805,
+  "observed_canonical_address": "Järnringen 5 Västra Götalands län, Partille",
+  "observed_map_link": "/kartan?tl=1&zoom=16&center=57.737614,12.086805",
+  "retrieved_hitta_html_sha256": "4cf762af32d2e65eec152ab2668004ef701b6254548c739ad85313cea361d06a",
+  "coordinate_scope": "address proxy, not exact historical PARX gate/charger",
+  "mapping_inference": "GIRO audit Partille garage + Transdev Partille site address; historical code-to-address not directly proven",
+  "rejected_geocodes": "Nominatim returned neighborhood and road centroids; not used"
+}

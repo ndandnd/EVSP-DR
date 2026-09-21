@@ -1,0 +1,42 @@
+{
+  "schema": "geographic_context_v1",
+  "created": "2026-09-21",
+  "coordinate_crs": "WGS84 EPSG:4326",
+  "display_projection": "latitude/longitude with aspect corrected at 57.73 N",
+  "coordinate_scope": "current stop/address proxies, not surveyed historical charger/depot positions",
+  "movement_scope": "exact selected buses in saved matched k5 figure; connectors are endpoint links, not road paths",
+  "unknown_locations_not_plotted": [
+    "ET_R",
+    "exact 2190 passenger platform"
+  ],
+  "sha256": {
+    "DATA_README.md": "be98026fdebb0a6dbc44e5feb305ace309968649b3c9fdc05e40c87fbaaea645",
+    "README.md": "6227a0bda91c97fcc377e1e43443097723a725ac1ac7cef178b3b438cca4d7b5",
+    "build_geography.py": "fcccc5b3beec90571bf10dc77063c51cbb01f4fd6ad7956d85a9e2c7d4609889",
+    "charging_events.csv": "5a8afc7947d7d9fe4b175f09852aa4a3074b9589933ac8568b3810107080c7e5",
+    "compact_movement_table.csv": "6e07f628bef3423193c3fe8def60730bb462b96250c13d906b88b2065195500e",
+    "coordinates.csv": "a234490b47cf5615b01846dce9cf179113d7b257ac75b7682b860f791496161f",
+    "extract_model_geography.py": "ea58f538e0e488c4254504adec3acb058479ebf6a809c48bd09fb30df0a57415",
+    "k5_charger_network_context.pdf": "bc0a0a8770babaf18d594c3770cd0da6fcc53cb5fe3b4b2d9ebada268fd86cb2",
+    "k5_charger_network_context.png": "4bc5d4e7e0d4e6ab25c552f8e1db4dd74784ea2cbcc7f83ae707f532bd8493a7",
+    "k5_charger_network_context.svg": "4a0d327a1570ad408ef1078da85f6e6bdaa4a59670997a08301188113df6f402",
+    "k5_geographic_context.pdf": "99946e95cdb67f7ad9b8d2a78fcb445247d4767d5267c69864f5bf1a521df6e6",
+    "k5_geographic_context.png": "e0b858a4d2c6814b9b64d85bd86dea2c2315b359791b64a3cb310cb48fcabcea",
+    "k5_geographic_context.svg": "eec8b55a375899c54761879e2d4a18b11ebcdfc55ad38d5418888a63e569cdbb",
+    "locations.csv": "8c9625a846f860dd1d339dbf386043fc762ae0a5765dfa6b4b4e7dc66e9bd43e",
+    "model_deadhead_links.csv": "f21af9553aa71dc6ff99a4a9537acb8708f7e9952d10fe414ec25c5eb91bfbd6",
+    "model_geography.json": "d8e86f81cfbf1c0f65a00de8f405fef368641b481e3baab879b5cfea6552b705",
+    "movements.csv": "71c7a8207df69bd0b3d29dcf8604451e355f6e1afe12ab0f43b03e31680a2234",
+    "raw_directional_dhd.csv": "bfab52bd9305f24692ec5758ff0cb7b6a27166469cf804de0a0aafcb5c6f292f",
+    "service_corridors.csv": "caeeb44721cc4ecc8a44d854de0c06c5dffb2dfc9630b20a145d55dfe4166e18",
+    "service_trips.csv": "99a1a2ecd99f2663cca8b226150d5c0accca6aeb06d5407ea283e5bdc30e91cc",
+    "sources/depot_address_evidence.json": "1ac98d77415db4afc029b2c208abde484ea273c90d8dd699bb00b16d8e26ec56",
+    "sources/nominatim_depot.json": "1f8512d8f8132c2ceb109ada16dae916ccd3e6d0a3575f8be720cadb0c1c9c52",
+    "sources/osm_eketragatan_context_20260921.osm": "93971ef43ec0ea6afa0accc7ae508624e221c30b99a30e0a577c939cb81614e2",
+    "sources/osm_named_stops_20260910.json": "8412ce39da4c11456a473c6fa9c12f5f428098013cf9f4442771ebb647bd38ea",
+    "sources/osm_named_stops_extra_20260910.json": "bd498fec6e76b87a54320f747326dbd79df2678491a1c5e2c84dbf861f21b887",
+    "sources/osm_roads_rivers_20260910.json": "d3129cb1f9e0106d8b93633c5b83b1c4611d639da5d5c41e6adf169f2bd486f5",
+    "sources/transdev_site_address.pdf": "2308859a9daa4873ad5f8428a68f7647e1eb32d2ff19cb4f10db4bda624b882f",
+    "travel_table.csv": "d0e667b611f10bc05cbadec8dcf7c0c3f08d9f16cd799b55a50d96ac6b098fd1"
+  }
+}

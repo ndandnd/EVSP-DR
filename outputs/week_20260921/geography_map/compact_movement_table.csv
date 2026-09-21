@@ -1,0 +1,8 @@
+From→to,Movement,Model minutes,Energy kWh,GIRO duty13414 minutes,Interpretation
+PARX→4808,Empty pull-out,7,7.8,8,GIRO06:43–06:51 uses peak travel; model is static. Fee0 departure05:18; fee5 departure06:44.
+4808→2190,Passenger service,51–60,42.50,53–59,Range over plotted trip sets; departure and arrival times fixed in input. Not deadhead time.
+2190→4808,Passenger service,55–63,41.73,55–63,Range over plotted trip sets; fee0 alone57–63. Not deadhead time.
+2190→2190L,Local empty platform→charger,0,0,1,Same-reference model collapse; original and raw directional DHD use0.2km≈0.4kWh.
+2190L→2190,Local empty charger→platform,0,0,0,Directional source permits zero return movement; do not force symmetric1minute.
+4808→PARX,Empty pull-in,7,7.8,7,GIRO and fee5 return21:30–21:37.
+2190→PARX,Empty pull-in,19,28.0,Not used on original duty,Fee0 returns19:49–20:08; raw directional DHD also19minutes.

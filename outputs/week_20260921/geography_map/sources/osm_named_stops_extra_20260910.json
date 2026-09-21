@@ -1,0 +1,3043 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-09-10T20:06:56Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 605005382,
+  "lat": 57.7381988,
+  "lon": 12.1050374,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Partille centrum",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "A"
+  }
+},
+{
+  "type": "node",
+  "id": 727455735,
+  "lat": 57.7222217,
+  "lon": 12.0478260,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Östra Sjukhuset",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "H"
+  }
+},
+{
+  "type": "node",
+  "id": 727455739,
+  "lat": 57.7222606,
+  "lon": 12.0479934,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Östra Sjukhuset",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "G"
+  }
+},
+{
+  "type": "node",
+  "id": 727455742,
+  "lat": 57.7223824,
+  "lon": 12.0476419,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Östra Sjukhuset",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "F"
+  }
+},
+{
+  "type": "node",
+  "id": 727455836,
+  "lat": 57.7226143,
+  "lon": 12.0470344,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Östra Sjukhuset",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "E"
+  }
+},
+{
+  "type": "node",
+  "id": 1272284947,
+  "lat": 57.7275816,
+  "lon": 12.0056828,
+  "tags": {
+    "name": "Gamlestads Torg",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "ref": "B",
+    "tram": "yes",
+    "wikidata": "Q107999059"
+  }
+},
+{
+  "type": "node",
+  "id": 1277049020,
+  "lat": 57.7224582,
+  "lon": 12.0478355,
+  "tags": {
+    "name": "Östra Sjukhuset",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "operator": "Göteborgs Spårvägar",
+    "operator:wikidata": "Q10512910",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "ref": "A",
+    "tram": "yes",
+    "wikidata": "Q107999432"
+  }
+},
+{
+  "type": "node",
+  "id": 2087541783,
+  "lat": 57.7224858,
+  "lon": 12.0479582,
+  "tags": {
+    "name": "Östra Sjukhuset",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "operator": "Göteborgs Spårvägar",
+    "operator:wikidata": "Q10512910",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "ref": "B",
+    "tram": "yes",
+    "wikidata": "Q107999432"
+  }
+},
+{
+  "type": "node",
+  "id": 2087560478,
+  "lat": 57.7225860,
+  "lon": 12.0474420,
+  "tags": {
+    "name": "Östra Sjukhuset",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "operator": "Göteborgs Spårvägar",
+    "operator:wikidata": "Q10512910",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "ref": "C",
+    "tram": "yes",
+    "wikidata": "Q107999432"
+  }
+},
+{
+  "type": "node",
+  "id": 2087560489,
+  "lat": 57.7226357,
+  "lon": 12.0475051,
+  "tags": {
+    "name": "Östra Sjukhuset",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "operator": "Göteborgs Spårvägar",
+    "operator:wikidata": "Q10512910",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "ref": "D",
+    "tram": "yes",
+    "wikidata": "Q107999432"
+  }
+},
+{
+  "type": "node",
+  "id": 2237269655,
+  "lat": 57.7224235,
+  "lon": 12.0472464,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Östra Sjukhuset",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "J"
+  }
+},
+{
+  "type": "node",
+  "id": 4397629625,
+  "lat": 57.7279073,
+  "lon": 12.0034113,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Gamlestads Torg Västra",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "G"
+  }
+},
+{
+  "type": "node",
+  "id": 4397629626,
+  "lat": 57.7279490,
+  "lon": 12.0035866,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Gamlestads Torg Västra",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "H"
+  }
+},
+{
+  "type": "node",
+  "id": 4397629627,
+  "lat": 57.7279636,
+  "lon": 12.0046485,
+  "tags": {
+    "name": "Gamlestads Torg",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "ref": "D",
+    "tram": "yes",
+    "wikidata": "Q107999059"
+  }
+},
+{
+  "type": "node",
+  "id": 4405782069,
+  "lat": 57.7275931,
+  "lon": 12.0044754,
+  "tags": {
+    "name": "Gamlestads Torg",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "ref": "C",
+    "tram": "yes",
+    "wikidata": "Q107999059"
+  }
+},
+{
+  "type": "node",
+  "id": 7676199055,
+  "lat": 57.7275176,
+  "lon": 12.0051001,
+  "tags": {
+    "name": "Gamlestads Torg",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "ref": "A",
+    "tram": "yes",
+    "wikidata": "Q107999059"
+  }
+},
+{
+  "type": "node",
+  "id": 7689367323,
+  "lat": 57.7281416,
+  "lon": 12.0053075,
+  "tags": {
+    "name": "Gamlestads Torg",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "ref": "F",
+    "tram": "yes",
+    "wikidata": "Q107999059"
+  }
+},
+{
+  "type": "node",
+  "id": 7689367324,
+  "lat": 57.7279365,
+  "lon": 12.0055780,
+  "tags": {
+    "name": "Gamlestads Torg",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "railway": "tram_stop",
+    "ref": "E",
+    "tram": "yes",
+    "wikidata": "Q107999059"
+  }
+},
+{
+  "type": "node",
+  "id": 8309011403,
+  "lat": 57.7222565,
+  "lon": 12.0489490,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Östra Sjukhuset",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "X"
+  }
+},
+{
+  "type": "node",
+  "id": 12007827000,
+  "lat": 57.7383847,
+  "lon": 12.1049853,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Partille centrum",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "11"
+  }
+},
+{
+  "type": "node",
+  "id": 12007827001,
+  "lat": 57.7384065,
+  "lon": 12.1050916,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Partille centrum",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "10"
+  }
+},
+{
+  "type": "node",
+  "id": 12007827002,
+  "lat": 57.7384273,
+  "lon": 12.1051934,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Partille centrum",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "9"
+  }
+},
+{
+  "type": "node",
+  "id": 12007827003,
+  "lat": 57.7384486,
+  "lon": 12.1052946,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Partille centrum",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "8"
+  }
+},
+{
+  "type": "node",
+  "id": 12007827004,
+  "lat": 57.7384663,
+  "lon": 12.1053898,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Partille centrum",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "7"
+  }
+},
+{
+  "type": "node",
+  "id": 12007827005,
+  "lat": 57.7384866,
+  "lon": 12.1054888,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Partille centrum",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "6"
+  }
+},
+{
+  "type": "node",
+  "id": 12007827006,
+  "lat": 57.7385040,
+  "lon": 12.1055806,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Partille centrum",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "5"
+  }
+},
+{
+  "type": "node",
+  "id": 12007827007,
+  "lat": 57.7385265,
+  "lon": 12.1056770,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Partille centrum",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "4"
+  }
+},
+{
+  "type": "node",
+  "id": 12007827008,
+  "lat": 57.7385423,
+  "lon": 12.1057606,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Partille centrum",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "3"
+  }
+},
+{
+  "type": "node",
+  "id": 12007827009,
+  "lat": 57.7385631,
+  "lon": 12.1058482,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Partille centrum",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "2"
+  }
+},
+{
+  "type": "node",
+  "id": 12007827010,
+  "lat": 57.7386210,
+  "lon": 12.1059513,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Partille centrum",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_position",
+    "ref": "1"
+  }
+},
+{
+  "type": "way",
+  "id": 4273700,
+  "center": {
+    "lat": 57.7291896,
+    "lon": 12.0074013
+  },
+  "tags": {
+    "highway": "secondary",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 4273701,
+  "center": {
+    "lat": 57.7296712,
+    "lon": 12.0069349
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 8045304,
+  "center": {
+    "lat": 57.7274758,
+    "lon": 12.0077969
+  },
+  "tags": {
+    "bridge": "yes",
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "layer": "1",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:both": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:left": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 14187762,
+  "center": {
+    "lat": 57.7629340,
+    "lon": 12.0104789
+  },
+  "tags": {
+    "cycleway:both": "no",
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 23276039,
+  "center": {
+    "lat": 57.7323339,
+    "lon": 12.0123902
+  },
+  "tags": {
+    "addr:housenumber": "3",
+    "addr:street": "Larsmässetorg",
+    "amenity": "school",
+    "check_date": "2026-03-31",
+    "education": "school",
+    "email": "gamlestadsskolan@grundskola.goteborg.se",
+    "fee": "no",
+    "grades": "0-9",
+    "name": "Gamlestadsskolan",
+    "operator": "Göteborgs Stad",
+    "operator:type": "public",
+    "phone": "+46 31 365 33 49",
+    "religion": "none",
+    "toilets:menstrual_products": "yes",
+    "website": "https://goteborg.se/wps/portal/enheter/gamlestadsskolan",
+    "wikidata": "Q18290076"
+  }
+},
+{
+  "type": "way",
+  "id": 23361785,
+  "center": {
+    "lat": 57.7304688,
+    "lon": 12.0073525
+  },
+  "tags": {
+    "highway": "residential",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 32454210,
+  "center": {
+    "lat": 57.7612910,
+    "lon": 12.0109977
+  },
+  "tags": {
+    "bicycle": "no",
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 38785959,
+  "center": {
+    "lat": 57.7294223,
+    "lon": 12.0070951
+  },
+  "tags": {
+    "highway": "secondary",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:both": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 39947202,
+  "center": {
+    "lat": 57.7291456,
+    "lon": 12.0077365
+  },
+  "tags": {
+    "highway": "secondary",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 39947206,
+  "center": {
+    "lat": 57.7289057,
+    "lon": 12.0077513
+  },
+  "tags": {
+    "bridge": "yes",
+    "highway": "secondary",
+    "layer": "1",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 39947272,
+  "center": {
+    "lat": 57.7245092,
+    "lon": 12.0084806
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:left": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:left": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 41453519,
+  "center": {
+    "lat": 57.7234103,
+    "lon": 12.0084815
+  },
+  "tags": {
+    "cycleway:both": "no",
+    "highway": "motorway_link",
+    "lanes": "1",
+    "lit": "yes",
+    "maxheight": "default",
+    "maxspeed": "70",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 41453529,
+  "center": {
+    "lat": 57.7234643,
+    "lon": 12.0090522
+  },
+  "tags": {
+    "highway": "secondary",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 50896653,
+  "center": {
+    "lat": 57.7285636,
+    "lon": 12.0080186
+  },
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "highway": "secondary",
+    "layer": "1",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:left": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 50898240,
+  "center": {
+    "lat": 57.7284031,
+    "lon": 12.0077285
+  },
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "highway": "secondary",
+    "layer": "1",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:left": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 112109275,
+  "center": {
+    "lat": 57.7297902,
+    "lon": 12.0065957
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "right",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 112109278,
+  "center": {
+    "lat": 57.7320552,
+    "lon": 12.0071839
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 112109280,
+  "center": {
+    "lat": 57.7290392,
+    "lon": 12.0075285
+  },
+  "tags": {
+    "highway": "secondary",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 112109281,
+  "center": {
+    "lat": 57.7307673,
+    "lon": 12.0070514
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 112109284,
+  "center": {
+    "lat": 57.7294770,
+    "lon": 12.0071686
+  },
+  "tags": {
+    "highway": "secondary",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 112109285,
+  "center": {
+    "lat": 57.7296860,
+    "lon": 12.0070690
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 112109288,
+  "center": {
+    "lat": 57.7305552,
+    "lon": 12.0070918
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 112109290,
+  "center": {
+    "lat": 57.7298657,
+    "lon": 12.0068126
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:both": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 115779333,
+  "center": {
+    "lat": 57.7253985,
+    "lon": 12.0080669
+  },
+  "tags": {
+    "highway": "construction",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 115955854,
+  "center": {
+    "lat": 57.7352716,
+    "lon": 12.0106160
+  },
+  "tags": {
+    "building": "sports_hall",
+    "leisure": "sports_centre",
+    "location": "indoor",
+    "name": "Gamlestadshallen",
+    "source": "Bing",
+    "sport": "multi"
+  }
+},
+{
+  "type": "way",
+  "id": 131608642,
+  "center": {
+    "lat": 57.7314913,
+    "lon": 12.0073120
+  },
+  "tags": {
+    "highway": "cycleway",
+    "lit": "yes",
+    "name": "Gamlestadsvägen",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 131651475,
+  "center": {
+    "lat": 57.7301130,
+    "lon": 12.0072232
+  },
+  "tags": {
+    "highway": "cycleway",
+    "name": "Gamlestadsvägen",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 137191063,
+  "center": {
+    "lat": 57.7234443,
+    "lon": 12.0088442
+  },
+  "tags": {
+    "cycleway:both": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "surface": "asphalt",
+    "turn:lanes": "left|right"
+  }
+},
+{
+  "type": "way",
+  "id": 177388082,
+  "center": {
+    "lat": 57.7233621,
+    "lon": 12.0089145
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "junction": "roundabout",
+    "lanes": "1",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "sidewalk:left": "no",
+    "source:maxspeed": "sign",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 184888612,
+  "center": {
+    "lat": 57.7346890,
+    "lon": 12.0064928
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 184888622,
+  "center": {
+    "lat": 57.7420907,
+    "lon": 12.0068268
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:left": "separate",
+    "sidewalk:right": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 184888627,
+  "center": {
+    "lat": 57.7389915,
+    "lon": 12.0062589
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "70",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:left": "separate",
+    "sidewalk:right": "no",
+    "smoothness": "excellent",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 184888631,
+  "center": {
+    "lat": 57.7471388,
+    "lon": 12.0092087
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "70",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:left": "separate",
+    "sidewalk:right": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 189541995,
+  "center": {
+    "lat": 57.7526357,
+    "lon": 12.0109158
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 189541996,
+  "center": {
+    "lat": 57.7598493,
+    "lon": 12.0109419
+  },
+  "tags": {
+    "highway": "tertiary",
+    "junction": "roundabout",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "parking:both": "no",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 232579923,
+  "center": {
+    "lat": 57.7269869,
+    "lon": 12.0076854
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "lanes": "3",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:left": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:left": "no",
+    "surface": "asphalt",
+    "turn:lanes": "left|through|through"
+  }
+},
+{
+  "type": "way",
+  "id": 232579927,
+  "center": {
+    "lat": 57.7241360,
+    "lon": 12.0085293
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "junction": "roundabout",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "sidewalk:left": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 235153452,
+  "center": {
+    "lat": 57.7262746,
+    "lon": 12.0076293
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:left": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 245092134,
+  "center": {
+    "lat": 57.7238275,
+    "lon": 12.0086463
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "lanes": "1",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "surface": "asphalt",
+    "turn:lanes": "left|right"
+  }
+},
+{
+  "type": "way",
+  "id": 246130112,
+  "center": {
+    "lat": 57.7384206,
+    "lon": 12.1053393
+  },
+  "tags": {
+    "amenity": "bus_station",
+    "bus": "yes",
+    "covered": "yes",
+    "name": "Partille centrum",
+    "network": "Västtrafik",
+    "public_transport": "station",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 293995995,
+  "center": {
+    "lat": 57.7294968,
+    "lon": 12.0073226
+  },
+  "tags": {
+    "highway": "tertiary",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 302400269,
+  "center": {
+    "lat": 57.7562767,
+    "lon": 12.0125447
+  },
+  "tags": {
+    "access": "private",
+    "highway": "service",
+    "name": "Gamlestadsvägen"
+  }
+},
+{
+  "type": "way",
+  "id": 366622914,
+  "center": {
+    "lat": 57.7259611,
+    "lon": 12.0079464
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:left": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:left": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 366622919,
+  "center": {
+    "lat": 57.7251095,
+    "lon": 12.0082477
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "lanes": "3",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:left": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:left": "no",
+    "surface": "asphalt",
+    "turn:lanes": "left|through|through"
+  }
+},
+{
+  "type": "way",
+  "id": 366622921,
+  "center": {
+    "lat": 57.7257097,
+    "lon": 12.0078348
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "lanes": "3",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:left": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt",
+    "turn:lanes": "through|through|right"
+  }
+},
+{
+  "type": "way",
+  "id": 366622924,
+  "center": {
+    "lat": 57.7248276,
+    "lon": 12.0082072
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:left": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt",
+    "turn:lanes": "through|through;right"
+  }
+},
+{
+  "type": "way",
+  "id": 368770078,
+  "center": {
+    "lat": 57.7280560,
+    "lon": 12.0081183
+  },
+  "tags": {
+    "bridge:structure": "beam",
+    "layer": "1",
+    "man_made": "bridge",
+    "name": "Gamlestadsbron",
+    "wikidata": "Q10502512"
+  }
+},
+{
+  "type": "way",
+  "id": 368770079,
+  "center": {
+    "lat": 57.7275102,
+    "lon": 12.0080239
+  },
+  "tags": {
+    "bridge": "yes",
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "layer": "1",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:both": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:left": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 425558640,
+  "center": {
+    "lat": 57.7301841,
+    "lon": 12.0061634
+  },
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 450274856,
+  "center": {
+    "lat": 57.7286924,
+    "lon": 12.0084004
+  },
+  "tags": {
+    "highway": "proposed",
+    "name": "Gamlestadstorget",
+    "proposed:highway": "residential"
+  }
+},
+{
+  "type": "way",
+  "id": 450274857,
+  "center": {
+    "lat": 57.7269273,
+    "lon": 12.0075421
+  },
+  "tags": {
+    "highway": "proposed",
+    "name": "Gamlestadsvägen",
+    "proposed:highway": "secondary",
+    "ref": "O 519"
+  }
+},
+{
+  "type": "way",
+  "id": 450274858,
+  "center": {
+    "lat": 57.7269008,
+    "lon": 12.0073597
+  },
+  "tags": {
+    "highway": "proposed",
+    "name": "Gamlestadsvägen",
+    "proposed:highway": "secondary",
+    "ref": "O 519"
+  }
+},
+{
+  "type": "way",
+  "id": 450274859,
+  "center": {
+    "lat": 57.7290100,
+    "lon": 12.0069391
+  },
+  "tags": {
+    "highway": "proposed",
+    "name": "Gamlestadsvägen",
+    "proposed:highway": "secondary",
+    "ref": "O 519"
+  }
+},
+{
+  "type": "way",
+  "id": 450274860,
+  "center": {
+    "lat": 57.7291261,
+    "lon": 12.0067786
+  },
+  "tags": {
+    "highway": "proposed",
+    "name": "Gamlestadsvägen",
+    "proposed:highway": "secondary",
+    "ref": "O 519"
+  }
+},
+{
+  "type": "way",
+  "id": 463333245,
+  "center": {
+    "lat": 57.7534672,
+    "lon": 12.0128721
+  },
+  "tags": {
+    "access": "private",
+    "highway": "service",
+    "name": "Gamlestadsvägen"
+  }
+},
+{
+  "type": "way",
+  "id": 463333247,
+  "center": {
+    "lat": 57.7540871,
+    "lon": 12.0128386
+  },
+  "tags": {
+    "access": "private",
+    "highway": "service",
+    "name": "Gamlestadsvägen"
+  }
+},
+{
+  "type": "way",
+  "id": 550715623,
+  "center": {
+    "lat": 57.7294509,
+    "lon": 12.0078565
+  },
+  "tags": {
+    "highway": "residential",
+    "maxspeed": "50",
+    "name": "Gamlestadstorget",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 598346403,
+  "center": {
+    "lat": 57.7272538,
+    "lon": 12.0049222
+  },
+  "tags": {
+    "bicycle": "designated",
+    "foot": "designated",
+    "highway": "path",
+    "name": "Gamlestads Brygga",
+    "segregated": "no",
+    "surface": "paving_stones"
+  }
+},
+{
+  "type": "way",
+  "id": 787990286,
+  "center": {
+    "lat": 57.7267986,
+    "lon": 12.0078236
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:left": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:left": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 788010770,
+  "center": {
+    "lat": 57.7290505,
+    "lon": 12.0075941
+  },
+  "tags": {
+    "bicycle": "no",
+    "highway": "secondary",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 952378004,
+  "center": {
+    "lat": 57.7273712,
+    "lon": 12.0072202
+  },
+  "tags": {
+    "bridge": "yes",
+    "highway": "path",
+    "layer": "1",
+    "name": "Gamlestads Bro",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 971466116,
+  "center": {
+    "lat": 57.7278767,
+    "lon": 12.0087633
+  },
+  "tags": {
+    "highway": "unclassified",
+    "name": "Gamlestads Brygga",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 988402699,
+  "center": {
+    "lat": 57.7589543,
+    "lon": 12.0106038
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 988402700,
+  "center": {
+    "lat": 57.7573528,
+    "lon": 12.0106263
+  },
+  "tags": {
+    "highway": "tertiary",
+    "junction": "roundabout",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 997822435,
+  "center": {
+    "lat": 57.7603993,
+    "lon": 12.0110319
+  },
+  "tags": {
+    "bicycle": "no",
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 997822436,
+  "center": {
+    "lat": 57.7603839,
+    "lon": 12.0111910
+  },
+  "tags": {
+    "bicycle": "no",
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1002555332,
+  "center": {
+    "lat": 57.7616580,
+    "lon": 12.0108066
+  },
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "highway": "tertiary",
+    "layer": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "maxweight:signed": "no",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1002555333,
+  "center": {
+    "lat": 57.7618346,
+    "lon": 12.0106999
+  },
+  "tags": {
+    "bicycle": "no",
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1023361700,
+  "center": {
+    "lat": 57.7281075,
+    "lon": 12.0081520
+  },
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "highway": "secondary",
+    "layer": "1",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:left": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1023361701,
+  "center": {
+    "lat": 57.7280121,
+    "lon": 12.0081510
+  },
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "highway": "secondary",
+    "layer": "1",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:left": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1023361707,
+  "center": {
+    "lat": 57.7266850,
+    "lon": 12.0076154
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "lanes": "3",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:left": "no",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:left": "no",
+    "surface": "asphalt",
+    "turn:lanes": "left|through|through"
+  }
+},
+{
+  "type": "way",
+  "id": 1023361708,
+  "center": {
+    "lat": 57.7268681,
+    "lon": 12.0076546
+  },
+  "tags": {
+    "highway": "secondary",
+    "lanes": "3",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "parking:left": "no",
+    "ref": "O 519",
+    "sidewalk:left": "no",
+    "surface": "asphalt",
+    "turn:lanes": "left|through|through"
+  }
+},
+{
+  "type": "way",
+  "id": 1045540351,
+  "center": {
+    "lat": 57.7293228,
+    "lon": 12.0075275
+  },
+  "tags": {
+    "highway": "secondary",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "ref": "O 519",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1045540352,
+  "center": {
+    "lat": 57.7293279,
+    "lon": 12.0075476
+  },
+  "tags": {
+    "highway": "tertiary",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1045540354,
+  "center": {
+    "lat": 57.7301469,
+    "lon": 12.0068188
+  },
+  "tags": {
+    "bicycle": "no",
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1045540355,
+  "center": {
+    "lat": 57.7302242,
+    "lon": 12.0068404
+  },
+  "tags": {
+    "bicycle": "no",
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1045540356,
+  "center": {
+    "lat": 57.7301592,
+    "lon": 12.0067711
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1045540357,
+  "center": {
+    "lat": 57.7302291,
+    "lon": 12.0068185
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1056084995,
+  "center": {
+    "lat": 57.7298033,
+    "lon": 12.0069761
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1063696033,
+  "center": {
+    "lat": 57.7238545,
+    "lon": 12.0087800
+  },
+  "tags": {
+    "highway": "secondary",
+    "lanes": "2",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1104901436,
+  "center": {
+    "lat": 57.7329288,
+    "lon": 12.0067777
+  },
+  "tags": {
+    "highway": "service",
+    "name": "Gamlestadsvägen",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1149588377,
+  "center": {
+    "lat": 57.7267793,
+    "lon": 12.0071341
+  },
+  "tags": {
+    "highway": "unclassified",
+    "lane_markings": "no",
+    "maxspeed": "20",
+    "name": "Gamlestadsvägen",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1149600218,
+  "center": {
+    "lat": 57.7276114,
+    "lon": 12.0061983
+  },
+  "tags": {
+    "highway": "unclassified",
+    "lane_markings": "no",
+    "name": "Gamlestads Brygga",
+    "parking:both": "no",
+    "surface": "paving_stones"
+  }
+},
+{
+  "type": "way",
+  "id": 1149600221,
+  "center": {
+    "lat": 57.7330101,
+    "lon": 12.0074948
+  },
+  "tags": {
+    "bicycle": "designated",
+    "check_date:surface": "2025-05-16",
+    "cycleway:surface": "asphalt",
+    "foot": "designated",
+    "footway:surface": "asphalt",
+    "highway": "path",
+    "lit": "yes",
+    "name": "Gamlestadsvägen",
+    "segregated": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1152840235,
+  "center": {
+    "lat": 57.7327741,
+    "lon": 12.0076729
+  },
+  "tags": {
+    "highway": "residential",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1152840236,
+  "center": {
+    "lat": 57.7323803,
+    "lon": 12.0075255
+  },
+  "tags": {
+    "cycleway:left": "separate",
+    "cycleway:right": "no",
+    "highway": "residential",
+    "lane_markings": "no",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1182967779,
+  "center": {
+    "lat": 57.7537820,
+    "lon": 12.0114825
+  },
+  "tags": {
+    "highway": "service",
+    "name": "Gamlestadsvägen"
+  }
+},
+{
+  "type": "way",
+  "id": 1182967780,
+  "center": {
+    "lat": 57.7557450,
+    "lon": 12.0114083
+  },
+  "tags": {
+    "highway": "service",
+    "name": "Gamlestadsvägen",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1199581862,
+  "center": {
+    "lat": 57.7314984,
+    "lon": 12.0070131
+  },
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1217905041,
+  "center": {
+    "lat": 57.7242344,
+    "lon": 12.0084256
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "ref": "O 519",
+    "sidewalk:left": "no",
+    "surface": "asphalt",
+    "turn:lanes": "through|through;right"
+  }
+},
+{
+  "type": "way",
+  "id": 1227749916,
+  "center": {
+    "lat": 57.7286833,
+    "lon": 12.0078975
+  },
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "highway": "secondary",
+    "layer": "1",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1241528146,
+  "center": {
+    "lat": 57.7537960,
+    "lon": 12.0119132
+  },
+  "tags": {
+    "highway": "service",
+    "name": "Gamlestadsvägen"
+  }
+},
+{
+  "type": "way",
+  "id": 1243578271,
+  "center": {
+    "lat": 57.7263929,
+    "lon": 12.0072541
+  },
+  "tags": {
+    "access": "private",
+    "construction": "minor",
+    "highway": "service",
+    "maxspeed": "20",
+    "name": "Gamlestadsvägen"
+  }
+},
+{
+  "type": "way",
+  "id": 1248982988,
+  "center": {
+    "lat": 57.7320266,
+    "lon": 12.0075432
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "cycleway:right": "separate",
+    "highway": "residential",
+    "lane_markings": "no",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "traffic_calming": "table"
+  }
+},
+{
+  "type": "way",
+  "id": 1248982989,
+  "center": {
+    "lat": 57.7321069,
+    "lon": 12.0075394
+  },
+  "tags": {
+    "highway": "residential",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "traffic_calming": "table"
+  }
+},
+{
+  "type": "way",
+  "id": 1248982993,
+  "center": {
+    "lat": 57.7316036,
+    "lon": 12.0075327
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "cycleway:right": "separate",
+    "highway": "residential",
+    "lane_markings": "no",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1248982994,
+  "center": {
+    "lat": 57.7311333,
+    "lon": 12.0075000
+  },
+  "tags": {
+    "highway": "residential",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "surface": "asphalt",
+    "traffic_calming": "table"
+  }
+},
+{
+  "type": "way",
+  "id": 1248983001,
+  "center": {
+    "lat": 57.7326543,
+    "lon": 12.0075157
+  },
+  "tags": {
+    "cycleway:left": "separate",
+    "cycleway:right": "no",
+    "highway": "residential",
+    "lanes": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "narrow": "yes",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1248983002,
+  "center": {
+    "lat": 57.7328336,
+    "lon": 12.0074861
+  },
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:surface": "asphalt",
+    "foot": "designated",
+    "footway:surface": "asphalt",
+    "highway": "path",
+    "name": "Gamlestadsvägen",
+    "segregated": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1248988350,
+  "center": {
+    "lat": 57.7333933,
+    "lon": 12.0069300
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1248988351,
+  "center": {
+    "lat": 57.7333940,
+    "lon": 12.0070301
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1248988355,
+  "center": {
+    "lat": 57.7345253,
+    "lon": 12.0066029
+  },
+  "tags": {
+    "highway": "unclassified",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1258722967,
+  "center": {
+    "lat": 57.7230548,
+    "lon": 12.0090421
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "junction": "roundabout",
+    "lanes": "1",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "sidewalk:left": "no",
+    "source:maxspeed": "sign",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1258722968,
+  "center": {
+    "lat": 57.7236166,
+    "lon": 12.0089419
+  },
+  "tags": {
+    "highway": "secondary",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1258722969,
+  "center": {
+    "lat": 57.7235910,
+    "lon": 12.0088118
+  },
+  "tags": {
+    "cycleway:both": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "surface": "asphalt",
+    "turn:lanes": "left|right"
+  }
+},
+{
+  "type": "way",
+  "id": 1259263225,
+  "center": {
+    "lat": 57.7240249,
+    "lon": 12.0084886
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "lanes": "1",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "surface": "asphalt",
+    "turn:lanes": "left|right"
+  }
+},
+{
+  "type": "way",
+  "id": 1259263226,
+  "center": {
+    "lat": 57.7240397,
+    "lon": 12.0086578
+  },
+  "tags": {
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1259393716,
+  "center": {
+    "lat": 57.7608464,
+    "lon": 12.0111856
+  },
+  "tags": {
+    "bicycle": "no",
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1259393717,
+  "center": {
+    "lat": 57.7609521,
+    "lon": 12.0111526
+  },
+  "tags": {
+    "bicycle": "no",
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1261937181,
+  "center": {
+    "lat": 57.7230868,
+    "lon": 12.0092457
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "junction": "roundabout",
+    "lanes": "1",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "sidewalk:left": "no",
+    "source:maxspeed": "sign",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1261937182,
+  "center": {
+    "lat": 57.7232533,
+    "lon": 12.0092923
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "junction": "roundabout",
+    "lanes": "1",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "sidewalk:left": "no",
+    "source:maxspeed": "sign",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1262276123,
+  "center": {
+    "lat": 57.7230966,
+    "lon": 12.0087905
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "junction": "roundabout",
+    "lanes": "1",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "sidewalk:left": "no",
+    "source:maxspeed": "sign",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1275380402,
+  "center": {
+    "lat": 57.7231215,
+    "lon": 12.0093020
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "junction": "roundabout",
+    "lanes": "1",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "sidewalk:left": "no",
+    "source:maxspeed": "sign",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1290620358,
+  "center": {
+    "lat": 57.7232294,
+    "lon": 12.0087016
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "junction": "roundabout",
+    "lanes": "1",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "sidewalk:left": "no",
+    "source:maxspeed": "sign",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1290620359,
+  "center": {
+    "lat": 57.7233818,
+    "lon": 12.0091637
+  },
+  "tags": {
+    "cycleway:left": "no",
+    "highway": "secondary",
+    "junction": "roundabout",
+    "lanes": "1",
+    "maxheight": "default",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "sidewalk:left": "no",
+    "source:maxspeed": "sign",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1355421684,
+  "center": {
+    "lat": 57.7279394,
+    "lon": 12.0079795
+  },
+  "tags": {
+    "highway": "unclassified",
+    "maxheight": "default",
+    "name": "Gamlestads Brygga",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1355421685,
+  "center": {
+    "lat": 57.7278150,
+    "lon": 12.0073239
+  },
+  "tags": {
+    "highway": "unclassified",
+    "lane_markings": "no",
+    "name": "Gamlestads Brygga",
+    "parking:both": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1363688965,
+  "center": {
+    "lat": 57.7557690,
+    "lon": 12.0119926
+  },
+  "tags": {
+    "highway": "service",
+    "name": "Gamlestadsvägen",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1363688966,
+  "center": {
+    "lat": 57.7551228,
+    "lon": 12.0125442
+  },
+  "tags": {
+    "access": "private",
+    "highway": "service",
+    "name": "Gamlestadsvägen"
+  }
+},
+{
+  "type": "way",
+  "id": 1369996244,
+  "center": {
+    "lat": 57.7554561,
+    "lon": 12.0133361
+  },
+  "tags": {
+    "access": "private",
+    "highway": "service",
+    "name": "Gamlestadsvägen"
+  }
+},
+{
+  "type": "way",
+  "id": 1375047625,
+  "center": {
+    "lat": 57.7559917,
+    "lon": 12.0108678
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:backward": "1",
+    "lanes:forward": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1375047626,
+  "center": {
+    "lat": 57.7567410,
+    "lon": 12.0107446
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1375049707,
+  "center": {
+    "lat": 57.7359594,
+    "lon": 12.0060809
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:backward": "2",
+    "lanes:forward": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1375049708,
+  "center": {
+    "lat": 57.7363323,
+    "lon": 12.0059859
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1375049709,
+  "center": {
+    "lat": 57.7429017,
+    "lon": 12.0069838
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:backward": "1",
+    "lanes:forward": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1375049710,
+  "center": {
+    "lat": 57.7453986,
+    "lon": 12.0080754
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:backward": "1",
+    "lanes:forward": "2",
+    "lit": "yes",
+    "maxspeed": "70",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:left": "separate",
+    "sidewalk:right": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1375049711,
+  "center": {
+    "lat": 57.7441608,
+    "lon": 12.0074821
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "70",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk:left": "separate",
+    "sidewalk:right": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1375067797,
+  "center": {
+    "lat": 57.7493748,
+    "lon": 12.0105373
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:backward": "2",
+    "lanes:forward": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1375067798,
+  "center": {
+    "lat": 57.7488935,
+    "lon": 12.0103053
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1375105736,
+  "center": {
+    "lat": 57.7284973,
+    "lon": 12.0080592
+  },
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "highway": "secondary",
+    "layer": "1",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1382739920,
+  "center": {
+    "lat": 57.7589385,
+    "lon": 12.0107662
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "1",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1382739921,
+  "center": {
+    "lat": 57.7578163,
+    "lon": 12.0105593
+  },
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "50",
+    "name": "Gamlestadsvägen",
+    "priority_road": "designated",
+    "ref": "O 519",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1389853779,
+  "center": {
+    "lat": 57.7263606,
+    "lon": 12.0074224
+  },
+  "tags": {
+    "highway": "unclassified",
+    "lane_markings": "no",
+    "maxspeed": "20",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1389853780,
+  "center": {
+    "lat": 57.7265791,
+    "lon": 12.0074103
+  },
+  "tags": {
+    "highway": "unclassified",
+    "lane_markings": "no",
+    "maxspeed": "20",
+    "name": "Gamlestadsvägen",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "relation",
+  "id": 2208859,
+  "center": {
+    "lat": 57.7224726,
+    "lon": 12.0478892
+  },
+  "tags": {
+    "name": "Östra Sjukhuset",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "operator": "Västtrafik",
+    "public_transport": "stop_area",
+    "public_transport:version": "2",
+    "type": "public_transport"
+  }
+},
+{
+  "type": "relation",
+  "id": 2849678,
+  "center": {
+    "lat": 57.7384206,
+    "lon": 12.1053393
+  },
+  "tags": {
+    "name": "Partille centrum",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_area",
+    "public_transport:version": "2",
+    "type": "public_transport"
+  }
+},
+{
+  "type": "relation",
+  "id": 4664196,
+  "center": {
+    "lat": 57.7278251,
+    "lon": 12.0051429
+  },
+  "tags": {
+    "name": "Gamlestads Torg",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_area",
+    "public_transport:version": "2",
+    "type": "public_transport"
+  }
+},
+{
+  "type": "relation",
+  "id": 10752842,
+  "center": {
+    "lat": 57.7341734,
+    "lon": 12.0147072
+  },
+  "tags": {
+    "addr:city": "Göteborg",
+    "addr:country": "SE",
+    "addr:housenumber": "24",
+    "addr:postcode": "41503",
+    "addr:street": "Lars Kaggsgatan",
+    "leisure": "sports_centre",
+    "name": "Gamlestadsvallen",
+    "sport": "multi",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "relation",
+  "id": 10757570,
+  "center": {
+    "lat": 57.7206696,
+    "lon": 12.0515306
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "health_specialty:emergency_medicine": "yes",
+    "health_specialty:family_medicine": "yes",
+    "health_specialty:intensive_care_medicine": "yes",
+    "health_specialty:orthopaedics": "yes",
+    "health_specialty:surgery": "yes",
+    "healthcare": "hospital",
+    "internet_access": "wlan",
+    "internet_access:fee": "no",
+    "name": "Östra Sjukhuset",
+    "opening_hours": "24/7",
+    "operator": "Västra Götalandsregionen",
+    "operator:type": "government",
+    "operator:wikidata": "Q3233447",
+    "payment:cash": "yes",
+    "payment:credit_cards": "yes",
+    "payment:debit_cards": "yes",
+    "short_name": "SU/Ö",
+    "type": "multipolygon",
+    "website": "https://www.sahlgrenska.se/",
+    "wheelchair": "yes",
+    "wikidata": "Q30302690"
+  }
+},
+{
+  "type": "relation",
+  "id": 11803527,
+  "center": {
+    "lat": 57.7279207,
+    "lon": 12.0034791
+  },
+  "tags": {
+    "name": "Gamlestads Torg Västra",
+    "network": "Västtrafik",
+    "network:wikidata": "Q928178",
+    "network:wikipedia": "sv:Västtrafik",
+    "public_transport": "stop_area",
+    "public_transport:version": "2",
+    "type": "public_transport"
+  }
+},
+{
+  "type": "relation",
+  "id": 12860463,
+  "center": {
+    "lat": 57.7277953,
+    "lon": 12.0051873
+  },
+  "tags": {
+    "highway": "pedestrian",
+    "name": "Gamlestads Torg",
+    "place": "square",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "relation",
+  "id": 18784665,
+  "center": {
+    "lat": 57.7435052,
+    "lon": 12.0090461
+  },
+  "tags": {
+    "name": "Gamlestadsvägen",
+    "type": "street"
+  }
+}
+
+  ]
+}

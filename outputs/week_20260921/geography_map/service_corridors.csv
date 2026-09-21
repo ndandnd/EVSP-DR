@@ -1,0 +1,7 @@
+arm,from_code,to_code,service_trip_count,scheduled_service_min,scheduled_service_max,service_kwh_min,service_kwh_max,source_trip_ids,empty_deadhead_travel_min,empty_deadhead_energy_kwh,note
+original_giro_13414,2190,4808,6,55,63,41.7299995,41.7299995,36;68;100;126;154;178,22.0,37.6,Service duration includes scheduled passenger stops; empty deadhead has a different path/service pattern.
+original_giro_13414,4808,2190,6,53,59,42.5,42.5,23;49;81;113;139;165,22.0,37.6,Service duration includes scheduled passenger stops; empty deadhead has a different path/service pattern.
+saved_joint_fee0,2190,4808,6,57,63,41.7299995,41.7299995,22;48;74;100;126;154,22.0,37.6,Service duration includes scheduled passenger stops; empty deadhead has a different path/service pattern.
+saved_joint_fee0,4808,2190,7,51,60,42.5,42.5,6;35;61;87;113;139;165,22.0,37.6,Service duration includes scheduled passenger stops; empty deadhead has a different path/service pattern.
+saved_joint_fee5,2190,4808,6,55,63,41.7299995,41.7299995,36;68;100;126;154;178,22.0,37.6,Service duration includes scheduled passenger stops; empty deadhead has a different path/service pattern.
+saved_joint_fee5,4808,2190,6,53,59,42.5,42.5,23;49;81;113;139;165,22.0,37.6,Service duration includes scheduled passenger stops; empty deadhead has a different path/service pattern.
