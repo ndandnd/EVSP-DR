@@ -2,6 +2,10 @@
 
 [Browsable gallery with editable keys](gallery.html) · [All five graphs and complete itineraries, 10-page PDF](all_comparisons.pdf) · [Contact sheet](contact_sheet.png) · [Comparison CSV](comparison_summary.csv) · [Leg key CSV](leg_key.csv)
 
+Open `gallery.html` locally with its neighboring images to browse the interactive sections. GitHub displays HTML source; the PDF and individual PNG links are the directly viewable alternatives there.
+
+[Updated research document PDF](doc_verification/current_after.pdf) · [Updated figures archive PDF](doc_verification/figures_after.pdf) · [Document preservation checks](doc_verification/README.md). The prior text, tables, links and all seven earlier figure/map images are preserved; the archive adds the primary spatial graph and a linked five-pair chooser.
+
 The primary view is a **fixed spatial multigraph**, with approximate geographic positions, directed passenger legs, explicit depot departure/return and every charging interval. A companion visit-expanded graph preserves full chronology, local transfers, waiting, preparation and ET_R rest visits. Its vertical spacing is not elapsed time. Original geographic maps remain unchanged in [the earlier map package](../geography_map/README.md).
 
 | Original duty | Charge starts: original / fee0 / fee5 | Spatial graph | Complete itinerary | Why inspect it |
@@ -19,5 +23,7 @@ These are existing recharging results on saved trip sequences, not fresh CG. All
 The spatial overview groups stop2190 and charger2190L at Eketrägatan; the itinerary separates their logical visits and retains the original one-minute outward transfer versus the model zero-minute transfer. ET_R is explicitly unlocated and placed schematically. Depot/station coordinates are proxies, not road-route geometry. Modeled empty-driving clocks use a feasible reconstruction convention, not uniquely optimized departure choices. Recorded preparation is preserved; no preparation is invented for model schedules. Zero-duration same-place bookkeeping is suppressed from dwell annotations, while the complete source events and distinct-location zero-time edges remain available.
 
 [Independent figure QA](independent_figure_qa.md), [parent data checks](parent_data_checks.json) and [extraction validation](extraction_validation.json) verify the 15 schedules and all 124 charge windows. [Plotting script](plot_spatial_schedules.py) and [gallery builder](build_gallery.py) reproduce the views. The gallery contains native HTML tables that can be selected/edited/copied; it does not store edits back to source CSV/JSON.
+
+Reproduction: run `plot_spatial_schedules.py` with Matplotlib, then `build_gallery.py` with Pillow and `combine_pdfs.py` with pypdf. These scripts read the archived extraction and require no network or optimization. Figure/package hashes are recorded in `figure_manifest.json`.
 
 The accompanying [k40 path-dependence audit](ladder_path_dependence.md) explains what ladder order can change. Within an identical final input/model, the complete weighted event-graph LP optimum is path independent; uncertified restricted masters, route weights and finite integer pools can differ. Parent routes are reoptimized on the child graph, so parent-only charging times do not enter. The six final inputs form three byte-identical groups, not one common instance. This is a source/theory audit, not a finished k40 result.

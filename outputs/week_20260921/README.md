@@ -2,6 +2,8 @@
 
 **Latest visual follow-up:** [Five spatial bus-day comparisons](spatial_schedule_graphs/README.md), [browsable gallery with editable keys](spatial_schedule_graphs/gallery.html), [10-page comparison PDF](spatial_schedule_graphs/all_comparisons.pdf), and [k40 ladder path-dependence audit](spatial_schedule_graphs/ladder_path_dependence.md). Complete itineraries preserve all visits, waits, charges and depot returns; the earlier geographic maps remain available below.
 
+[Latest research document snapshot](spatial_schedule_graphs/doc_verification/current_after.pdf) · [Latest figures archive](spatial_schedule_graphs/doc_verification/figures_after.pdf) · [Verified preservation of prior text, tables, links and all seven earlier images](spatial_schedule_graphs/doc_verification/README.md).
+
 [Live research document](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.79m3d3x4h45m) · [This week's 14-slide deck](https://docs.google.com/presentation/d/1F6udjgkiPH51vMUcku7ZT3PhZPAxsQwUCi3TK9vFRDM/edit)
 
 [Deck PDF](slides/weekly_deck.pdf) · [Editable PowerPoint export](slides/weekly_deck.pptx) · [Initial weekly document snapshot](doc_verification/after.pdf) · [Publication and history-preservation checks](doc_verification/README.md)

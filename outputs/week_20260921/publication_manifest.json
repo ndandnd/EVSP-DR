@@ -12,23 +12,23 @@
   "included_files": [
     {
       "path": "README.md",
-      "bytes": 6961,
-      "sha256": "3bd4899ff45afb1085b1592c28ac9d8776fc1ca5d94221b246ff770ecbc28896"
+      "bytes": 7284,
+      "sha256": "8509bf5aede4c609fbd5c257c3e2190a8c4c20e232261f806178296ee0a46d60"
     },
     {
       "path": "RESEARCH_JOURNAL.html",
-      "bytes": 11925,
-      "sha256": "bc563300eb8b45f5e7473982f0f1bf7cccac1d123d9fd6af757c9c4c9c828f1d"
+      "bytes": 13128,
+      "sha256": "1816ca84fad8f4ebaecdeda38e8ac3475859eb5b5b66d5cbeaa2626b3238fad6"
     },
     {
       "path": "RESEARCH_JOURNAL.md",
-      "bytes": 9377,
-      "sha256": "5b7150a57b818c467dc15383e1bd9d496e4e460b2d5e98cf7af455bd3a50d1b5"
+      "bytes": 10403,
+      "sha256": "0f5f24b7be51bb6c82035877d2384c006c4c0d2b7df4f30474b418028aafda66"
     },
     {
       "path": "RESEARCH_JOURNAL_BODY.html",
-      "bytes": 11265,
-      "sha256": "801100be685ec3f61d1ee52a0b742fa9a359c26995cf8343c3b01ea89752bc1e"
+      "bytes": 12468,
+      "sha256": "bddd19a59278c0b4566fabf23c02c72a57a2532595871d60d96fb907eef56d77"
     },
     {
       "path": "capacity_strict/README.md",
@@ -2712,8 +2712,8 @@
     },
     {
       "path": "spatial_schedule_graphs/README.md",
-      "bytes": 4415,
-      "sha256": "8cf92a7b4aefa59bde1fb209918969bcd05c3f873519e05d3c48062c8b346710"
+      "bytes": 5256,
+      "sha256": "2778dd2ebb9ace43eda4b450843ec772c66a0b6d5be317902c0033a47079d5d8"
     },
     {
       "path": "spatial_schedule_graphs/all_comparisons.pdf",
@@ -2726,6 +2726,11 @@
       "sha256": "c7459708ff431d753a425583bbb9e3e973caad935b12cac20708129284486328"
     },
     {
+      "path": "spatial_schedule_graphs/combine_pdfs.py",
+      "bytes": 1137,
+      "sha256": "e364f1ded57c6ea928c4364f74dc7fcda89b1513525a191671459b191c0be659"
+    },
+    {
       "path": "spatial_schedule_graphs/comparison_summary.csv",
       "bytes": 1054,
       "sha256": "e80ae959d4d3cafaa26ef4fcd5871d133d11a1f754f75cc24f2531358c0d2860"
@@ -2734,6 +2739,46 @@
       "path": "spatial_schedule_graphs/contact_sheet.png",
       "bytes": 1504507,
       "sha256": "7c246816034b6d255c4c047e35abc8d507e6faaa20338e430df18e712650ff48"
+    },
+    {
+      "path": "spatial_schedule_graphs/doc_verification/README.md",
+      "bytes": 1695,
+      "sha256": "5eb5312b9008504315ca9bb2c513ce8e52c70e5fb3a4510f15340c1204d717ce"
+    },
+    {
+      "path": "spatial_schedule_graphs/doc_verification/current_after.md",
+      "bytes": 12644,
+      "sha256": "e4193b8c389b43182c5441f57f24dcd01a082ad93b53cfcf11ac898813863bdf"
+    },
+    {
+      "path": "spatial_schedule_graphs/doc_verification/current_after.pdf",
+      "bytes": 466908,
+      "sha256": "1ecec5f93c1638afbabd29b42a8b957287e593054427eec3a70bb54ed7c3887e"
+    },
+    {
+      "path": "spatial_schedule_graphs/doc_verification/current_before.md",
+      "bytes": 12272,
+      "sha256": "65f156edb498ced8730cc70df90a5255060b17d25f113af6509e8d00158855c5"
+    },
+    {
+      "path": "spatial_schedule_graphs/doc_verification/figures_after.md",
+      "bytes": 10550,
+      "sha256": "3c9bc143a4cc696dcbf9bf201b3f1948acb5bd1d5726673b74dde128625df9e1"
+    },
+    {
+      "path": "spatial_schedule_graphs/doc_verification/figures_after.pdf",
+      "bytes": 1851331,
+      "sha256": "af50fc370f77428614e40d823425a3083a5ea50b93e80e65a35994a5a1d73b09"
+    },
+    {
+      "path": "spatial_schedule_graphs/doc_verification/figures_before.md",
+      "bytes": 6619,
+      "sha256": "5ae1b8082b0de39e4ed022fca97d1c6637272cae2649ea08297c6a2bb64df61f"
+    },
+    {
+      "path": "spatial_schedule_graphs/doc_verification/verification.json",
+      "bytes": 430,
+      "sha256": "1529a2c8e233fdeb4c2f65871e8d72994e6a24d6bf9b192537e79634dd0e9d20"
     },
     {
       "path": "spatial_schedule_graphs/duty_13401_graph.pdf",
@@ -2912,8 +2957,8 @@
     },
     {
       "path": "spatial_schedule_graphs/figure_manifest.json",
-      "bytes": 9043,
-      "sha256": "299518253a0615fe548724df1cd48b6e7ddc5fe17530318b7827bca499573e87"
+      "bytes": 9193,
+      "sha256": "d1f7451b7c33b24b164553b378f1a1a7716f52e48f3e666dd37859134f34b3e7"
     },
     {
       "path": "spatial_schedule_graphs/gallery.html",
@@ -2922,8 +2967,8 @@
     },
     {
       "path": "spatial_schedule_graphs/independent_figure_qa.md",
-      "bytes": 3097,
-      "sha256": "33eb79b898e4244e15aab33cb80b19eca113d0a726046d7eb217a0c0ac93a096"
+      "bytes": 3768,
+      "sha256": "2101fd7ca9306b5d2a20f670ac13f520fbf84d650f0bfb24efbe2ee10cde0c39"
     },
     {
       "path": "spatial_schedule_graphs/ladder_path_dependence.md",
@@ -9656,48 +9701,60 @@
       "reason": "Python cache"
     },
     {
-      "path": "spatial_schedule_graphs/doc_verification/current_before.md",
-      "reason": "Parent document verification still in progress; final snapshots will follow"
+      "path": "spatial_schedule_graphs/doc_verification/current_page1_qa.png",
+      "reason": "Intermediate export or QA thumbnail; final PDFs, compact text and checks are included"
     },
     {
-      "path": "spatial_schedule_graphs/doc_verification/figures_before.md",
-      "reason": "Parent document verification still in progress; final snapshots will follow"
+      "path": "spatial_schedule_graphs/doc_verification/figures_page-01.png",
+      "reason": "Intermediate export or QA thumbnail; final PDFs, compact text and checks are included"
+    },
+    {
+      "path": "spatial_schedule_graphs/doc_verification/figures_page-02.png",
+      "reason": "Intermediate export or QA thumbnail; final PDFs, compact text and checks are included"
+    },
+    {
+      "path": "spatial_schedule_graphs/doc_verification/figures_page-03.png",
+      "reason": "Intermediate export or QA thumbnail; final PDFs, compact text and checks are included"
+    },
+    {
+      "path": "spatial_schedule_graphs/doc_verification/geography_final_qa.png",
+      "reason": "Intermediate export or QA thumbnail; final PDFs, compact text and checks are included"
     },
     {
       "path": "spatial_schedule_graphs/prototype_duty_13414_graph.pdf",
-      "reason": "Superseded layout prototype; final five-pair figures are included"
+      "reason": "Superseded layout prototype; final figures are included"
     },
     {
       "path": "spatial_schedule_graphs/prototype_duty_13414_graph.png",
-      "reason": "Superseded layout prototype; final five-pair figures are included"
+      "reason": "Superseded layout prototype; final figures are included"
     },
     {
       "path": "spatial_schedule_graphs/prototype_duty_13414_graph.svg",
-      "reason": "Superseded layout prototype; final five-pair figures are included"
+      "reason": "Superseded layout prototype; final figures are included"
     },
     {
       "path": "spatial_schedule_graphs/prototype_duty_13414_itinerary.pdf",
-      "reason": "Superseded layout prototype; final five-pair figures are included"
+      "reason": "Superseded layout prototype; final figures are included"
     },
     {
       "path": "spatial_schedule_graphs/prototype_duty_13414_itinerary.png",
-      "reason": "Superseded layout prototype; final five-pair figures are included"
+      "reason": "Superseded layout prototype; final figures are included"
     },
     {
       "path": "spatial_schedule_graphs/prototype_duty_13414_itinerary.svg",
-      "reason": "Superseded layout prototype; final five-pair figures are included"
+      "reason": "Superseded layout prototype; final figures are included"
     },
     {
       "path": "spatial_schedule_graphs/prototype_duty_13414_spatial.pdf",
-      "reason": "Superseded layout prototype; final five-pair figures are included"
+      "reason": "Superseded layout prototype; final figures are included"
     },
     {
       "path": "spatial_schedule_graphs/prototype_duty_13414_spatial.png",
-      "reason": "Superseded layout prototype; final five-pair figures are included"
+      "reason": "Superseded layout prototype; final figures are included"
     },
     {
       "path": "spatial_schedule_graphs/prototype_duty_13414_spatial.svg",
-      "reason": "Superseded layout prototype; final five-pair figures are included"
+      "reason": "Superseded layout prototype; final figures are included"
     }
   ],
   "notes": [
@@ -9705,7 +9762,7 @@
     "Code changes are represented by exact commit references and source patches; they are not merged into this documentation branch.",
     "The evidence manifest includes source locations for files intentionally retained locally; omission is disclosed here."
   ],
-  "updated_utc": "2026-09-21T19:10:36.683977+00:00",
+  "updated_utc": "2026-09-21T19:17:05.656016+00:00",
   "update_note": "Final clarified exports: fee0/fee5 use different inherited sequences and station paths; session counts are descriptive, not a fee-only causal effect. Original solver results unchanged.",
   "superseded_publications": [
     {
@@ -9717,8 +9774,8 @@
   "additional_repository_files": [
     {
       "path": "outputs/research_register/README.md",
-      "bytes": 53556,
-      "sha256": "5690bf628117957ed39af19147d9bbcaa24c0016ec52a040423d6c008e95fa67",
+      "bytes": 54508,
+      "sha256": "ee30d56bf7d1bd0c29c4c3897686b579a033b59830239bc01d08afdca4ab5eb4",
       "scope": "authorized register entry and minimal campaign-list integration only"
     },
     {

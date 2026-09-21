@@ -55,6 +55,12 @@ The [launch audit](chain_extension_40/launch_verification.json) verifies **140 p
 
 By the [14:46:43 EDT snapshot](chain_extension_40/final_queue_snapshot.json), 14 new graph tasks run; 29 wait for resources and one scheduled requeue waits for its eligible time. Including the separate strict k16 CG, 15 jobs run in this scope. No new k33+ scientific endpoint is claimed.
 
+## 21 September, later follow-up — spatial schedules and ladder order
+
+The [five-pair gallery](spatial_schedule_graphs/README.md) adds fixed geographic multigraphs, complete visit itineraries and editable time/charge keys for all 15 saved schedules. Original duty 13414 and its fee5 counterpart share twelve passenger trips; every fee0/fee5 paired trip set differs. Trip numbers are prepared-input labels, not GIRO journey numbers. All 751 events and 124 charge windows were independently checked; no optimization was rerun.
+
+The [source audit of ladder order](spatial_schedule_graphs/ladder_path_dependence.md) confirms inherited sequences are reoptimized on the child graph, without importing parent-only charging times. Within each identical final-input/model group, the complete weighted event-graph LP optimum is path independent; uncertified restricted masters and finite integer pools can still differ. The six k40 inputs form three exact groups. This is an implementation/theory conclusion, not a new k40 endpoint.
+
 ## Historical milestones retained
 
 **16–17 September:** time-only group separation explains mixed-group fleet advantages, without establishing strict-energy feasibility. **18 September:** k8 witness proofs and open k15 bounds. **19–20 September:** replay/memory recovery and integer-directed pilot. **21 September:** completed charging, verified logs and C1 recovery supersede stale statuses. [Original evidence and failed attempts remain preserved](../research_register/README.md).

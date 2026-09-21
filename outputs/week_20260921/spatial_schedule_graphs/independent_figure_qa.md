@@ -23,7 +23,13 @@ Keep adjacent editable captions explicit: `Ordered_Trip_ID` is a prepared label 
 
 Hashes below identify the files inspected; subsequent edits require a new or amended receipt.
 
-- `plot_spatial_schedules.py`: `e5f2a025413b59388a7e23d4851fca0f45794fd15f6ba5a3123566ca3cb1a2b6`
+- `plot_spatial_schedules.py`: `b9d4e8e045f1a71b319ae353c75d52c6e2c11a3571de4bc7ab3a3500a814430b`
 - `extract_schedules.py`: `22ba7e06a8c8b04a0f6f04b425bcda4c83f27ac36178939acf6a87400efd8a77`
 - `schedules.json`: `f9e52bd0fbf61bdb513ec5ef2bc64295c9ea1d37bb17453afc510090ecd11de1`
 - `duty_13414_graph.png`: `7b1489622aa0eadef0a4728461d4e1ef0ba64c13b43f1c3706b4a2c5c6c0be2b`
+
+## Layout-only amendment
+
+Reviewed the later two-line change to OUT/BACK callout positions for buses starting at2190 and visually inspected the corrected `duty_13403_graph.png`. Labels no longer overlap the lower passenger-leg labels. Reversing only those two positional lines reproduces the originally reviewed script hash, confirming no other plotting logic changed. The extraction script, schedule data and primary13414 figure hashes remain unchanged. The script hash above is updated; the full data audit was not rerun because this amendment changes label placement only.
+
+- `duty_13403_graph.png`: `46759a842bbc39b7324dd412da1b7a81fdbea64dc4cd6fb7da3bc176071f9902`
