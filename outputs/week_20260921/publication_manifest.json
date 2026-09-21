@@ -12,28 +12,28 @@
   "included_files": [
     {
       "path": "README.md",
-      "bytes": 3184,
-      "sha256": "d1b91480cee08e925ca5487dde1d6b33b55301706574f7b64d612fbb71d930a1"
+      "bytes": 3572,
+      "sha256": "4347b7bdd57ddfefaa28200046a9cafcc124ec61727cbeaf4c48c73c6cf9c0d3"
     },
     {
       "path": "RESEARCH_JOURNAL.html",
-      "bytes": 9065,
-      "sha256": "467df6d79cc2f4a54e4dd492a6fb30a83d44d3162a2a34fbf9ec0827b66d82e2"
+      "bytes": 9234,
+      "sha256": "de5042643573ba2778f1bb2c90c7f5c876570ac34acc57b40d80574eb07a9800"
     },
     {
       "path": "RESEARCH_JOURNAL.md",
-      "bytes": 6922,
-      "sha256": "ae8f351bdb1b789030bda85d9375cdf7b1b145134c373a2c99af089504c13d00"
+      "bytes": 7078,
+      "sha256": "2561a1d8f234bc8e1c913cad540da85f0908217c0311c97c120bf20e38781bfb"
     },
     {
       "path": "RESEARCH_JOURNAL_BODY.html",
-      "bytes": 8405,
-      "sha256": "eca938e99a678a7a2aa20150cdf518f7e3b41cfd211b2ca1adf624b59ce0c267"
+      "bytes": 8574,
+      "sha256": "683c17bd476baecb9be74c8b3ae0b9200317ec16c38617f25671fcd49cf55bbe"
     },
     {
       "path": "capacity_strict/README.md",
-      "bytes": 9019,
-      "sha256": "cc6a025b77a1d05247a6708e5176e7ba53e3855654fdf74a1f99d99f9103cc73"
+      "bytes": 11006,
+      "sha256": "eb3b8b46173b1c50ab75df5cf39862c24f9ce51feb917a632dc54d0581f3bbe1"
     },
     {
       "path": "capacity_strict/SHA256SUMS.json",
@@ -109,6 +109,41 @@
       "path": "capacity_strict/plot_capacity_chart_only.py",
       "bytes": 1429,
       "sha256": "95ac1883cff44cbd520175412234bd7cdaadd78333726656e51379796fcd1ac9"
+    },
+    {
+      "path": "capacity_strict/recovery/BENCHMARK_COMPLETE.json",
+      "bytes": 170,
+      "sha256": "81a813964664ddb2d64fa587ee271d0ba29daaa149e1eed6b35b3546bb763ffe"
+    },
+    {
+      "path": "capacity_strict/recovery/benchmark/646674_r0/COMPLETE.json",
+      "bytes": 324,
+      "sha256": "a721904120c9fac5eedf30c93de23392fae01cae59b0408bb66f1a89a42293b5"
+    },
+    {
+      "path": "capacity_strict/recovery/benchmark/646674_r0/new_explicit.json",
+      "bytes": 37129,
+      "sha256": "aef61af4816cb1d8b84cbfbacb7a3a4a870fd2fd54c43fb62e9f83005a65cb5f"
+    },
+    {
+      "path": "capacity_strict/recovery/benchmark/646674_r0/new_packed.json",
+      "bytes": 37131,
+      "sha256": "7549709311ea3dedf0698f42e3b892d34a5856f3f15c2737477754b08fc80bf0"
+    },
+    {
+      "path": "capacity_strict/recovery/benchmark/646674_r0/original_explicit.json",
+      "bytes": 37129,
+      "sha256": "0c333e3263f8387f5a9aa5c5ef19d02d7601b2c66bd40ffcd26bdbcb87457a91"
+    },
+    {
+      "path": "capacity_strict/recovery/benchmark/646674_r0/result.json",
+      "bytes": 128037,
+      "sha256": "e359d770902b1ca0359347a1a12097a0125371f8a0f4d4cf4a884d54765012ea"
+    },
+    {
+      "path": "capacity_strict/recovery/benchmark_summary.json",
+      "bytes": 1091,
+      "sha256": "4a62f6cbc4236986ae9d03b927e319db0544a7b13c942e90d23679761a5a84d5"
     },
     {
       "path": "capacity_strict/recovery/benchmark_variant.py",
@@ -8427,5 +8462,7 @@
     "SLURM allocation.env files contain only scheduler metadata and are retained as resource receipts.",
     "Code changes are represented by exact commit references and source patches; they are not merged into this documentation branch.",
     "The evidence manifest includes source locations for files intentionally retained locally; omission is disclosed here."
-  ]
+  ],
+  "updated_utc": "2026-09-21T15:15:07.685100+00:00",
+  "update_note": "Verified benchmark646674 receipt and current k16 recovery status added; no slide exports or UI mutations."
 }

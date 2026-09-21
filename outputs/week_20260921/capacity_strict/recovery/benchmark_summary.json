@@ -1,0 +1,32 @@
+{
+  "original_explicit": {
+    "build_s": 121.10516343079507,
+    "peak_rss_gib": 2.0622482299804688,
+    "mean_pricing_s": 33.015356266871095,
+    "total_five_pricing_s": 165.07678133435547,
+    "retained_arcs": 3319685,
+    "build_speedup_vs_original": 1.0,
+    "pricing_speedup_vs_original": 1.0,
+    "memory_ratio_vs_original": 1.0
+  },
+  "new_explicit": {
+    "build_s": 52.31022531585768,
+    "peak_rss_gib": 2.063373565673828,
+    "mean_pricing_s": 32.358335121907295,
+    "total_five_pricing_s": 161.79167560953647,
+    "retained_arcs": 3319685,
+    "build_speedup_vs_original": 2.3151336607621613,
+    "pricing_speedup_vs_original": 1.0203045410862002,
+    "memory_ratio_vs_original": 0.9994546136908603
+  },
+  "new_packed": {
+    "build_s": 41.809898257721215,
+    "peak_rss_gib": 0.146728515625,
+    "mean_pricing_s": 0.06220308719202876,
+    "total_five_pricing_s": 0.3110154359601438,
+    "retained_arcs": 1180257,
+    "build_speedup_vs_original": 2.8965668054078573,
+    "pricing_speedup_vs_original": 530.7671653811736,
+    "memory_ratio_vs_original": 14.054856489184692
+  }
+}

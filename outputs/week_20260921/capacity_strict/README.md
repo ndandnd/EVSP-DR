@@ -60,3 +60,21 @@ Commit `35770aae2c08e7d5a356cc3b673e67608e5b1036` on branch `codex/strict-packed
 The 21 old blocked descendant jobs (k16 MIP onward) are preserved under a user hold with comment `SUPERSEDED_PENDING_AUDIT_strict_packed_20260921`. This makes their obsolete dependency status explicit while the new algorithm is evaluated. The independently held historical array537227 is untouched. The launcher's first post-submission bookkeeping attempt encountered an already purged completed Slurm ID; the retry examined live IDs and did not resubmit any jobs. Remote campaign: `/home/nc437/ladder-lite/strict_packed_20260921/`.
 
 Packed storage is estimated at 16 bytes per retained edge (targets/costs/recipes), versus hundreds of bytes of Python objects per original explicit edge. The 64G request leaves substantial room for graph-building caches above an estimated 4–6GiB edge buffer; measured RSS from the controlled benchmark and k16 will decide whether further changes are needed. No large-case speed or final-fleet improvement is claimed before those outputs exist.
+
+## Controlled benchmark verified — 21 September, 11:12 EDT
+
+Job **646674 completed** in 9m16s. The same 26-trip strict-physics instance, same node (snavely-cpu-17), identical event lattice, five deterministic fixed dual vectors and physical route replay were used for all three implementations.
+
+| Implementation | Graph build | Peak process RSS | Mean pricing call | Retained arcs |
+|---|---:|---:|---:|---:|
+|Original explicit|121.105 s|2.062 GiB|33.015 s|3,319,685|
+|New explicit, deferred tie keys|52.310 s|2.063 GiB|32.358 s|3,319,685|
+|New packed, deferred tie keys|41.810 s|0.147 GiB|0.0622 s|1,180,257|
+
+**All five minimum reduced costs are numerically identical, and all 15 generated routes pass physical replay.** The exact event-lattice hash also agrees across implementations. The old/new explicit comparison isolates the deferred tie-key improvement: **2.32× faster graph construction**. The packed implementation gives **2.90× faster construction, 14.1× lower peak process memory, and 530.8× faster mean pricing** versus the original on this small case. This is a one-instance deterministic benchmark, not a scaling claim or a new CG certificate. Packed pricing benefits from both cheapest-transition dominance without shared capacity and a vectorized packed shortest-path implementation; it must not be extrapolated to capacity-dual pricing.
+
+[Full benchmark and route-replay evidence](recovery/benchmark/646674_r0/result.json) · [Compact metrics](recovery/benchmark_summary.json) · [Completion receipt](recovery/BENCHMARK_COMPLETE.json)
+
+Full-result SHA256: `e359d770902b1ca0359347a1a12097a0125371f8a0f4d4cf4a884d54765012ea`.
+
+**k16 recovery646675 has now started** on luxlab-cpu-02. At the 5m40s startup sample it is still constructing the graph; sampled batch RSS is 354MiB. No k16 timing endpoint or improved fleet result is yet available. MIP646676 waits on its genuine CG dependency. No additional submissions or changes were made during this verification.
