@@ -665,6 +665,8 @@ class DivePilot:
             "fixed_trip_sets_sha256": trip_set_sha256(fixed_keys),
             "fixed_routes": [sorted(int(t) for t in key) for key in fixed_keys],
             "outcome": outcome,
+            "penalized_pricing_closed": certified,
+            "unpenalized_node_infeasibility_certified": False,
             "node_stop": stop,
             "lp_objective": None if lp is None else lp.objective,
             "lp_route_weight": None if lp is None else sum(
@@ -899,6 +901,46 @@ class DivePilot:
 # --------------------------------------------------------------------------
 # artifact publication
 # --------------------------------------------------------------------------
+
+def export_incumbent(integer_solution, journal_path, trips, out_path):
+    """Resolve the dive cover to full existing records; never invent columns.
+
+    Incidence identifies master variables; cost distinguishes replacements.
+    The full chosen record and its line/hash make equal-incidence collisions
+    auditable. The MIP runner independently replays these physical records.
+    """
+    if integer_solution is None:
+        return None
+    from durable_io import read_jsonl_records
+    wanted = integer_solution["routes"]
+    keys = [frozenset(int(t) for t in r["trips"]) for r in wanted]
+    if len(set(keys)) != len(keys) or len(keys) != integer_solution["buses"]:
+        raise DivePilotError("incumbent has duplicate incidences or fleet mismatch")
+    if set().union(*keys) != set(trips):
+        raise DivePilotError("incumbent does not cover the source trip universe")
+    matches = {}
+    for ordinal, record in enumerate(read_jsonl_records(journal_path, repair_trailing=False), 1):
+        key = frozenset(int(t) for t in record["trips"])
+        if key not in keys or key in matches:
+            continue
+        target = wanted[keys.index(key)]
+        if not math.isclose(float(record["cost"]), float(target["cost"]), rel_tol=0, abs_tol=1e-7):
+            continue
+        if not record.get("route_nodes"):
+            continue
+        matches[key] = (record, ordinal)
+    if len(matches) != len(keys):
+        raise DivePilotError("incumbent full records missing at matching incidence and cost")
+    records = [matches[key][0] for key in keys]
+    payload = {"routes": records, "source": "own_dive_augmented_journal",
+               "source_journal_sha256": file_sha256(Path(journal_path)),
+               "source_record_ordinals": [matches[key][1] for key in keys],
+               "record_sha256": [hashlib.sha256(json.dumps(r, sort_keys=True, separators=(",", ":")).encode()).hexdigest() for r in records],
+               "external_witness_columns_used": False,
+               "route_physical_validation": "pending independent MIP replay"}
+    Path(out_path).write_text(json.dumps(payload, indent=1))
+    return {"path": str(Path(out_path).resolve()), "sha256": file_sha256(Path(out_path)),
+            "buses": len(records), "source_record_ordinals": payload["source_record_ordinals"]}
 
 def publish_augmented_pool(
     *, source_status, source_result_path, source_journal_path,
@@ -1216,6 +1258,10 @@ def main(argv=None) -> int:
         generated_records=generated,
         out_dir=out_dir,
     )
+    incumbent_export = export_incumbent(
+        pilot.integer_solution if pilot else None,
+        publication["augmented_journal"], trips, out_dir / "dive_incumbent.json",
+    )
 
     # Source immutability, re-checked after every write this process made.
     final_result_sha256 = file_sha256(source_result_path)
@@ -1270,6 +1316,7 @@ def main(argv=None) -> int:
             "integer_solution": pilot.integer_solution if pilot else None,
         },
         "augmented_pool": publication,
+        "incumbent_export": incumbent_export,
         "global_certificate": None,
         "scope": (
             "Every LP here is a restricted master over one dive node. No "
