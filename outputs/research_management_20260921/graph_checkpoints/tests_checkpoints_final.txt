@@ -1,0 +1,15 @@
+test_changed_physics_and_provenance_are_rejected (test_graph_arc_checkpoints.GraphCheckpointTests.test_changed_physics_and_provenance_are_rejected) ... ok
+test_changed_trip_and_tariff_are_rejected (test_graph_arc_checkpoints.GraphCheckpointTests.test_changed_trip_and_tariff_are_rejected) ... ok
+test_complete_checkpoint_reuses_all_rows_and_keeps_cache_compatible (test_graph_arc_checkpoints.GraphCheckpointTests.test_complete_checkpoint_reuses_all_rows_and_keeps_cache_compatible) ... ok
+test_concurrent_writer_is_rejected_and_lock_released_on_error (test_graph_arc_checkpoints.GraphCheckpointTests.test_concurrent_writer_is_rejected_and_lock_released_on_error) ... ok
+test_corrupt_binary_is_rejected (test_graph_arc_checkpoints.GraphCheckpointTests.test_corrupt_binary_is_rejected) ... ok
+test_corrupt_row_metadata_is_rejected (test_graph_arc_checkpoints.GraphCheckpointTests.test_corrupt_row_metadata_is_rejected) ... ok
+test_explicit_mode_rejects_checkpoints (test_graph_arc_checkpoints.GraphCheckpointTests.test_explicit_mode_rejects_checkpoints) ... ok
+test_killed_after_commit_skips_rows_and_is_identical (test_graph_arc_checkpoints.GraphCheckpointTests.test_killed_after_commit_skips_rows_and_is_identical) ... ok
+test_killed_before_manifest_ignores_orphan_shard (test_graph_arc_checkpoints.GraphCheckpointTests.test_killed_before_manifest_ignores_orphan_shard) ... ok
+test_real_csv_rebuilds_same_identity_across_processes (test_graph_arc_checkpoints.GraphCheckpointTests.test_real_csv_rebuilds_same_identity_across_processes) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 3.541s
+
+OK

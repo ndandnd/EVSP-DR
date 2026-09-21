@@ -1,0 +1,519 @@
+commit 71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a
+Author:     Nathan Cho <>
+AuthorDate: Mon Sep 21 16:22:28 2026 -0400
+Commit:     Nathan Cho <>
+CommitDate: Mon Sep 21 16:22:28 2026 -0400
+
+    Checkpoint completed packed graph sources with atomic resumable shards
+
+diff --git a/src/event_pricer_network.py b/src/event_pricer_network.py
+index b3285230..ab1631e6 100644
+--- a/src/event_pricer_network.py
++++ b/src/event_pricer_network.py
+@@ -5,6 +5,9 @@ from __future__ import annotations
+ import hashlib
+ import json
+ import math
++import pickle
++import sys
++from pathlib import Path
+ import time
+ from array import array
+ from bisect import bisect_left
+@@ -160,6 +163,8 @@ class EventExpandedNetwork:
+         strict_tariff_coverage=False,
+         arc_mode="lazy",
+         fixed_sequence_index=False,
++        arc_checkpoint_dir=None,
++        arc_checkpoint_identity=None,
+     ):
+         self.problem = problem
+         self.soc_step = float(soc_step)
+@@ -193,7 +198,42 @@ class EventExpandedNetwork:
+         self._selected_action_cache = {}
+         self._split_arcs()
+         self._build_nodes()
+-        self._build_arcs()
++        if arc_checkpoint_dir is not None and self.arc_mode != "lazy":
++            raise ValueError("partial graph checkpoints require lazy packed arcs")
++        checkpoint = None
++        if arc_checkpoint_dir is not None:
++            from graph_arc_checkpoints import ArcCheckpoints, digest
++            # Hash every local source module conservatively, including physics
++            # helpers and configuration. This also protects dirty development
++            # trees whose git commit alone would be insufficient identity.
++            source_hashes = {p.name: digest(p) for p in sorted(Path(__file__).parent.glob("*.py"))}
++            prepared_state = dict(self.__dict__)
++            prepared_state["problem"] = {
++                name: getattr(problem, name) for name in
++                ("trips", "adjacency", "start_min", "end_min", "trip_energy")
++            }
++            identity = {
++                "provenance": arc_checkpoint_identity,
++                "source_sha256": source_hashes,
++                "prepared_network_sha256": hashlib.sha256(
++                    pickle.dumps(prepared_state, protocol=4)).hexdigest(),
++                "python": list(sys.version_info[:3]),
++                "numpy": np.__version__,
++                "byteorder": sys.byteorder,
++                "array_sizes": [array(kind).itemsize for kind in ("I", "d")],
++            }
++            if identity["array_sizes"] != [4, 8]:
++                raise ValueError("partial graph checkpoints require uint32/float64 arrays")
++            source_order = [0] + [source for _key, source in sorted(self.trip_node.items())]
++            checkpoint = ArcCheckpoints(arc_checkpoint_dir, identity, source_order)
++        try:
++            if checkpoint is None:
++                self._build_arcs()
++            else:
++                self._build_arcs(checkpoint=checkpoint)
++        finally:
++            if checkpoint is not None:
++                checkpoint.close()
+         # _finalize_source sorts every row by target in both representations.
+         self._replay_sorted_rows_version = 1
+         self.set_fixed_sequence_index(fixed_sequence_index)
+@@ -363,7 +403,7 @@ class EventExpandedNetwork:
+             if target == self.SINK
+         )
+ 
+-    def _build_arcs(self):
++    def _build_arcs(self, *, checkpoint=None):
+         self.out = (
+             [[] for _node in self.node_meta]
+             if self.arc_mode == "explicit" else None
+@@ -375,15 +415,33 @@ class EventExpandedNetwork:
+             self._arc_slices = [(0, 0) for _node in self.node_meta]
+         self._building_arcs = {}
+         self.sink_arcs = []
+-        for target, cost, trip, action in self._source_candidates():
+-            self._add(0, target, cost, trip, action)
+-        self._finalize_source(0)
+-        for (trip, level), source in sorted(self.trip_node.items()):
++        resumed = checkpoint.restore(self) if checkpoint is not None else 0
++        if resumed == 0:
++            for target, cost, trip, action in self._source_candidates():
++                self._add(0, target, cost, trip, action)
++            self._finalize_source(0)
++            if checkpoint is not None:
++                checkpoint.maybe_commit(self, 1)
++        sources = sorted(self.trip_node.items())
++        for ordinal, ((trip, level), source) in enumerate(sources, start=1):
++            if ordinal < resumed:
++                continue
+             soc_exit = self.grid[level] - self.problem.trip_energy[trip]
+             depart = float(self.problem.end_min[trip])
+             self._direct_arcs(source, trip, soc_exit, depart)
+             self._charge_arcs(source, trip, soc_exit, depart)
+             self._finalize_source(source)
++            if checkpoint is not None:
++                checkpoint.maybe_commit(self, ordinal + 1)
++        if checkpoint is not None:
++            checkpoint.maybe_commit(self, len(sources) + 1, force=True)
++            self.graph_checkpoint_report = {
++                "resumed_sources": checkpoint.resumed_sources,
++                "total_sources": len(sources) + 1,
++                "shards": len(checkpoint.manifest["shards"]),
++                "bytes_written_this_attempt": checkpoint.bytes_written,
++                "io_s_this_attempt": checkpoint.io_s,
++            }
+         del self._building_arcs
+         if self.arc_mode == "explicit":
+             self.n_arcs = sum(len(arcs) for arcs in self.out)
+diff --git a/src/exact_pricer_expanded.py b/src/exact_pricer_expanded.py
+index 9071e666..e54e8fe9 100644
+--- a/src/exact_pricer_expanded.py
++++ b/src/exact_pricer_expanded.py
+@@ -1822,6 +1822,10 @@ def run_cg(args) -> dict:
+         _event_network_cache_identity(args, provenance)
+         if time_model == "event" and cache_path is not None else None
+     )
++    checkpoint_dir = getattr(args, "event_graph_checkpoints", None)
++    if checkpoint_dir is not None:
++        network_kwargs["arc_checkpoint_dir"] = checkpoint_dir
++        network_kwargs["arc_checkpoint_identity"] = _event_network_cache_identity(args, provenance)
+     cache_manifest = None
+     cache_hit = False
+     network_t0 = time.time()
+@@ -1868,6 +1872,8 @@ def run_cg(args) -> dict:
+     )
+     if time_model == "event":
+         network_metrics["fixed_sequence_index"] = net.fixed_sequence_index
++    if not cache_hit and hasattr(net, "graph_checkpoint_report"):
++        network_metrics["graph_checkpoint"] = dict(net.graph_checkpoint_report)
+     inherited_event_pool_audit = None
+     if cache_path is not None:
+         network_metrics.update({
+@@ -3291,6 +3297,11 @@ def main(argv=None) -> int:
+         "--fixed-sequence-index", action="store_true",
+         help="Use indexed complete-successor event replay (baseline is default).",
+     )
++    parser.add_argument(
++        "--event-graph-checkpoints", type=Path, default=None,
++        help="Opt in to resumable packed graph shards in a stable directory; "
++             "requires event/lazy mode. Does not change completed cache format.",
++    )
+     parser.add_argument(
+         "--event-network-cache", type=Path, default=None,
+         help="Hash-validated pickle cache for a completed event network.",
+@@ -3495,6 +3506,10 @@ def main(argv=None) -> int:
+         and getattr(args, "time_model", "uniform") != "event"
+     ):
+         parser.error("--event-arc-mode requires --time-model event")
++    if args.event_graph_checkpoints is not None and (
++        args.time_model != "event" or getattr(args, "event_arc_mode", "lazy") != "lazy"
++    ):
++        parser.error("--event-graph-checkpoints requires event time and lazy packed arcs")
+     if args.fixed_sequence_index and args.time_model != "event":
+         parser.error("--fixed-sequence-index requires --time-model event")
+     if args.event_network_cache is not None and (
+diff --git a/src/graph_arc_checkpoints.py b/src/graph_arc_checkpoints.py
+new file mode 100644
+index 00000000..2423ac23
+--- /dev/null
++++ b/src/graph_arc_checkpoints.py
+@@ -0,0 +1,156 @@
++"""Atomic, hash-checked completed-source shards for packed event graph builds.
++
++These checkpoints contain raw numeric buffers and JSON metadata, never executable
++pickle payloads. A manifest replacement is the only commit point. One writer owns
++an advisory lock for the entire graph build; unreferenced files are ignored.
++"""
++from bisect import bisect_left
++import fcntl
++import hashlib
++import json
++import os
++from pathlib import Path
++import time
++import uuid
++
++SCHEMA = 'evsp-packed-source-shards-v1'
++BUFFERS = (('_arc_targets', 'I', 4), ('_arc_costs', 'd', 8), ('_arc_recipes', 'I', 4))
++
++
++def digest(path, prefix=b''):
++    h = hashlib.sha256(prefix)
++    with Path(path).open('rb') as stream:
++        for block in iter(lambda: stream.read(4 * 1024 * 1024), b''):
++            h.update(block)
++    return h.hexdigest()
++
++
++def fsync_directory(path):
++    descriptor = os.open(path, os.O_RDONLY)
++    try:
++        os.fsync(descriptor)
++    finally:
++        os.close(descriptor)
++
++
++class ArcCheckpoints:
++    def __init__(self, directory, identity, source_order, *,
++                 shard_bytes=256 * 1024 * 1024, interval_s=300.0):
++        self.directory = Path(directory)
++        self.directory.mkdir(parents=True, exist_ok=True)
++        self.lock = (self.directory / 'writer.lock').open('a')
++        try:
++            fcntl.flock(self.lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
++        except BaseException:
++            self.lock.close()
++            raise
++        self.identity = identity
++        self.source_order = source_order
++        self.shard_bytes = shard_bytes
++        self.interval_s = interval_s
++        self.manifest_path = self.directory / 'manifest.json'
++        self.manifest = {'schema': SCHEMA, 'identity': identity, 'shards': []}
++        self.finished = self.edge_start = 0
++        self.last_commit = time.monotonic()
++        self.io_s = 0.0
++        self.resumed_sources = 0
++        self.bytes_written = 0
++        try:
++            if self.manifest_path.exists():
++                self.manifest = json.loads(self.manifest_path.read_text())
++                if (self.manifest.get('schema') != SCHEMA
++                        or self.manifest.get('identity') != identity):
++                    raise ValueError('graph checkpoint identity mismatch')
++        except BaseException:
++            self.close()
++            raise
++
++    def close(self):
++        self.lock.close()
++
++    def restore(self, network):
++        started = time.monotonic()
++        for number, shard in enumerate(self.manifest['shards']):
++            name = f'shard-{number:06d}.bin'
++            if shard['file'] != name:
++                raise ValueError('graph checkpoint shard name/order mismatch')
++            path = self.directory / name
++            count = shard['edge_count']
++            rows = shard['rows']
++            expected_sources = self.source_order[self.finished:self.finished + len(rows)]
++            if (not rows or [row[0] for row in rows] != expected_sources
++                    or shard['edge_start'] != self.edge_start or count < 0):
++                raise ValueError('graph checkpoint source/edge continuity mismatch')
++            cursor = self.edge_start
++            for source, begin, end in rows:
++                if begin != cursor or end < begin:
++                    raise ValueError('graph checkpoint row offsets mismatch')
++                cursor = end
++            if cursor != self.edge_start + count:
++                raise ValueError('graph checkpoint edge count mismatch')
++            if path.stat().st_size != count * 16 or digest(path, json.dumps(rows, separators=(',', ':')).encode()) != shard['sha256']:
++                raise ValueError('graph checkpoint shard hash/size mismatch')
++            with path.open('rb') as stream:
++                for attribute, _kind, _width in BUFFERS:
++                    getattr(network, attribute).fromfile(stream, count)
++            for source, begin, end in rows:
++                network._arc_slices[source] = (begin, end)
++            # Reconstruct sink entries from verified arrays, not duplicate JSON.
++            for source, begin, end in rows:
++                index = bisect_left(network._arc_targets, network.SINK, begin, end)
++                if index < end and network._arc_targets[index] == network.SINK:
++                    network.sink_arcs.append((source, network._arc_costs[index], None))
++            self.finished += len(rows)
++            self.edge_start += count
++        self.resumed_sources = self.finished
++        self.io_s += time.monotonic() - started
++        return self.finished
++
++    def maybe_commit(self, network, finished, *, force=False):
++        if finished == self.finished:
++            return
++        count = len(network._arc_targets) - self.edge_start
++        if (not force and count * 16 < self.shard_bytes
++                and time.monotonic() - self.last_commit < self.interval_s):
++            return
++        started = time.monotonic()
++        sources = self.source_order[self.finished:finished]
++        rows = [(source, *network._arc_slices[source]) for source in sources]
++        number = len(self.manifest['shards'])
++        name = f'shard-{number:06d}.bin'
++        temporary = self.directory / ('.' + name + '.' + uuid.uuid4().hex)
++        h = hashlib.sha256(json.dumps(rows, separators=(',', ':')).encode())
++        try:
++            with temporary.open('wb') as stream:
++                for attribute, _kind, _width in BUFFERS:
++                    view = memoryview(getattr(network, attribute))[self.edge_start:]
++                    try:
++                        stream.write(view)
++                        h.update(view)
++                    finally:
++                        view.release()
++                stream.flush()
++                os.fsync(stream.fileno())
++            os.replace(temporary, self.directory / name)
++            fsync_directory(self.directory)
++            shard = {'file': name, 'sha256': h.hexdigest(),
++                     'edge_start': self.edge_start, 'edge_count': count, 'rows': rows}
++            updated = dict(self.manifest, shards=self.manifest['shards'] + [shard])
++            manifest_tmp = self.directory / ('.manifest.' + uuid.uuid4().hex)
++            try:
++                with manifest_tmp.open('w') as stream:
++                    json.dump(updated, stream, separators=(',', ':'), allow_nan=False)
++                    stream.flush()
++                    os.fsync(stream.fileno())
++                os.replace(manifest_tmp, self.manifest_path)
++                fsync_directory(self.directory)
++            finally:
++                manifest_tmp.unlink(missing_ok=True)
++            self.manifest = updated
++            self.finished = finished
++            self.edge_start = len(network._arc_targets)
++            self.bytes_written += count * 16
++            self.last_commit = time.monotonic()
++        finally:
++            temporary.unlink(missing_ok=True)
++            self.io_s += time.monotonic() - started
+diff --git a/tests/test_graph_arc_checkpoints.py b/tests/test_graph_arc_checkpoints.py
+new file mode 100644
+index 00000000..3236543f
+--- /dev/null
++++ b/tests/test_graph_arc_checkpoints.py
+@@ -0,0 +1,182 @@
++import hashlib
++import json
++import os
++from pathlib import Path
++import signal
++import subprocess
++import sys
++import tempfile
++import time
++import unittest
++from unittest import mock
++
++REPO = Path(__file__).resolve().parents[1]
++sys.path[:0] = [str(REPO / 'src'), str(REPO / 'tests')]
++from event_pricer_network import EventExpandedNetwork
++from graph_arc_checkpoints import ArcCheckpoints
++from test_event_pricer_network import two_trip_problem, prices
++
++
++def network(directory=None, **changes):
++    arguments = dict(soc_step=30, block_min=10, g_kwh=240,
++                     charge_kw=240, reserve_kwh=0, arc_checkpoint_dir=directory,
++                     arc_checkpoint_identity={'git_commit': 'fixture', 'input_sha256': 'fixture'})
++    arguments.update(changes)
++    return EventExpandedNetwork(two_trip_problem(), prices(), **arguments)
++
++
++def real_network(directory=None):
++    from test_event_pricer_tie_keys import build_problem, restricted_problem
++    problem = build_problem(REPO / 'data/overnight_decomposition_20260912',
++                            'd00_g3.csv', reference_data_dir=REPO / 'data')
++    problem = restricted_problem(problem, problem.trips[:3])
++    return EventExpandedNetwork(problem, prices(), soc_step=30, block_min=10,
++                                g_kwh=240, charge_kw=240, reserve_kwh=0,
++                                arc_checkpoint_dir=directory,
++                                arc_checkpoint_identity={'fixture': 'real3'})
++
++
++def fingerprint(graph):
++    value = {
++        'targets': hashlib.sha256(graph._arc_targets.tobytes()).hexdigest(),
++        'costs': hashlib.sha256(graph._arc_costs.tobytes()).hexdigest(),
++        'recipes': hashlib.sha256(graph._arc_recipes.tobytes()).hexdigest(),
++        'slices': graph._arc_slices,
++        'sink': graph.sink_arcs,
++        'metrics': graph.metrics(),
++        'fixed': graph.fixed_sequence_record((0, 1)),
++        'queries': [graph.min_reduced_cost_route({0: a, 1: b})
++                    for a, b in [(0, 0), (100000, 100000), (150000, 80000)]],
++    }
++    return json.loads(json.dumps(value, default=lambda x: x.tolist()))
++
++
++class GraphCheckpointTests(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory()
++        self.path = Path(self.temp.name) / 'checkpoints'
++        self.reference = fingerprint(network())
++
++    def tearDown(self):
++        self.temp.cleanup()
++
++    def crash_child(self, before_manifest=False, real=False):
++        program = '''
++import os, signal, sys
++from pathlib import Path
++sys.path[:0] = [sys.argv[1] + '/src', sys.argv[1] + '/tests']
++from test_graph_arc_checkpoints import network, real_network
++from graph_arc_checkpoints import ArcCheckpoints
++original = ArcCheckpoints.maybe_commit
++counter = 0
++if sys.argv[3] == 'before_manifest':
++    replace = os.replace
++    def crash_replace(source, destination):
++        global counter
++        if Path(destination).name == 'manifest.json':
++            counter += 1
++            if counter == 3:
++                os.kill(os.getpid(), signal.SIGKILL)
++        return replace(source, destination)
++    os.replace = crash_replace
++
++def commit(self, graph, finished, **kwargs):
++    self.shard_bytes = 1
++    original(self, graph, finished, **kwargs)
++    if sys.argv[3] == 'after_manifest' and finished == 3:
++        os.kill(os.getpid(), signal.SIGKILL)
++ArcCheckpoints.maybe_commit = commit
++(real_network if sys.argv[4] == 'real' else network)(sys.argv[2])
++'''
++        result = subprocess.run([sys.executable, '-c', program, str(REPO), str(self.path),
++                                 'before_manifest' if before_manifest else 'after_manifest', 'real' if real else 'toy'],
++                                capture_output=True, text=True)
++        self.assertEqual(result.returncode, -signal.SIGKILL, result.stderr)
++
++    def test_killed_after_commit_skips_rows_and_is_identical(self):
++        self.crash_child()
++        calls = []
++        original = EventExpandedNetwork._finalize_source
++        def finalize(graph, source):
++            calls.append(source)
++            return original(graph, source)
++        with mock.patch.object(EventExpandedNetwork, '_finalize_source', finalize):
++            graph = network(self.path)
++        self.assertEqual(graph.graph_checkpoint_report['resumed_sources'], 3)
++        source_order = [0] + [s for _, s in sorted(graph.trip_node.items())]
++        self.assertEqual(calls, source_order[3:])
++        self.assertEqual(fingerprint(graph), self.reference)
++
++    def test_killed_before_manifest_ignores_orphan_shard(self):
++        self.crash_child(before_manifest=True)
++        self.assertTrue((self.path / 'shard-000002.bin').exists())
++        graph = network(self.path)
++        self.assertEqual(graph.graph_checkpoint_report['resumed_sources'], 2)
++        self.assertEqual(fingerprint(graph), self.reference)
++
++    def test_complete_checkpoint_reuses_all_rows_and_keeps_cache_compatible(self):
++        first = network(self.path)
++        with mock.patch.object(EventExpandedNetwork, '_finalize_source', side_effect=AssertionError('rebuilt')):
++            restored = network(self.path)
++        self.assertEqual(fingerprint(first), fingerprint(restored))
++        from exact_pricer_expanded import _write_event_network_cache, _load_event_network_cache
++        cache = Path(self.temp.name) / 'complete.pkl'
++        _write_event_network_cache(cache, restored, {'fixture': 1}, 0)
++        loaded, _ = _load_event_network_cache(cache, {'fixture': 1})
++        self.assertEqual(fingerprint(loaded), self.reference)
++
++    def test_corrupt_binary_is_rejected(self):
++        network(self.path)
++        path = self.path / 'shard-000000.bin'
++        data = bytearray(path.read_bytes());data[0] ^= 1;path.write_bytes(data)
++        with self.assertRaisesRegex(ValueError, 'hash/size'):
++            network(self.path)
++
++    def test_corrupt_row_metadata_is_rejected(self):
++        network(self.path)
++        path = self.path / 'manifest.json';doc = json.loads(path.read_text())
++        doc['shards'][0]['rows'][0][2] += 1;path.write_text(json.dumps(doc))
++        with self.assertRaisesRegex(ValueError, 'offsets|hash'):
++            network(self.path)
++
++    def test_changed_physics_and_provenance_are_rejected(self):
++        network(self.path)
++        for changes in [dict(charge_kw=120), dict(arc_checkpoint_identity={'git_commit': 'changed'})]:
++            with self.subTest(changes=changes), self.assertRaisesRegex(ValueError, 'identity'):
++                network(self.path, **changes)
++
++    def test_changed_trip_and_tariff_are_rejected(self):
++        network(self.path)
++        altered_prices = prices();altered_prices[next(iter(altered_prices))][1] = 7
++        for problem, tariff in [(two_trip_problem(180), prices()), (two_trip_problem(), altered_prices)]:
++            with self.assertRaisesRegex(ValueError, 'identity'):
++                EventExpandedNetwork(problem, tariff, soc_step=30, block_min=10,
++                                     g_kwh=240, charge_kw=240, reserve_kwh=0,
++                                     arc_checkpoint_dir=self.path,
++                                     arc_checkpoint_identity={'git_commit':'fixture','input_sha256':'fixture'})
++
++    def test_concurrent_writer_is_rejected_and_lock_released_on_error(self):
++        self.path.mkdir()
++        with (self.path / 'writer.lock').open('a') as lock:
++            import fcntl
++            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
++            with self.assertRaises(BlockingIOError):
++                network(self.path)
++        with mock.patch.object(EventExpandedNetwork, '_direct_arcs', side_effect=RuntimeError('interrupt')):
++            with self.assertRaisesRegex(RuntimeError, 'interrupt'):
++                network(self.path)
++        self.assertEqual(fingerprint(network(self.path)), self.reference)
++
++    def test_real_csv_rebuilds_same_identity_across_processes(self):
++        self.crash_child(real=True)
++        restored = real_network(self.path)
++        self.assertEqual(restored.graph_checkpoint_report['resumed_sources'], 3)
++        self.assertEqual(fingerprint(restored), fingerprint(real_network()))
++
++    def test_explicit_mode_rejects_checkpoints(self):
++        with self.assertRaisesRegex(ValueError, 'lazy packed'):
++            network(self.path, arc_mode='explicit')
++
++
++if __name__ == '__main__':
++    unittest.main()

@@ -1,0 +1,25 @@
+{
+  "commit": "b931772dadf1e5930fd87bf4a89edd7dcaf6c51a",
+  "worktree": "/Users/nadan/Documents/projects/demandresponse/.codex-work/charging-factorial-20260921",
+  "campaign_path_in_commit": "outputs/research_management_20260921/charging_fee_factorial",
+  "manifest_sha256": "b3aae8ebcd98d4ef4749c314261670435afc768351f546c63dd541b584ec6532",
+  "files": {
+    "worker.py": "f5d4480f59be9ba1754ca2ba404d117c0adca04669eca0c7f58d16cdc07a33df",
+    "submit.py": "d2fb3625ec5b61f747f27d0b2e61c0e24547cf7e2d69e77f2f03ea03b49cc917",
+    "worker.sub": "54ba688219021f600a8c10926e47831d5c23a13bb5f4497eb9ac87a58c65248a",
+    "run_case.py": "215292a69ff0700c843520efc13ff2222ca76cb95dc596d380f8348cbf8b1d50",
+    "manifest.json": "b3aae8ebcd98d4ef4749c314261670435afc768351f546c63dd541b584ec6532",
+    "prepare.py": "2744756bbcfb4b48770cf534a5bdd1bd63571e2597f66a04233151a8fad7b14a",
+    "bundle/tariffs/peak12.csv": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+    "bundle/tariffs/peak18.csv": "d70c3c3f9c15b82f26e1262fb2067f9fcc5e41d63e9ffbe877d33b5fa16563a6",
+    "bundle/tariffs/peak08.csv": "b461f12cf8ca41ba8a89102b32d46ea16b974566ea05849dd75776a7108f341e",
+    "bundle/data/Par_VehicleDetails_Updated.csv": "11dff837f8f62efb73f8fe98a2c325a8033e56754fa6334f853c9899404ee846",
+    "bundle/.codex-work/review-strict-chain-20260916/src/giro_partille_physics.py": "861e83411316adf9b73d95015f475c496e7d49d7963cf48d682d74b198a4b29f",
+    "bundle/outputs/meeting_20260917/route_explainer/inputs/original.json": "a015a776f9103b3d6e274c60a7b3378e8c8ccfbdee7dfedc5d5ee74391175baa",
+    "bundle/outputs/meeting_20260917/route_explainer/inputs/k05.csv": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+    "bundle/outputs/week_20260921/cleanup_physics/joint_sequence_charging.py": "5afaafb3bd1f8dbb2c2b57c1ad0c0500f7dceedd07b386f017d647cfbda3dedb",
+    "bundle/outputs/week_20260921/cleanup_physics/saved_sequence_replay.json": "c1da7af401110e34bcd3a45a0e6a262a33eff582ff21516225d01c264b0a4bcd",
+    "bundle/outputs/week_20260921/cleanup_physics/matched_fixed_windows.py": "ee7e34f3a767f41c3beb69c20de9ea78de6dffc5da5f019326a55c691870b53d",
+    "bundle/outputs/week_20260921/cleanup_physics/inputs/peak08_h26.csv": "b461f12cf8ca41ba8a89102b32d46ea16b974566ea05849dd75776a7108f341e"
+  }
+}

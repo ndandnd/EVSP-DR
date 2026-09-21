@@ -1,0 +1,24 @@
+--- outputs/week_20260921/cleanup_physics/joint_sequence_charging.py
++++ outputs/research_management_20260921/charging_fee_factorial/bundle/outputs/week_20260921/cleanup_physics/joint_sequence_charging.py
+@@ -14,11 +14,11 @@
+ TR={int(r['count_trip_id']):dict(start=f.minutes(r['Start1']),end=f.minutes(r['End1']),energy=float(r['Usage kWh']),source_id=r['Ordered_Trip_ID']) for r in csv.DictReader((I/'k05.csv').open())}
+ ORIG=json.loads((I/'original.json').read_text())['routes'];pr=PARTILLE_PROFILES['18E1'];C=pr.usable_capacity_kwh;reserve=pr.reserve_kwh;idle=pr.idle_kw/60
+ 
+-def solve(arm,fee):
++def solve(arm,fee,seconds=600,threads=2,seed=0):
+  routes=REPLAY[arm]['routes'];assert all(r['feasible'] for r in routes)
+  perm=max(itertools.permutations(range(5)),key=lambda pp:sum(len(set(routes[j]['trips'])&set(ORIG[k]['trips'])) for j,k in enumerate(pp)))
+  target=[f.TARGET[ORIG[k]['duty_id']] for k in perm]
+- m=gp.Model(arm+'_matched_recharge');m.Params.Threads=4;m.Params.TimeLimit=120;m.Params.MIPGap=.0001;m.Params.LogFile=str(P/f'{arm}.gurobi.log');m.Params.NumericFocus=2
++ m=gp.Model(arm+'_matched_recharge');m.Params.Threads=threads;m.Params.TimeLimit=seconds;m.Params.Seed=seed;m.Params.MIPGap=.0001;m.Params.LogFile=str(P/f'{arm}.gurobi.log');m.Params.NumericFocus=2
+  conn=[];allrecords=[];obj=gp.LinExpr()
+  for ri,r in enumerate(routes):
+   first=r['actions'][0];soc=m.addVar(lb=C-first['deadhead_kwh'],ub=C-first['deadhead_kwh']);records=[]
+@@ -69,6 +69,6 @@
+    capacity[st]=peak
+   assert all(n<=1 for st,n in capacity.items() if st!='PARX');result['capacity_peaks']=capacity
+  result['scope']='documented18E1 physics and charger counts; fixed saved joint tripsequences and stationpaths; staticDHD, platform/FIFO/driver rules unvalidated; terminal perbus matchedoriginal floor'
+- (P/f'{arm}.json').write_text(json.dumps(result,indent=2));m.write(str(P/f'{arm}.lp'));m.dispose();print(arm,result['status'],result['objective'],result.get('capacity_peaks'))
++ (P/f'{arm}.json').write_text(json.dumps(result,indent=2));m.write(str(P/f'{arm}.lp'));m.dispose();print(arm,result['status'],result['objective'],result.get('capacity_peaks'));return result
+ if __name__=='__main__':
+  solve('saved_joint_fee0',0);solve('saved_joint_fee5',5)

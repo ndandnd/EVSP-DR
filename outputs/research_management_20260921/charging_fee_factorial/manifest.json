@@ -1,0 +1,271 @@
+{
+  "question": "Within an identical frozen trip assignment and fixed station path, how does a start fee change charging?",
+  "source_model": "outputs/week_20260921/cleanup_physics/joint_sequence_charging.py",
+  "cases": [
+    {
+      "case_id": "original_peak08_fee0",
+      "fee_pair_id": "original_peak08",
+      "arm": "original",
+      "peak": 8,
+      "fee": 0,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "original_peak08_fee5",
+      "fee_pair_id": "original_peak08",
+      "arm": "original",
+      "peak": 8,
+      "fee": 5,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "original_peak12_fee0",
+      "fee_pair_id": "original_peak12",
+      "arm": "original",
+      "peak": 12,
+      "fee": 0,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "original_peak12_fee5",
+      "fee_pair_id": "original_peak12",
+      "arm": "original",
+      "peak": 12,
+      "fee": 5,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "original_peak18_fee0",
+      "fee_pair_id": "original_peak18",
+      "arm": "original",
+      "peak": 18,
+      "fee": 0,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "original_peak18_fee5",
+      "fee_pair_id": "original_peak18",
+      "arm": "original",
+      "peak": 18,
+      "fee": 5,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "saved_joint_fee0_peak08_fee0",
+      "fee_pair_id": "saved_joint_fee0_peak08",
+      "arm": "saved_joint_fee0",
+      "peak": 8,
+      "fee": 0,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "saved_joint_fee0_peak08_fee5",
+      "fee_pair_id": "saved_joint_fee0_peak08",
+      "arm": "saved_joint_fee0",
+      "peak": 8,
+      "fee": 5,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "saved_joint_fee0_peak12_fee0",
+      "fee_pair_id": "saved_joint_fee0_peak12",
+      "arm": "saved_joint_fee0",
+      "peak": 12,
+      "fee": 0,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "saved_joint_fee0_peak12_fee5",
+      "fee_pair_id": "saved_joint_fee0_peak12",
+      "arm": "saved_joint_fee0",
+      "peak": 12,
+      "fee": 5,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "saved_joint_fee0_peak18_fee0",
+      "fee_pair_id": "saved_joint_fee0_peak18",
+      "arm": "saved_joint_fee0",
+      "peak": 18,
+      "fee": 0,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "saved_joint_fee0_peak18_fee5",
+      "fee_pair_id": "saved_joint_fee0_peak18",
+      "arm": "saved_joint_fee0",
+      "peak": 18,
+      "fee": 5,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "saved_joint_fee5_peak08_fee0",
+      "fee_pair_id": "saved_joint_fee5_peak08",
+      "arm": "saved_joint_fee5",
+      "peak": 8,
+      "fee": 0,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "saved_joint_fee5_peak08_fee5",
+      "fee_pair_id": "saved_joint_fee5_peak08",
+      "arm": "saved_joint_fee5",
+      "peak": 8,
+      "fee": 5,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "saved_joint_fee5_peak12_fee0",
+      "fee_pair_id": "saved_joint_fee5_peak12",
+      "arm": "saved_joint_fee5",
+      "peak": 12,
+      "fee": 0,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "saved_joint_fee5_peak12_fee5",
+      "fee_pair_id": "saved_joint_fee5_peak12",
+      "arm": "saved_joint_fee5",
+      "peak": 12,
+      "fee": 5,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "saved_joint_fee5_peak18_fee0",
+      "fee_pair_id": "saved_joint_fee5_peak18",
+      "arm": "saved_joint_fee5",
+      "peak": 18,
+      "fee": 0,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    },
+    {
+      "case_id": "saved_joint_fee5_peak18_fee5",
+      "fee_pair_id": "saved_joint_fee5_peak18",
+      "arm": "saved_joint_fee5",
+      "peak": 18,
+      "fee": 5,
+      "seconds": 600,
+      "threads": 2,
+      "seed": 0
+    }
+  ],
+  "sources": {
+    "outputs/week_20260921/cleanup_physics/matched_fixed_windows.py": {
+      "original_path": "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/matched_fixed_windows.py",
+      "sha256": "ee7e34f3a767f41c3beb69c20de9ea78de6dffc5da5f019326a55c691870b53d"
+    },
+    "outputs/week_20260921/cleanup_physics/joint_sequence_charging.py": {
+      "original_path": "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/joint_sequence_charging.py",
+      "sha256": "f48188c37c2ae909dc31219a4e2b479d57b7a4991878b7d52b3015c8d0f99889",
+      "executed_sha256": "5afaafb3bd1f8dbb2c2b57c1ad0c0500f7dceedd07b386f017d647cfbda3dedb"
+    },
+    "outputs/week_20260921/cleanup_physics/saved_sequence_replay.json": {
+      "original_path": "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/saved_sequence_replay.json",
+      "sha256": "c1da7af401110e34bcd3a45a0e6a262a33eff582ff21516225d01c264b0a4bcd"
+    },
+    "outputs/week_20260921/cleanup_physics/inputs/peak08_h26.csv": {
+      "original_path": "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/peak08_h26.csv",
+      "sha256": "b461f12cf8ca41ba8a89102b32d46ea16b974566ea05849dd75776a7108f341e"
+    },
+    "outputs/meeting_20260917/route_explainer/inputs/original.json": {
+      "original_path": "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260917/route_explainer/inputs/original.json",
+      "sha256": "a015a776f9103b3d6e274c60a7b3378e8c8ccfbdee7dfedc5d5ee74391175baa"
+    },
+    "outputs/meeting_20260917/route_explainer/inputs/k05.csv": {
+      "original_path": "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260917/route_explainer/inputs/k05.csv",
+      "sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d"
+    },
+    "data/Par_VehicleDetails_Updated.csv": {
+      "original_path": "/Users/nadan/Documents/projects/demandresponse/data/Par_VehicleDetails_Updated.csv",
+      "sha256": "11dff837f8f62efb73f8fe98a2c325a8033e56754fa6334f853c9899404ee846"
+    },
+    ".codex-work/review-strict-chain-20260916/src/giro_partille_physics.py": {
+      "original_path": "/Users/nadan/Documents/projects/demandresponse/.codex-work/review-strict-chain-20260916/src/giro_partille_physics.py",
+      "sha256": "861e83411316adf9b73d95015f475c496e7d49d7963cf48d682d74b198a4b29f"
+    },
+    "tariffs/peak08.csv": {
+      "original_path": "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/peak08_h26.csv",
+      "sha256": "b461f12cf8ca41ba8a89102b32d46ea16b974566ea05849dd75776a7108f341e"
+    },
+    "tariffs/peak12.csv": {
+      "original_path": "/Users/nadan/Documents/projects/demandresponse/.codex-work/zero-fee-terminal-cg/data/tariff_response/peak12_h26.csv",
+      "sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381"
+    },
+    "tariffs/peak18.csv": {
+      "original_path": "/Users/nadan/Documents/projects/demandresponse/.codex-work/zero-fee-terminal-cg/data/tariff_response/peak18_h26.csv",
+      "sha256": "d70c3c3f9c15b82f26e1262fb2067f9fcc5e41d63e9ffbe877d33b5fa16563a6"
+    }
+  },
+  "arm_labels": {
+    "original": "Original trip assignment with recovered station paths",
+    "saved_joint_fee0": "Saved fee0-derived trip assignment with recovered station paths",
+    "saved_joint_fee5": "Saved fee5-derived trip assignment with recovered station paths"
+  },
+  "model_family": "Fixed trip-sequence charging MIP; no column generation",
+  "initialization": "No MIP starts; Gurobi default initialization, Seed0 in every case",
+  "objective": "Purchased energy at synthetic tariff plus start_fee times charging starts",
+  "master_sense": "Not a covering master; all62 fixed-assignment trips served exactly once",
+  "source_modification": "Only TimeLimit, Threads and Seed parameterization and returning the existing result; mathematical model unchanged",
+  "physics": {
+    "group": "18E1",
+    "battery_kwh": 236.44,
+    "initial_kwh": 236.44,
+    "reserve_fraction": 0.15,
+    "depot_kw": 60,
+    "opportunity": "documented nonlinear taper",
+    "min_charge_minutes": 3,
+    "idle_kw": 0.1,
+    "station_capacity": "one at2190L and4808 within five-bus cohort",
+    "terminal": "each saved bus matched to original duty by maximum overlap; identical within fee pair"
+  },
+  "scope": "fixed sequences and station paths; one optional charge per gap confined to one tariff hour; not CG or unrestricted charging/routing optimum",
+  "limitations": [
+    "static reference deadhead",
+    "original recorded path need not belong to this restricted charging model",
+    "no background35buses, FIFO, platform blocking or crew constraints"
+  ],
+  "resources": {
+    "partition": "default_partition",
+    "cpus": 2,
+    "memory": "8G",
+    "allocation": "00:20:00",
+    "independent_tasks": 18,
+    "concurrency": 18,
+    "requeue": true,
+    "exclude": "scaglione-compute-01"
+  }
+}

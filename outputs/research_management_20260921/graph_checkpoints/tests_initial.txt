@@ -1,0 +1,66 @@
+test_changed_physics_and_provenance_are_rejected (test_graph_arc_checkpoints.GraphCheckpointTests.test_changed_physics_and_provenance_are_rejected) ... ok
+test_changed_trip_and_tariff_are_rejected (test_graph_arc_checkpoints.GraphCheckpointTests.test_changed_trip_and_tariff_are_rejected) ... ok
+test_complete_checkpoint_reuses_all_rows_and_keeps_cache_compatible (test_graph_arc_checkpoints.GraphCheckpointTests.test_complete_checkpoint_reuses_all_rows_and_keeps_cache_compatible) ... ERROR
+test_concurrent_writer_is_rejected_and_lock_released_on_error (test_graph_arc_checkpoints.GraphCheckpointTests.test_concurrent_writer_is_rejected_and_lock_released_on_error) ... ERROR
+test_corrupt_binary_is_rejected (test_graph_arc_checkpoints.GraphCheckpointTests.test_corrupt_binary_is_rejected) ... ok
+test_corrupt_row_metadata_is_rejected (test_graph_arc_checkpoints.GraphCheckpointTests.test_corrupt_row_metadata_is_rejected) ... ok
+test_explicit_mode_rejects_checkpoints (test_graph_arc_checkpoints.GraphCheckpointTests.test_explicit_mode_rejects_checkpoints) ... ok
+test_killed_after_commit_skips_rows_and_is_identical (test_graph_arc_checkpoints.GraphCheckpointTests.test_killed_after_commit_skips_rows_and_is_identical) ... ERROR
+test_killed_before_manifest_ignores_orphan_shard (test_graph_arc_checkpoints.GraphCheckpointTests.test_killed_before_manifest_ignores_orphan_shard) ... ERROR
+
+======================================================================
+ERROR: test_complete_checkpoint_reuses_all_rows_and_keeps_cache_compatible (test_graph_arc_checkpoints.GraphCheckpointTests.test_complete_checkpoint_reuses_all_rows_and_keeps_cache_compatible)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/nadan/Documents/projects/demandresponse/.codex-work/graph-checkpoints-20260921/tests/test_graph_arc_checkpoints.py", line 109, in test_complete_checkpoint_reuses_all_rows_and_keeps_cache_compatible
+    self.assertEqual(fingerprint(first), fingerprint(restored))
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/case.py", line 885, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/case.py", line 1178, in assertDictEqual
+    if d1 != d2:
+       ^^^^^^^^
+ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
+
+======================================================================
+ERROR: test_concurrent_writer_is_rejected_and_lock_released_on_error (test_graph_arc_checkpoints.GraphCheckpointTests.test_concurrent_writer_is_rejected_and_lock_released_on_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/nadan/Documents/projects/demandresponse/.codex-work/graph-checkpoints-20260921/tests/test_graph_arc_checkpoints.py", line 156, in test_concurrent_writer_is_rejected_and_lock_released_on_error
+    self.assertEqual(fingerprint(network(self.path)), self.reference)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/case.py", line 885, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/case.py", line 1178, in assertDictEqual
+    if d1 != d2:
+       ^^^^^^^^
+ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
+
+======================================================================
+ERROR: test_killed_after_commit_skips_rows_and_is_identical (test_graph_arc_checkpoints.GraphCheckpointTests.test_killed_after_commit_skips_rows_and_is_identical)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/nadan/Documents/projects/demandresponse/.codex-work/graph-checkpoints-20260921/tests/test_graph_arc_checkpoints.py", line 96, in test_killed_after_commit_skips_rows_and_is_identical
+    self.assertEqual(fingerprint(graph), self.reference)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/case.py", line 885, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/case.py", line 1178, in assertDictEqual
+    if d1 != d2:
+       ^^^^^^^^
+ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
+
+======================================================================
+ERROR: test_killed_before_manifest_ignores_orphan_shard (test_graph_arc_checkpoints.GraphCheckpointTests.test_killed_before_manifest_ignores_orphan_shard)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/nadan/Documents/projects/demandresponse/.codex-work/graph-checkpoints-20260921/tests/test_graph_arc_checkpoints.py", line 103, in test_killed_before_manifest_ignores_orphan_shard
+    self.assertEqual(fingerprint(graph), self.reference)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/case.py", line 885, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/case.py", line 1178, in assertDictEqual
+    if d1 != d2:
+       ^^^^^^^^
+ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
+
+----------------------------------------------------------------------
+Ran 9 tests in 1.506s
+
+FAILED (errors=4)

@@ -1,0 +1,52 @@
+{
+  "root": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/charging_fee_factorial",
+  "files": [
+    "README.md",
+    "RESULTS.md",
+    "manifest.json",
+    "code_receipt.json",
+    "mathematical_model_diff.patch",
+    "cell_results.csv",
+    "paired_fee_results.csv",
+    "results_summary.json",
+    "controlled_start_fee.png",
+    "controlled_start_fee.pdf",
+    "controlled_start_fee.svg",
+    "figure_caption.txt",
+    "log_excerpts.md",
+    "collect_and_plot.py",
+    "finish_artifacts.py",
+    "repair_numerical_witness.py",
+    "postprocess_repair/original_peak08_fee5/repair_report.json"
+  ],
+  "sha256": {
+    "README.md": "297021684628bb4cbc907f6c58dc67cf8f29480a027fd63c2fbd223e3ac8f826",
+    "RESULTS.md": "9cd7f14cd7445b784a113cd9630768f36cc8b01e7eb742ec03b9fa18181133fd",
+    "manifest.json": "b3aae8ebcd98d4ef4749c314261670435afc768351f546c63dd541b584ec6532",
+    "code_receipt.json": "364b9d8f48ae90b2c40ad006e461c2bae58ae06175f5fac06feb3dad2f79eef2",
+    "mathematical_model_diff.patch": "3e8b30d4b8588014c61819a60861eac9f255c254af013f1560d8f95521067c98",
+    "cell_results.csv": "5edb28880cc8f7fccc1b0b4ca0a78ee02aedc2ae33c13c2d52c447d8bbd7f79c",
+    "paired_fee_results.csv": "d7e3e13cb1bba0566cb4b1cb54900e58d3ff362719891c1dc708d82f44b008c4",
+    "results_summary.json": "5e0e5558f053cc293d42f3afb59eb36e5d21e2696d3620fbe926daf736069a50",
+    "controlled_start_fee.png": "c11f7f8afa86a2dbb51c7ae34ab0cd7854be6d41617d44ea84a613049f5043a6",
+    "controlled_start_fee.pdf": "e69e26c0d0d2e9c6747d284ffb4af2640f7484b7075e0f822c79d4e71328ff64",
+    "controlled_start_fee.svg": "6a2f68214e5e3a2543eede2401040fe445333ee7ed2a8cd218023ee6c8375302",
+    "figure_caption.txt": "ab87702cbc237be8d0987d3bb68f41d9c5667a9372cdd2911fcc7368c38a1761",
+    "log_excerpts.md": "7045a880e7751bf3c01fbbd04424581986cac5f307731ca48f4d7ae1d6591525",
+    "collect_and_plot.py": "641deb64de8f4be290afef9c39ed03a3a1b39502861355494f102b5c9cb81809",
+    "finish_artifacts.py": "de9d865390ecabf4d708458df7f931c05932d246be9adcb4169b24b5542b561a",
+    "repair_numerical_witness.py": "7b8a3cf286777d84c0369bf33acdac406481cb30ff4291c1c6b05455889eb5f4",
+    "postprocess_repair/original_peak08_fee5/repair_report.json": "a2d00a385a6240af580dcde64c71ebdcf00b25b929094e8aff839184d397f74c"
+  },
+  "excludes": [
+    "bundle/ raw inputs and source deployment",
+    "native/ complete operational artifacts; retain locally for audit",
+    "smoke/ QA cases",
+    "__pycache__/",
+    "deployment.tar.gz",
+    "scheduler snapshots",
+    "license contents",
+    "private real-tariff and invitation files"
+  ],
+  "note": "Only listed aggregate findings, fixed-model provenance, plot source and endpoint excerpts are proposed for publication. Raw logs/models/results remain locally accessible via cell_results.csv."
+}

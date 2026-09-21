@@ -1,0 +1,20 @@
+{
+  "branch": "codex/graph-checkpoints-20260921",
+  "commit": "71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a",
+  "base_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "worktree": "/Users/nadan/Documents/projects/demandresponse/.codex-work/graph-checkpoints-20260921",
+  "new_checkpoint_tests_passed": 10,
+  "existing_event_regressions_passed": 18,
+  "cluster_submissions": 0,
+  "running_jobs_modified": 0,
+  "remote_source_mutations": 0,
+  "representation_migration_required": false,
+  "current_run_can_be_retrofitted": false,
+  "scope": "opt-in partial baseline event/lazy graph construction only; no CG/solver checkpoints",
+  "source_files": [
+    "src/graph_arc_checkpoints.py",
+    "src/event_pricer_network.py",
+    "src/exact_pricer_expanded.py",
+    "tests/test_graph_arc_checkpoints.py"
+  ]
+}

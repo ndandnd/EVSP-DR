@@ -1,0 +1,103 @@
+{
+  "scope": "local synthetic32trip no-charge graph; 3 repetitions; hardware/cache ordering uncontrolled; not production performance",
+  "samples": [
+    {
+      "fresh": {
+        "wall_s": 0.057378541212528944,
+        "checkpoint": null
+      },
+      "checkpoint_build": {
+        "wall_s": 0.08813024964183569,
+        "checkpoint": {
+          "resumed_sources": 0,
+          "total_sources": 3073,
+          "shards": 1,
+          "bytes_written_this_attempt": 803584,
+          "io_s_this_attempt": 0.005934333428740501
+        }
+      },
+      "completed_resume": {
+        "wall_s": 0.013585833832621574,
+        "checkpoint": {
+          "resumed_sources": 3073,
+          "total_sources": 3073,
+          "shards": 1,
+          "bytes_written_this_attempt": 0,
+          "io_s_this_attempt": 0.0020280838944017887
+        }
+      },
+      "repeat": 0,
+      "dag_nodes": 3074,
+      "dag_arcs": 50224,
+      "packed_bytes": 803584,
+      "all_buffer_hashes_equal": true
+    },
+    {
+      "fresh": {
+        "wall_s": 0.05737812491133809,
+        "checkpoint": null
+      },
+      "checkpoint_build": {
+        "wall_s": 0.08136854087933898,
+        "checkpoint": {
+          "resumed_sources": 0,
+          "total_sources": 3073,
+          "shards": 1,
+          "bytes_written_this_attempt": 803584,
+          "io_s_this_attempt": 0.0067970422096550465
+        }
+      },
+      "completed_resume": {
+        "wall_s": 0.013563957996666431,
+        "checkpoint": {
+          "resumed_sources": 3073,
+          "total_sources": 3073,
+          "shards": 1,
+          "bytes_written_this_attempt": 0,
+          "io_s_this_attempt": 0.002243500202894211
+        }
+      },
+      "repeat": 1,
+      "dag_nodes": 3074,
+      "dag_arcs": 50224,
+      "packed_bytes": 803584,
+      "all_buffer_hashes_equal": true
+    },
+    {
+      "fresh": {
+        "wall_s": 0.05643566697835922,
+        "checkpoint": null
+      },
+      "checkpoint_build": {
+        "wall_s": 0.07698862487450242,
+        "checkpoint": {
+          "resumed_sources": 0,
+          "total_sources": 3073,
+          "shards": 1,
+          "bytes_written_this_attempt": 803584,
+          "io_s_this_attempt": 0.005828041583299637
+        }
+      },
+      "completed_resume": {
+        "wall_s": 0.0126305827870965,
+        "checkpoint": {
+          "resumed_sources": 3073,
+          "total_sources": 3073,
+          "shards": 1,
+          "bytes_written_this_attempt": 0,
+          "io_s_this_attempt": 0.001789167057722807
+        }
+      },
+      "repeat": 2,
+      "dag_nodes": 3074,
+      "dag_arcs": 50224,
+      "packed_bytes": 803584,
+      "all_buffer_hashes_equal": true
+    }
+  ],
+  "medians_s": {
+    "fresh": 0.05737812491133809,
+    "checkpoint_build": 0.08136854087933898,
+    "completed_resume": 0.013563957996666431
+  }
+}

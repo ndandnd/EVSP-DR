@@ -1,0 +1,120 @@
+{
+  "case_id": "original_peak08_fee5",
+  "raw_result_path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/charging_fee_factorial/native/results/original_peak08_fee5/668989_r0_1790021161641214996/original.json",
+  "raw_result_sha256": "bffc245f49dd5432ec4b6ef03f144a9b3dd3bee6c3a606bf9c7b2a0eed5dea02",
+  "raw_receipt_sha256": "ddcd6c95de70505127441ac92c5135d0e72ddcb3acb55fbf8ef0b91e51bc4651",
+  "raw_failed_terminal_shortfall_kwh": 2.8157760262104148e-05,
+  "repair": "Extend route index 2 charge index 3 at 2190L by 0.0001 minute (6 milliseconds); independently replay its entire duty and recompute every downstream energy and tariff cost.",
+  "altered_clock_count": 1,
+  "charge_end_before": 559.9767573947768,
+  "charge_end_after": 559.9768573947767,
+  "terminal_floor_margin_kwh": 0.00021444847694596092,
+  "raw_solver_objective": 369.63624803906384,
+  "feasible_repaired_objective": 369.63633416204846,
+  "unchanged_solver_bound": 369.63624803906384,
+  "repaired_relative_gap": 2.329938284003923e-07,
+  "validation_thresholds_unchanged": true,
+  "solver_rerun": false,
+  "raw_artifacts_unchanged": true,
+  "charges": [
+    {
+      "station": "4808",
+      "start": 360.0,
+      "end_before": 366.0,
+      "end_after": 366.0,
+      "kwh_change": -1.4210854715202004e-13,
+      "cost_change": -3.552713678800501e-15
+    },
+    {
+      "station": "2190L",
+      "start": 420.0,
+      "end_before": 429.0,
+      "end_after": 429.0,
+      "kwh_change": 1.1368683772161603e-13,
+      "cost_change": 3.375077994860476e-14
+    },
+    {
+      "station": "4808",
+      "start": 488.0,
+      "end_before": 491.0,
+      "end_after": 491.0,
+      "kwh_change": 2.3092638912203256e-14,
+      "cost_change": 0.0
+    },
+    {
+      "station": "2190L",
+      "start": 554.0,
+      "end_before": 559.9767573947768,
+      "end_after": 559.9768573947767,
+      "kwh_change": 0.00047416666659572115,
+      "cost_change": 0.00011764378859613345
+    },
+    {
+      "station": "4808",
+      "start": 617.0,
+      "end_before": 624.0,
+      "end_after": 624.0,
+      "kwh_change": -4.3877724522189965e-05,
+      "cost_change": -9.417172771364335e-06
+    },
+    {
+      "station": "2190L",
+      "start": 679.0,
+      "end_before": 689.0,
+      "end_after": 689.0,
+      "kwh_change": -3.9818860216200846e-05,
+      "cost_change": -6.763056280334467e-06
+    },
+    {
+      "station": "4808",
+      "start": 747.0,
+      "end_before": 754.0,
+      "end_after": 754.0,
+      "kwh_change": -7.728016339569876e-05,
+      "cost_change": -9.6436875542949e-06
+    },
+    {
+      "station": "2190L",
+      "start": 810.0,
+      "end_before": 820.0,
+      "end_after": 820.0,
+      "kwh_change": -2.898673304230215e-05,
+      "cost_change": -2.5361137376833653e-06
+    },
+    {
+      "station": "4808",
+      "start": 879.0,
+      "end_before": 886.0,
+      "end_after": 886.0,
+      "kwh_change": -2.6305345159016724e-05,
+      "cost_change": -1.6099860076224104e-06
+    },
+    {
+      "station": "2190L",
+      "start": 943.0,
+      "end_before": 948.0,
+      "end_after": 948.0,
+      "kwh_change": -1.1935997825673894e-05,
+      "cost_change": -5.389674271327749e-07
+    },
+    {
+      "station": "4808",
+      "start": 1011.0,
+      "end_before": 1018.0,
+      "end_after": 1018.0,
+      "kwh_change": -2.176136209897095e-05,
+      "cost_change": -7.961664776345856e-07
+    },
+    {
+      "station": "2190L",
+      "start": 1075.0,
+      "end_before": 1080.0,
+      "end_after": 1080.0,
+      "kwh_change": -9.91867005950553e-06,
+      "cost_change": -3.2296539376197586e-07
+    }
+  ],
+  "validator_sha256": "215292a69ff0700c843520efc13ff2222ca76cb95dc596d380f8348cbf8b1d50",
+  "repair_script_sha256": "7b8a3cf286777d84c0369bf33acdac406481cb30ff4291c1c6b05455889eb5f4",
+  "corrupt_repaired_terminal_and_target_rejected": true
+}
