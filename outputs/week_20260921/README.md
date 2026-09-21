@@ -1,5 +1,7 @@
 # Week of 21 September 2026 — EVSP–DR
 
+**Latest, 21 September afternoon:** [paper results preview](../research_management_20260921/paper_results/RESULTS_PREVIEW.md), [active experiment plan](../research_management_20260921/MANAGER_PLAN.md), [current document export](../research_management_20260921/doc_verification/current_after.pdf), and [figures archive](../research_management_20260921/doc_verification/figures_after.pdf). The dated entries below preserve earlier states; strict646675/646676 are now complete and their latest outcome is in [operations](../research_management_20260921/operations/README.md).
+
 **Five-place example:** [Recorded GIRO duty13309](complex_route_graphs/README.md), [morning/afternoon spatial graph](complex_route_graphs/duty_13309_graph.png), [five-page full itinerary](complex_route_graphs/duty_13309_daybook.pdf), and [interactive gallery](complex_route_graphs/gallery.html). It serves22 trips and charges at Heden, Jons väg and PARX, including a105-minute midday depot recharge. This is original-only; the depot is displaced in the diagram for clarity.
 
 [Latest figure archive with the five-place example](complex_route_graphs/doc_verification/figures_after.pdf) · [Verified preservation of all earlier figure content](complex_route_graphs/doc_verification/README.md). The current-results snapshot and Slides remain unchanged by this visual follow-up.

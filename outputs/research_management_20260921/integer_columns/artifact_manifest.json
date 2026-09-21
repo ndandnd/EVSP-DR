@@ -1,0 +1,377 @@
+{
+ "audit_utc": "2026-09-21T20:27:02.573152+00:00",
+ "scheduler_snapshot_utc": "2026-09-21T20:24:24.195686+00:00",
+ "remote_hash_verified_files": 48,
+ "artifacts": [
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260921/668461_r0/dive_argv.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260921/668461_r0/dive_argv.json",
+   "sha256": "cf719c688f6ea53ea9afe5b9e5c6d214137d2d0ef688121671e9d3792499ede9",
+   "bytes": 1010
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260921/668461_r0/result.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260921/668461_r0/result.json",
+   "sha256": "460fbdb35e0d884bed3c4d2551172cc8a46760ba5400056370e6eb4db7862195",
+   "bytes": 36706
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260921/668461_r0/mip_argv.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260921/668461_r0/mip_argv.json",
+   "sha256": "a1a4f7ba3a0bbceac2e71d8bb704ed7bacd3c132f6ebfd7cc90b109bc7ee1403",
+   "bytes": 1013
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260921/668461_r0/dive_gurobi.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260921/668461_r0/dive_gurobi.log",
+   "sha256": "1dee28a944d8d364cdc309f78bc007de3863e3a16dd4c0d1d725a8e2f18bc788",
+   "bytes": 748400
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260921/668461_r0/dive_stdout.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260921/668461_r0/dive_stdout.log",
+   "sha256": "9632bda95b82bc4aded1182e3ed654df89c46d7bf174a69c55f21741f3a29679",
+   "bytes": 748703
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260921/668461_r0/mip_stderr.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260921/668461_r0/mip_stderr.log",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260921/668461_r0/mip_gurobi.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260921/668461_r0/mip_gurobi.log",
+   "sha256": "b2f39ab3c1206ff27ca608bb9bfd2485e3657b2532464cfbd4b6a9b86e28b268",
+   "bytes": 9622
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260921/668461_r0/mip_stdout.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260921/668461_r0/mip_stdout.log",
+   "sha256": "da508f2bff9a07ca94469bffde3e6b6b9f027b785248d0a19e76a65228ffad38",
+   "bytes": 10583
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260921/668461_r0/execution.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260921/668461_r0/execution.json",
+   "sha256": "41e2c43d7670d3e4072e4166faf0cba129c5fbefded5e6c9f89bcbdfb872f616",
+   "bytes": 4483
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260921/668461_r0/dive_stderr.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260921/668461_r0/dive_stderr.log",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260921/668461_r0/dive/dive_incumbent.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260921/668461_r0/dive/dive_incumbent.json",
+   "sha256": "7b00fb9976b4b12bfed1631f4e6cbb2f963cb211502bf36d32a68d90da5013e3",
+   "bytes": 32626
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260921/668461_r0/dive/manifest.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260921/668461_r0/dive/manifest.json",
+   "sha256": "fe16ef934c1931a3f1fbf3f0b3210ec697f38eac56691a0db1e6a6dc9bd1f0d7",
+   "bytes": 25361
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260922/668463_r0/dive_argv.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260922/668463_r0/dive_argv.json",
+   "sha256": "e3ec594f6aafe4e581390aa291be5863f1036b4152a2b66186f8910b68c86e27",
+   "bytes": 1010
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260922/668463_r0/result.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260922/668463_r0/result.json",
+   "sha256": "1e51d66118e53bb5215bdceee210a91b414be2b48203c349d0a4dc6d5912b072",
+   "bytes": 40840
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260922/668463_r0/mip_argv.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260922/668463_r0/mip_argv.json",
+   "sha256": "406d6d88522e4c9521cd5597a11d1a0986f92d3fbd22751d5a62a55b1a3e0873",
+   "bytes": 1013
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260922/668463_r0/dive_gurobi.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260922/668463_r0/dive_gurobi.log",
+   "sha256": "467da700a662bddf09e059f18690874b0620ec918170711055be9f6d8564ec2a",
+   "bytes": 514513
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260922/668463_r0/dive_stdout.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260922/668463_r0/dive_stdout.log",
+   "sha256": "cf89b5888b203fdce894b81ea2dc0b898e85830cfd9e6126a7c8cbd9fc86bc2f",
+   "bytes": 514815
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260922/668463_r0/mip_stderr.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260922/668463_r0/mip_stderr.log",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260922/668463_r0/mip_gurobi.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260922/668463_r0/mip_gurobi.log",
+   "sha256": "6c5e1dba747cd339b7fc763f1b85beefb3a7c76836f9a0e88ce834808327e7e3",
+   "bytes": 9510
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260922/668463_r0/mip_stdout.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260922/668463_r0/mip_stdout.log",
+   "sha256": "ece0c3e7043232422305d9a20442cd96dffd4fb7a22c7407bd05615eda411bde",
+   "bytes": 10471
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260922/668463_r0/execution.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260922/668463_r0/execution.json",
+   "sha256": "173486771b7ec30ae866891adf5108d5aa5529f4c9f133626e4592ebb36e18a3",
+   "bytes": 4482
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260922/668463_r0/dive_stderr.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260922/668463_r0/dive_stderr.log",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260922/668463_r0/dive/dive_incumbent.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260922/668463_r0/dive/dive_incumbent.json",
+   "sha256": "757164374dab859f815bc91c99ff2484c76f6748bb202cd9f0e3535ec0032317",
+   "bytes": 32633
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260922/668463_r0/dive/manifest.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260922/668463_r0/dive/manifest.json",
+   "sha256": "4808ce88a1039bc8957407b89620c73c63b0e85063ae286de28f80aad6bbfaed",
+   "bytes": 22133
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260921/668469_r0/dive_argv.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260921/668469_r0/dive_argv.json",
+   "sha256": "819ee399fef470dd023fef2ced91588869ee85594f4985e206bbf99ae966d534",
+   "bytes": 1010
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260921/668469_r0/result.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260921/668469_r0/result.json",
+   "sha256": "7edbd444864a387f571ff53c80d541b35042d3b63a319ddd7de393162a935e3a",
+   "bytes": 47009
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260921/668469_r0/mip_argv.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260921/668469_r0/mip_argv.json",
+   "sha256": "b6b169d21c82fcfea4b6186cd9b811b9ab0be64d71e428faf94918156310f2be",
+   "bytes": 1013
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260921/668469_r0/dive_gurobi.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260921/668469_r0/dive_gurobi.log",
+   "sha256": "1982706432a5501347d71cc11bada7840bd69e04aad6942d1723ae72f4ad9022",
+   "bytes": 460425
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260921/668469_r0/dive_stdout.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260921/668469_r0/dive_stdout.log",
+   "sha256": "1392037e387e18fcfb863edecd7610e24907e2fbf75cc9bb3d4efc7036afa694",
+   "bytes": 460727
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260921/668469_r0/mip_stderr.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260921/668469_r0/mip_stderr.log",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260921/668469_r0/mip_gurobi.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260921/668469_r0/mip_gurobi.log",
+   "sha256": "6a0813bb39a346daf6b916cbdada437b9c4fc264fada25d863ef3595356a224e",
+   "bytes": 12262
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260921/668469_r0/mip_stdout.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260921/668469_r0/mip_stdout.log",
+   "sha256": "f8546f4dc60599298317207ee0b058eb4a1325b4a0d2d833796c163364a6f038",
+   "bytes": 13224
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260921/668469_r0/execution.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260921/668469_r0/execution.json",
+   "sha256": "f354ec65398160d9b5270f7e2367c47ea34d6890091b62034e3bd007c31d119f",
+   "bytes": 4483
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260921/668469_r0/dive_stderr.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260921/668469_r0/dive_stderr.log",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260921/668469_r0/dive/dive_incumbent.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260921/668469_r0/dive/dive_incumbent.json",
+   "sha256": "25236f701560461d22762dc2c666f307ed9bc5db8bcddcfdef120b761527a3fc",
+   "bytes": 40331
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260921/668469_r0/dive/manifest.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260921/668469_r0/dive/manifest.json",
+   "sha256": "bc02d12c6f071a54a4db8819040f6369d841118f4b80274ddeae479cc94717db",
+   "bytes": 26177
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260922/668471_r0/dive_argv.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260922/668471_r0/dive_argv.json",
+   "sha256": "f5ef5bd5518622f96c052cfeccd2edfcc97017df4bfa9b2019e26f559cbfc3e7",
+   "bytes": 1010
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260922/668471_r0/result.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260922/668471_r0/result.json",
+   "sha256": "28a8fed82b2e25dc6ab9689424a3e27c5bb76ae45b6c83c21d0761f381179fb2",
+   "bytes": 44353
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260922/668471_r0/mip_argv.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260922/668471_r0/mip_argv.json",
+   "sha256": "5412eb9c10bd96c97e548212b6839add370e6bcae6cc51bc982419f22e6d8e95",
+   "bytes": 1013
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260922/668471_r0/dive_gurobi.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260922/668471_r0/dive_gurobi.log",
+   "sha256": "4c55fe3e525ee9d865451523992414a5674e0be5da440c7eeca13d91942cd093",
+   "bytes": 649952
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260922/668471_r0/dive_stdout.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260922/668471_r0/dive_stdout.log",
+   "sha256": "51a0355332f6d64ea9c80839759a9fc050c779a54c387066f320088bfd1899e1",
+   "bytes": 650254
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260922/668471_r0/mip_stderr.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260922/668471_r0/mip_stderr.log",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260922/668471_r0/mip_gurobi.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260922/668471_r0/mip_gurobi.log",
+   "sha256": "85bc64c170eb6fb429986680ed8887f4f0ff4689f8dbac64d9d2dc1b35aed4c1",
+   "bytes": 11922
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260922/668471_r0/mip_stdout.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260922/668471_r0/mip_stdout.log",
+   "sha256": "627e41b9d18691d00da3dc3c21ce634f9b308c9b244ff556a0b70d2f40cac4e0",
+   "bytes": 12884
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260922/668471_r0/execution.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260922/668471_r0/execution.json",
+   "sha256": "0a39eca979695e24a9027bd4b4fd1909698d95f738fdb6e69ad114c41eb61ead",
+   "bytes": 4480
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260922/668471_r0/dive_stderr.log",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260922/668471_r0/dive_stderr.log",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260922/668471_r0/dive/dive_incumbent.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260922/668471_r0/dive/dive_incumbent.json",
+   "sha256": "fcbe8fb72bda4ef41ebf1b5d9e64202d217b5533b397633c4a68652871a6795c",
+   "bytes": 39710
+  },
+  {
+   "local": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260922/668471_r0/dive/manifest.json",
+   "remote": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260922/668471_r0/dive/manifest.json",
+   "sha256": "eca7dfd65e4aa01d726b9b803d392ff46b6075b07d7231147c2aaa53b880f64f",
+   "bytes": 26792
+  }
+ ],
+ "verified_completed_treatments": [
+  {
+   "case": "c3_k08",
+   "seed": "20260921",
+   "job_id": "668461",
+   "fleet": 8,
+   "finite_pool_bound": 8,
+   "handoff_accepted_line": 30,
+   "fleet_proof_line": 65,
+   "full_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260921/668461_r0/mip_gurobi.log",
+   "columns_generated": 15823,
+   "dive_wall_s": 1062.477878563106,
+   "mip_budget_s": 2537,
+   "actual_dive_plus_solver_s": 1091.1895220205188,
+   "end_to_end_s": 1125.9158961256035,
+   "physical_replay": true,
+   "duplicate_removal_validated": false,
+   "shared_capacity_validated": false,
+   "external_witness_columns": false,
+   "global_certificate": null
+  },
+  {
+   "case": "c3_k08",
+   "seed": "20260922",
+   "job_id": "668463",
+   "fleet": 8,
+   "finite_pool_bound": 8,
+   "handoff_accepted_line": 30,
+   "fleet_proof_line": 61,
+   "full_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c3_k08/treatment_s20260922/668463_r0/mip_gurobi.log",
+   "columns_generated": 12148,
+   "dive_wall_s": 723.6277357190847,
+   "mip_budget_s": 2876,
+   "actual_dive_plus_solver_s": 817.5347601026297,
+   "end_to_end_s": 848.1121918237768,
+   "physical_replay": true,
+   "duplicate_removal_validated": false,
+   "shared_capacity_validated": false,
+   "external_witness_columns": false,
+   "global_certificate": null
+  },
+  {
+   "case": "c5_k08",
+   "seed": "20260921",
+   "job_id": "668469",
+   "fleet": 8,
+   "finite_pool_bound": 8,
+   "handoff_accepted_line": 30,
+   "fleet_proof_line": 70,
+   "full_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260921/668469_r0/mip_gurobi.log",
+   "columns_generated": 11169,
+   "dive_wall_s": 826.4134273550007,
+   "mip_budget_s": 2773,
+   "actual_dive_plus_solver_s": 1008.5583143255208,
+   "end_to_end_s": 1064.643613132881,
+   "physical_replay": true,
+   "duplicate_removal_validated": false,
+   "shared_capacity_validated": false,
+   "external_witness_columns": false,
+   "global_certificate": null
+  },
+  {
+   "case": "c5_k08",
+   "seed": "20260922",
+   "job_id": "668471",
+   "fleet": 8,
+   "finite_pool_bound": 8,
+   "handoff_accepted_line": 30,
+   "fleet_proof_line": 66,
+   "full_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/integer_columns/results/c5_k08/treatment_s20260922/668471_r0/mip_gurobi.log",
+   "columns_generated": 14049,
+   "dive_wall_s": 985.2945171808824,
+   "mip_budget_s": 2614,
+   "actual_dive_plus_solver_s": 1064.1976913427934,
+   "end_to_end_s": 1120.14959996799,
+   "physical_replay": true,
+   "duplicate_removal_validated": false,
+   "shared_capacity_validated": false,
+   "external_witness_columns": false,
+   "global_certificate": null
+  }
+ ]
+}

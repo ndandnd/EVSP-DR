@@ -1,0 +1,36 @@
+{
+  "verified": true,
+  "checks": {
+    "all_prior_figure_body_preserved": true,
+    "all_prior_figure_pixels_preserved": true,
+    "six_new_images": true,
+    "new_figure_headings": true,
+    "no_placeholders": true,
+    "unambiguous_one_hour_budget": true,
+    "all_current_tables_preserved": true,
+    "all_old_source_links_preserved": true,
+    "historical_footer_and_original_current_figures_preserved": true,
+    "strict_endpoint_and_scope": true,
+    "paper_preview_linked": true,
+    "sixteen_balanced_jobs_described": true
+  },
+  "figures_pages_before": 11,
+  "figures_pages_after": 17,
+  "figures_images_before": 9,
+  "figures_images_after": 15,
+  "current_pages_after": 8,
+  "history_tab_modified": false,
+  "cg_tab_modified": false,
+  "slides_modified": false,
+  "visual_qa": "New figure pages 1\u20136 rendered and inspected; no clipping; captions and source links remain editable.",
+  "files_sha256": {
+    "current_before.md": "e4193b8c389b43182c5441f57f24dcd01a082ad93b53cfcf11ac898813863bdf",
+    "figures_before.md": "6d148843e27190939045987354262c18bd93b5be10284407b4df899c1ac79ed1",
+    "README.md": "f3e7d7251e4b7e5a40f231882f1dbf762c04393b4fa9023e6b4016e299e4cb08",
+    "figures_after.pdf": "a5a84579abc28980f6f292484bb78c71c1282ae12b5b857350a6cfe63ce2e8f2",
+    "current_after.pdf": "24ac5f0164c04ae8592baf527cb567334ea2e2722d8b79cdac5e9e6bb2594059",
+    "figures_after.md": "c9c2fc38f8ebe91954364eb16642203378a28c89d49614571c27b29ec1e3c0bb",
+    "verify.py": "361e993660258c10cd46bb779e4db7570d6957e9a3151407a26de23ef10a19c3",
+    "current_after.md": "eb68ec0e52d655572e846f28b88f562f714dec4cd081f46100f58ebaae306a3a"
+  }
+}

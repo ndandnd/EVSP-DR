@@ -1,0 +1,101 @@
+# **EVSP DR research journal**
+
+**Week of 21 September 2026\.** The main advance is evidence that our fresh LP pools miss routes needed for a good integer cover. New pricing recovers those routes in small tests. The harder charging model still needs faster graph construction and pricing. 
+
+## **21 September Extending all six chains to 40**
+
+All six baseline chains have found 32-bus schedules after longer MIPs and seed repeats. The original one-hour searches reached largest targets 26, 28, 31, 29, 26 and 28\. These are largest matches, not a claim that every smaller target matched. At k32 all six CGs stopped at four hours without a pricing certificate.
+
+Now submitted: **48 cases, k33–40 on each chain**, using frozen duty additions and the entire preceding column pool. Graph array **661616** has 44 independent builds; identical inputs share four builds. Each CG keeps its previous-k dependency, followed by its own MIP. Budgets remain 4 h CG and 1 h two-stage MIP. Graphs receive 96 GB and up to 36 h; k32 builds took 12–15 h. First graph tasks are running. Reaching k40 is roughly a two-day pipeline under favorable scheduling, longer if preempted or queued.
+
+This extension retains the baseline 240 kWh / 240 kW, flat tariff, 5-unit start fee, and no reserve, shared charger limit or terminal-energy floor. It is separate from the stricter k5 comparison. At full40, identical input groups are C1/C4 (948 trips), C2/C3/C6 (947) and C5 alone (946), because service-day variants were preserved. Within an identical group, fully certified LPs must have the same optimal weighted objective, though their fractional routes can differ. Time-limited LP endpoints and finite-pool integer results may differ with the inherited pool. The true full-model integer optimum is also independent of the path taken.
+
+New: [geographic maps and editable travel table](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i), with charger/depot locations, travel minutes and energy. [Sources and remaining movement approximations](https://github.com/ndandnd/EVSP-DR/blob/bc5391af975db7de61a1df804a57883b821c2868/outputs/week_20260921/geography_map/README.md).
+
+## 
+
+## **21 September Eight jobs completed**
+
+| Job | Test | Outcome |
+| ----- | ----- | ----- |
+| 628428 | k1 capacity, shortcut off | CG 4 h limit; pool optimum 1 bus |
+| 628429 | k1 capacity, shortcut on | CG certified in 26.9 min; pool optimum 1 |
+| 628436 | k2 capacity, shortcut off | CG 4 h limit; pool optimum 3 |
+| 628437 | k2 capacity, shortcut on | CG 4 h limit; pool optimum 2 |
+| 628438 | k3 capacity, shortcut off | CG 4 h limit; pool optimum 21 |
+| 628439 | k3 capacity, shortcut on | CG 4 h limit; pool optimum 5 |
+| 628314 | Strict 18E2 k15 | Graph build 4 h 17 min; zero pricing iterations |
+| 628441 | C1 incumbent transfer | 8 buses, bound 8; charging optimum 447.44 in pool |
+
+All six dependent capacity MIPs also finished. “Pool optimum” means the best fleet using only saved routes; it does not prove the full model's optimum. Only one capacity CG certified its LP. These capacity tests use 240 kWh, 240 kW, zero reserve and flat prices. Charger-count checks pass, but k2-off and k3-on retain 1 and 6 extra trip assignments. [Settings, results and logs](https://github.com/ndandnd/EVSP-DR/blob/ca1dda82247db995ffd0d524e045430ea197ec13/outputs/week_20260921/capacity_strict/README.md).
+
+## **21 September Why the fresh integer pools are worse**
+
+**Four fresh k8 pools require nine buses: C1, C3, C4 and C5.** Adding eight known sequential routes to each restores a proved eight-bus cover. This is a diagnostic using known solutions, separate from the new pricing pilot.
+
+The LP spreads eight units of route weight across 80–101 fractional routes. Whole buses need a compatible combination. Of 40 sequential witness routes across five audited cases, 39 trip sets are absent from the fresh pools, 37 have positive reduced cost, and 34 were inherited. A route can help complete an integer cover without improving the fractional objective.
+
+For C1, the eight-route witness costs 800479.960, versus LP 800383.688. The difference is **96.272 \= 72.142 in reduced costs \+ 24.130 in dual-valued extra coverage**. The LP prefers its cheaper fractional mixture, even though the witness avoids an extra integer bus. This explains the mechanism; it does not identify a unique combinatorial obstruction. [Derivation and reproducible checks](https://github.com/ndandnd/EVSP-DR/blob/ca1dda82247db995ffd0d524e045430ea197ec13/outputs/week_20260921/evidence/README.md).
+
+**Read the Gurobi proof:** [C1 control, lines 155–156](https://github.com/ndandnd/EVSP-DR/blob/ca1dda82247db995ffd0d524e045430ea197ec13/outputs/week_20260921/evidence/k8_witness/c1_k08/control/391804_r0/gurobi.log#L155): objective 9, bound 9, gap zero. Stage 1 uses unit bus costs. [After eight added routes, line 112](https://github.com/ndandnd/EVSP-DR/blob/ca1dda82247db995ffd0d524e045430ea197ec13/outputs/week_20260921/evidence/k8_witness/c1_k08/augmented/391805_r0/gurobi.log#L112): objective 8, bound 8\. The later charging-stage time limit does not undo the fleet proof. These are numerical proofs for the specified finite pools.
+
+## **21 September Longer MIPs and new pricing**
+
+All twelve 12-hour fleet searches **and their charging stages are finished**. For C1–C6, plain search found **18, 17, 17, 19, 16, 18**; stronger MIP heuristics found **18, 17, 16, 17, 16, 17**. Every fleet bound is 15\. This favors generating better columns, but does not prove that a 15-bus solution is absent. [All outcomes and full log paths](https://github.com/ndandnd/EVSP-DR/blob/ca1dda82247db995ffd0d524e045430ea197ec13/outputs/week_20260921/evidence/k15_12h_summary.csv).
+
+The pricing pilot recovered eight buses in **3/4 final MIPs**, versus nine in controls. C1's dive had already found eight, but its final MIP did not receive that incumbent. Follow-up 628441 transferred it and recovered eight in 29.6 additional minutes, with the same distinct routes. The original benchmark remains 3/4. [Follow-up log](https://github.com/ndandnd/EVSP-DR/blob/ca1dda82247db995ffd0d524e045430ea197ec13/outputs/week_20260921/evidence/c1_followup/628441_r0/gurobi.log).
+
+## **21 September Harder physics and duplicate service**
+
+The capacity shortcut completed 134 versus 6 pricing iterations at k2, and 51 versus 2 at k3. The strict k15 run instead spent its budget constructing 260.7 million arcs; its 37-bus initial-pool result tells us little about the model. k16 timed out at 211.9 GiB peak memory.
+
+A packed graph representation with unchanged physics passes 44 tests. A same-node equivalence audit (646674) gates k16 recovery (646675) and its MIP (646676). The audit now passes all five fixed-dual checks and physical replay. On its 26-trip test, graph build fell from 121.11 to 41.81 seconds and peak memory from 2.06 to 0.147 GiB. The k16 CG is now running; large-case improvement remains unmeasured.
+
+[Completed graph benchmark and replay checks](https://github.com/ndandnd/EVSP-DR/blob/4c8e4c005ec92259d520b1baa990b39ed4a851bf/outputs/week_20260921/capacity_strict/recovery/benchmark/646674_r0/result.json) — five fixed-dual checks on 26 trips; k16 recovery is running.
+
+ [Code and experiment receipts](https://github.com/ndandnd/EVSP-DR/blob/ca1dda82247db995ffd0d524e045430ea197ec13/outputs/week_20260921/capacity_strict/README.md).
+
+Duplicate cleanup now chooses one bus to serve each trip, checks shorter connections and reoptimizes charging. It cannot simply wait at the wrong stop. On the historical k5 solution, it preserves five buses and 62 exactly-once trips, lowers charged energy by 80.87 kWh and electricity cost by 2.58. This test retains its historical 240/350, zero-reserve physics. The optional pipeline step saves an independently checked dispatch result without overwriting the source. [Implementation, tests and validation](https://github.com/ndandnd/EVSP-DR/blob/ca1dda82247db995ffd0d524e045430ea197ec13/outputs/week_20260921/cleanup_physics/README.md).
+
+## **21 September Corrected k5 charging comparison**
+
+The replacement figure uses **236.44 kWh, 15% reserve, PARX 60 kW, the documented opportunity-charging taper and a three-minute minimum**. All three fleets have five buses, 62 trips and equal total ending energy. New schedules pass exactly-once, SOC and modeled charger-count checks for this five-bus cohort.
+
+| Schedule | Electricity | Starts | Total with its fee |
+| ----- | ----- | ----- | ----- |
+| GIRO, fee 0 | 230.64 | 52 | 230.64 |
+| Saved sequences, fee 0 | 158.71 | 42 | 158.71 |
+| GIRO, fee 5 | 230.64 | 52 | 490.64 |
+| Saved sequences, fee 5 | 183.71 | 30 | 333.71 |
+
+Costs are synthetic tariff units. The two saved solutions have different trip sequences and station paths, so 42 versus 30 starts is not a controlled fee-only effect. Fee 5 stops after 120 seconds with a 0.6504% gap. This is **charging reoptimization of saved trip sequences, not fresh CG**. It restricts each gap's charging to one tariff hour. Deadheads use a static reference; platform blocking, FIFO and crew rules remain unchecked. The other 35 buses are excluded. Optimizing only the original charging windows gives no material saving; that is a narrower fixed-duty benchmark. [Figure, solver logs and exact assumptions](https://github.com/ndandnd/EVSP-DR/blob/ca1dda82247db995ffd0d524e045430ea197ec13/outputs/week_20260921/cleanup_physics/README.md).
+
+## 
+
+## **Historical context and sources**
+
+**16–17 September:** the baseline audit recorded 67 closed and 35 open event-model fleet gaps among 102 LP endpoints. Sequential searches reached k32 in all six chains after longer searches and repeats; this was not full GIRO physics. **18–20 September:** witness-route proofs, open k15 bounds and the pricing pilot. Today's entries supersede their stale running statuses; source artifacts remain intact.
+
+Local evidence root: /Users/nadan/Documents/projects/demandresponse/outputs/week\_20260921/evidence/
+
+Unicorn C1 proof: /home/nc437/ladder-lite/review\_witness\_columns\_20260917/results/c1\_k08/control/391804\_r0/gurobi.log
+
+[Log walkthrough](https://github.com/ndandnd/EVSP-DR/blob/ca1dda82247db995ffd0d524e045430ea197ec13/outputs/week_20260921/evidence/LOG_EXCERPTS.md) · [Source hashes](https://github.com/ndandnd/EVSP-DR/blob/ca1dda82247db995ffd0d524e045430ea197ec13/outputs/week_20260921/evidence/source_manifest.json) · [This week's slides](https://docs.google.com/presentation/d/1F6udjgkiPH51vMUcku7ZT3PhZPAxsQwUCi3TK9vFRDM/edit)
+
+[F1–F9 verdicts and execution ledger](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/independent_review_20260916/execution/README.md) · [Chain results with numerical lower bounds](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/independent_review_20260916/execution/audited_chain_results.csv) · [Independent review](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/independent_review_20260916/REVIEW.md)
+
+[Figures with explanations](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i) · [CG curves and bus schedules](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly) · [Historical research log](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.lumf8xm66fow)
+
+## 
+
+## **Figures for 21 September**
+
+**Capacity shortcut comparison.** Left: best integer fleet in each saved pool. Right: pricing iterations completed. Four-hour budgets; only k1 with the shortcut certified CG, in 26.9 minutes. All other CG runs timed out. These capacity tests use 240 kWh / 240 kW and zero reserve.
+
+![][image1]
+
+**One bus from the matched k5 comparison.** Blue bars are service trips; orange segments are charging. The lower panels show battery energy, with the 15% reserve dashed. The trip IDs are source IDs, sorted by departure time, not newly assigned route-order labels. The original / fee 0 / fee 5 example buses have 9 / 9 / 6 charging starts. All five buses were jointly checked for the modeled charger counts; the picture displays one representative bus from each solution.
+
+![][image2]
+
+The corrected schedules use the matched charging physics listed above. They reoptimize charging on saved trip sequences; they are not fresh full-CG solutions under all GIRO constraints. [Open full-resolution figure](https://github.com/ndandnd/EVSP-DR/blob/ca1dda82247db995ffd0d524e045430ea197ec13/outputs/week_20260921/cleanup_physics/one_bus_k5_joint_matched.png).

@@ -25,7 +25,7 @@ The user renewed authorization today to manage EVSP–DR, run Astra subagents, u
 
 Automation `unicorn-evsp-dr-research-progress` is active in the current task every four hours. The old monitor had been deleted, so a new heartbeat was created; the separate paused V2G monitor was not changed. Reuse focused evidence from the last 90 minutes when nothing requires a new collection. Stay quiet on unchanged state; report validated findings, actionable failures and access changes. Do not recreate reports or publish identical outputs on each tick.
 
-At 16:08 EDT, SSH was available: all 44 large-chain graphs, 16 balanced k8 allocations, strict k17 CG and two representation benchmarks were running. The 18-cell charging array668984 had also been submitted, with first valid endpoints returning. Baseline and strict solver dependencies are genuine. Six graph attempts were preempted and automatically requeued, losing 84.6 minutes. These are dated observations, not a claim about future scheduler state.
+At 16:23 EDT, SSH was available and 59 jobs were running: all 44 large-chain graphs, 12 remaining balanced k8 allocations, strict k17 CG and two representation benchmarks. Four k8 treatments had completed (C3/C5, both seeds), proving eight buses in 14.1–18.8 minutes end-to-end; paired controls remain incomplete. The 18-cell charging array668984 is finished with 17 raw validated witnesses and one separately repaired witness. All nine controlled pairs are available. Baseline and strict solver dependencies are genuine. Six graph attempts were preempted and automatically requeued, losing 84.6 minutes. These are dated observations, not a claim about future scheduler state.
 
 Strict646675/646676 are complete: subgroup target9 (256 trips within parent prefix16), fractional route weight9 without a pricing certificate, finite-pool integer optimum10. The selected solution duplicates57 trip assignments and violates omitted shared-capacity limits. Packed storage reduced the observed memory requirement to3.934GiB and allowed2,453iterations, but no full-GIRO feasibility or matched large-case speedup is claimed.
 
@@ -46,6 +46,7 @@ Publish reviewed evidence from an isolated worktree; preserve the dirty legacy c
 3. Require charging source/physics/cost/coverage checks before treating any cell as a result; retained timeout bounds qualify all comparisons.
 4. After the large graphs finish, inspect actual CG checkpoints and certificates. Repair failures before launching replacements; never mistake resource/priority waits for broken dependencies.
 5. Use verified outcomes to choose the next experiment. If target recovery improves but pricing certificates remain slow, study fleet-certified stopping as a separately labelled stopping rule; do not relabel it full weighted-objective convergence.
+6. Graph-checkpoint implementation71f3acb8 passes 28 tests and independent review. The next code-validation step is a bounded native filesystem/storage/overhead pilot before any production rollout. Keep all 44 current pins unchanged; partial shards duplicate much of the graph storage and require an explicit capacity check.
 
 ## Paper positioning
 

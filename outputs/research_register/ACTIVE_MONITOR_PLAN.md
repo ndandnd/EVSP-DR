@@ -1,3 +1,7 @@
+## Active management — 21 September 2026
+
+The user resumed monitoring and authorized useful new research/code work with Astra subagents. Follow [today’s manager plan](../research_management_20260921/MANAGER_PLAN.md), which supersedes older dated blanket submission holds for its registered workstreams. New heartbeat `unicorn-evsp-dr-research-progress` runs every four hours, with quiet unchanged checks and prompt access-loss alerts. Existing historical held537227 and separate EVSP–V2G work remain protected; Slides remain unchanged. Do not regenerate the historical collector on each heartbeat: use campaign-specific receipts and endpoints. Exact current campaign roots, collectors and gates are in [the continuation](../research_management_20260921/MONITOR_CONTINUATION.md).
+
 ## Monitoring cadence — user update, 17 September
 
 Use a four-hour heartbeat. Reuse a successful focused collection from the last90minutes unless a new reported issue warrants investigation. On unchanged/non-actionable state, save at most a small local receipt and stop: no report regeneration, Doc export, figures, commits/pushes/mirror, repeated narrative, or historical-log review. Batch publication with meaningful results/failures. Notify only meaningful new findings, access changes or required action; preserve the gated four-result briefing and all submission/privacy/proof restrictions below. Previously reported meeting results must not be announced again just because a heartbeat fires.

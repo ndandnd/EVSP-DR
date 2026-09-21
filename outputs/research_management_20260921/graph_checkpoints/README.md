@@ -51,4 +51,4 @@ Partial shards remain after a completed full graph cache is written. **Retaining
 
 The initial problem/event/node preparation is rebuilt on resume; only the expensive arc-construction phase is checkpointed. Warm construction caches are not persisted. Completed-cache identity still includes source commit, so old-pin caches are not silently accepted by this new commit. This patch does not change scheduling, graph admission, the 44 current jobs, or held work.
 
-Independent read-only code review is in progress; its findings will be preserved alongside this handoff.
+[Independent read-only review](independent_review.md) passes: all ten checkpoint tests and four additional interrupted/corrupt-state checks were independently verified. Cluster filesystem/storage checks remain open.

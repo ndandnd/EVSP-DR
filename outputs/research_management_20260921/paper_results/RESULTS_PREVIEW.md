@@ -59,7 +59,7 @@ All five figures have **PNG, PDF and editable-text SVG** versions and adjacent C
 ## Remaining experiments that can change the paper
 
 1. **Integer enrichment:** matched-budget fresh-pool enrichment versus unchanged-pool search; transfer every validated dive incumbent, account for graph/input overhead, and preserve the original pilot.
-2. **Larger strict model:** complete packed k16 CG/MIP and replay before claiming operational scale; shared-capacity pricing needs separate evidence.
+2. **Larger strict model:** the packed recovery has now completed 2,453 CG iterations at 3.934 GiB, but its nine-duty subgroup has pool optimum 10, no pricing certificate and failed omitted-capacity checks. [Verified endpoint and new successor/benchmark tests](../operations/README.md). Shared-capacity pricing needs separate evidence; the five figures above retain their original frozen cohorts.
 3. **Economic value:** compare fixed-duty and joint scheduling under identical physics, tariffs, energy floors and dispatch validation. Existing saved fee0/fee5 schedules have different sequences and station paths, so their differences cannot identify a fee-only effect. A fixed-sequence fee control answers a narrower charging question.
 
 The baseline in Figures 1–4 is set covering, 240 kWh/240 kW, zero reserve, 2.5 kWh/5-minute grid, flat tariff, charge-start fee 5, with no terminal floor or shared capacity. CG minimizes 100,000 × fractional route weight plus charging-related cost. **Weighted LP objective, fractional route weight and fleet-only bounds are different quantities.** The data keep them separate. No uncertified RMP is used as a full-model bound.

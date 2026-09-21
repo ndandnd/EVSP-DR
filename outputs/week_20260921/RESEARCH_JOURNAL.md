@@ -1,5 +1,15 @@
 # EVSP–DR research journal — week of 21 September 2026
 
+## 21 September, afternoon — from pilot evidence to controlled tests
+
+The paper preview now reproduces five figures with268checks across70source files. Across24cases at targets5/8/10/15, both fresh and sequential methods certify their weighted LP endpoints; one-hour pool MIPs match6/24 versus24/24. Accumulated sequential work is included. This comparison establishes the LP/integer split, not a causal hardware-normalized runtime speedup.
+
+Sixteen balanced k8 jobs test integer-directed pricing after fixing own-incumbent transfer and budget accounting;55tests pass. At16:24EDT the first four treatments (C3/C5,bothseeds) prove8 in14.1–18.8minutes; controls remain incomplete. Six paired k15 follow-ups are conditional on native validation. Eighteen charging cells hold assignment, paths, physics and terminal floors fixed while changing fee0/5 across three tariffs. These are fixed-path charging tests, not new CG. All18witnesses validate:17raw and one separately corrected numerical witness. The nine paired incumbents use8–22fewer starts atfee5; six searches retain gaps up to3.83%.
+
+Strict packed recovery finishes2,453iterations in4h including115.4min graph construction, at3.934GiB peak. Its parent-prefix16 subgroup has9duties/256trips. Fractional route weight9 is uncertified; the final saved pool proves10integer buses. All pool routes individually replay, but the chosen covering solution duplicates57assignments and violates omitted capacity limits. This is computational progress with remaining mathematical and dispatch gaps. New successor/benchmark jobs test scaling; all44baseline full40 graph builds were running at16:08EDT. Six requeues lost84.6min, motivating isolated graph-checkpoint work.
+
+[Figures and source tables](../research_management_20260921/paper_results/RESULTS_PREVIEW.md) · [Strict logs/validation](../research_management_20260921/operations/README.md) · [Controlled integer design](../research_management_20260921/integer_columns/README.md) · [Charging design/results](../research_management_20260921/charging_fee_factorial/README.md).
+
 ## 21 September — a bus day across five places
 
 [Recorded GIRO duty 13309](complex_route_graphs/README.md) visits five areas, serves 22 passenger trips and charges four times at Heden, Jons väg and PARX. Its midday depot return at 10:42 leads to 105 minutes of charging (+105 kWh), then departure at 12:43. Morning/afternoon graphs share an approximate layout; PARX is displaced for clarity. The five-page companion preserves 27 inter-area movements, 28 visits and all 60 events. Recharge cells match the correct 239.01 kWh 18E2 basis. This is original-only, with no optimized counterpart asserted. [The updated figure tab preserves its previous text and eight images](complex_route_graphs/doc_verification/README.md); no Slides or solver settings changed.
