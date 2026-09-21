@@ -1,0 +1,29 @@
+visit,area,raw_codes,arrival,departure,activities
+V1,PARX depot,PARX,05:12,05:19,prep PARX 05:12–05:19
+V2,Heden,HED_D,05:37,05:37,Immediate departure
+V3,Partille centrum,PC_10,06:07,06:07,Immediate departure
+V4,Heden,"HED_E, 3127L, HED_D",06:41,06:57,deadhead HED_E→3127L 06:41–06:42; C1 charge 3127L 06:42–06:56 +40.594kWh; deadhead 3127L→HED_D 06:56–06:57
+V5,Partille centrum,"PC_10, PC_7",07:27,07:30,same reference gap PC_10→PC_7 07:27–07:30
+V6,Gamlestads Torg,"GMV_G, GMV_H",07:54,08:00,deadhead GMV_G→GMV_H 07:54–07:56; wait GMV_H 07:56–08:00
+V7,Partille centrum,"PC_7, PC_9",08:27,08:27,same reference gap PC_7→PC_9 08:27–08:27
+V8,Jons väg,"JON_B, JON_A",08:42,08:45,deadhead JON_B→JON_A 08:42–08:43; wait JON_A 08:43–08:45
+V9,Partille centrum,PC_7,08:57,08:57,Immediate departure
+V10,Jons väg,"JON_B, JON_A",09:14,09:25,deadhead JON_B→JON_A 09:14–09:15; C2 charge JON_A 09:15–09:25 +44.832kWh
+V11,Partille centrum,"PC_7, PC_5",09:37,09:37,same reference gap PC_7→PC_5 09:37–09:37
+V12,Heden,"HED_E, HED_D",10:08,10:13,deadhead HED_E→HED_D 10:08–10:10; wait HED_D 10:10–10:13
+V13,Partille centrum,PC_5,10:37,10:37,Immediate departure
+V14,PARX depot,PARX,10:42,12:43,prep PARX 10:42–10:45; C3 charge PARX 10:45–12:30 +105.000kWh; wait PARX 12:30–12:36; prep PARX 12:36–12:43
+V15,Jons väg,JON_A,12:54,12:54,Immediate departure
+V16,Partille centrum,"PC_9, PC_7",13:07,13:10,same reference gap PC_9→PC_7 13:07–13:10
+V17,Gamlestads Torg,"GMV_G, GMV_H",13:34,13:42,deadhead GMV_G→GMV_H 13:34–13:36; wait GMV_H 13:36–13:42
+V18,Partille centrum,PC_7,14:07,14:10,wait PC_7 14:07–14:10
+V19,Gamlestads Torg,"GMV_G, GMV_H",14:35,14:42,deadhead GMV_G→GMV_H 14:35–14:37; wait GMV_H 14:37–14:42
+V20,Partille centrum,PC_7,15:07,15:10,wait PC_7 15:07–15:10
+V21,Gamlestads Torg,"GMV_G, GMV_H",15:35,15:40,deadhead GMV_G→GMV_H 15:35–15:37; wait GMV_H 15:37–15:40
+V22,Partille centrum,PC_7,16:07,16:07,Immediate departure
+V23,Heden,"3127L, HED_D",16:22,16:50,C4 charge 3127L 16:22–16:49 +130.728kWh; deadhead 3127L→HED_D 16:49–16:50
+V24,Partille centrum,PC_5,17:17,17:17,Immediate departure
+V25,Heden,"HED_E, HED_D",17:48,17:52,deadhead HED_E→HED_D 17:48–17:50; wait HED_D 17:50–17:52
+V26,Partille centrum,PC_5,18:17,18:17,Immediate departure
+V27,Heden,HED_E,18:47,18:47,Immediate departure
+V28,PARX depot,PARX,19:02,19:05,prep PARX 19:02–19:05

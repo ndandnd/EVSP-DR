@@ -1,0 +1,183 @@
+{
+  "schema": "complex-bus-day-figure-v1",
+  "created_utc": "2026-09-21T19:43:27.104727+00:00",
+  "primary": "duty_13309_graph.png",
+  "scope": "Original GIRO13309 only;five areas;22trips;three charging sites;PARX displaced for clarity",
+  "checks": {
+    "extracted_activity_rows_cross_checked_with_original_workbook": true,
+    "leg_key_exact_times_codes_trip_ids": true,
+    "primary_graph_visually_reviewed_after_depot_displacement": true,
+    "pdf_pages": 5,
+    "pdf_all_pages_rendered_and_inspected": true,
+    "prepared_trip_ids_not_giro_journey_numbers": true,
+    "secondary_13722_left_unlocated": true,
+    "source_validation": "validation.json"
+  },
+  "files": [
+    {
+      "path": "DATA_README.md",
+      "bytes": 4254,
+      "sha256": "7fc0fe6aa7c33f365771a31e5b20b7be92cce337be061f7938835de7c50ceeea"
+    },
+    {
+      "path": "README.md",
+      "bytes": 5146,
+      "sha256": "76ba5a7afd8c15467a2a78c2f1ea577602cc326369c61e9290e73dd5cdfaac62"
+    },
+    {
+      "path": "areas.csv",
+      "bytes": 1861,
+      "sha256": "78e4a96d671d4c5d59db4a30692659af4328efae709d922e21d959dc98611540"
+    },
+    {
+      "path": "build_daybook.py",
+      "bytes": 5147,
+      "sha256": "a88e0942e703bc2d4c62f3b234b7d078af1ae0a3300977d0b3900b5ba4988cba"
+    },
+    {
+      "path": "build_gallery.py",
+      "bytes": 11136,
+      "sha256": "e92daa4a123a6fa0dba92a59c94e7801d68275119228b37789fb11612e28d7a2"
+    },
+    {
+      "path": "candidates.csv",
+      "bytes": 7239,
+      "sha256": "e74f3f3f2f1486352f716b9686228a97c8e7891a5ae370c83cba761a5874885f"
+    },
+    {
+      "path": "charging.csv",
+      "bytes": 2811,
+      "sha256": "e35a1934fd3f4d929df893d6f6a64e0f89f92439beb31c37a581769ecf1cd52e"
+    },
+    {
+      "path": "coordinates.csv",
+      "bytes": 1155,
+      "sha256": "a5c0a8010bbeefeb5760dc8a16a26f5124ad5eed6efc8b36a5f0c616eaaf3edf"
+    },
+    {
+      "path": "diagram_charging_key.csv",
+      "bytes": 190,
+      "sha256": "49b3666edd426a9cf4dea1ba96754733b1c693d3b0c8c7dff5e62ae8335add33"
+    },
+    {
+      "path": "diagram_event_key.csv",
+      "bytes": 6365,
+      "sha256": "83250747cb995e3141d1146cdbbf142be3eff8f2cba7a71f3b761cbf69d790a2"
+    },
+    {
+      "path": "diagram_leg_key.csv",
+      "bytes": 3017,
+      "sha256": "7c5150e628277519c6c7355589d60787edb06b8811e1258836d53b94e9adf8e0"
+    },
+    {
+      "path": "diagram_visit_key.csv",
+      "bytes": 2459,
+      "sha256": "e3fd29623d0b34e3bb051cc22603bf69bf46d7f29f337cd3f5a26c49560a5018"
+    },
+    {
+      "path": "display_layout.csv",
+      "bytes": 504,
+      "sha256": "08b4f1e9b2d78869f3ed5662077eeb72b1a2b8ef599a4bb9ce1bde097a00f638"
+    },
+    {
+      "path": "duty_13309_daybook.pdf",
+      "bytes": 96677,
+      "sha256": "6f7b39ab4c4d3ea7b877e5878590f34da3910cfb23b2b36d6351a89e13256bff"
+    },
+    {
+      "path": "duty_13309_full_day.pdf",
+      "bytes": 36544,
+      "sha256": "06fa9ec8303b392f299da03d71db6a1d50c06548336f26fbec7cdc65607e0f22"
+    },
+    {
+      "path": "duty_13309_full_day.png",
+      "bytes": 481965,
+      "sha256": "88e184aea934d39a61f52910f70f0da5f1a3cb9adc39d48c825deb8436cea2fe"
+    },
+    {
+      "path": "duty_13309_full_day.svg",
+      "bytes": 47183,
+      "sha256": "01152ff5d537fad667a9121915dfb943909d8c76eeae30014a9f6817158fc6d3"
+    },
+    {
+      "path": "duty_13309_graph.pdf",
+      "bytes": 39635,
+      "sha256": "def29a0e7359bd79d153e75f9eaa5fbf0d4aebd30a884d19692dfab6b4dec515"
+    },
+    {
+      "path": "duty_13309_graph.png",
+      "bytes": 546395,
+      "sha256": "c5d65a7314575eb4fe805d96be845b3f45f08a9a6f9c236f136f63c95352d806"
+    },
+    {
+      "path": "duty_13309_graph.svg",
+      "bytes": 54900,
+      "sha256": "06877f40be2446a67df3bd58e3f6a170c62fd2b15f5d92d1a27cee71a88c2607"
+    },
+    {
+      "path": "duty_13309_interactive.svg",
+      "bytes": 67052,
+      "sha256": "421b96ac871da16a5a264add8be909d8f4f38d560839a2a602f70da61ad98056"
+    },
+    {
+      "path": "duty_13309_itinerary.pdf",
+      "bytes": 57632,
+      "sha256": "b30dc8b1abf81d09cceb0454a123f7f6d42e817b06b963babff3d9a73a8239a7"
+    },
+    {
+      "path": "edges.csv",
+      "bytes": 3492,
+      "sha256": "2c3bdd53d63d69b283707677fa901ca4869014346d8a3e743381ce3053f792b5"
+    },
+    {
+      "path": "events.csv",
+      "bytes": 37587,
+      "sha256": "d26db71c0d4dca9cf00589fd690195f8bd6794caefd1c1050467f3f52c09e06d"
+    },
+    {
+      "path": "extract_complex_originals.py",
+      "bytes": 14953,
+      "sha256": "670fcecf65f4ef857bc974ad67a1a19d8b55381e7d4a44cea5e3c888b3821fad"
+    },
+    {
+      "path": "extraction_summary.json",
+      "bytes": 1134,
+      "sha256": "e610b3ac92a0a1090a54a53739ead580f30082502ceb79ca621217a5ebcb1cd8"
+    },
+    {
+      "path": "gallery.html",
+      "bytes": 92869,
+      "sha256": "e17d9d5803fd455d22d89a1533fbd5005f049a47b1c7546906a5872e3ed88639"
+    },
+    {
+      "path": "native_itinerary_fragment.html",
+      "bytes": 4703,
+      "sha256": "d4f61985e879bb118d871c454bbb34f5575bc127bfb9eab27f41bb33ba0fe198"
+    },
+    {
+      "path": "plot_complex_routes.py",
+      "bytes": 7784,
+      "sha256": "dad2c07ae16c007807befeeb6e4b9b328d1e58732d6a71a38b6130a18a0f5200"
+    },
+    {
+      "path": "saved_candidates.csv",
+      "bytes": 4847,
+      "sha256": "755d636915e7260026bb90902203f020887985373dc8ce920349283cf725cabf"
+    },
+    {
+      "path": "schedules.json",
+      "bytes": 265224,
+      "sha256": "0e3912c100fd53e3dc5e3c3bb5b0f917e07e98b9e7148d87a266086a032e5e66"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 5583,
+      "sha256": "c1033d8fdb04c9bee414aa6480a88bb97a287ef230e7889e9e4944628dc1b765"
+    },
+    {
+      "path": "visits.csv",
+      "bytes": 4568,
+      "sha256": "8b2814f72f1b54fe44883d0acb5de9ef04b48fa0853d971f219a4b54a5c8ccc8"
+    }
+  ]
+}

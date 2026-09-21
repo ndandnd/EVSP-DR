@@ -1,0 +1,28 @@
+step,diagram_label,prepared_trip_id,kind,from_area,from_code,to_area,to_code,departure,arrival,duration_minutes,recorded_usage_kwh,source_pointer
+1,M1,,Empty movement,PARX depot,PARX,Heden,HED_D,05:19,05:37,18,20.7999992,Data!A544:X544
+2,L1,226,Passenger service,Heden,HED_D,Partille centrum,PC_10,05:37,06:07,30,21.3279991,Data!A545:X545
+3,L2,229,Passenger service,Partille centrum,PC_10,Heden,HED_E,06:07,06:41,34,22.3409996,Data!A546:X546
+4,L3,234,Passenger service,Heden,HED_D,Partille centrum,PC_10,06:57,07:27,30,21.3279991,Data!A550:X550
+5,L4,586,Passenger service,Partille centrum,PC_7,Gamlestads Torg,GMV_G,07:30,07:54,24,18.6380005,Data!A551:X551
+6,L5,589,Passenger service,Gamlestads Torg,GMV_H,Partille centrum,PC_7,08:00,08:27,27,18.3059998,Data!A553:X553
+7,L6,901,Passenger service,Partille centrum,PC_9,Jons väg,JON_B,08:27,08:42,15,12.3870001,Data!A554:X554
+8,L7,792,Passenger service,Jons väg,JON_A,Partille centrum,PC_7,08:45,08:57,12,10.2659998,Data!A556:X556
+9,L8,793,Passenger service,Partille centrum,PC_7,Jons väg,JON_B,08:57,09:14,17,10.2790003,Data!A557:X557
+10,L9,796,Passenger service,Jons väg,JON_A,Partille centrum,PC_7,09:25,09:37,12,10.2659998,Data!A560:X560
+11,L10,393,Passenger service,Partille centrum,PC_5,Heden,HED_E,09:37,10:08,31,20.1809998,Data!A561:X561
+12,L11,396,Passenger service,Heden,HED_D,Partille centrum,PC_5,10:13,10:37,24,19.8619995,Data!A563:X563
+13,M2,,Empty movement,Partille centrum,PC_5,PARX depot,PARX,10:37,10:42,5,2.79999995,Data!A564:X564
+14,M3,,Empty movement,PARX depot,PARX,Jons väg,JON_A,12:43,12:54,11,12.8000002,Data!A568:X568
+15,L12,922,Passenger service,Jons väg,JON_A,Partille centrum,PC_9,12:54,13:07,13,12.342,Data!A569:X569
+16,L13,626,Passenger service,Partille centrum,PC_7,Gamlestads Torg,GMV_G,13:10,13:34,24,18.6380005,Data!A570:X570
+17,L14,629,Passenger service,Gamlestads Torg,GMV_H,Partille centrum,PC_7,13:42,14:07,25,18.3059998,Data!A572:X572
+18,L15,632,Passenger service,Partille centrum,PC_7,Gamlestads Torg,GMV_G,14:10,14:35,25,18.6380005,Data!A573:X573
+19,L16,635,Passenger service,Gamlestads Torg,GMV_H,Partille centrum,PC_7,14:42,15:07,25,18.3059998,Data!A575:X575
+20,L17,638,Passenger service,Partille centrum,PC_7,Gamlestads Torg,GMV_G,15:10,15:35,25,18.6380005,Data!A576:X576
+21,L18,641,Passenger service,Gamlestads Torg,GMV_H,Partille centrum,PC_7,15:40,16:07,27,18.3059998,Data!A578:X578
+22,M4,,Empty movement,Partille centrum,PC_7,Heden,3127L,16:07,16:22,15,20.6000004,Data!A579:X579
+23,L19,447,Passenger service,Heden,HED_D,Partille centrum,PC_5,16:50,17:17,27,19.8619995,Data!A582:X582
+24,L20,451,Passenger service,Partille centrum,PC_5,Heden,HED_E,17:17,17:48,31,20.1809998,Data!A583:X583
+25,L21,456,Passenger service,Heden,HED_D,Partille centrum,PC_5,17:52,18:17,25,19.8619995,Data!A585:X585
+26,L22,459,Passenger service,Partille centrum,PC_5,Heden,HED_E,18:17,18:47,30,20.1809998,Data!A586:X586
+27,M5,,Empty movement,Heden,HED_E,PARX depot,PARX,18:47,19:02,15,20.7999992,Data!A587:X587

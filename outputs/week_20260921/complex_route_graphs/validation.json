@@ -1,0 +1,91 @@
+{
+  "schedules": [
+    {
+      "duty_id": "13309",
+      "metrics": {
+        "trip_count": 22,
+        "starts": 4,
+        "charging_sites": [
+          "3127L",
+          "JON_A",
+          "PARX"
+        ],
+        "reference_area_count": 5,
+        "raw_location_count": 12,
+        "depot_departure_min": 319,
+        "depot_return_min": 1142,
+        "depot_departure_time": "05:19",
+        "depot_return_time": "19:02",
+        "charged_kwh": 321.1537248,
+        "recorded_usage_kwh": 469.0039958584,
+        "min_recorded_soc_percent": 25.6933384
+      },
+      "validation": {
+        "raw_workbook_rows_match": true,
+        "all_recorded_activities_included": true,
+        "complete_continuous_clock": true,
+        "raw_locations_continuous_with_explicit_unspecified_same_reference_transfers": true,
+        "no_invented_inter_area_movements": true,
+        "source_trip_ids_unique": true,
+        "recharge_soc_consistent_with_239_01_kwh_capacity": true,
+        "maximum_charge_soc_residual_kwh": 1.5260790000581892e-05,
+        "new_solver_or_physics_validation": false
+      }
+    },
+    {
+      "duty_id": "13320",
+      "metrics": {
+        "trip_count": 16,
+        "starts": 3,
+        "charging_sites": [
+          "3127L",
+          "JON_A",
+          "PARX"
+        ],
+        "reference_area_count": 6,
+        "raw_location_count": 15,
+        "depot_departure_min": 402,
+        "depot_return_min": 1153,
+        "depot_departure_time": "06:42",
+        "depot_return_time": "19:13",
+        "charged_kwh": 199.71628570000001,
+        "recorded_usage_kwh": 306.5229959037,
+        "min_recorded_soc_percent": 28.6356201
+      },
+      "validation": {
+        "raw_workbook_rows_match": true,
+        "all_recorded_activities_included": true,
+        "complete_continuous_clock": true,
+        "raw_locations_continuous_with_explicit_unspecified_same_reference_transfers": true,
+        "no_invented_inter_area_movements": true,
+        "source_trip_ids_unique": true,
+        "recharge_soc_consistent_with_239_01_kwh_capacity": true,
+        "maximum_charge_soc_residual_kwh": 7.264000000617443e-06,
+        "new_solver_or_physics_validation": false
+      }
+    }
+  ],
+  "sources": {
+    "/Users/nadan/Documents/projects/demandresponse/data/Par_VehicleDetails_Updated.csv": "11dff837f8f62efb73f8fe98a2c325a8033e56754fa6334f853c9899404ee846",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/giro_email_sources/Par_VehicleDetails.xlsx": "768468a4b9e64948d1be7510599efbdef4934cf1bd268d2154905113acb3fece",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/geography_map/coordinates.csv": "a234490b47cf5615b01846dce9cf179113d7b257ac75b7682b860f791496161f",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/capacity_strict/strict_original/cases/w5_k15_18E2/mip/341291_r0/selected_routes.json": "f896f7f18fb2144fc8edb0112868ac7b6437d898988016f0ee8135ea11346edd",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/capacity_strict/strict_original/cases/w5_k15_18E2/mip/341291_r0/result.json": "c2b75723581ec19ceb13bf3ef0a4c89aca9ed887780f87e1e7f4e6f3dcd2122c",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/independent_review_20260916/execution/p2_strict/inputs/w5_k15_18E2.csv": "457f61e1d002a552b0c75e27ca817a6422b095fa53353de9921068acc86ac346",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_day_20260918/matched_k3/manifest.json": "c06521e7df338b49af77b7b5931794bef708889db05a93f4d56229f210289e78",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/saved_joint_fee0.json": "884c14a731936f89488d42e2a4be0311f248341e3c371cb7deee8603039897b3",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/saved_joint_fee5.json": "9274f1b9c78c135a0b533490b249e917ee35aeead176461fef20cb91f7b0ffe3",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/complex_route_graphs/extract_complex_originals.py": "670fcecf65f4ef857bc974ad67a1a19d8b55381e7d4a44cea5e3c888b3821fad",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/complex_route_graphs/coordinates.csv": "a5c0a8010bbeefeb5760dc8a16a26f5124ad5eed6efc8b36a5f0c616eaaf3edf"
+  },
+  "caveats": [
+    "Original GIRO recorded schedules only. No optimized fee0/fee5 counterpart is asserted.",
+    "Diagram areas collapse only documented Ref_dict platform/reference memberships; exact rawplatform/charger codes remain in every event.",
+    "13309 visits five reference areas including depot and charges at two opportunity sites plus depot.13320 visits six areas including unresolved13722.",
+    "Same-reference gaps preserve unrecorded platform transfer/idle without inventing a travel time, path, or energy. Depot waiting need not consume idle energy; no new energy model is applied.",
+    "Trip labels are prepared Ordered_Trip_ID values, not GIRO-supplied journey numbers. Rawsource row pointers retain actual GIRO duty and activities.",
+    "Recorded SOC/energy/clock values are copied, not a new feasibility or optimality certificate. These133xx duties use239.01kWh documented18E2 capacity, unlike236.44kWh134xx18E1 figures.",
+    "Straight diagram edges show ordered activities, not road geometry. Geographic proxies are not surveyed exactplatform/charger coordinates."
+  ]
+}

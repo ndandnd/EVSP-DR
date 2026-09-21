@@ -1,0 +1,61 @@
+event,diagram_label,kind,start,end,from_code,to_code,prepared_trip_id,recorded_recharge_kwh,recorded_usage_kwh,source_pointer,timing_basis
+E1,,prep,05:12,05:19,PARX,PARX,,,,Data!A543:X543,recorded GIRO clock interval
+E2,M1,deadhead,05:19,05:37,PARX,HED_D,,,20.7999992,Data!A544:X544,recorded GIRO clock interval
+E3,L1,service,05:37,06:07,HED_D,PC_10,226,,21.3279991,Data!A545:X545,recorded GIRO clock interval
+E4,L2,service,06:07,06:41,PC_10,HED_E,229,,22.3409996,Data!A546:X546,recorded GIRO clock interval
+E5,,deadhead,06:41,06:42,HED_E,3127L,,,0.061999999,Data!A547:X547,recorded GIRO clock interval
+E6,C1,charge,06:42,06:56,3127L,3127L,,40.5944138,,Data!A548:X548,recorded GIRO clock interval
+E7,,deadhead,06:56,06:57,3127L,HED_D,,,0.0500000007,Data!A549:X549,recorded GIRO clock interval
+E8,L3,service,06:57,07:27,HED_D,PC_10,234,,21.3279991,Data!A550:X550,recorded GIRO clock interval
+E9,,same_reference_gap,07:27,07:30,PC_10,PC_7,,,,Data!rows 550–551,interval between adjacent recorded activities; within-area movement not separately specified
+E10,L4,service,07:30,07:54,PC_7,GMV_G,586,,18.6380005,Data!A551:X551,recorded GIRO clock interval
+E11,,deadhead,07:54,07:56,GMV_G,GMV_H,,,0.5,Data!A552:X552,recorded GIRO clock interval
+E12,,wait,07:56,08:00,GMV_H,GMV_H,,,,Data!rows 552–553,interval between adjacent recorded activities at same place
+E13,L5,service,08:00,08:27,GMV_H,PC_7,589,,18.3059998,Data!A553:X553,recorded GIRO clock interval
+E14,,same_reference_gap,08:27,08:27,PC_7,PC_9,,,,Data!rows 553–554,interval between adjacent recorded activities; within-area movement not separately specified
+E15,L6,service,08:27,08:42,PC_9,JON_B,901,,12.3870001,Data!A554:X554,recorded GIRO clock interval
+E16,,deadhead,08:42,08:43,JON_B,JON_A,,,0.200000003,Data!A555:X555,recorded GIRO clock interval
+E17,,wait,08:43,08:45,JON_A,JON_A,,,,Data!rows 555–556,interval between adjacent recorded activities at same place
+E18,L7,service,08:45,08:57,JON_A,PC_7,792,,10.2659998,Data!A556:X556,recorded GIRO clock interval
+E19,L8,service,08:57,09:14,PC_7,JON_B,793,,10.2790003,Data!A557:X557,recorded GIRO clock interval
+E20,,deadhead,09:14,09:15,JON_B,JON_A,,,0.200000003,Data!A558:X558,recorded GIRO clock interval
+E21,C2,charge,09:15,09:25,JON_A,JON_A,,44.831604,,Data!A559:X559,recorded GIRO clock interval
+E22,L9,service,09:25,09:37,JON_A,PC_7,796,,10.2659998,Data!A560:X560,recorded GIRO clock interval
+E23,,same_reference_gap,09:37,09:37,PC_7,PC_5,,,,Data!rows 560–561,interval between adjacent recorded activities; within-area movement not separately specified
+E24,L10,service,09:37,10:08,PC_5,HED_E,393,,20.1809998,Data!A561:X561,recorded GIRO clock interval
+E25,,deadhead,10:08,10:10,HED_E,HED_D,,,0.100000001,Data!A562:X562,recorded GIRO clock interval
+E26,,wait,10:10,10:13,HED_D,HED_D,,,,Data!rows 562–563,interval between adjacent recorded activities at same place
+E27,L11,service,10:13,10:37,HED_D,PC_5,396,,19.8619995,Data!A563:X563,recorded GIRO clock interval
+E28,M2,deadhead,10:37,10:42,PC_5,PARX,,,2.79999995,Data!A564:X564,recorded GIRO clock interval
+E29,,prep,10:42,10:45,PARX,PARX,,,,Data!A565:X565,recorded GIRO clock interval
+E30,C3,charge,10:45,12:30,PARX,PARX,,105.0,,Data!A566:X566,recorded GIRO clock interval
+E31,,wait,12:30,12:36,PARX,PARX,,,,Data!rows 566–567,interval between adjacent recorded activities at same place
+E32,,prep,12:36,12:43,PARX,PARX,,,,Data!A567:X567,recorded GIRO clock interval
+E33,M3,deadhead,12:43,12:54,PARX,JON_A,,,12.8000002,Data!A568:X568,recorded GIRO clock interval
+E34,L12,service,12:54,13:07,JON_A,PC_9,922,,12.342,Data!A569:X569,recorded GIRO clock interval
+E35,,same_reference_gap,13:07,13:10,PC_9,PC_7,,,,Data!rows 569–570,interval between adjacent recorded activities; within-area movement not separately specified
+E36,L13,service,13:10,13:34,PC_7,GMV_G,626,,18.6380005,Data!A570:X570,recorded GIRO clock interval
+E37,,deadhead,13:34,13:36,GMV_G,GMV_H,,,0.5,Data!A571:X571,recorded GIRO clock interval
+E38,,wait,13:36,13:42,GMV_H,GMV_H,,,,Data!rows 571–572,interval between adjacent recorded activities at same place
+E39,L14,service,13:42,14:07,GMV_H,PC_7,629,,18.3059998,Data!A572:X572,recorded GIRO clock interval
+E40,,wait,14:07,14:10,PC_7,PC_7,,,,Data!rows 572–573,interval between adjacent recorded activities at same place
+E41,L15,service,14:10,14:35,PC_7,GMV_G,632,,18.6380005,Data!A573:X573,recorded GIRO clock interval
+E42,,deadhead,14:35,14:37,GMV_G,GMV_H,,,0.5,Data!A574:X574,recorded GIRO clock interval
+E43,,wait,14:37,14:42,GMV_H,GMV_H,,,,Data!rows 574–575,interval between adjacent recorded activities at same place
+E44,L16,service,14:42,15:07,GMV_H,PC_7,635,,18.3059998,Data!A575:X575,recorded GIRO clock interval
+E45,,wait,15:07,15:10,PC_7,PC_7,,,,Data!rows 575–576,interval between adjacent recorded activities at same place
+E46,L17,service,15:10,15:35,PC_7,GMV_G,638,,18.6380005,Data!A576:X576,recorded GIRO clock interval
+E47,,deadhead,15:35,15:37,GMV_G,GMV_H,,,0.5,Data!A577:X577,recorded GIRO clock interval
+E48,,wait,15:37,15:40,GMV_H,GMV_H,,,,Data!rows 577–578,interval between adjacent recorded activities at same place
+E49,L18,service,15:40,16:07,GMV_H,PC_7,641,,18.3059998,Data!A578:X578,recorded GIRO clock interval
+E50,M4,deadhead,16:07,16:22,PC_7,3127L,,,20.6000004,Data!A579:X579,recorded GIRO clock interval
+E51,C4,charge,16:22,16:49,3127L,3127L,,130.727707,,Data!A580:X580,recorded GIRO clock interval
+E52,,deadhead,16:49,16:50,3127L,HED_D,,,0.0500000007,Data!A581:X581,recorded GIRO clock interval
+E53,L19,service,16:50,17:17,HED_D,PC_5,447,,19.8619995,Data!A582:X582,recorded GIRO clock interval
+E54,L20,service,17:17,17:48,PC_5,HED_E,451,,20.1809998,Data!A583:X583,recorded GIRO clock interval
+E55,,deadhead,17:48,17:50,HED_E,HED_D,,,0.100000001,Data!A584:X584,recorded GIRO clock interval
+E56,,wait,17:50,17:52,HED_D,HED_D,,,,Data!rows 584–585,interval between adjacent recorded activities at same place
+E57,L21,service,17:52,18:17,HED_D,PC_5,456,,19.8619995,Data!A585:X585,recorded GIRO clock interval
+E58,L22,service,18:17,18:47,PC_5,HED_E,459,,20.1809998,Data!A586:X586,recorded GIRO clock interval
+E59,M5,deadhead,18:47,19:02,HED_E,PARX,,,20.7999992,Data!A587:X587,recorded GIRO clock interval
+E60,,prep,19:02,19:05,PARX,PARX,,,,Data!A588:X588,recorded GIRO clock interval

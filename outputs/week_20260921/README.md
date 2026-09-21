@@ -1,5 +1,7 @@
 # Week of 21 September 2026 — EVSP–DR
 
+**Five-place example:** [Recorded GIRO duty13309](complex_route_graphs/README.md), [morning/afternoon spatial graph](complex_route_graphs/duty_13309_graph.png), [five-page full itinerary](complex_route_graphs/duty_13309_daybook.pdf), and [interactive gallery](complex_route_graphs/gallery.html). It serves22 trips and charges at Heden, Jons väg and PARX, including a105-minute midday depot recharge. This is original-only; the depot is displaced in the diagram for clarity.
+
 **Latest visual follow-up:** [Five spatial bus-day comparisons](spatial_schedule_graphs/README.md), [browsable gallery with editable keys](spatial_schedule_graphs/gallery.html), [10-page comparison PDF](spatial_schedule_graphs/all_comparisons.pdf), and [k40 ladder path-dependence audit](spatial_schedule_graphs/ladder_path_dependence.md). Complete itineraries preserve all visits, waits, charges and depot returns; the earlier geographic maps remain available below.
 
 [Latest research document snapshot](spatial_schedule_graphs/doc_verification/current_after.pdf) · [Latest figures archive](spatial_schedule_graphs/doc_verification/figures_after.pdf) · [Verified preservation of prior text, tables, links and all seven earlier images](spatial_schedule_graphs/doc_verification/README.md).

@@ -1,0 +1,50 @@
+[
+  {
+    "duty": "13309",
+    "metrics": {
+      "trip_count": 22,
+      "starts": 4,
+      "charging_sites": [
+        "3127L",
+        "JON_A",
+        "PARX"
+      ],
+      "reference_area_count": 5,
+      "raw_location_count": 12,
+      "depot_departure_min": 319,
+      "depot_return_min": 1142,
+      "depot_departure_time": "05:19",
+      "depot_return_time": "19:02",
+      "charged_kwh": 321.1537248,
+      "recorded_usage_kwh": 469.0039958584,
+      "min_recorded_soc_percent": 25.6933384
+    },
+    "events": 60,
+    "visits": 28,
+    "edges": 27
+  },
+  {
+    "duty": "13320",
+    "metrics": {
+      "trip_count": 16,
+      "starts": 3,
+      "charging_sites": [
+        "3127L",
+        "JON_A",
+        "PARX"
+      ],
+      "reference_area_count": 6,
+      "raw_location_count": 15,
+      "depot_departure_min": 402,
+      "depot_return_min": 1153,
+      "depot_departure_time": "06:42",
+      "depot_return_time": "19:13",
+      "charged_kwh": 199.71628570000001,
+      "recorded_usage_kwh": 306.5229959037,
+      "min_recorded_soc_percent": 28.6356201
+    },
+    "events": 46,
+    "visits": 21,
+    "edges": 20
+  }
+]
