@@ -5,6 +5,9 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import pickle
+import sys
+from pathlib import Path
 import time
 from array import array
 from bisect import bisect_left
@@ -160,6 +163,8 @@ class EventExpandedNetwork:
         strict_tariff_coverage=False,
         arc_mode="lazy",
         fixed_sequence_index=False,
+        arc_checkpoint_dir=None,
+        arc_checkpoint_identity=None,
     ):
         self.problem = problem
         self.soc_step = float(soc_step)
@@ -193,7 +198,42 @@ class EventExpandedNetwork:
         self._selected_action_cache = {}
         self._split_arcs()
         self._build_nodes()
-        self._build_arcs()
+        if arc_checkpoint_dir is not None and self.arc_mode != "lazy":
+            raise ValueError("partial graph checkpoints require lazy packed arcs")
+        checkpoint = None
+        if arc_checkpoint_dir is not None:
+            from graph_arc_checkpoints import ArcCheckpoints, digest
+            # Hash every local source module conservatively, including physics
+            # helpers and configuration. This also protects dirty development
+            # trees whose git commit alone would be insufficient identity.
+            source_hashes = {p.name: digest(p) for p in sorted(Path(__file__).parent.glob("*.py"))}
+            prepared_state = dict(self.__dict__)
+            prepared_state["problem"] = {
+                name: getattr(problem, name) for name in
+                ("trips", "adjacency", "start_min", "end_min", "trip_energy")
+            }
+            identity = {
+                "provenance": arc_checkpoint_identity,
+                "source_sha256": source_hashes,
+                "prepared_network_sha256": hashlib.sha256(
+                    pickle.dumps(prepared_state, protocol=4)).hexdigest(),
+                "python": list(sys.version_info[:3]),
+                "numpy": np.__version__,
+                "byteorder": sys.byteorder,
+                "array_sizes": [array(kind).itemsize for kind in ("I", "d")],
+            }
+            if identity["array_sizes"] != [4, 8]:
+                raise ValueError("partial graph checkpoints require uint32/float64 arrays")
+            source_order = [0] + [source for _key, source in sorted(self.trip_node.items())]
+            checkpoint = ArcCheckpoints(arc_checkpoint_dir, identity, source_order)
+        try:
+            if checkpoint is None:
+                self._build_arcs()
+            else:
+                self._build_arcs(checkpoint=checkpoint)
+        finally:
+            if checkpoint is not None:
+                checkpoint.close()
         # _finalize_source sorts every row by target in both representations.
         self._replay_sorted_rows_version = 1
         self.set_fixed_sequence_index(fixed_sequence_index)
@@ -363,7 +403,7 @@ class EventExpandedNetwork:
             if target == self.SINK
         )
 
-    def _build_arcs(self):
+    def _build_arcs(self, *, checkpoint=None):
         self.out = (
             [[] for _node in self.node_meta]
             if self.arc_mode == "explicit" else None
@@ -375,15 +415,33 @@ class EventExpandedNetwork:
             self._arc_slices = [(0, 0) for _node in self.node_meta]
         self._building_arcs = {}
         self.sink_arcs = []
-        for target, cost, trip, action in self._source_candidates():
-            self._add(0, target, cost, trip, action)
-        self._finalize_source(0)
-        for (trip, level), source in sorted(self.trip_node.items()):
+        resumed = checkpoint.restore(self) if checkpoint is not None else 0
+        if resumed == 0:
+            for target, cost, trip, action in self._source_candidates():
+                self._add(0, target, cost, trip, action)
+            self._finalize_source(0)
+            if checkpoint is not None:
+                checkpoint.maybe_commit(self, 1)
+        sources = sorted(self.trip_node.items())
+        for ordinal, ((trip, level), source) in enumerate(sources, start=1):
+            if ordinal < resumed:
+                continue
             soc_exit = self.grid[level] - self.problem.trip_energy[trip]
             depart = float(self.problem.end_min[trip])
             self._direct_arcs(source, trip, soc_exit, depart)
             self._charge_arcs(source, trip, soc_exit, depart)
             self._finalize_source(source)
+            if checkpoint is not None:
+                checkpoint.maybe_commit(self, ordinal + 1)
+        if checkpoint is not None:
+            checkpoint.maybe_commit(self, len(sources) + 1, force=True)
+            self.graph_checkpoint_report = {
+                "resumed_sources": checkpoint.resumed_sources,
+                "total_sources": len(sources) + 1,
+                "shards": len(checkpoint.manifest["shards"]),
+                "bytes_written_this_attempt": checkpoint.bytes_written,
+                "io_s_this_attempt": checkpoint.io_s,
+            }
         del self._building_arcs
         if self.arc_mode == "explicit":
             self.n_arcs = sum(len(arcs) for arcs in self.out)

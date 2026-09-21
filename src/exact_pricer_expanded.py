@@ -1822,6 +1822,10 @@ def run_cg(args) -> dict:
         _event_network_cache_identity(args, provenance)
         if time_model == "event" and cache_path is not None else None
     )
+    checkpoint_dir = getattr(args, "event_graph_checkpoints", None)
+    if checkpoint_dir is not None:
+        network_kwargs["arc_checkpoint_dir"] = checkpoint_dir
+        network_kwargs["arc_checkpoint_identity"] = _event_network_cache_identity(args, provenance)
     cache_manifest = None
     cache_hit = False
     network_t0 = time.time()
@@ -1868,6 +1872,8 @@ def run_cg(args) -> dict:
     )
     if time_model == "event":
         network_metrics["fixed_sequence_index"] = net.fixed_sequence_index
+    if not cache_hit and hasattr(net, "graph_checkpoint_report"):
+        network_metrics["graph_checkpoint"] = dict(net.graph_checkpoint_report)
     inherited_event_pool_audit = None
     if cache_path is not None:
         network_metrics.update({
@@ -3292,6 +3298,11 @@ def main(argv=None) -> int:
         help="Use indexed complete-successor event replay (baseline is default).",
     )
     parser.add_argument(
+        "--event-graph-checkpoints", type=Path, default=None,
+        help="Opt in to resumable packed graph shards in a stable directory; "
+             "requires event/lazy mode. Does not change completed cache format.",
+    )
+    parser.add_argument(
         "--event-network-cache", type=Path, default=None,
         help="Hash-validated pickle cache for a completed event network.",
     )
@@ -3495,6 +3506,10 @@ def main(argv=None) -> int:
         and getattr(args, "time_model", "uniform") != "event"
     ):
         parser.error("--event-arc-mode requires --time-model event")
+    if args.event_graph_checkpoints is not None and (
+        args.time_model != "event" or getattr(args, "event_arc_mode", "lazy") != "lazy"
+    ):
+        parser.error("--event-graph-checkpoints requires event time and lazy packed arcs")
     if args.fixed_sequence_index and args.time_model != "event":
         parser.error("--fixed-sequence-index requires --time-model event")
     if args.event_network_cache is not None and (
