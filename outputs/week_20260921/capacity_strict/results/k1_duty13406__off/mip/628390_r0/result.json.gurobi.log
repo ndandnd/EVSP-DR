@@ -1,0 +1,69 @@
+
+Gurobi 12.0.3 (linux64) logging started Mon Sep 21 04:18:27 2026
+
+Set parameter LogFile to value "/home/nc437/ladder-lite/capacity_loop_20260921/results/k1_duty13406__off/mip/628390_r0/result.json.gurobi.log"
+Set parameter Threads to value 4
+Set parameter MIPGap to value 0.0001
+Set parameter TimeLimit to value 1800
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2690 v2 @ 3.00GHz, instruction set [SSE2|AVX]
+Thread count: 20 physical cores, 20 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  1800
+Threads  4
+
+Optimize a model with 141 rows, 28 columns and 259 nonzeros
+Model fingerprint: 0x01f3dd72
+Variable types: 0 continuous, 28 integer (28 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 10.0000000
+Presolve removed 141 rows and 28 columns
+Presolve time: 0.01s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.02 seconds (0.00 work units)
+Thread count was 1 (of 20 available processors)
+
+Solution count 2: 1 10 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.000000000000e+00, best bound 1.000000000000e+00, gap 0.0000%
+Set parameter TimeLimit to value 3599.9783202908
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2690 v2 @ 3.00GHz, instruction set [SSE2|AVX]
+Thread count: 20 physical cores, 20 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  3599.9783202908
+Threads  4
+
+Optimize a model with 142 rows, 28 columns and 287 nonzeros
+Model fingerprint: 0xfe23e9c8
+Variable types: 0 continuous, 28 integer (28 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [5e+00, 6e+01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+
+Loaded user MIP start with objective 56.952
+MIP start from previous solve did not produce a new incumbent solution
+
+Presolve removed 142 rows and 28 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds (0.00 work units)
+Thread count was 1 (of 20 available processors)
+
+Solution count 1: 56.952 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 5.695200000000e+01, best bound 5.695200000000e+01, gap 0.0000%

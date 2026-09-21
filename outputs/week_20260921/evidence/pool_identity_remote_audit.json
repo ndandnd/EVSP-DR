@@ -1,0 +1,392 @@
+{
+  "c1_k08": {
+    "fresh_cg": {
+      "bytes": 47059,
+      "sha256": "c024cc4e235234ed4244abaa1e7738f3600c264a2ffe4c05c5026198b69d56b0"
+    },
+    "fresh_journal": {
+      "bytes": 170822363,
+      "sha256": "2e75b32ab3f2c11e7677892844b33c9fe8c0351529927d08980370c113d2845c"
+    },
+    "fresh_mip": {
+      "bytes": 53318,
+      "sha256": "c9dc2e96492adc127590ad89b0d2bfbb13394f358dc49f64438380093245a631"
+    },
+    "warm_mip": {
+      "bytes": 60109,
+      "sha256": "92aa65873dc345fbd578f3066f78f4e31c92e19ce8710a5b7518930126456c2f"
+    },
+    "warm_cg": {
+      "bytes": 48252,
+      "sha256": "1513ea906b23b9866083c4ecb57df48685e8ce8f87e22b6774c70213c2c7e72b"
+    },
+    "warm_journal": {
+      "bytes": 344378997,
+      "sha256": "7cb84716fbcf1049a263aa24e41ad05864d3f087c3e4887983700db5f7d27ab6"
+    },
+    "aug_cg": {
+      "bytes": 47899,
+      "sha256": "0d86f4b45c2373f57fb1058180b4d4e914873fc5f1bd44b76b7063c5b84a3b9c"
+    },
+    "aug_journal": {
+      "bytes": 170859252,
+      "sha256": "1193c62b242668af3a45f577a894ce2ad7bab963cc3697d32007871258a7ab3f"
+    },
+    "aug_prefix_equals_fresh": true,
+    "appended_lines": 8,
+    "cg_keys": [
+      "csv",
+      "prices_csv",
+      "soc_step",
+      "block_min",
+      "strict_tariff_coverage",
+      "g_kwh",
+      "charge_kw",
+      "min_soc_frac",
+      "master_sense",
+      "master_backend",
+      "initial_pool",
+      "time_model",
+      "columns_per_iter",
+      "column_selection",
+      "column_diversity_weight",
+      "column_candidate_multiplier",
+      "validated_seed_routes_sha256",
+      "inherited_event_pool_status_sha256",
+      "inherited_event_pool_audit",
+      "column_pool_treatment",
+      "trip_ids",
+      "iterations",
+      "attempt_iterations",
+      "certified_rc_optimal",
+      "final",
+      "columns",
+      "columns_journal",
+      "wall_s",
+      "attempt_wall_s",
+      "peak_rss_mb",
+      "stop_reason",
+      "termination_signal",
+      "network_metrics",
+      "snapshot_availability",
+      "history_tail",
+      "final_lp",
+      "final_lp_source",
+      "provenance",
+      "resume_parent"
+    ],
+    "dual_fields": {}
+  },
+  "c4_k08": {
+    "fresh_cg": {
+      "bytes": 46737,
+      "sha256": "6d64febeeb1d25cc7245e38133c17ea696b76b4419f385d4219f3a17e5a63d4c"
+    },
+    "fresh_journal": {
+      "bytes": 166890942,
+      "sha256": "c73aa81245a59305a48173a072d450a3b5faee7e4fd906d613c4eca97cd6bc64"
+    },
+    "fresh_mip": {
+      "bytes": 53381,
+      "sha256": "7d5fdb4e6a73f4b6dbb6df9aace22ea50f60d30e96c25cdc518547c7df7da0be"
+    },
+    "warm_mip": {
+      "bytes": 58262,
+      "sha256": "97b19ca46cf80aa0a8b0fbd192505fbf6d132d35bb38cb8c4a8594c4a6973553"
+    },
+    "warm_cg": {
+      "bytes": 47827,
+      "sha256": "abaad912868de2ba23be45fcb7ecf44247290931faa742d20a7e7de7c5e7e870"
+    },
+    "warm_journal": {
+      "bytes": 133351171,
+      "sha256": "35f7882830e3710ba28ed7f05a46aa8a2c000c9f6cc6199bab2ba57979c7dfa0"
+    },
+    "aug_cg": {
+      "bytes": 47577,
+      "sha256": "453013dae0b6d1b7f3c968c94578f6c166a1dec35b585a42ed4a1398746c6892"
+    },
+    "aug_journal": {
+      "bytes": 166926613,
+      "sha256": "4619f336b5a995470b1504ce7530773dfbc598b62a02bb5d8f31f058c1c3fb91"
+    },
+    "aug_prefix_equals_fresh": true,
+    "appended_lines": 8,
+    "cg_keys": [
+      "csv",
+      "prices_csv",
+      "soc_step",
+      "block_min",
+      "strict_tariff_coverage",
+      "g_kwh",
+      "charge_kw",
+      "min_soc_frac",
+      "master_sense",
+      "master_backend",
+      "initial_pool",
+      "time_model",
+      "columns_per_iter",
+      "column_selection",
+      "column_diversity_weight",
+      "column_candidate_multiplier",
+      "validated_seed_routes_sha256",
+      "inherited_event_pool_status_sha256",
+      "inherited_event_pool_audit",
+      "column_pool_treatment",
+      "trip_ids",
+      "iterations",
+      "attempt_iterations",
+      "certified_rc_optimal",
+      "final",
+      "columns",
+      "columns_journal",
+      "wall_s",
+      "attempt_wall_s",
+      "peak_rss_mb",
+      "stop_reason",
+      "termination_signal",
+      "network_metrics",
+      "snapshot_availability",
+      "history_tail",
+      "final_lp",
+      "final_lp_source",
+      "provenance",
+      "resume_parent"
+    ],
+    "dual_fields": {}
+  },
+  "c5_k08": {
+    "fresh_cg": {
+      "bytes": 42240,
+      "sha256": "364c6a6505bf510678634a2922b51a8185febbbbf276e7e1e7d755db04cd9e2f"
+    },
+    "fresh_journal": {
+      "bytes": 113665046,
+      "sha256": "9ab51e03bfa1f350834fe96b24942ab42f5bf319222cc111b38b40806420a11c"
+    },
+    "fresh_mip": {
+      "bytes": 53901,
+      "sha256": "7e0c12ec4fd898f5038f10ca06e6d320e32b3e5c109e465a252a158bd0e66910"
+    },
+    "warm_mip": {
+      "bytes": 58079,
+      "sha256": "390a77c4dff0bb3d29f90b62fd4290a5ed74fd7167acb460a86ba774a07b11f1"
+    },
+    "warm_cg": {
+      "bytes": 43376,
+      "sha256": "f15c681b63bcd66a77932258e981f0cfd07b55d2589afa199b196fb0a29f7b2d"
+    },
+    "warm_journal": {
+      "bytes": 123943848,
+      "sha256": "06fac0df544f1781ec2191bb95005bbfa12a259c5dfbaccd28e1a2f4c13f567d"
+    },
+    "aug_cg": {
+      "bytes": 43080,
+      "sha256": "b6bb0bb263f3cbb538ca3b6c35d7e35da899e3b4f8b9d510ffa45667bbacd2b1"
+    },
+    "aug_journal": {
+      "bytes": 113700654,
+      "sha256": "7bd6b469456a4a59005b4a6d88fb1002a1458290e3846450343f85489ded65a1"
+    },
+    "aug_prefix_equals_fresh": true,
+    "appended_lines": 8,
+    "cg_keys": [
+      "csv",
+      "prices_csv",
+      "soc_step",
+      "block_min",
+      "strict_tariff_coverage",
+      "g_kwh",
+      "charge_kw",
+      "min_soc_frac",
+      "master_sense",
+      "master_backend",
+      "initial_pool",
+      "time_model",
+      "columns_per_iter",
+      "column_selection",
+      "column_diversity_weight",
+      "column_candidate_multiplier",
+      "validated_seed_routes_sha256",
+      "inherited_event_pool_status_sha256",
+      "inherited_event_pool_audit",
+      "column_pool_treatment",
+      "trip_ids",
+      "iterations",
+      "attempt_iterations",
+      "certified_rc_optimal",
+      "final",
+      "columns",
+      "columns_journal",
+      "wall_s",
+      "attempt_wall_s",
+      "peak_rss_mb",
+      "stop_reason",
+      "termination_signal",
+      "network_metrics",
+      "snapshot_availability",
+      "history_tail",
+      "final_lp",
+      "final_lp_source",
+      "provenance",
+      "resume_parent"
+    ],
+    "dual_fields": {}
+  },
+  "c2_k08": {
+    "fresh_cg": {
+      "bytes": 42704,
+      "sha256": "f9544e307dc64585034133ef0e440657e737eb29f94e690646f822a7ad1c8352"
+    },
+    "fresh_journal": {
+      "bytes": 68886006,
+      "sha256": "9336b5d5b6b70c57dfb9033aeda33f14888a44eb33c1ebfb12acce694360d8f4"
+    },
+    "fresh_mip": {
+      "bytes": 49708,
+      "sha256": "f82b4e049c973036cb00a53c5bd5a3925206c6d8333fc32b2b4a704dfe00c3e4"
+    },
+    "warm_mip": {
+      "bytes": 53635,
+      "sha256": "3414ef6674b182fe5dc3b2dca75d46dafbf826c8e0ebe28d7fa76521bf8dcb8d"
+    },
+    "warm_cg": {
+      "bytes": 45008,
+      "sha256": "1b41a5335fa1651103ee949099d20edd5a86b29dd627f94ee73164c093cdff80"
+    },
+    "warm_journal": {
+      "bytes": 147568474,
+      "sha256": "45b9b0b769d67e0e9ee56e755d408e2391f270b9a4ba04ec8f07812a78d783ec"
+    },
+    "aug_cg": {
+      "bytes": 43544,
+      "sha256": "14528a8f87744dcdb0e6375c4e0a812d8b28d00eae1f3018831e2128a06bff55"
+    },
+    "aug_journal": {
+      "bytes": 68914676,
+      "sha256": "8ddeb47b4dc7db770970b4130e87e1d532c8f02f32a4c159f11bc49c642c3669"
+    },
+    "aug_prefix_equals_fresh": true,
+    "appended_lines": 7,
+    "cg_keys": [
+      "csv",
+      "prices_csv",
+      "soc_step",
+      "block_min",
+      "strict_tariff_coverage",
+      "g_kwh",
+      "charge_kw",
+      "min_soc_frac",
+      "master_sense",
+      "master_backend",
+      "initial_pool",
+      "time_model",
+      "columns_per_iter",
+      "column_selection",
+      "column_diversity_weight",
+      "column_candidate_multiplier",
+      "validated_seed_routes_sha256",
+      "inherited_event_pool_status_sha256",
+      "inherited_event_pool_audit",
+      "column_pool_treatment",
+      "trip_ids",
+      "iterations",
+      "attempt_iterations",
+      "certified_rc_optimal",
+      "final",
+      "columns",
+      "columns_journal",
+      "wall_s",
+      "attempt_wall_s",
+      "peak_rss_mb",
+      "stop_reason",
+      "termination_signal",
+      "network_metrics",
+      "snapshot_availability",
+      "history_tail",
+      "final_lp",
+      "final_lp_source",
+      "provenance",
+      "resume_parent"
+    ],
+    "dual_fields": {}
+  },
+  "c3_k08": {
+    "fresh_cg": {
+      "bytes": 34442,
+      "sha256": "9e8376a2835c071c76011325de652348eda5bf3937a3faad03d9bb7544e78082"
+    },
+    "fresh_journal": {
+      "bytes": 55484458,
+      "sha256": "7ea9fdbc17fc11def3c741a5c2d0525e078391ed41d47ae1bc14a0182704d5f6"
+    },
+    "fresh_mip": {
+      "bytes": 48887,
+      "sha256": "1d4936bec7def830d91a25a20f8f460fdb8f66ffd383e6a68463bd8a6f584ffc"
+    },
+    "warm_mip": {
+      "bytes": 48277,
+      "sha256": "cfe1b55635a997edbf7bd6eba3d651d4ec42e00c95798edb2c0074fbc0ce30f5"
+    },
+    "warm_cg": {
+      "bytes": 35969,
+      "sha256": "49635299c5e437f25ee4a6858d09e3582fc21f97ed632d6a916666112a7bf362"
+    },
+    "warm_journal": {
+      "bytes": 80110864,
+      "sha256": "a1448433c7d882c55f97b51db8505bcac776d575a1afc402859d4a3e557686a3"
+    },
+    "aug_cg": {
+      "bytes": 35282,
+      "sha256": "68905e6194f1a334a7f71bce32c32d018a93981ba7a2275ecc0473a1c7dd8f85"
+    },
+    "aug_journal": {
+      "bytes": 55513495,
+      "sha256": "66e6a976c92755677fe2f3cda1f9ed0fa56c38596d527f48189f2388204ffa58"
+    },
+    "aug_prefix_equals_fresh": true,
+    "appended_lines": 8,
+    "cg_keys": [
+      "csv",
+      "prices_csv",
+      "soc_step",
+      "block_min",
+      "strict_tariff_coverage",
+      "g_kwh",
+      "charge_kw",
+      "min_soc_frac",
+      "master_sense",
+      "master_backend",
+      "initial_pool",
+      "time_model",
+      "columns_per_iter",
+      "column_selection",
+      "column_diversity_weight",
+      "column_candidate_multiplier",
+      "validated_seed_routes_sha256",
+      "inherited_event_pool_status_sha256",
+      "inherited_event_pool_audit",
+      "column_pool_treatment",
+      "trip_ids",
+      "iterations",
+      "attempt_iterations",
+      "certified_rc_optimal",
+      "final",
+      "columns",
+      "columns_journal",
+      "wall_s",
+      "attempt_wall_s",
+      "peak_rss_mb",
+      "stop_reason",
+      "termination_signal",
+      "network_metrics",
+      "snapshot_availability",
+      "history_tail",
+      "final_lp",
+      "final_lp_source",
+      "provenance",
+      "resume_parent"
+    ],
+    "dual_fields": {}
+  }
+}

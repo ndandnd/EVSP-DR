@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/home/nc437/ladder-lite/capacity_loop_20260921/code/src/run_capacity_speed_event_cg.py", line 925, in <module>
+    main()
+  File "/home/nc437/ladder-lite/capacity_loop_20260921/code/src/run_capacity_speed_event_cg.py", line 903, in main
+    prov = provenance(args, instance, prices_path, reference)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nc437/ladder-lite/capacity_loop_20260921/code/src/run_capacity_speed_event_cg.py", line 196, in provenance
+    commit = subprocess.run(
+             ^^^^^^^^^^^^^^^
+  File "/home/nc437/evsp_env/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.

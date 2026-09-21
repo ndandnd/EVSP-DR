@@ -1,0 +1,27 @@
+[
+  {
+    "arm": "saved_joint_fee0",
+    "fee": 0,
+    "electricity_cost": 158.70682036845736,
+    "starts": 42,
+    "objective": 158.7068203684573,
+    "bound": 158.69784983822532,
+    "gap": 5.6522651081730154e-05,
+    "status": 2,
+    "seconds": 0.5457260608673096,
+    "selected_source_index": 1
+  },
+  {
+    "arm": "saved_joint_fee5",
+    "fee": 5,
+    "electricity_cost": 183.71482507696504,
+    "starts": 30,
+    "objective": 333.71481484840484,
+    "bound": 331.54427371378017,
+    "gap": 0.006504179730859934,
+    "status": 9,
+    "seconds": 120.00476121902466,
+    "selected_source_index": 0
+  }
+]
+[('Recorded GIRO', 12, 9), ('Our saved CG trips · fee 0', 13, 9), ('Our saved pool trips · fee 5', 12, 6)]

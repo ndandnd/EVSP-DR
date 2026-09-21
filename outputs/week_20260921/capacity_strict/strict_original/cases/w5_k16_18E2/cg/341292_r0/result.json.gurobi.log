@@ -1,0 +1,39 @@
+
+Gurobi 12.0.3 (linux64) logging started Mon Sep 21 10:39:04 2026
+
+Set parameter LogFile to value "/share/scaglione/nc437/evsp-dr/review_strict_c5_20260916/cases/w5_k16_18E2/cg/341292_r0/result.json.gurobi.log"
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2665 0 @ 2.40GHz, instruction set [SSE2|AVX]
+Thread count: 16 physical cores, 16 logical processors, using up to 8 threads
+
+Non-default parameters:
+Threads  8
+
+Optimize a model with 256 rows, 889 columns and 6598 nonzeros
+Model fingerprint: 0x694fedc9
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 67 rows and 323 columns
+Presolve time: 0.00s
+Presolved: 189 rows, 566 columns, 6275 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    7.2004059e+06   3.600000e+01   0.000000e+00      0s
+     118    7.4005261e+06   0.000000e+00   0.000000e+00      0s
+
+Use crossover to convert LP symmetric solution to basic solution...
+Crossover log...
+
+       0 PPushes remaining with PInf 0.0000000e+00                 0s
+
+  Push phase complete: Pinf 0.0000000e+00, Dinf 1.0004442e-10      0s
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+     121    7.4005261e+06   0.000000e+00   0.000000e+00      0s
+
+Solved in 121 iterations and 0.01 seconds (0.01 work units)
+Optimal objective  7.400526072e+06

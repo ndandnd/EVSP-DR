@@ -1,0 +1,108 @@
+{
+  "saved_joint_fee0": {
+    "valid_for_declared_scope": true,
+    "exact_once_trips": 62,
+    "fleet": 5,
+    "routes": [
+      {
+        "source_index": 0,
+        "valid": true,
+        "min_soc_kwh": 35.46599999999977,
+        "terminal_kwh": 47.90066852827698,
+        "target_kwh": 47.90066852827695
+      },
+      {
+        "source_index": 1,
+        "valid": true,
+        "min_soc_kwh": 35.465999999999696,
+        "terminal_kwh": 50.20850168172372,
+        "target_kwh": 50.20850168172383
+      },
+      {
+        "source_index": 2,
+        "valid": true,
+        "min_soc_kwh": 35.46600000000003,
+        "terminal_kwh": 57.867414773418915,
+        "target_kwh": 57.86741477341874
+      },
+      {
+        "source_index": 3,
+        "valid": true,
+        "min_soc_kwh": 35.46599999999985,
+        "terminal_kwh": 46.47529889133208,
+        "target_kwh": 46.4752988913322
+      },
+      {
+        "source_index": 4,
+        "valid": true,
+        "min_soc_kwh": 35.46600000000005,
+        "terminal_kwh": 48.266440477601584,
+        "target_kwh": 48.26644047760146
+      }
+    ],
+    "charger_peaks": {
+      "4808": 1,
+      "2190L": 1
+    },
+    "not_validated": [
+      "time-dependent DHD",
+      "platform/departure blocking",
+      "FIFO at4808",
+      "crew constraints"
+    ],
+    "source_hash": "884c14a731936f89488d42e2a4be0311f248341e3c371cb7deee8603039897b3"
+  },
+  "saved_joint_fee5": {
+    "valid_for_declared_scope": true,
+    "exact_once_trips": 62,
+    "fleet": 5,
+    "routes": [
+      {
+        "source_index": 0,
+        "valid": true,
+        "min_soc_kwh": 35.465999999999724,
+        "terminal_kwh": 50.208501681723526,
+        "target_kwh": 50.20850168172383
+      },
+      {
+        "source_index": 1,
+        "valid": true,
+        "min_soc_kwh": 35.46600000000002,
+        "terminal_kwh": 46.47529889133165,
+        "target_kwh": 46.4752988913322
+      },
+      {
+        "source_index": 2,
+        "valid": true,
+        "min_soc_kwh": 35.46599999999721,
+        "terminal_kwh": 57.86741477341627,
+        "target_kwh": 57.86741477341874
+      },
+      {
+        "source_index": 3,
+        "valid": true,
+        "min_soc_kwh": 35.46600000000004,
+        "terminal_kwh": 47.90066852827641,
+        "target_kwh": 47.90066852827695
+      },
+      {
+        "source_index": 4,
+        "valid": true,
+        "min_soc_kwh": 35.46600000000002,
+        "terminal_kwh": 48.26644047760103,
+        "target_kwh": 48.26644047760146
+      }
+    ],
+    "charger_peaks": {
+      "4808": 1,
+      "2190L": 1
+    },
+    "not_validated": [
+      "time-dependent DHD",
+      "platform/departure blocking",
+      "FIFO at4808",
+      "crew constraints"
+    ],
+    "source_hash": "9274f1b9c78c135a0b533490b249e917ee35aeead176461fef20cb91f7b0ffe3"
+  }
+}

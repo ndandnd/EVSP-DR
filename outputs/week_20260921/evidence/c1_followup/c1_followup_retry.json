@@ -1,0 +1,22 @@
+{
+  "job": "628441",
+  "command": [
+    "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+    "--parsable",
+    "--partition=default_partition",
+    "--exclude=scaglione-compute-01",
+    "--requeue",
+    "--cpus-per-task=8",
+    "--mem=32G",
+    "--time=01:30:00",
+    "--job-name=diveC1start",
+    "--output=/home/nc437/ladder-lite/research_execution_20260921/%j_c1.out",
+    "--error=/home/nc437/ladder-lite/research_execution_20260921/%j_c1.err",
+    "/home/nc437/ladder-lite/research_execution_20260921/c1_followup.sh"
+  ],
+  "start_sha256": "c7179fc7034786e8e918d59e0923a1fbfe85dbcea705e067c89f12c75473eb3c",
+  "source_status_sha256": "8343ffa5b0d585e39034f68396f14cd857626e97e29188c0ba525659699673d8",
+  "scope": "Additional one-hour follow-up; never overwrite original one-hour benchmark.",
+  "original_job": "628419",
+  "retry_reason": "Missing submitted-source hash environment variables; preflight failed before optimization."
+}

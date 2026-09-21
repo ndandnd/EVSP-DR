@@ -1,0 +1,35 @@
+
+Gurobi 12.0.1 (mac64[arm]) logging started Mon Sep 21 11:04:13 2026
+
+Set parameter LogFile to value "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/integration_smoke/dispatch_cleanup/fleet.log"
+Gurobi Optimizer version 12.0.1 build v12.0.1rc0 (mac64[arm] - Darwin 25.5.0 25F84)
+
+CPU model: Apple M3 Pro
+Thread count: 12 physical cores, 12 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  1
+MIPGap  0
+Threads  4
+
+Optimize a model with 64 rows, 1291 columns and 18703 nonzeros
+Model fingerprint: 0xfcc28ab1
+Variable types: 0 continuous, 1291 integer (1291 binary)
+Coefficient statistics:
+  Matrix range     [5e-01, 2e+02]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+02]
+Found heuristic solution: objective 5.0000000
+Presolve removed 64 rows and 1291 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds (0.01 work units)
+Thread count was 1 (of 12 available processors)
+
+Solution count 1: 5 
+
+Optimal solution found (tolerance 0.00e+00)
+Best objective 5.000000000000e+00, best bound 5.000000000000e+00, gap 0.0000%
+Set parameter TimeLimit to value 1.9870892078615725e+00

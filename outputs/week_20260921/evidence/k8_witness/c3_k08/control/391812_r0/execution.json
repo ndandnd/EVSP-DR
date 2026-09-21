@@ -1,0 +1,21 @@
+{
+ "case_id": "c3_k08",
+ "arm": "control",
+ "slurm_job_id": "391812",
+ "restart_count": "0",
+ "host": "scaglione-cpu-04",
+ "cpus_on_node": "8",
+ "cpus_per_task": "8",
+ "mem_per_node": "24576",
+ "started_utc": "2026-09-18T01:52:34Z",
+ "result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k08/base/135633_r0/cg.json",
+ "result_sha256": "9e8376a2835c071c76011325de652348eda5bf3937a3faad03d9bb7544e78082",
+ "journal": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k08/base/135633_r0/cg.json.columns.jsonl",
+ "journal_sha256": "7ea9fdbc17fc11def3c741a5c2d0525e078391ed41d47ae1bc14a0182704d5f6",
+ "mip_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+ "cwd": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code",
+ "status": "finished",
+ "returncode": 0,
+ "ended_utc": "2026-09-18T02:52:53Z",
+ "result_sha256_out": "94e1db89ab3223ccef82eab11eb51fd81d99ef5e5a5620bc7a32ddb0bda979b3"
+}

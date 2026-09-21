@@ -1,0 +1,87 @@
+
+Gurobi 12.0.3 (linux64) logging started Mon Sep 21 04:18:26 2026
+
+Set parameter LogFile to value "/home/nc437/ladder-lite/capacity_loop_20260921/results/e1_short_k2__on/mip/628398_r0/result.json.gurobi.log"
+Set parameter Threads to value 4
+Set parameter MIPGap to value 0.0001
+Set parameter TimeLimit to value 1800
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6230 CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  1800
+Threads  4
+
+Optimize a model with 884 rows, 157 columns and 8931 nonzeros
+Model fingerprint: 0x171228b3
+Variable types: 0 continuous, 157 integer (157 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 12.0000000
+Presolve removed 822 rows and 28 columns
+Presolve time: 0.02s
+Presolved: 62 rows, 129 columns, 2079 nonzeros
+Found heuristic solution: objective 11.0000000
+Variable types: 0 continuous, 129 integer (129 binary)
+
+Root relaxation: objective 2.000000e+00, 53 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+*    0     0               0       2.0000000    2.00000  0.00%     -    0s
+
+Explored 1 nodes (53 simplex iterations) in 0.03 seconds (0.01 work units)
+Thread count was 4 (of 40 available processors)
+
+Solution count 3: 2 11 12 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.000000000000e+00, best bound 2.000000000000e+00, gap 0.0000%
+Set parameter TimeLimit to value 3.5999611181817017e+03
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6230 CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  3.5999611181817017e+03
+Threads  4
+
+Optimize a model with 885 rows, 157 columns and 9088 nonzeros
+Model fingerprint: 0xa1789873
+Variable types: 0 continuous, 157 integer (157 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [5e+00, 6e+01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+00]
+
+Loaded user MIP start with objective 84.272
+MIP start from previous solve did not produce a new incumbent solution
+
+Presolve removed 821 rows and 6 columns
+Presolve time: 0.02s
+Presolved: 64 rows, 151 columns, 2378 nonzeros
+Variable types: 0 continuous, 151 integer (151 binary)
+
+Root relaxation: objective 8.093867e+01, 65 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   80.93867    0    5   84.27200   80.93867  3.96%     -    0s
+     0     0     cutoff    0        84.27200   84.27200  0.00%     -    0s
+
+Explored 1 nodes (73 simplex iterations) in 0.03 seconds (0.01 work units)
+Thread count was 4 (of 40 available processors)
+
+Solution count 1: 84.272 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 8.427200000000e+01, best bound 8.427200000000e+01, gap 0.0000%

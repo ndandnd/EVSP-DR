@@ -1,0 +1,40 @@
+{
+  "inputs": {
+    "/Users/nadan/Documents/projects/demandresponse/data/Par_VehicleDetails_Updated.csv": "11dff837f8f62efb73f8fe98a2c325a8033e56754fa6334f853c9899404ee846",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260917/route_explainer/inputs/original.json": "a015a776f9103b3d6e274c60a7b3378e8c8ccfbdee7dfedc5d5ee74391175baa",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/peak08_h26.csv": "b461f12cf8ca41ba8a89102b32d46ea16b974566ea05849dd75776a7108f341e",
+    "/Users/nadan/Documents/projects/demandresponse/.codex-work/review-strict-chain-20260916/src/giro_partille_physics.py": "861e83411316adf9b73d95015f475c496e7d49d7963cf48d682d74b198a4b29f"
+  },
+  "execution_script_sha256": "0536239bfeba19be73f297457622d40a68a15903a4d9523ec6f9efd9c6d15d7e",
+  "comparison_scope": "All five original GIRO duties, same62trips, reoptimized within existing charge windows. Not jointCG or route reassignment.",
+  "original_duties": [
+    "13401",
+    "13403",
+    "13405",
+    "13408",
+    "13414"
+  ],
+  "targets": {
+    "13401": 46.4752988913322,
+    "13403": 47.90066852827695,
+    "13405": 57.86741477341874,
+    "13408": 48.26644047760146,
+    "13414": 50.20850168172383
+  },
+  "results": [
+    {
+      "fee": 0,
+      "status": 2,
+      "cost": 230.6427969829188,
+      "starts": 52,
+      "objective": 230.64279698291904
+    },
+    {
+      "fee": 5,
+      "status": 2,
+      "cost": 230.6427969829188,
+      "starts": 52,
+      "objective": 490.6427969829191
+    }
+  ]
+}

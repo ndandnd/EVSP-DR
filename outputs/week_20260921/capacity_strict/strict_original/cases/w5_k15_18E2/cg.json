@@ -1,0 +1,90 @@
+{
+  "arm": "parx60",
+  "capacity_selector": "reference",
+  "certified_rc_optimal": false,
+  "checkpoint": {
+    "atomic_pool_replace": true,
+    "id": "fdecc51447b6b852b9e3c0d2aa202cd85e9a9dbe00abfcde8fdff68d5c5d00c8",
+    "initial_pool_columns": 596,
+    "resumed": false,
+    "schema": "evsp-dr-capacity-speed-cg-checkpoint-v1",
+    "writes_this_attempt": 2
+  },
+  "final": {
+    "artificial_total": 0.0,
+    "objective": 3700526.072,
+    "pool_columns": 596,
+    "route_weight": 37.0
+  },
+  "gurobi_log": "/share/scaglione/nc437/evsp-dr/review_strict_c5_20260916/cases/w5_k15_18E2/cg/628314_r0/result.json.gurobi.log",
+  "inheritance": {
+    "every_inherited_route_replayed": true,
+    "inherited_columns": 566,
+    "parent_instance_sha256": "a901bd78e6040ad6974609d7267d4bd797d9014a633b9edf644c32cfb733eccb",
+    "parent_pool": "/home/nc437/ladder-lite/review_strict_c5_20260916/cases/w5_k14_18E2/pool.jsonl",
+    "parent_pool_sha256": "6511d7ad54c6900283b61fdd9e6f1790ce147bc63b178f2dbbfd222c35e3d7c2",
+    "parent_status": "/home/nc437/ladder-lite/review_strict_c5_20260916/cases/w5_k14_18E2/cg.json",
+    "parent_status_sha256": "f3b96f20f8815024a8a87ef707834eb832aac6fc52c7f28df597de74667f93d1",
+    "trip_mapping_sha256": "98bbb6edb4bc99978daab9351933ded3f3f717f6bfa071359694308b6f6729d1"
+  },
+  "iterations": [],
+  "mode": "cg",
+  "network": {
+    "arc_mode": "explicit",
+    "dag_arcs": 260658942,
+    "dag_nodes": 16365,
+    "event_lattice_sha256": "109f4d232414b6fd0d0a322817e56b86ce66e094b27833a2b6f11db8593bd145",
+    "materialized_python_arc_objects": 260658942,
+    "packed_arc_bytes": 0,
+    "station_charge_kw": {
+      "PARX": 60.0
+    },
+    "station_event_times": {
+      "2190L_0": 28,
+      "3127L_0": 497,
+      "4808_0": 28,
+      "7880C_0": 496,
+      "JON_A_0": 522,
+      "PARX_1": 502
+    },
+    "time_model": "event"
+  },
+  "network_build_s": 15441.938124184031,
+  "physics": {
+    "battery_kwh": 239.01,
+    "capacity_enforced": false,
+    "charger_counts": {},
+    "event_block_min": 5,
+    "initial_soc_kwh": 239.01,
+    "max_station_wait_min": 1560.0,
+    "non_parx_kw": 240.0,
+    "parx_capacity": "unlimited",
+    "parx_kw": 60.0,
+    "reserve_kwh": 35.8515,
+    "soc_step_kwh": 2.5,
+    "terminal_soc_constraint": "reserve_only"
+  },
+  "pool": "/share/scaglione/nc437/evsp-dr/review_strict_c5_20260916/cases/w5_k15_18E2/cg/628314_r0/pool.jsonl",
+  "pool_sha256": "3d80187a87901792a5999c7f4fdb2fd368b74ed4c6dfbf7b95d86337b95677a8",
+  "pricing_certificate_scope": "full conservative event-time/SOC covering LP without shared capacity",
+  "provenance": {
+    "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "git_commit": "50ceb6c095a580f79f87b53bef536cac31f81963",
+    "git_tracked_dirty": false,
+    "gurobi_version": "12.0.3",
+    "host": "unicorn-cpu-75.coecis.cornell.edu",
+    "instance": "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k15_18E2.csv",
+    "instance_sha256": "457f61e1d002a552b0c75e27ca817a6422b095fa53353de9921068acc86ac346",
+    "prices": "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0/data/hourly_prices_flat.csv",
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference_data_dir": "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0/data",
+    "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "slurm_array_task_id": null,
+    "slurm_job_id": "628314"
+  },
+  "runtime_s": 15444.798642966896,
+  "schema": "evsp-dr-capacity-speed-exact-event-pilot-v1",
+  "status": "incomplete",
+  "stop_reason": "cg_wall_limit",
+  "terminal_exact_min_reduced_cost": null
+}

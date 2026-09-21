@@ -1,0 +1,134 @@
+{
+  "arm": "capacity",
+  "capacity_enforced_in_mip": true,
+  "cg_status": "/home/nc437/ladder-lite/capacity_loop_20260921/results/e1_short_k2__on/cg/628437_r0/result.json",
+  "cg_status_sha256": "1cfded0e6b5b034f7bf6994c70b91336deed6da786e70123c74a2d50de88b2c8",
+  "duplicate_service_audit": {
+    "all_trips_covered": true,
+    "extra_trip_assignments": 0,
+    "overcovered_trip_count": 0,
+    "overcovered_trips": {}
+  },
+  "mode": "mip",
+  "physical_station_capacity_audit": {
+    "half_open_intervals": true,
+    "stations": {
+      "2190L": {
+        "documented_chargers": 1,
+        "peak_simultaneous_connections": 1,
+        "peak_time_min": 376.0,
+        "valid": true
+      },
+      "3127L": {
+        "documented_chargers": 2,
+        "peak_simultaneous_connections": 0,
+        "peak_time_min": null,
+        "valid": true
+      },
+      "4808": {
+        "documented_chargers": 1,
+        "peak_simultaneous_connections": 0,
+        "peak_time_min": null,
+        "valid": true
+      },
+      "7880C": {
+        "documented_chargers": 1,
+        "peak_simultaneous_connections": 0,
+        "peak_time_min": null,
+        "valid": true
+      },
+      "JON_A": {
+        "documented_chargers": 1,
+        "peak_simultaneous_connections": 0,
+        "peak_time_min": null,
+        "valid": true
+      }
+    },
+    "valid": true
+  },
+  "pool": "/home/nc437/ladder-lite/capacity_loop_20260921/results/e1_short_k2__on/cg/628437_r0/pool.jsonl",
+  "pool_acceptance": {
+    "cg_pricing_certified": false,
+    "cg_status": "incomplete",
+    "cg_stop_reason": "pricing_deadline",
+    "classification": "timed_uncertified_exact_event_cg_pool",
+    "covered_trip_count": 23,
+    "route_count": 157,
+    "usable": true
+  },
+  "pool_sha256": "504cbab2132fdf5ab363b370e9f72748c6be81dcf208cdef3f59fea7b26eaec0",
+  "provenance": {
+    "capacity_candidate_mode": "grid",
+    "capacity_shortcircuit": "on",
+    "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "git_commit": "cf61e2c8618b067df032c3eb795476e64184ed0a",
+    "git_tracked_dirty": false,
+    "gurobi_version": "12.0.3",
+    "host": "jingjie-cpu-06.mae.cornell.edu",
+    "instance": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+    "instance_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+    "prices": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/hourly_prices_flat.csv",
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference_data_dir": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data",
+    "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "slurm_array_task_id": null,
+    "slurm_job_id": "628398"
+  },
+  "result": {
+    "charging_related_cost": 84.2719999999972,
+    "fleet": 2,
+    "has_solution": true,
+    "method": "two_stage_fleet_then_charging_cost",
+    "reconstructed_weighted_cost": 200084.272,
+    "selected_indices": [
+      75,
+      112
+    ],
+    "stage1": {
+      "fleet_bound_raw": 2.0,
+      "fleet_integer_lower_bound": 2,
+      "fleet_proven": true,
+      "has_solution": true,
+      "incumbent_fleet": 2,
+      "incumbent_validation_scope": "covering rows plus cross-route station-capacity sweep; individual exact-event route feasibility is by construction",
+      "mip_gap": 0.0,
+      "node_count": 1.0,
+      "runtime_s": 0.03749374579638243,
+      "selected_indices": [
+        75,
+        112
+      ],
+      "status": "OPTIMAL",
+      "status_code": 2,
+      "time_limit_s": 1800.0,
+      "validated_incumbent": true
+    },
+    "stage2": {
+      "charging_cost": 84.2719999999972,
+      "charging_cost_bound": 84.2719999999972,
+      "charging_cost_gap": 0.0,
+      "executed": true,
+      "fleet_cap": {
+        "rhs": 2,
+        "sense": "<=",
+        "source": "best_validated_stage1_incumbent",
+        "source_fleet_proven": true
+      },
+      "has_solution": true,
+      "incumbent_fleet": 2,
+      "node_count": 1.0,
+      "runtime_s": 0.03209954686462879,
+      "selected_indices": [
+        75,
+        112
+      ],
+      "skip_reason": null,
+      "status": "OPTIMAL",
+      "status_code": 2,
+      "time_limit_s": 3599.9611181817017
+    },
+    "status": "OPTIMAL",
+    "total_budget_s": 3600.0
+  },
+  "schema": "evsp-dr-capacity-speed-two-stage-cover-mip-v2"
+}

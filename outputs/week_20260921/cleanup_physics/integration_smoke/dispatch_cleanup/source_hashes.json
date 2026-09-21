@@ -1,0 +1,18 @@
+{
+  "source": "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/integration_smoke/summary.json",
+  "source_sha256": "068fa1d22515751bdb389ddf900b338cce27c1d3a18ef32772ec3bef04291d1f",
+  "selected_routes": "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/integration_smoke/selected_routes.json",
+  "selected_routes_sha256": "32c90684152aa97a335a0c995e769a1c0df74937f70da9f6fdadf9351633b819",
+  "selected_routes_canonical_sha256": "71b6ebc39e028b9683e1b11ee7d866bcc9aeddd8754a44cecfb2bb46be5f32bf",
+  "input_hashes": {
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/peak08_h26.csv": "b461f12cf8ca41ba8a89102b32d46ea16b974566ea05849dd75776a7108f341e",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/inputs/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+  },
+  "execution_revision": {
+    "commit": "24fbda8100f612c45477c28a92747e00cf7cb42a",
+    "dirty": false,
+    "root": "/Users/nadan/Documents/projects/demandresponse/.codex-work/week-cleanup-20260921"
+  }
+}

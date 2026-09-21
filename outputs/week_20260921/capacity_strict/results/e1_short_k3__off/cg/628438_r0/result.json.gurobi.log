@@ -1,0 +1,88 @@
+
+Gurobi 12.0.3 (linux64) logging started Mon Sep 21 00:20:23 2026
+
+Set parameter LogFile to value "/home/nc437/ladder-lite/capacity_loop_20260921/results/e1_short_k3__off/cg/628438_r0/result.json.gurobi.log"
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6134 CPU @ 3.20GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 16 physical cores, 16 logical processors, using up to 4 threads
+
+Non-default parameters:
+Threads  4
+
+Optimize a model with 7835 rows, 70 columns and 70 nonzeros
+Model fingerprint: 0x2739955a
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 2e+00]
+Presolve removed 7835 rows and 70 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    3.5000000e+06   0.000000e+00   0.000000e+00      0s
+
+Solved in 0 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  3.500000000e+06
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6134 CPU @ 3.20GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 16 physical cores, 16 logical processors, using up to 4 threads
+
+Non-default parameters:
+Threads  4
+
+Optimize a model with 7835 rows, 71 columns and 197 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 2e+00]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -1.3999068e+36   1.270000e+32   1.399907e+06      0s
+      14    2.1000932e+06   0.000000e+00   0.000000e+00      0s
+
+Solved in 14 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  2.100093152e+06
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6134 CPU @ 3.20GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 16 physical cores, 16 logical processors, using up to 4 threads
+
+Non-default parameters:
+Threads  4
+
+Optimize a model with 7835 rows, 72 columns and 293 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 2e+00]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -1.0999573e+36   9.600000e+31   1.099957e+06      0s
+      34    2.1000932e+06   0.000000e+00   0.000000e+00      0s
+
+Solved in 34 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  2.100093152e+06
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6134 CPU @ 3.20GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 16 physical cores, 16 logical processors, using up to 4 threads
+
+Non-default parameters:
+Threads  4
+
+Optimize a model with 7835 rows, 72 columns and 293 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 2e+00]
+
+Solved in 0 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  2.100093152e+06

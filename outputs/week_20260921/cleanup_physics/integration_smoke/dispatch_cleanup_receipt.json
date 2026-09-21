@@ -1,0 +1,11 @@
+{
+  "status": "repaired",
+  "usable_dispatch": true,
+  "source_summary_sha256": "068fa1d22515751bdb389ddf900b338cce27c1d3a18ef32772ec3bef04291d1f",
+  "summary": "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/integration_smoke/dispatch_cleanup/summary.json",
+  "dispatch": "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/integration_smoke/dispatch_cleanup/dispatch.json",
+  "selected_routes": "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/integration_smoke/dispatch_cleanup/selected_routes.json",
+  "validation": "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/integration_smoke/dispatch_cleanup/validation.json",
+  "source_routes_preserved": true,
+  "note": "Use dispatch.service_trips for passenger assignment; route.trips can retain redundant empty driving in a fallback."
+}

@@ -1,0 +1,154 @@
+{
+ "schema": "evsp-fresh-k15-longmip-v2",
+ "created_utc": "2026-09-18T15:30:28.954172+00:00",
+ "purpose": "Does a 12 h fleet-stage search (vs 3 h in P1, 30 min originally) recover 15 buses from the six fresh k15 CG pools? Two arms: plain Gurobi defaults; heur = MIPFocus 1 / NoRelHeurTime 1800 / Heuristics 0.5 via gurobi.env.",
+ "live_job_array": "454004",
+ "superseded": [
+  {
+   "array": "391785",
+   "why": "worker did not export EVSP_EXPECTED_COMMIT; runner aborts submitted solves without a pinned commit"
+  },
+  {
+   "array": "453453",
+   "why": "cells pointed at MIP result.json files, which carry no column journal; the runner needs the CG status file"
+  },
+  {
+   "array": "453589",
+   "why": "worker did not export EVSP_MIP_EXPECTED_RESULT_SHA256 / EVSP_MIP_EXPECTED_JOURNAL_SHA256"
+  }
+ ],
+ "runner_commit": "6830caa225856903d1157ef8587863c7ae21ad53",
+ "runner_base": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+ "pools": "fresh k15 CG status files from cumulative_budget_20260913 cases/c*_k15/base/*/cg.json; status and journal sha256 reused verbatim from the P1 campaign manifest so the pools are provably the ones P1 searched for 3 h",
+ "physics": {
+  "battery_kwh": 240,
+  "charge_kw": 240,
+  "reserve_kwh": 0,
+  "tariff": "hourly_prices_flat.csv",
+  "charge_start_cost": 5,
+  "master": "cover"
+ },
+ "budgets": {
+  "timelimit_s": 45000,
+  "stage1_timelimit_s": 43200,
+  "threads": 8,
+  "mipgap": 0.0001,
+  "seed": 0
+ },
+ "resources": "scaglione, 8 CPU, 24G, 13h30, --exclude=scaglione-compute-01",
+ "comparators": {
+  "p1_3h_seeds": "review_p1_mip_20260916: 0/18 target hits",
+  "original_1h": "cumulative_budget_20260913 mip_base: 16,17,18,18,19,20"
+ },
+ "decision_rule": "No cell at 15 with bound still 15.00 -> more time is exhausted for fresh pools (consistent with the k=8 witness-column result). heur reaching 15 where plain does not -> solver configuration fix. plain reaching 15 late -> the 3 h conclusion was budget-limited.",
+ "cells": [
+  {
+   "cell": "c1_k15__plain",
+   "case": "c1_k15",
+   "arm": "plain",
+   "result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k15/base/135603_r0/cg.json",
+   "result_sha256": "4bd5821a72b96ac83b81f2474514aa3eceb8fcdd24106f80050e58bcfc91db7d",
+   "journal_sha256": "54a53afdab53c7f7dba73fd458d5c69c2025e19882776ba643e51478932f398c",
+   "commit": "6830caa225856903d1157ef8587863c7ae21ad53"
+  },
+  {
+   "cell": "c2_k15__plain",
+   "case": "c2_k15",
+   "arm": "plain",
+   "result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c2_k15/base/135623_r0/cg.json",
+   "result_sha256": "5be8ec670c62fc03224ff22cb10cc4de50c208d97f5a29c8aecdd940dc94bae6",
+   "journal_sha256": "cdea04a614c418ddd736d19fcfc7d6ee3ea308993c0b085d6dab152567ed736c",
+   "commit": "6830caa225856903d1157ef8587863c7ae21ad53"
+  },
+  {
+   "cell": "c3_k15__plain",
+   "case": "c3_k15",
+   "arm": "plain",
+   "result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/base/135643_r0/cg.json",
+   "result_sha256": "ee81a8b2d5215e8c00dcd88739426365d78ea6fd724f0b6f22ac132e2ce662eb",
+   "journal_sha256": "8fc224ddb3f0c9109f38549bc39d8f63749c8fa425a52a473c3d2d13319abb48",
+   "commit": "6830caa225856903d1157ef8587863c7ae21ad53"
+  },
+  {
+   "cell": "c4_k15__plain",
+   "case": "c4_k15",
+   "arm": "plain",
+   "result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c4_k15/base/135663_r0/cg.json",
+   "result_sha256": "92ff859870255f0704d5093b800bed23b51e86958183a169a6820dc4bf567f04",
+   "journal_sha256": "bf79c00447327712f76086e2a0a6d2ef1a6b708d5da50c999fed6db1703c16f4",
+   "commit": "6830caa225856903d1157ef8587863c7ae21ad53"
+  },
+  {
+   "cell": "c5_k15__plain",
+   "case": "c5_k15",
+   "arm": "plain",
+   "result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c5_k15/base/135685_r0/cg.json",
+   "result_sha256": "c2cc709f60bdb18f5e5fd02ee66632550791b3f9cb0f7f512f2fede8e14c25ae",
+   "journal_sha256": "7e4ec71945b25afbc60489a67b2531c25403fc36e5ef56d38325c75cb678e3f7",
+   "commit": "6830caa225856903d1157ef8587863c7ae21ad53"
+  },
+  {
+   "cell": "c6_k15__plain",
+   "case": "c6_k15",
+   "arm": "plain",
+   "result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c6_k15/base/135706_r0/cg.json",
+   "result_sha256": "51ba7a2f4beddfb083a27d4ef8715e1e05f69418a483e9734e69617a7dcb06b5",
+   "journal_sha256": "d951f975163ccdf69fda0d22c552f97eb65547dd382f41ddf2fc5ddf6cc56883",
+   "commit": "6830caa225856903d1157ef8587863c7ae21ad53"
+  },
+  {
+   "cell": "c1_k15__heur",
+   "case": "c1_k15",
+   "arm": "heur",
+   "result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k15/base/135603_r0/cg.json",
+   "result_sha256": "4bd5821a72b96ac83b81f2474514aa3eceb8fcdd24106f80050e58bcfc91db7d",
+   "journal_sha256": "54a53afdab53c7f7dba73fd458d5c69c2025e19882776ba643e51478932f398c",
+   "commit": "6830caa225856903d1157ef8587863c7ae21ad53"
+  },
+  {
+   "cell": "c2_k15__heur",
+   "case": "c2_k15",
+   "arm": "heur",
+   "result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c2_k15/base/135623_r0/cg.json",
+   "result_sha256": "5be8ec670c62fc03224ff22cb10cc4de50c208d97f5a29c8aecdd940dc94bae6",
+   "journal_sha256": "cdea04a614c418ddd736d19fcfc7d6ee3ea308993c0b085d6dab152567ed736c",
+   "commit": "6830caa225856903d1157ef8587863c7ae21ad53"
+  },
+  {
+   "cell": "c3_k15__heur",
+   "case": "c3_k15",
+   "arm": "heur",
+   "result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/base/135643_r0/cg.json",
+   "result_sha256": "ee81a8b2d5215e8c00dcd88739426365d78ea6fd724f0b6f22ac132e2ce662eb",
+   "journal_sha256": "8fc224ddb3f0c9109f38549bc39d8f63749c8fa425a52a473c3d2d13319abb48",
+   "commit": "6830caa225856903d1157ef8587863c7ae21ad53"
+  },
+  {
+   "cell": "c4_k15__heur",
+   "case": "c4_k15",
+   "arm": "heur",
+   "result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c4_k15/base/135663_r0/cg.json",
+   "result_sha256": "92ff859870255f0704d5093b800bed23b51e86958183a169a6820dc4bf567f04",
+   "journal_sha256": "bf79c00447327712f76086e2a0a6d2ef1a6b708d5da50c999fed6db1703c16f4",
+   "commit": "6830caa225856903d1157ef8587863c7ae21ad53"
+  },
+  {
+   "cell": "c5_k15__heur",
+   "case": "c5_k15",
+   "arm": "heur",
+   "result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c5_k15/base/135685_r0/cg.json",
+   "result_sha256": "c2cc709f60bdb18f5e5fd02ee66632550791b3f9cb0f7f512f2fede8e14c25ae",
+   "journal_sha256": "7e4ec71945b25afbc60489a67b2531c25403fc36e5ef56d38325c75cb678e3f7",
+   "commit": "6830caa225856903d1157ef8587863c7ae21ad53"
+  },
+  {
+   "cell": "c6_k15__heur",
+   "case": "c6_k15",
+   "arm": "heur",
+   "result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c6_k15/base/135706_r0/cg.json",
+   "result_sha256": "51ba7a2f4beddfb083a27d4ef8715e1e05f69418a483e9734e69617a7dcb06b5",
+   "journal_sha256": "d951f975163ccdf69fda0d22c552f97eb65547dd382f41ddf2fc5ddf6cc56883",
+   "commit": "6830caa225856903d1157ef8587863c7ae21ad53"
+  }
+ ]
+}

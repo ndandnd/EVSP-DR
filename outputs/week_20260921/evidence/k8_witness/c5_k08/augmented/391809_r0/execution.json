@@ -1,0 +1,21 @@
+{
+ "case_id": "c5_k08",
+ "arm": "augmented",
+ "slurm_job_id": "391809",
+ "restart_count": "0",
+ "host": "scaglione-cpu-02",
+ "cpus_on_node": "8",
+ "cpus_per_task": "8",
+ "mem_per_node": "24576",
+ "started_utc": "2026-09-18T01:52:35Z",
+ "result": "/home/nc437/ladder-lite/review_witness_columns_20260917/aug/c5_k08/cg.json",
+ "result_sha256": "b6bb0bb263f3cbb538ca3b6c35d7e35da899e3b4f8b9d510ffa45667bbacd2b1",
+ "journal": "/home/nc437/ladder-lite/review_witness_columns_20260917/aug/c5_k08/cg.json.columns.jsonl",
+ "journal_sha256": "7bd6b469456a4a59005b4a6d88fb1002a1458290e3846450343f85489ded65a1",
+ "mip_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+ "cwd": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code",
+ "status": "finished",
+ "returncode": 0,
+ "ended_utc": "2026-09-18T01:56:18Z",
+ "result_sha256_out": "ae2f4ca99a24548cf843a994ed4caa52898107665f093b2be3b4bf0a26bca317"
+}

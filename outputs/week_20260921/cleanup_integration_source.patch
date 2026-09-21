@@ -1,0 +1,146 @@
+commit 24fbda8100f612c45477c28a92747e00cf7cb42a
+Author:     Nathan Cho <>
+AuthorDate: Mon Sep 21 11:02:27 2026 -0400
+Commit:     Nathan Cho <>
+CommitDate: Mon Sep 21 11:02:27 2026 -0400
+
+    Add opt-in exact-once dispatch cleanup after terminal CG MIP
+
+diff --git a/src/run_terminal_energy_cg.py b/src/run_terminal_energy_cg.py
+index ef26bb86..f12b9551 100644
+--- a/src/run_terminal_energy_cg.py
++++ b/src/run_terminal_energy_cg.py
+@@ -202,6 +202,10 @@ def main():
+     p.add_argument('--mip-seconds', type=float, default=3600)
+     p.add_argument('--target', type=float, default=280.7833253)
+     p.add_argument('--fleet-cap', type=int, default=5)
++    p.add_argument('--postprocess-exact-once', action='store_true',
++                   help='After the MIP, publish validated exact-once passenger dispatch and cost-aware duplicate cleanup')
++    p.add_argument('--cleanup-seconds', type=float, default=600)
++    p.add_argument('--cleanup-threads', type=int, default=1)
+     args = p.parse_args()
+     from master_lp_gurobi import gurobi_preflight
+     gurobi_preflight()
+@@ -220,8 +224,12 @@ def main():
+                               [data/args.csv, Path(args.prices), data/'Ref_dict.csv', data/'par_ref_dhd.csv']}
+     result['physics'] = dict(battery_kwh=240, initial_kwh=240, charge_kw=350,
+                             reserve_kwh=0, soc_step=2.5, time_step=5,
+-                            shared_capacity=False, charge_start_fee=0, coverage='cover')
++                            shared_capacity=False, charge_start_fee=config.CHARGE_START_COST, coverage='cover')
+     save(Path(args.out)/'summary.json', result)
++    if args.postprocess_exact_once:
++        from terminal_dispatch_postprocess import postprocess_selected_dispatch
++        postprocess_selected_dispatch(args.out, seconds=args.cleanup_seconds,
++                                      threads=args.cleanup_threads)
+ 
+ 
+ if __name__ == '__main__':
+diff --git a/src/terminal_dispatch_postprocess.py b/src/terminal_dispatch_postprocess.py
+new file mode 100644
+index 00000000..91883fd7
+--- /dev/null
++++ b/src/terminal_dispatch_postprocess.py
+@@ -0,0 +1,57 @@
++"""Opt-in final dispatch cleanup, leaving CG/MIP source evidence immutable."""
++from pathlib import Path
++import hashlib
++import json
++import subprocess
++import sys
++
++from terminal_cleanup_settings import settings_from_summary
++
++
++def postprocess_selected_dispatch(output_directory, *, seconds=600, threads=1,
++                                  runner=None):
++    """Publish an exact-once dispatch or an explicit failure receipt.
++
++    Only the cleanup backend's declared constant-power configurations pass its
++    fail-closed settings parser. Raw selected routes and their solver summary
++    are never overwritten or relabeled as a cleaned dispatch.
++    """
++    output = Path(output_directory).resolve()
++    source = output / 'summary.json'
++    source_bytes = source.read_bytes()
++    source_hash = hashlib.sha256(source_bytes).hexdigest()
++    selected = output / 'selected_routes.json'
++    receipt_path = output / 'dispatch_cleanup_receipt.json'
++    if not selected.exists():
++        receipt = {'status': 'skipped_no_integer_incumbent',
++                   'source_summary_sha256': source_hash}
++    else:
++        if seconds <= 0 or threads < 1:
++            raise ValueError('cleanup seconds and threads must be positive')
++        summary = json.loads(source_bytes)
++        settings_from_summary(summary)  # Reject unsupported physics before launch.
++        destination = output / 'dispatch_cleanup'
++        if destination.exists():
++            raise FileExistsError('Refusing to overwrite an earlier dispatch cleanup')
++        command = [sys.executable, str(Path(__file__).with_name(
++            'terminal_duplicate_cleanup.py')), '--source', str(source),
++            '--source-sha256', source_hash, '--selected-source-sha256',
++            hashlib.sha256(selected.read_bytes()).hexdigest(), '--out',
++            str(destination), '--seconds', str(seconds), '--threads', str(threads)]
++        execute = subprocess.run if runner is None else runner
++        execute(command, check=True)
++        result = json.loads((destination / 'summary.json').read_text())
++        if source.read_bytes() != source_bytes:
++            raise RuntimeError('Cleanup unexpectedly mutated its source summary')
++        accepted = result['outcome'] in ('repaired', 'unchanged_dispatch_fallback')
++        receipt = {'status': result['outcome'], 'usable_dispatch': accepted,
++                   'source_summary_sha256': source_hash,
++                   'summary': str(destination / 'summary.json'),
++                   'dispatch': str(destination / 'dispatch.json') if accepted else None,
++                   'selected_routes': str(destination / 'selected_routes.json') if accepted else None,
++                   'validation': str(destination / 'validation.json'),
++                   'source_routes_preserved': True,
++                   'note': 'Use dispatch.service_trips for passenger assignment; '
++                           'route.trips can retain redundant empty driving in a fallback.'}
++    receipt_path.write_text(json.dumps(receipt, indent=2) + '\n')
++    return receipt
+diff --git a/tests/test_terminal_dispatch_postprocess.py b/tests/test_terminal_dispatch_postprocess.py
+new file mode 100644
+index 00000000..ea1f47b0
+--- /dev/null
++++ b/tests/test_terminal_dispatch_postprocess.py
+@@ -0,0 +1,40 @@
++import json
++from pathlib import Path
++import pytest
++from terminal_dispatch_postprocess import postprocess_selected_dispatch
++from terminal_cleanup_settings import UnsupportedConfiguration
++
++
++def source(tmp_path, **physics_extra):
++    s={'terminal_target_kwh':0,'fleet_cap':1,'physics':dict(battery_kwh=240,
++       initial_kwh=240,charge_kw=350,reserve_kwh=0,soc_step=2.5,time_step=5,
++       shared_capacity=False,charge_start_fee=5,coverage='cover',**physics_extra)}
++    (tmp_path/'summary.json').write_text(json.dumps(s))
++    (tmp_path/'selected_routes.json').write_text('[{"trips":[1]}]')
++    return (tmp_path/'summary.json').read_bytes()
++
++
++def test_missing_incumbent_skips_without_calling_solver(tmp_path):
++    (tmp_path/'summary.json').write_text('{}')
++    def fail(*a,**kw): raise AssertionError('must not invoke solver')
++    r=postprocess_selected_dispatch(tmp_path,runner=fail)
++    assert r['status']=='skipped_no_integer_incumbent'
++
++
++def test_nonlinear_physics_rejected_before_running(tmp_path):
++    source(tmp_path,piecewise_charging=True)
++    with pytest.raises(UnsupportedConfiguration):
++        postprocess_selected_dispatch(tmp_path,runner=lambda *a,**k: pytest.fail())
++
++
++def test_dispatch_receipt_preserves_sources_and_service_assignment(tmp_path):
++    original=source(tmp_path)
++    def solver(argv,check):
++        assert check and '--selected-source-sha256' in argv
++        out=Path(argv[argv.index('--out')+1]);out.mkdir()
++        (out/'summary.json').write_text(json.dumps({'outcome':'unchanged_dispatch_fallback'}))
++    r=postprocess_selected_dispatch(tmp_path,seconds=12,threads=2,runner=solver)
++    assert (tmp_path/'summary.json').read_bytes()==original
++    assert r['usable_dispatch'] and r['status']=='unchanged_dispatch_fallback'
++    assert 'service_trips' in r['note']
++    with pytest.raises(FileExistsError):postprocess_selected_dispatch(tmp_path,runner=solver)

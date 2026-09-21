@@ -1,0 +1,168 @@
+
+Gurobi 12.0.1 (mac64[arm]) logging started Mon Sep 21 10:50:57 2026
+
+Set parameter LogFile to value "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/fee0.gurobi.log"
+Set parameter FeasibilityTol to value 1e-08
+Gurobi Optimizer version 12.0.1 build v12.0.1rc0 (mac64[arm] - Darwin 25.5.0 25F84)
+
+CPU model: Apple M3 Pro
+Thread count: 12 physical cores, 12 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  120
+FeasibilityTol  1e-08
+MIPGap  0
+Threads  4
+
+Optimize a model with 625 rows, 739 columns and 1421 nonzeros
+Model fingerprint: 0xc113ac55
+Model has 114 simple general constraints
+  114 PWL
+Variable types: 687 continuous, 52 integer (52 binary)
+Coefficient statistics:
+  Matrix range     [2e-03, 2e+02]
+  Objective range  [3e-02, 3e-01]
+  Bounds range     [1e+00, 2e+02]
+  RHS range        [2e-03, 6e+01]
+  PWLCon x range   [2e+01, 2e+02]
+  PWLCon y range   [4e+00, 5e+01]
+Presolve added 0 rows and 252 columns
+Presolve removed 171 rows and 0 columns
+Presolve time: 0.07s
+Presolved: 454 rows, 991 columns, 2749 nonzeros
+Presolved model has 102 SOS constraint(s)
+Variable types: 939 continuous, 52 integer (52 binary)
+
+Root relaxation: objective 1.976858e+02, 407 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0  197.68577    0   57          -  197.68577      -     -    0s
+     0     0  207.20542    0   55          -  207.20542      -     -    0s
+     0     0  211.12963    0   55          -  211.12963      -     -    0s
+     0     0  212.16703    0   55          -  212.16703      -     -    0s
+     0     0  212.31262    0   55          -  212.31262      -     -    0s
+     0     0  212.32762    0   55          -  212.32762      -     -    0s
+     0     0  212.53056    0   55          -  212.53056      -     -    0s
+     0     2  212.53056    0   55          -  212.53056      -     -    0s
+*  991   243             116     230.6447881  218.76662  5.15%   4.7    0s
+
+Explored 10602 nodes (31901 simplex iterations) in 0.69 seconds (1.24 work units)
+Thread count was 4 (of 12 available processors)
+
+Solution count 1: 230.645 
+
+Optimal solution found (tolerance 0.00e+00)
+Warning: max constraint violation (3.6714e-06) exceeds tolerance
+Warning: max general constraint violation (3.6714e-06) exceeds tolerance
+Best objective 2.306447880737e+02, best bound 2.306447880737e+02, gap 0.0000%
+
+Gurobi 12.0.1 (mac64[arm]) logging started Mon Sep 21 10:51:24 2026
+
+Set parameter LogFile to value "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/fee0.gurobi.log"
+Set parameter FeasibilityTol to value 1e-07
+Set parameter NumericFocus to value 3
+Set parameter Presolve to value 0
+Gurobi Optimizer version 12.0.1 build v12.0.1rc0 (mac64[arm] - Darwin 25.5.0 25F84)
+
+CPU model: Apple M3 Pro
+Thread count: 12 physical cores, 12 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  120
+FeasibilityTol  1e-07
+MIPGap  0
+NumericFocus  3
+Presolve  0
+Threads  4
+
+Optimize a model with 625 rows, 739 columns and 1421 nonzeros
+Model fingerprint: 0xc113ac55
+Model has 114 simple general constraints
+  114 PWL
+Variable types: 687 continuous, 52 integer (52 binary)
+Coefficient statistics:
+  Matrix range     [2e-03, 2e+02]
+  Objective range  [3e-02, 3e-01]
+  Bounds range     [1e+00, 2e+02]
+  RHS range        [2e-03, 6e+01]
+  PWLCon x range   [2e+01, 2e+02]
+  PWLCon y range   [4e+00, 5e+01]
+Variable types: 1827 continuous, 52 integer (52 binary)
+
+Root relaxation: objective 1.704210e+02, 578 iterations, 0.01 seconds (0.01 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0  170.42105    0   69          -  170.42105      -     -    0s
+     0     2  170.42105    0   69          -  170.42105      -     -    0s
+
+Explored 5558 nodes (21694 simplex iterations) in 0.99 seconds (2.44 work units)
+Thread count was 4 (of 12 available processors)
+
+Solution count 0
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 12.0.1 (mac64[arm]) logging started Mon Sep 21 10:52:15 2026
+
+Set parameter LogFile to value "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/fee0.gurobi.log"
+Set parameter FeasibilityTol to value 1e-07
+Set parameter NumericFocus to value 3
+Set parameter Presolve to value 2
+Gurobi Optimizer version 12.0.1 build v12.0.1rc0 (mac64[arm] - Darwin 25.5.0 25F84)
+
+CPU model: Apple M3 Pro
+Thread count: 12 physical cores, 12 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  120
+FeasibilityTol  1e-07
+MIPGap  0
+NumericFocus  3
+Presolve  2
+Threads  4
+
+Optimize a model with 630 rows, 739 columns and 1426 nonzeros
+Model fingerprint: 0x0fa4d68d
+Model has 114 simple general constraints
+  114 PWL
+Variable types: 687 continuous, 52 integer (52 binary)
+Coefficient statistics:
+  Matrix range     [2e-03, 2e+02]
+  Objective range  [3e-02, 3e-01]
+  Bounds range     [1e+00, 2e+02]
+  RHS range        [2e-03, 6e+01]
+  PWLCon x range   [2e+01, 2e+02]
+  PWLCon y range   [4e+00, 5e+01]
+Presolve removed 454 rows and 375 columns
+Presolve time: 0.17s
+Presolved: 176 rows, 364 columns, 1322 nonzeros
+Presolved model has 20 SOS constraint(s)
+Variable types: 324 continuous, 40 integer (26 binary)
+Root relaxation presolve removed 66 rows and 56 columns
+Root relaxation presolved: 110 rows, 308 columns, 900 nonzeros
+
+
+Root relaxation: objective 2.155678e+02, 109 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0  215.56785    0   27          -  215.56785      -     -    0s
+     0     2  215.56785    0   27          -  215.56785      -     -    0s
+H  249    42                     230.6427970  229.13083  0.66%   4.6    0s
+
+Cutting planes:
+  Implied bound: 2
+
+Explored 327 nodes (1436 simplex iterations) in 0.21 seconds (0.16 work units)
+Thread count was 4 (of 12 available processors)
+
+Solution count 1: 230.643 
+
+Optimal solution found (tolerance 0.00e+00)
+Best objective 2.306427969829e+02, best bound 2.306427969829e+02, gap 0.0000%

@@ -1,0 +1,71 @@
+Set parameter LicenseID to value 2674428
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "en-cc-unicorn-data-dirs.coecis.cornell.edu"
+Set parameter OutputFlag to value 1
+Set parameter LogFile to value "/home/nc437/ladder-lite/capacity_loop_20260921/results/e1_short_k3__off/mip/628400_r0/result.json.gurobi.log"
+Set parameter Threads to value 4
+Set parameter MIPGap to value 0.0001
+Set parameter TimeLimit to value 1800
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6230 CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  1800
+Threads  4
+
+Optimize a model with 224 rows, 37 columns and 258 nonzeros
+Model fingerprint: 0xdbc25bee
+Variable types: 0 continuous, 37 integer (37 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 35.0000000
+Presolve removed 224 rows and 37 columns
+Presolve time: 0.01s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds (0.00 work units)
+Thread count was 1 (of 40 available processors)
+
+Solution count 2: 21 35 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.100000000000e+01, best bound 2.100000000000e+01, gap 0.0000%
+Set parameter TimeLimit to value 3.5999841366433538e+03
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6230 CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  3.5999841366433538e+03
+Threads  4
+
+Optimize a model with 225 rows, 37 columns and 295 nonzeros
+Model fingerprint: 0xca8ada1f
+Variable types: 0 continuous, 37 integer (37 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [4e+01, 9e+01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+01]
+
+Loaded user MIP start with objective 93.152
+MIP start from previous solve did not produce a new incumbent solution
+
+Presolve removed 225 rows and 37 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds (0.00 work units)
+Thread count was 1 (of 40 available processors)
+
+Solution count 1: 93.152 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 9.315200000000e+01, best bound 9.315200000000e+01, gap 0.0000%
+{"arm": "capacity", "mode": "mip", "out": "/home/nc437/ladder-lite/capacity_loop_20260921/results/e1_short_k3__off/mip/628400_r0/result.json", "status": "OPTIMAL"}

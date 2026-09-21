@@ -1,0 +1,25 @@
+{
+  "battery_kwh": 240.0,
+  "initial_kwh": 240.0,
+  "charge_kw": 350.0,
+  "reserve_kwh": 0.0,
+  "soc_step": 2.5,
+  "block_min": 5,
+  "charge_start_fee": 0.0,
+  "shared_capacity": false,
+  "coverage": "cover",
+  "terminal_target_kwh": 280.7833253,
+  "fleet_cap": 5,
+  "min_terminal_soc_kwh": 0.0,
+  "min_charge_duration_min": 0.0,
+  "station_capacity": {},
+  "strict_tariff_coverage": true,
+  "bounds": {
+    "max_removable_per_route": 8,
+    "max_subsets_per_route": 64,
+    "max_columns": 20000
+  },
+  "schema": "terminal_duplicate_cleanup_settings_v1",
+  "horizon_min": 1560.0,
+  "model_constants_note": "horizon_min and strict_tariff_coverage are model constants of the source backend, not metadata-declared physics"
+}

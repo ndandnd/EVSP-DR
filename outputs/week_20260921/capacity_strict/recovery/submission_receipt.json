@@ -1,0 +1,67 @@
+{
+  "jobs": {
+    "benchmark": {
+      "job": "646674",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--requeue",
+        "--cpus-per-task=4",
+        "--mem=32G",
+        "--time=02:00:00",
+        "--job-name=pack21_benchmark",
+        "--output=/home/nc437/ladder-lite/strict_packed_20260921/%j.out",
+        "--error=/home/nc437/ladder-lite/strict_packed_20260921/%j.err",
+        "/home/nc437/ladder-lite/strict_packed_20260921/worker.sh",
+        "/home/nc437/ladder-lite/strict_packed_20260921",
+        "benchmark"
+      ],
+      "verified": "JobId=646674 JobName=pack21_benchmark UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14311 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-21T10:56:38 EligibleTime=2026-09-21T10:56:38 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-21T10:56:38 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2047681 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=4,mem=32G,node=1,billing=4 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=4 MinMemoryNode=32G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/strict_packed_20260921/worker.sh WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/strict_packed_20260921/646674.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/strict_packed_20260921/646674.out TresPerTask=cpu=4 \n"
+    },
+    "cg": {
+      "job": "646675",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--requeue",
+        "--cpus-per-task=8",
+        "--mem=64G",
+        "--time=06:00:00",
+        "--job-name=pack21_cg",
+        "--output=/home/nc437/ladder-lite/strict_packed_20260921/%j.out",
+        "--error=/home/nc437/ladder-lite/strict_packed_20260921/%j.err",
+        "--dependency=afterok:646674",
+        "/home/nc437/ladder-lite/strict_packed_20260921/worker.sh",
+        "/home/nc437/ladder-lite/strict_packed_20260921",
+        "cg"
+      ],
+      "verified": "JobId=646675 JobName=pack21_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14312 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:646674(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=06:00:00 TimeMin=N/A SubmitTime=2026-09-21T10:56:39 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-21T10:56:39 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2047681 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/strict_packed_20260921/worker.sh WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/strict_packed_20260921/646675.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/strict_packed_20260921/646675.out TresPerTask=cpu=8 \n"
+    },
+    "mip": {
+      "job": "646676",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--requeue",
+        "--cpus-per-task=8",
+        "--mem=24G",
+        "--time=01:15:00",
+        "--job-name=pack21_mip",
+        "--output=/home/nc437/ladder-lite/strict_packed_20260921/%j.out",
+        "--error=/home/nc437/ladder-lite/strict_packed_20260921/%j.err",
+        "--dependency=afterok:646675",
+        "/home/nc437/ladder-lite/strict_packed_20260921/worker.sh",
+        "/home/nc437/ladder-lite/strict_packed_20260921",
+        "mip"
+      ],
+      "verified": "JobId=646676 JobName=pack21_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14311 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:646675(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=01:15:00 TimeMin=N/A SubmitTime=2026-09-21T10:56:39 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-21T10:56:39 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2047681 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/strict_packed_20260921/worker.sh WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/strict_packed_20260921/646676.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/strict_packed_20260921/646676.out TresPerTask=cpu=8 \n"
+    }
+  },
+  "held_original_descendants": 21
+}

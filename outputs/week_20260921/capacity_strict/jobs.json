@@ -1,0 +1,248 @@
+{
+  "k1_duty13406__off__cg": {
+    "job": "628389",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=4",
+      "--mem=128G",
+      "--time=06:00:00",
+      "--job-name=cap21_cg",
+      "--output=/home/nc437/ladder-lite/capacity_loop_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/capacity_loop_20260921/%j.err",
+      "/home/nc437/ladder-lite/capacity_loop_20260921/worker.sh",
+      "/home/nc437/ladder-lite/capacity_loop_20260921",
+      "k1_duty13406__off",
+      "cg"
+    ]
+  },
+  "k1_duty13406__off__mip": {
+    "job": "628390",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=4",
+      "--mem=32G",
+      "--time=01:30:00",
+      "--job-name=cap21_mip",
+      "--output=/home/nc437/ladder-lite/capacity_loop_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/capacity_loop_20260921/%j.err",
+      "--dependency=afterok:628389",
+      "/home/nc437/ladder-lite/capacity_loop_20260921/worker.sh",
+      "/home/nc437/ladder-lite/capacity_loop_20260921",
+      "k1_duty13406__off",
+      "mip"
+    ]
+  },
+  "k1_duty13406__on__cg": {
+    "job": "628391",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=4",
+      "--mem=128G",
+      "--time=06:00:00",
+      "--job-name=cap21_cg",
+      "--output=/home/nc437/ladder-lite/capacity_loop_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/capacity_loop_20260921/%j.err",
+      "/home/nc437/ladder-lite/capacity_loop_20260921/worker.sh",
+      "/home/nc437/ladder-lite/capacity_loop_20260921",
+      "k1_duty13406__on",
+      "cg"
+    ]
+  },
+  "k1_duty13406__on__mip": {
+    "job": "628392",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=4",
+      "--mem=32G",
+      "--time=01:30:00",
+      "--job-name=cap21_mip",
+      "--output=/home/nc437/ladder-lite/capacity_loop_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/capacity_loop_20260921/%j.err",
+      "--dependency=afterok:628391",
+      "/home/nc437/ladder-lite/capacity_loop_20260921/worker.sh",
+      "/home/nc437/ladder-lite/capacity_loop_20260921",
+      "k1_duty13406__on",
+      "mip"
+    ]
+  },
+  "e1_short_k2__off__cg": {
+    "job": "628395",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=4",
+      "--mem=128G",
+      "--time=06:00:00",
+      "--job-name=cap21_cg",
+      "--output=/home/nc437/ladder-lite/capacity_loop_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/capacity_loop_20260921/%j.err",
+      "/home/nc437/ladder-lite/capacity_loop_20260921/worker.sh",
+      "/home/nc437/ladder-lite/capacity_loop_20260921",
+      "e1_short_k2__off",
+      "cg"
+    ]
+  },
+  "e1_short_k2__off__mip": {
+    "job": "628396",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=4",
+      "--mem=32G",
+      "--time=01:30:00",
+      "--job-name=cap21_mip",
+      "--output=/home/nc437/ladder-lite/capacity_loop_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/capacity_loop_20260921/%j.err",
+      "--dependency=afterok:628395",
+      "/home/nc437/ladder-lite/capacity_loop_20260921/worker.sh",
+      "/home/nc437/ladder-lite/capacity_loop_20260921",
+      "e1_short_k2__off",
+      "mip"
+    ]
+  },
+  "e1_short_k2__on__cg": {
+    "job": "628397",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=4",
+      "--mem=128G",
+      "--time=06:00:00",
+      "--job-name=cap21_cg",
+      "--output=/home/nc437/ladder-lite/capacity_loop_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/capacity_loop_20260921/%j.err",
+      "/home/nc437/ladder-lite/capacity_loop_20260921/worker.sh",
+      "/home/nc437/ladder-lite/capacity_loop_20260921",
+      "e1_short_k2__on",
+      "cg"
+    ]
+  },
+  "e1_short_k2__on__mip": {
+    "job": "628398",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=4",
+      "--mem=32G",
+      "--time=01:30:00",
+      "--job-name=cap21_mip",
+      "--output=/home/nc437/ladder-lite/capacity_loop_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/capacity_loop_20260921/%j.err",
+      "--dependency=afterok:628397",
+      "/home/nc437/ladder-lite/capacity_loop_20260921/worker.sh",
+      "/home/nc437/ladder-lite/capacity_loop_20260921",
+      "e1_short_k2__on",
+      "mip"
+    ]
+  },
+  "e1_short_k3__off__cg": {
+    "job": "628399",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=4",
+      "--mem=128G",
+      "--time=06:00:00",
+      "--job-name=cap21_cg",
+      "--output=/home/nc437/ladder-lite/capacity_loop_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/capacity_loop_20260921/%j.err",
+      "/home/nc437/ladder-lite/capacity_loop_20260921/worker.sh",
+      "/home/nc437/ladder-lite/capacity_loop_20260921",
+      "e1_short_k3__off",
+      "cg"
+    ]
+  },
+  "e1_short_k3__off__mip": {
+    "job": "628400",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=4",
+      "--mem=32G",
+      "--time=01:30:00",
+      "--job-name=cap21_mip",
+      "--output=/home/nc437/ladder-lite/capacity_loop_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/capacity_loop_20260921/%j.err",
+      "--dependency=afterok:628399",
+      "/home/nc437/ladder-lite/capacity_loop_20260921/worker.sh",
+      "/home/nc437/ladder-lite/capacity_loop_20260921",
+      "e1_short_k3__off",
+      "mip"
+    ]
+  },
+  "e1_short_k3__on__cg": {
+    "job": "628401",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=4",
+      "--mem=128G",
+      "--time=06:00:00",
+      "--job-name=cap21_cg",
+      "--output=/home/nc437/ladder-lite/capacity_loop_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/capacity_loop_20260921/%j.err",
+      "/home/nc437/ladder-lite/capacity_loop_20260921/worker.sh",
+      "/home/nc437/ladder-lite/capacity_loop_20260921",
+      "e1_short_k3__on",
+      "cg"
+    ]
+  },
+  "e1_short_k3__on__mip": {
+    "job": "628402",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=4",
+      "--mem=32G",
+      "--time=01:30:00",
+      "--job-name=cap21_mip",
+      "--output=/home/nc437/ladder-lite/capacity_loop_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/capacity_loop_20260921/%j.err",
+      "--dependency=afterok:628401",
+      "/home/nc437/ladder-lite/capacity_loop_20260921/worker.sh",
+      "/home/nc437/ladder-lite/capacity_loop_20260921",
+      "e1_short_k3__on",
+      "mip"
+    ]
+  }
+}

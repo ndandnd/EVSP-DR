@@ -1,0 +1,86 @@
+
+Gurobi 12.0.3 (linux64) logging started Mon Sep 21 04:37:29 2026
+
+Set parameter LogFile to value "/share/scaglione/nc437/evsp-dr/review_strict_c5_20260916/cases/w5_k15_18E2/mip/341291_r0/result.json.gurobi.log"
+Set parameter Threads to value 8
+Set parameter MIPGap to value 0.0001
+Set parameter TimeLimit to value 1800
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2665 0 @ 2.40GHz, instruction set [SSE2|AVX]
+Thread count: 16 physical cores, 16 logical processors, using up to 8 threads
+
+Non-default parameters:
+TimeLimit  1800
+Threads  8
+
+Optimize a model with 219 rows, 596 columns and 6305 nonzeros
+Model fingerprint: 0x3fe96f97
+Variable types: 0 continuous, 596 integer (596 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 39.0000000
+Presolve removed 195 rows and 542 columns
+Presolve time: 0.02s
+Presolved: 24 rows, 54 columns, 484 nonzeros
+Variable types: 0 continuous, 54 integer (54 binary)
+Found heuristic solution: objective 38.0000000
+
+Root relaxation: objective 3.700000e+01, 13 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+*    0     0               0      37.0000000   37.00000  0.00%     -    0s
+
+Explored 1 nodes (13 simplex iterations) in 0.06 seconds (0.00 work units)
+Thread count was 8 (of 16 available processors)
+
+Solution count 3: 37 38 39 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 3.700000000000e+01, best bound 3.700000000000e+01, gap 0.0000%
+Set parameter TimeLimit to value 3.5999262892808765e+03
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2665 0 @ 2.40GHz, instruction set [SSE2|AVX]
+Thread count: 16 physical cores, 16 logical processors, using up to 8 threads
+
+Non-default parameters:
+TimeLimit  3.5999262892808765e+03
+Threads  8
+
+Optimize a model with 220 rows, 596 columns and 6901 nonzeros
+Model fingerprint: 0xec121f3a
+Variable types: 0 continuous, 596 integer (596 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [5e+00, 1e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 4e+01]
+
+Loaded user MIP start with objective 563.264
+MIP start from previous solve did not produce a new incumbent solution
+
+Presolve removed 183 rows and 323 columns
+Presolve time: 0.03s
+Presolved: 37 rows, 273 columns, 3830 nonzeros
+Variable types: 0 continuous, 273 integer (273 binary)
+
+Root relaxation: objective 5.260720e+02, 153 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+*    0     0               0     526.0720000  526.07200  0.00%     -    0s
+
+Explored 1 nodes (153 simplex iterations) in 0.03 seconds (0.02 work units)
+Thread count was 8 (of 16 available processors)
+
+Solution count 2: 526.072 563.264 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 5.260720000000e+02, best bound 5.260720000000e+02, gap 0.0000%

@@ -1,0 +1,32 @@
+...................E
+======================================================================
+ERROR: test_small_real_graph_is_identical_to_eager_implementation (test_event_pricer_tie_keys.EventPricerDeferredTieKeyTests.test_small_real_graph_is_identical_to_eager_implementation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/nadan/Documents/projects/demandresponse/.codex-work/strict-packed-20260921/tests/test_event_pricer_tie_keys.py", line 158, in test_small_real_graph_is_identical_to_eager_implementation
+    problem = build_problem(
+              ^^^^^^^^^^^^^^
+  File "/Users/nadan/Documents/projects/demandresponse/.codex-work/strict-packed-20260921/src/audit_giro_known_columns.py", line 177, in build_problem
+    frame = pd.read_csv(data_dir / csv_name).rename(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1026, in read_csv
+    return _read(filepath_or_buffer, kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 620, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1620, in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1880, in _make_engine
+    self.handles = get_handle(
+                   ^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/pandas/io/common.py", line 873, in get_handle
+    handle = open(
+             ^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/nadan/Documents/projects/demandresponse/.codex-work/strict-packed-20260921/data/overnight_decomposition_20260912/d00_g3.csv'
+
+----------------------------------------------------------------------
+Ran 20 tests in 69.783s
+
+FAILED (errors=1)

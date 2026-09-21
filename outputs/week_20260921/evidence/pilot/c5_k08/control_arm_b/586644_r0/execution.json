@@ -1,0 +1,22 @@
+{
+ "track": "diving_pricing_20260919",
+ "case_id": "c5_k08",
+ "arm": "control_arm_b",
+ "slurm_job_id": "586644",
+ "restart_count": "0",
+ "host": "jingjie-cpu-08",
+ "cpus_on_node": "8",
+ "mem_per_node": "24576",
+ "started_utc": "2026-09-20T04:37:40Z",
+ "result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c5_k08/base/135675_r0/cg.json",
+ "result_sha256": "364c6a6505bf510678634a2922b51a8185febbbbf276e7e1e7d755db04cd9e2f",
+ "journal": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c5_k08/base/135675_r0/cg.json.columns.jsonl",
+ "journal_sha256": "9ab51e03bfa1f350834fe96b24942ab42f5bf319222cc111b38b40806420a11c",
+ "mip_commit": "a3392e2c8f6722da9538d88a34bab7ef85f7cc72",
+ "timelimit_s": "6120",
+ "status": "finished",
+ "returncode": 0,
+ "ended_utc": "2026-09-20T06:20:20Z",
+ "result_sha256_out": "9a8fe39810ce91abb6b1df742e26054292cdb8b0ec1f90e155fa8608b84f14c5",
+ "source_immutable": true
+}

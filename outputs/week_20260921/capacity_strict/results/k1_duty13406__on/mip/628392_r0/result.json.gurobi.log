@@ -1,0 +1,77 @@
+
+Gurobi 12.0.3 (linux64) logging started Mon Sep 21 00:45:11 2026
+
+Set parameter LogFile to value "/home/nc437/ladder-lite/capacity_loop_20260921/results/k1_duty13406__on/mip/628392_r0/result.json.gurobi.log"
+Set parameter Threads to value 4
+Set parameter MIPGap to value 0.0001
+Set parameter TimeLimit to value 1800
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6230 CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 80 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  1800
+Threads  4
+
+Optimize a model with 520 rows, 80 columns and 3560 nonzeros
+Model fingerprint: 0x9f082813
+Variable types: 0 continuous, 80 integer (80 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 10.0000000
+Presolve removed 491 rows and 26 columns
+Presolve time: 0.01s
+Presolved: 29 rows, 54 columns, 546 nonzeros
+Variable types: 0 continuous, 54 integer (54 binary)
+
+Root relaxation: objective 1.000000e+00, 24 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+*    0     0               0       1.0000000    1.00000  0.00%     -    0s
+
+Explored 1 nodes (24 simplex iterations) in 0.02 seconds (0.00 work units)
+Thread count was 4 (of 80 available processors)
+
+Solution count 2: 1 10 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.000000000000e+00, best bound 1.000000000000e+00, gap 0.0000%
+Set parameter TimeLimit to value 3.5999727119021118e+03
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6230 CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 80 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  3.5999727119021118e+03
+Threads  4
+
+Optimize a model with 521 rows, 80 columns and 3640 nonzeros
+Model fingerprint: 0xd5c8b353
+Variable types: 0 continuous, 80 integer (80 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [5e+00, 6e+01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+
+Loaded user MIP start with objective 56.952
+MIP start from previous solve did not produce a new incumbent solution
+
+Presolve removed 521 rows and 80 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds (0.00 work units)
+Thread count was 1 (of 80 available processors)
+
+Solution count 1: 56.952 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 5.695200000000e+01, best bound 5.695200000000e+01, gap 0.0000%

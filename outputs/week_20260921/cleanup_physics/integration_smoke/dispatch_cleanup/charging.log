@@ -1,0 +1,62 @@
+
+Gurobi 12.0.1 (mac64[arm]) logging started Mon Sep 21 11:04:13 2026
+
+Set parameter LogFile to value "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/integration_smoke/dispatch_cleanup/charging.log"
+Gurobi Optimizer version 12.0.1 build v12.0.1rc0 (mac64[arm] - Darwin 25.5.0 25F84)
+
+CPU model: Apple M3 Pro
+Thread count: 12 physical cores, 12 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  1.9870892078615725e+00
+MIPGap  0
+Threads  4
+
+Optimize a model with 65 rows, 1291 columns and 19994 nonzeros
+Model fingerprint: 0x7cf64dcd
+Variable types: 0 continuous, 1291 integer (1291 binary)
+Coefficient statistics:
+  Matrix range     [5e-01, 2e+02]
+  Objective range  [2e+01, 4e+01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+02]
+
+Loaded user MIP start with objective 156.972
+MIP start from previous solve did not produce a new incumbent solution
+
+Presolve removed 58 rows and 7 columns
+Presolve time: 0.01s
+Presolved: 7 rows, 1284 columns, 2925 nonzeros
+Variable types: 0 continuous, 1284 integer (1284 binary)
+
+Root relaxation: objective 1.289150e+02, 24 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0  128.91497    0    2  156.97237  128.91497  17.9%     -    0s
+H    0     0                     130.9746797  128.91497  1.57%     -    0s
+H    0     0                     129.8496740  128.91497  0.72%     -    0s
+H    0     0                     128.9496694  128.91497  0.03%     -    0s
+H    0     0                     128.9490904  128.91497  0.03%     -    0s
+     0     0  128.91497    0    4  128.94909  128.91497  0.03%     -    0s
+     0     0  128.91497    0    2  128.94909  128.91497  0.03%     -    0s
+     0     0  128.91497    0    2  128.94909  128.91497  0.03%     -    0s
+     0     0  128.91497    0    2  128.94909  128.91497  0.03%     -    0s
+     0     2  128.91497    0    2  128.94909  128.91497  0.03%     -    0s
+H   71   132                     128.9475887  128.91497  0.03%   1.7    0s
+H29885 12227                     128.9475887  128.91497  0.03%   1.5    1s
+
+Cutting planes:
+  Gomory: 1
+  MIR: 2
+  StrongCG: 1
+  GUB cover: 1
+
+Explored 54550 nodes (83213 simplex iterations) in 1.99 seconds (5.39 work units)
+Thread count was 4 (of 12 available processors)
+
+Solution count 7: 128.948 128.948 128.949 ... 156.972
+
+Time limit reached
+Best objective 1.289475887481e+02, best bound 1.289149689201e+02, gap 0.0253%

@@ -1,0 +1,96 @@
+{
+  "created": 1789964115.4000216,
+  "execution_source_commit": "cf61e2c8618b067df032c3eb795476e64184ed0a",
+  "code_archive_sha256": "55ccebd6eb3a39412bd09a4b123b1fa70b13ed608383a54d34e8b0d7a64483bd",
+  "code": "/home/nc437/ladder-lite/capacity_loop_20260921/code_git",
+  "question": "End-to-end capacity pricing shortcircuit off vs on, candidate mode grid in both; single algorithm switch. Charging-window floating ties may change trajectories.",
+  "cases": {
+    "k1_duty13406__off": {
+      "instance": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_recovery_20260909/inputs/k1/duty_13406.csv",
+      "prices": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/hourly_prices_flat.csv",
+      "reference": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data",
+      "shortcircuit": "off",
+      "input_hashes": {
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_recovery_20260909/inputs/k1/duty_13406.csv": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      }
+    },
+    "k1_duty13406__on": {
+      "instance": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_recovery_20260909/inputs/k1/duty_13406.csv",
+      "prices": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/hourly_prices_flat.csv",
+      "reference": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data",
+      "shortcircuit": "on",
+      "input_hashes": {
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_recovery_20260909/inputs/k1/duty_13406.csv": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      }
+    },
+    "e1_short_k2__off": {
+      "instance": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+      "prices": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/hourly_prices_flat.csv",
+      "reference": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data",
+      "shortcircuit": "off",
+      "input_hashes": {
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      }
+    },
+    "e1_short_k2__on": {
+      "instance": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+      "prices": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/hourly_prices_flat.csv",
+      "reference": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data",
+      "shortcircuit": "on",
+      "input_hashes": {
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      }
+    },
+    "e1_short_k3__off": {
+      "instance": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k3.csv",
+      "prices": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/hourly_prices_flat.csv",
+      "reference": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data",
+      "shortcircuit": "off",
+      "input_hashes": {
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k3.csv": "c12ad3f575f7f70fd9b58a339ef79ace69266c28c7781e415028b15a298fd3ae",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      }
+    },
+    "e1_short_k3__on": {
+      "instance": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k3.csv",
+      "prices": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/hourly_prices_flat.csv",
+      "reference": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data",
+      "shortcircuit": "on",
+      "input_hashes": {
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k3.csv": "c12ad3f575f7f70fd9b58a339ef79ace69266c28c7781e415028b15a298fd3ae",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      }
+    }
+  },
+  "cg_budget_s": 14400,
+  "mip_budget_s": 3600,
+  "reserve_kwh": 0,
+  "shared_capacity": true,
+  "battery_kwh": 240,
+  "non_parx_kw": 240,
+  "scope": "capacity-only baseline; not full strict GIRO model",
+  "resources": {
+    "partition": "default_partition",
+    "exclude": "scaglione-compute-01",
+    "cpus": 4,
+    "memory": "128G",
+    "independent_concurrency": 6
+  },
+  "deployment_correction": "Original six CGs failed before optimization: archived code lacked Git metadata. Retried with detached sparse checkout, same src/tests."
+}
