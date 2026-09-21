@@ -7,3 +7,5 @@ This is a posthoc audit and visualization of saved results. No new solver runs o
 - [Capacity-only replay](battery_rounding/README.md): 3.93 GiB is computer memory, not vehicle energy. In 48 saved MIP solutions, 40/487 route occurrences fail if every battery and initial charge become 239.01 kWh, and 195/487 fail at 236.44 kWh, with all other energy flows frozen. These are sensitivity scenarios, not observed actual vehicle assignments. They show failure of saved charging schedules, not impossibility of repairing the trip routes. The two selected 13309 counterparts both pass 239.01 kWh under their historical zero-reserve assumptions.
 
 Raw sources, execution commits, hashes, settings, proof scopes and reproducible scripts are in the three linked folders. No CG certificate, finite-pool proof, GIRO target claim or strict-physics status was upgraded by plotting or replaying these results. Google Slides remain untouched.
+
+[Google Doc before/after preservation checks](doc_verification/README.md) pass: three new images, all fifteen prior figure images and original text/tables/links preserved.
