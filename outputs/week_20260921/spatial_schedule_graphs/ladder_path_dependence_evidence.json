@@ -1,0 +1,80 @@
+{
+  "schema": "evsp-ladder-path-dependence-audit-v1",
+  "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "manifest_sha256": "e3d7164834a388b69def78840acf6038129d9aa8dddc18f9db3bcfe6e575046e",
+  "input_classes": {
+    "904070ec8919dd11bf431eab62e1396ad4882d95f7d5917bcf83f34d1e20e607": {
+      "chains": [
+        1,
+        4
+      ],
+      "trips": 948,
+      "cache_owner": "w1_k40",
+      "cache": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k40/network.pkl",
+      "variants": [
+        "13324muw",
+        "13316m"
+      ]
+    },
+    "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd": {
+      "chains": [
+        2,
+        3,
+        6
+      ],
+      "trips": 947,
+      "cache_owner": "w2_k40",
+      "cache": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k40/network.pkl",
+      "variants": [
+        "13324t",
+        "13316uwt"
+      ]
+    },
+    "1c53d995701acc515431b296ff51445a8312d66621d6c380ea838dac5056e2fb": {
+      "chains": [
+        5
+      ],
+      "trips": 946,
+      "cache_owner": "w5_k40",
+      "cache": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k40/network.pkl",
+      "variants": [
+        "13316uwt",
+        "13324muw"
+      ]
+    }
+  },
+  "scientific_settings": {
+    "battery_kwh": 240,
+    "initial_soc_kwh": 240,
+    "charge_kw": 240,
+    "reserve_kwh": 0,
+    "terminal_floor": null,
+    "shared_station_capacity": false,
+    "master_sense": "cover",
+    "objective": "100000 + electricity + 5 per charge start",
+    "tariff": "flat",
+    "soc_step_kwh": 2.5,
+    "block_min": 5,
+    "columns_per_iter": 30,
+    "rc_epsilon": 0.0001,
+    "inherit_max_columns": 0,
+    "inherit_time_limit_s": 0,
+    "inherit_workers": 8,
+    "fixed_sequence_index": true,
+    "skip_gurobi_incidence": false,
+    "mip_seconds": 3600,
+    "stage1_seconds": 1800,
+    "stage2_fleet_constraint": "<= validated incumbent"
+  },
+  "source": {
+    "src/exact_pricer_expanded.py": {
+      "artifact": "outputs/week_20260921/spatial_schedule_graphs/source_audit_a0e0bb/exact_pricer_expanded.py",
+      "sha256": "f4310ddc495c70bba6118b0ecd9c546f80a8ce6b7f1b027e2866de9595af8831"
+    },
+    "src/event_pricer_network.py": {
+      "artifact": "outputs/week_20260921/spatial_schedule_graphs/source_audit_a0e0bb/event_pricer_network.py",
+      "sha256": "03d4674ab684ab690b32b7f04be2073d345efc680315435c4bf06b6c2a6d6d9a"
+    }
+  },
+  "scope": "baseline sequential-chain CG; not strict packed campaign; no new jobs submitted"
+}

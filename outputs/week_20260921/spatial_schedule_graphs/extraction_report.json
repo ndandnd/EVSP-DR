@@ -1,0 +1,548 @@
+{
+  "pairs": [
+    {
+      "pair_id": "duty_13414",
+      "original_duty": "13414",
+      "original_internal_trip_ids": [
+        9,
+        14,
+        18,
+        24,
+        29,
+        35,
+        39,
+        44,
+        49,
+        54,
+        58,
+        60
+      ],
+      "original_source_trip_ids": [
+        "23",
+        "36",
+        "49",
+        "68",
+        "81",
+        "100",
+        "113",
+        "126",
+        "139",
+        "154",
+        "165",
+        "178"
+      ],
+      "original_starts": 9,
+      "fee0_source_index": 1,
+      "fee0_trip_overlap": 6,
+      "fee0_trip_count": 13,
+      "fee0_same_trip_set": false,
+      "fee0_removed_source_trip_ids": [
+        "23",
+        "36",
+        "49",
+        "68",
+        "81",
+        "178"
+      ],
+      "fee0_added_source_trip_ids": [
+        "6",
+        "22",
+        "35",
+        "48",
+        "61",
+        "74",
+        "87"
+      ],
+      "fee0_starts": 9,
+      "fee5_source_index": 0,
+      "fee5_trip_overlap": 12,
+      "fee5_trip_count": 12,
+      "fee5_same_trip_set": true,
+      "fee5_removed_source_trip_ids": [],
+      "fee5_added_source_trip_ids": [],
+      "fee5_starts": 6,
+      "fee0_fee5_trip_overlap": 6,
+      "fee0_fee5_same_trip_set": false,
+      "visual_priority": 1,
+      "visual_interest_reason": "Only original-versus-fee5 pair with identical twelve service trips; nine to six charges, with original ET_R visits and a different thirteen-trip fee0 assignment."
+    },
+    {
+      "pair_id": "duty_13403",
+      "original_duty": "13403",
+      "original_internal_trip_ids": [
+        1,
+        5,
+        11,
+        16,
+        22,
+        27,
+        32,
+        36,
+        40,
+        45,
+        50,
+        55,
+        59,
+        61
+      ],
+      "original_source_trip_ids": [
+        "2",
+        "10",
+        "30",
+        "43",
+        "62",
+        "75",
+        "88",
+        "101",
+        "114",
+        "127",
+        "142",
+        "155",
+        "170",
+        "179"
+      ],
+      "original_starts": 12,
+      "fee0_source_index": 0,
+      "fee0_trip_overlap": 7,
+      "fee0_trip_count": 12,
+      "fee0_same_trip_set": false,
+      "fee0_removed_source_trip_ids": [
+        "10",
+        "30",
+        "43",
+        "142",
+        "155",
+        "170",
+        "179"
+      ],
+      "fee0_added_source_trip_ids": [
+        "23",
+        "36",
+        "49",
+        "144",
+        "157"
+      ],
+      "fee0_starts": 8,
+      "fee5_source_index": 3,
+      "fee5_trip_overlap": 6,
+      "fee5_trip_count": 12,
+      "fee5_same_trip_set": false,
+      "fee5_removed_source_trip_ids": [
+        "30",
+        "43",
+        "62",
+        "75",
+        "88",
+        "101",
+        "170",
+        "179"
+      ],
+      "fee5_added_source_trip_ids": [
+        "26",
+        "39",
+        "56",
+        "69",
+        "82",
+        "95"
+      ],
+      "fee5_starts": 5,
+      "fee0_fee5_trip_overlap": 3,
+      "fee0_fee5_same_trip_set": false,
+      "visual_priority": 2,
+      "visual_interest_reason": "Largest original-versus-fee5 charge-count change, twelve to five; both modeled arms also finish substantially earlier because trip assignments differ."
+    },
+    {
+      "pair_id": "duty_13405",
+      "original_duty": "13405",
+      "original_internal_trip_ids": [
+        2,
+        6,
+        10,
+        15,
+        19,
+        23,
+        28,
+        33,
+        37,
+        42,
+        47,
+        51,
+        56
+      ],
+      "original_source_trip_ids": [
+        "4",
+        "13",
+        "26",
+        "39",
+        "52",
+        "65",
+        "78",
+        "91",
+        "104",
+        "117",
+        "130",
+        "143",
+        "156"
+      ],
+      "original_starts": 12,
+      "fee0_source_index": 2,
+      "fee0_trip_overlap": 9,
+      "fee0_trip_count": 12,
+      "fee0_same_trip_set": false,
+      "fee0_removed_source_trip_ids": [
+        "52",
+        "65",
+        "78",
+        "91"
+      ],
+      "fee0_added_source_trip_ids": [
+        "68",
+        "81",
+        "179"
+      ],
+      "fee0_starts": 9,
+      "fee5_source_index": 2,
+      "fee5_trip_overlap": 4,
+      "fee5_trip_count": 14,
+      "fee5_same_trip_set": false,
+      "fee5_removed_source_trip_ids": [
+        "4",
+        "13",
+        "26",
+        "39",
+        "104",
+        "117",
+        "130",
+        "143",
+        "156"
+      ],
+      "fee5_added_source_trip_ids": [
+        "0",
+        "8",
+        "22",
+        "35",
+        "108",
+        "121",
+        "135",
+        "149",
+        "170",
+        "179"
+      ],
+      "fee5_starts": 6,
+      "fee0_fee5_trip_overlap": 1,
+      "fee0_fee5_same_trip_set": false,
+      "visual_priority": 3,
+      "visual_interest_reason": "Twelve to nine to six charges, with substantially later final modeled service and depot return; highlights route reassignment and longer charging intervals."
+    },
+    {
+      "pair_id": "duty_13401",
+      "original_duty": "13401",
+      "original_internal_trip_ids": [
+        0,
+        3,
+        8,
+        13,
+        20,
+        25,
+        30,
+        34,
+        41,
+        46,
+        52,
+        57
+      ],
+      "original_source_trip_ids": [
+        "0",
+        "6",
+        "22",
+        "35",
+        "56",
+        "69",
+        "82",
+        "95",
+        "116",
+        "129",
+        "144",
+        "157"
+      ],
+      "original_starts": 10,
+      "fee0_source_index": 3,
+      "fee0_trip_overlap": 4,
+      "fee0_trip_count": 12,
+      "fee0_same_trip_set": false,
+      "fee0_removed_source_trip_ids": [
+        "0",
+        "6",
+        "22",
+        "35",
+        "116",
+        "129",
+        "144",
+        "157"
+      ],
+      "fee0_added_source_trip_ids": [
+        "10",
+        "30",
+        "43",
+        "108",
+        "121",
+        "135",
+        "149",
+        "178"
+      ],
+      "fee0_starts": 8,
+      "fee5_source_index": 1,
+      "fee5_trip_overlap": 4,
+      "fee5_trip_count": 12,
+      "fee5_same_trip_set": false,
+      "fee5_removed_source_trip_ids": [
+        "0",
+        "6",
+        "22",
+        "35",
+        "56",
+        "69",
+        "82",
+        "95"
+      ],
+      "fee5_added_source_trip_ids": [
+        "4",
+        "13",
+        "30",
+        "43",
+        "62",
+        "75",
+        "88",
+        "101"
+      ],
+      "fee5_starts": 6,
+      "fee0_fee5_trip_overlap": 2,
+      "fee0_fee5_same_trip_set": false,
+      "visual_priority": 4,
+      "visual_interest_reason": "Ten to eight to six charges; fee0 returns much later while fee5 keeps the original return time despite a different trip assignment."
+    },
+    {
+      "pair_id": "duty_13408",
+      "original_duty": "13408",
+      "original_internal_trip_ids": [
+        4,
+        7,
+        12,
+        17,
+        21,
+        26,
+        31,
+        38,
+        43,
+        48,
+        53
+      ],
+      "original_source_trip_ids": [
+        "8",
+        "20",
+        "33",
+        "48",
+        "61",
+        "74",
+        "87",
+        "108",
+        "121",
+        "135",
+        "149"
+      ],
+      "original_starts": 9,
+      "fee0_source_index": 4,
+      "fee0_trip_overlap": 3,
+      "fee0_trip_count": 13,
+      "fee0_same_trip_set": false,
+      "fee0_removed_source_trip_ids": [
+        "48",
+        "61",
+        "74",
+        "87",
+        "108",
+        "121",
+        "135",
+        "149"
+      ],
+      "fee0_added_source_trip_ids": [
+        "0",
+        "52",
+        "65",
+        "78",
+        "91",
+        "116",
+        "129",
+        "142",
+        "155",
+        "170"
+      ],
+      "fee0_starts": 8,
+      "fee5_source_index": 4,
+      "fee5_trip_overlap": 6,
+      "fee5_trip_count": 12,
+      "fee5_same_trip_set": false,
+      "fee5_removed_source_trip_ids": [
+        "8",
+        "108",
+        "121",
+        "135",
+        "149"
+      ],
+      "fee5_added_source_trip_ids": [
+        "6",
+        "104",
+        "117",
+        "130",
+        "143",
+        "156"
+      ],
+      "fee5_starts": 7,
+      "fee0_fee5_trip_overlap": 2,
+      "fee0_fee5_same_trip_set": false,
+      "visual_priority": 5,
+      "visual_interest_reason": "Nine to eight to seven charges and low original-fee0 overlap; useful illustration of why bus labels should not imply identical service assignments."
+    }
+  ],
+  "schedule_count": 15,
+  "event_count": 751,
+  "visit_count": 405,
+  "validation": {
+    "fleets": 3,
+    "buses_per_fleet": 5,
+    "source_trips_per_fleet": 62,
+    "exact_once": true,
+    "complete_chronology": true,
+    "continuous_locations": true,
+    "source_charge_intervals_preserved": true,
+    "event_endpoint_soc_within_battery_and_reserve": true,
+    "extracted_charge_capacity_peaks": {
+      "original": {
+        "4808": 1,
+        "2190L": 1
+      },
+      "fee0": {
+        "2190L": 1,
+        "4808": 1
+      },
+      "fee5": {
+        "2190L": 1,
+        "4808": 1
+      }
+    },
+    "maximum_energy_balance_residual_kwh": 1.5631940186722204e-13,
+    "charge_starts": {
+      "original": 52,
+      "fee0": 42,
+      "fee5": 30
+    },
+    "independent_physical_validation": {
+      "saved_joint_fee0": {
+        "valid_for_declared_scope": true,
+        "exact_once_trips": 62,
+        "fleet": 5,
+        "routes": [
+          {
+            "source_index": 0,
+            "valid": true,
+            "min_soc_kwh": 35.46599999999977,
+            "terminal_kwh": 47.90066852827698,
+            "target_kwh": 47.90066852827695
+          },
+          {
+            "source_index": 1,
+            "valid": true,
+            "min_soc_kwh": 35.465999999999696,
+            "terminal_kwh": 50.20850168172372,
+            "target_kwh": 50.20850168172383
+          },
+          {
+            "source_index": 2,
+            "valid": true,
+            "min_soc_kwh": 35.46600000000003,
+            "terminal_kwh": 57.867414773418915,
+            "target_kwh": 57.86741477341874
+          },
+          {
+            "source_index": 3,
+            "valid": true,
+            "min_soc_kwh": 35.46599999999985,
+            "terminal_kwh": 46.47529889133208,
+            "target_kwh": 46.4752988913322
+          },
+          {
+            "source_index": 4,
+            "valid": true,
+            "min_soc_kwh": 35.46600000000005,
+            "terminal_kwh": 48.266440477601584,
+            "target_kwh": 48.26644047760146
+          }
+        ],
+        "charger_peaks": {
+          "4808": 1,
+          "2190L": 1
+        },
+        "not_validated": [
+          "time-dependent DHD",
+          "platform/departure blocking",
+          "FIFO at4808",
+          "crew constraints"
+        ],
+        "source_hash": "884c14a731936f89488d42e2a4be0311f248341e3c371cb7deee8603039897b3"
+      },
+      "saved_joint_fee5": {
+        "valid_for_declared_scope": true,
+        "exact_once_trips": 62,
+        "fleet": 5,
+        "routes": [
+          {
+            "source_index": 0,
+            "valid": true,
+            "min_soc_kwh": 35.465999999999724,
+            "terminal_kwh": 50.208501681723526,
+            "target_kwh": 50.20850168172383
+          },
+          {
+            "source_index": 1,
+            "valid": true,
+            "min_soc_kwh": 35.46600000000002,
+            "terminal_kwh": 46.47529889133165,
+            "target_kwh": 46.4752988913322
+          },
+          {
+            "source_index": 2,
+            "valid": true,
+            "min_soc_kwh": 35.46599999999721,
+            "terminal_kwh": 57.86741477341627,
+            "target_kwh": 57.86741477341874
+          },
+          {
+            "source_index": 3,
+            "valid": true,
+            "min_soc_kwh": 35.46600000000004,
+            "terminal_kwh": 47.90066852827641,
+            "target_kwh": 47.90066852827695
+          },
+          {
+            "source_index": 4,
+            "valid": true,
+            "min_soc_kwh": 35.46600000000002,
+            "terminal_kwh": 48.26644047760103,
+            "target_kwh": 48.26644047760146
+          }
+        ],
+        "charger_peaks": {
+          "4808": 1,
+          "2190L": 1
+        },
+        "not_validated": [
+          "time-dependent DHD",
+          "platform/departure blocking",
+          "FIFO at4808",
+          "crew constraints"
+        ],
+        "source_hash": "9274f1b9c78c135a0b533490b249e917ee35aeead176461fef20cb91f7b0ffe3"
+      }
+    }
+  }
+}

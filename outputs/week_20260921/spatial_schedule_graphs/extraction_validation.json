@@ -1,0 +1,266 @@
+{
+  "schema": "k5_all_bus_spatial_schedule_extraction_v1",
+  "pairing_validation": {
+    "saved_joint_fee0": {
+      "total_trip_overlap": 29,
+      "equally_optimal_assignments": 2,
+      "preserved_assignment": [
+        "13403",
+        "13414",
+        "13405",
+        "13401",
+        "13408"
+      ],
+      "overlap_matrix": {
+        "13401": [
+          2,
+          3,
+          0,
+          4,
+          3
+        ],
+        "13403": [
+          7,
+          0,
+          1,
+          3,
+          3
+        ],
+        "13405": [
+          0,
+          0,
+          9,
+          0,
+          4
+        ],
+        "13408": [
+          0,
+          4,
+          0,
+          4,
+          3
+        ],
+        "13414": [
+          3,
+          6,
+          2,
+          1,
+          0
+        ]
+      }
+    },
+    "saved_joint_fee5": {
+      "total_trip_overlap": 32,
+      "equally_optimal_assignments": 4,
+      "preserved_assignment": [
+        "13414",
+        "13401",
+        "13405",
+        "13403",
+        "13408"
+      ],
+      "overlap_matrix": {
+        "13401": [
+          0,
+          4,
+          3,
+          4,
+          1
+        ],
+        "13403": [
+          0,
+          6,
+          2,
+          6,
+          0
+        ],
+        "13405": [
+          0,
+          2,
+          4,
+          2,
+          5
+        ],
+        "13408": [
+          0,
+          0,
+          5,
+          0,
+          6
+        ],
+        "13414": [
+          12,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "fleet_validation": {
+    "fleets": 3,
+    "buses_per_fleet": 5,
+    "source_trips_per_fleet": 62,
+    "exact_once": true,
+    "complete_chronology": true,
+    "continuous_locations": true,
+    "source_charge_intervals_preserved": true,
+    "event_endpoint_soc_within_battery_and_reserve": true,
+    "extracted_charge_capacity_peaks": {
+      "original": {
+        "4808": 1,
+        "2190L": 1
+      },
+      "fee0": {
+        "2190L": 1,
+        "4808": 1
+      },
+      "fee5": {
+        "2190L": 1,
+        "4808": 1
+      }
+    },
+    "maximum_energy_balance_residual_kwh": 1.5631940186722204e-13,
+    "charge_starts": {
+      "original": 52,
+      "fee0": 42,
+      "fee5": 30
+    },
+    "independent_physical_validation": {
+      "saved_joint_fee0": {
+        "valid_for_declared_scope": true,
+        "exact_once_trips": 62,
+        "fleet": 5,
+        "routes": [
+          {
+            "source_index": 0,
+            "valid": true,
+            "min_soc_kwh": 35.46599999999977,
+            "terminal_kwh": 47.90066852827698,
+            "target_kwh": 47.90066852827695
+          },
+          {
+            "source_index": 1,
+            "valid": true,
+            "min_soc_kwh": 35.465999999999696,
+            "terminal_kwh": 50.20850168172372,
+            "target_kwh": 50.20850168172383
+          },
+          {
+            "source_index": 2,
+            "valid": true,
+            "min_soc_kwh": 35.46600000000003,
+            "terminal_kwh": 57.867414773418915,
+            "target_kwh": 57.86741477341874
+          },
+          {
+            "source_index": 3,
+            "valid": true,
+            "min_soc_kwh": 35.46599999999985,
+            "terminal_kwh": 46.47529889133208,
+            "target_kwh": 46.4752988913322
+          },
+          {
+            "source_index": 4,
+            "valid": true,
+            "min_soc_kwh": 35.46600000000005,
+            "terminal_kwh": 48.266440477601584,
+            "target_kwh": 48.26644047760146
+          }
+        ],
+        "charger_peaks": {
+          "4808": 1,
+          "2190L": 1
+        },
+        "not_validated": [
+          "time-dependent DHD",
+          "platform/departure blocking",
+          "FIFO at4808",
+          "crew constraints"
+        ],
+        "source_hash": "884c14a731936f89488d42e2a4be0311f248341e3c371cb7deee8603039897b3"
+      },
+      "saved_joint_fee5": {
+        "valid_for_declared_scope": true,
+        "exact_once_trips": 62,
+        "fleet": 5,
+        "routes": [
+          {
+            "source_index": 0,
+            "valid": true,
+            "min_soc_kwh": 35.465999999999724,
+            "terminal_kwh": 50.208501681723526,
+            "target_kwh": 50.20850168172383
+          },
+          {
+            "source_index": 1,
+            "valid": true,
+            "min_soc_kwh": 35.46600000000002,
+            "terminal_kwh": 46.47529889133165,
+            "target_kwh": 46.4752988913322
+          },
+          {
+            "source_index": 2,
+            "valid": true,
+            "min_soc_kwh": 35.46599999999721,
+            "terminal_kwh": 57.86741477341627,
+            "target_kwh": 57.86741477341874
+          },
+          {
+            "source_index": 3,
+            "valid": true,
+            "min_soc_kwh": 35.46600000000004,
+            "terminal_kwh": 47.90066852827641,
+            "target_kwh": 47.90066852827695
+          },
+          {
+            "source_index": 4,
+            "valid": true,
+            "min_soc_kwh": 35.46600000000002,
+            "terminal_kwh": 48.26644047760103,
+            "target_kwh": 48.26644047760146
+          }
+        ],
+        "charger_peaks": {
+          "4808": 1,
+          "2190L": 1
+        },
+        "not_validated": [
+          "time-dependent DHD",
+          "platform/departure blocking",
+          "FIFO at4808",
+          "crew constraints"
+        ],
+        "source_hash": "9274f1b9c78c135a0b533490b249e917ee35aeead176461fef20cb91f7b0ffe3"
+      }
+    }
+  },
+  "sources": {
+    "/Users/nadan/Documents/projects/demandresponse/data/Par_VehicleDetails_Updated.csv": "11dff837f8f62efb73f8fe98a2c325a8033e56754fa6334f853c9899404ee846",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/giro_email_sources/Par_VehicleDetails.xlsx": "768468a4b9e64948d1be7510599efbdef4934cf1bd268d2154905113acb3fece",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260917/route_explainer/inputs/k05.csv": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260917/route_explainer/inputs/original.json": "a015a776f9103b3d6e274c60a7b3378e8c8ccfbdee7dfedc5d5ee74391175baa",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/baseline.json": "9c2d180a99b1fa80782183358d0d003f835da1e1d272ab1bc27e13b69ee5bf24",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/saved_joint_fee0.json": "884c14a731936f89488d42e2a4be0311f248341e3c371cb7deee8603039897b3",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/saved_joint_fee5.json": "9274f1b9c78c135a0b533490b249e917ee35aeead176461fef20cb91f7b0ffe3",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/saved_sequence_replay.json": "c1da7af401110e34bcd3a45a0e6a262a33eff582ff21516225d01c264b0a4bcd",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/cleanup_physics/joint_validation.json": "956678ea51cc438614abc261397bbe286fb2758ff98c4e6988b7d5d80979753b",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/geography_map/model_geography.json": "d8e86f81cfbf1c0f65a00de8f405fef368641b481e3baab879b5cfea6552b705",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/geography_map/coordinates.csv": "a234490b47cf5615b01846dce9cf179113d7b257ac75b7682b860f791496161f",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/spatial_schedule_graphs/extract_schedules.py": "22ba7e06a8c8b04a0f6f04b425bcda4c83f27ac36178939acf6a87400efd8a77"
+  },
+  "caveats": [
+    "Trip numbers (source_trip_id) are stable Ordered_Trip_ID labels added in our prepared full input, not GIRO-supplied journey numbers. The raw GIRO workbook has no such field. count_trip_id is the separate local0–61 model index.",
+    "All three fleets cover the same62 source trips exactly once; most paired individual buses do not share the same trip set.",
+    "Pairing preserves the one-to-one maximum-total-trip-overlap assignment already used for terminal floors. It is an identification convention, not an operational bus identity.",
+    "Fee0 and fee5 inherit different trip sequences and station paths; their differences are not a controlled fee-only causal effect.",
+    "Recorded GIRO movements use source clocks and directional links. Saved-model movements use static symmetric reference deadheads; 2190→2190L is zero in the model but one minute in recorded GIRO.",
+    "For modeled direct arcs, travel is placed immediately after service and idle at the destination. Within fixed station paths, the bus arrives immediately and departs at the next-trip deadline. These valid clock placements are reconstructed, not uniquely optimized.",
+    "Repeated location visits should remain separate graph nodes. Straight edges connect events; they are not road routes or passenger stop geometry.",
+    "ET_R has no documented coordinate. It may be an explicitly unlocated auxiliary diagram node, never a geocoded point. 2190 is terminal vicinity, not an established exact passenger platform.",
+    "Baseline prep activities are included because recorded; modeled sequences have no invented prep activities. Waiting is idle, not an established crew break.",
+    "236.44kWh initial/battery,15% reserve,0.1kW idle,documented18E1 opportunity taper,PARX60kW and minimum3minute active charging. Equal matched terminal floors; capacity counts hold within these five buses only.",
+    "Full GIRO operational equivalence is not established: time-dependent/directional model deadheads, platform/departure blocking, FIFO, crew and other buses sharing chargers remain outside this validation."
+  ]
+}

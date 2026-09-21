@@ -1,0 +1,25 @@
+{
+  "reviewer": "parent independent extraction cross-check",
+  "checks": {
+    "original": {
+      "buses": 5,
+      "unique_trips": 62,
+      "charge_starts": 52,
+      "continuous_day_paths": true
+    },
+    "fee0": {
+      "buses": 5,
+      "unique_trips": 62,
+      "charge_starts": 42,
+      "continuous_day_paths": true
+    },
+    "fee5": {
+      "buses": 5,
+      "unique_trips": 62,
+      "charge_starts": 30,
+      "continuous_day_paths": true
+    }
+  },
+  "all_source_hashes_match": true,
+  "same_fleet_trip_set": true
+}
