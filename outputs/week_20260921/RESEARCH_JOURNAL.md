@@ -1,5 +1,9 @@
 # EVSP–DR research journal — week of 21 September 2026
 
+## 21 September — a bus day across five places
+
+[Recorded GIRO duty 13309](complex_route_graphs/README.md) visits five areas, serves 22 passenger trips and charges four times at Heden, Jons väg and PARX. Its midday depot return at 10:42 leads to 105 minutes of charging (+105 kWh), then departure at 12:43. Morning/afternoon graphs share an approximate layout; PARX is displaced for clarity. The five-page companion preserves 27 inter-area movements, 28 visits and all 60 events. Recharge cells match the correct 239.01 kWh 18E2 basis. This is original-only, with no optimized counterpart asserted. [The updated figure tab preserves its previous text and eight images](complex_route_graphs/doc_verification/README.md); no Slides or solver settings changed.
+
 ## 21 September — eight jobs finished; the scientific outcomes differ
 
 All eight jobs and six dependent capacity MIPs finished. Those MIPs prove **finite-pool** fleet optima; only one capacity CG supplies a pricing certificate.

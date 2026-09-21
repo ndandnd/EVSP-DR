@@ -11,7 +11,11 @@
     "pdf_all_pages_rendered_and_inspected": true,
     "prepared_trip_ids_not_giro_journey_numbers": true,
     "secondary_13722_left_unlocated": true,
-    "source_validation": "validation.json"
+    "source_validation": "validation.json",
+    "interactive_javascript_syntax": "PASS",
+    "interactive_service_targets": 22,
+    "interactive_empty_move_targets": 5,
+    "native_editable_tables": 4
   },
   "files": [
     {
@@ -21,8 +25,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 5146,
-      "sha256": "76ba5a7afd8c15467a2a78c2f1ea577602cc326369c61e9290e73dd5cdfaac62"
+      "bytes": 5393,
+      "sha256": "fcf9135bb6cc89b929e811884b13ae953ed78d9ff4c5145abf7e8d971db2dcdc"
     },
     {
       "path": "areas.csv",
@@ -179,5 +183,6 @@
       "bytes": 4568,
       "sha256": "8b2814f72f1b54fe44883d0acb5de9ef04b48fa0853d971f219a4b54a5c8ccc8"
     }
-  ]
+  ],
+  "document_verification": "doc_verification/README.md"
 }

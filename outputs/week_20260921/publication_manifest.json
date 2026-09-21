@@ -12,23 +12,23 @@
   "included_files": [
     {
       "path": "README.md",
-      "bytes": 7760,
-      "sha256": "87c4c61f48e1fbed239cf5749633f2fdbfb2f0c2273cf6c6efc14b07fdc75663"
+      "bytes": 8061,
+      "sha256": "d73d267358ad38dd9283a7a93a9b1c72bccf2b9fac5610404e157d89ee30955e"
     },
     {
       "path": "RESEARCH_JOURNAL.html",
-      "bytes": 13128,
-      "sha256": "1816ca84fad8f4ebaecdeda38e8ac3475859eb5b5b66d5cbeaa2626b3238fad6"
+      "bytes": 13923,
+      "sha256": "82f9a66a1bf0f2669f68bea615d2a3c9eeef453778f4f3464f718ccb33347a45"
     },
     {
       "path": "RESEARCH_JOURNAL.md",
-      "bytes": 10403,
-      "sha256": "0f5f24b7be51bb6c82035877d2384c006c4c0d2b7df4f30474b418028aafda66"
+      "bytes": 11164,
+      "sha256": "c9850938c319bd39cc732d8d2258d29ae4b621bf0d89828d4a0415f9c94a88cf"
     },
     {
       "path": "RESEARCH_JOURNAL_BODY.html",
-      "bytes": 12468,
-      "sha256": "bddd19a59278c0b4566fabf23c02c72a57a2532595871d60d96fb907eef56d77"
+      "bytes": 13263,
+      "sha256": "ae82735957f35992010bfa5823451635cc9debcfaa0d49ce8dd679c0a92554a4"
     },
     {
       "path": "capacity_strict/README.md",
@@ -1472,8 +1472,8 @@
     },
     {
       "path": "complex_route_graphs/README.md",
-      "bytes": 5146,
-      "sha256": "76ba5a7afd8c15467a2a78c2f1ea577602cc326369c61e9290e73dd5cdfaac62"
+      "bytes": 5393,
+      "sha256": "fcf9135bb6cc89b929e811884b13ae953ed78d9ff4c5145abf7e8d971db2dcdc"
     },
     {
       "path": "complex_route_graphs/areas.csv",
@@ -1529,6 +1529,36 @@
       "path": "complex_route_graphs/display_layout.csv",
       "bytes": 504,
       "sha256": "08b4f1e9b2d78869f3ed5662077eeb72b1a2b8ef599a4bb9ce1bde097a00f638"
+    },
+    {
+      "path": "complex_route_graphs/doc_verification/README.md",
+      "bytes": 1348,
+      "sha256": "a0784678dcc4785dcaeb1f6c1757d39278a2afd5b12a6e14536ee4371f4eb242"
+    },
+    {
+      "path": "complex_route_graphs/doc_verification/figures_after.md",
+      "bytes": 12062,
+      "sha256": "6d148843e27190939045987354262c18bd93b5be10284407b4df899c1ac79ed1"
+    },
+    {
+      "path": "complex_route_graphs/doc_verification/figures_after.pdf",
+      "bytes": 2152874,
+      "sha256": "dbb0e1194952d9369f47e621121bfaee56e9bb7308c39cb9a4adb5bc4fd69fb3"
+    },
+    {
+      "path": "complex_route_graphs/doc_verification/figures_before.md",
+      "bytes": 10550,
+      "sha256": "3c9bc143a4cc696dcbf9bf201b3f1948acb5bd1d5726673b74dde128625df9e1"
+    },
+    {
+      "path": "complex_route_graphs/doc_verification/verification.json",
+      "bytes": 439,
+      "sha256": "c2f69132ff99521db8bd17b06e1bd3aac342ad725069af07fe15cd56484e34e2"
+    },
+    {
+      "path": "complex_route_graphs/doc_verification/verify.py",
+      "bytes": 2395,
+      "sha256": "3e99305f73d07222fde54736bc0b6eeaa8b89d1ed9f5dc7d36489113a86b1366"
     },
     {
       "path": "complex_route_graphs/duty_13309_daybook.pdf",
@@ -1597,8 +1627,8 @@
     },
     {
       "path": "complex_route_graphs/figure_manifest.json",
-      "bytes": 5752,
-      "sha256": "c446b1b9ccfc305a5c76ab4b6ca999e79dda8279b690c2a47e9aa1912fb96568"
+      "bytes": 5967,
+      "sha256": "06f29953647c5e2cdeac13eac8b77566029ecb77a862cbe81445fddddfe8b4b1"
     },
     {
       "path": "complex_route_graphs/gallery.html",
@@ -9932,7 +9962,7 @@
     "Code changes are represented by exact commit references and source patches; they are not merged into this documentation branch.",
     "The evidence manifest includes source locations for files intentionally retained locally; omission is disclosed here."
   ],
-  "updated_utc": "2026-09-21T19:43:27.119389+00:00",
+  "updated_utc": "2026-09-21T19:46:16.874577+00:00",
   "update_note": "Final clarified exports: fee0/fee5 use different inherited sequences and station paths; session counts are descriptive, not a fee-only causal effect. Original solver results unchanged.",
   "superseded_publications": [
     {
@@ -9944,8 +9974,8 @@
   "additional_repository_files": [
     {
       "path": "outputs/research_register/README.md",
-      "bytes": 54508,
-      "sha256": "ee30d56bf7d1bd0c29c4c3897686b579a033b59830239bc01d08afdca4ab5eb4",
+      "bytes": 55280,
+      "sha256": "8b115cb21ddbfc1a9dd020e03f5679c60effa67067d2c8cd79a9e4034b56638c",
       "scope": "authorized register entry and minimal campaign-list integration only"
     },
     {
@@ -9961,11 +9991,11 @@
       "scope": "authorized register entry and minimal campaign-list integration only"
     }
   ],
-  "latest_addition": "OriginalGIRO13309 five-area spatial diagram and exact event/visit/leg keys; no solver results or beta materials",
+  "latest_addition": "Verified GoogleDoc figure archive and concise original-only figure journal/register entry",
   "complex_route_exclusions": {
-    "doc_verification/": "Pending final GoogleDoc export in second publication",
     "prototype_*": "Superseded visual iterations",
     "__pycache__/": "Generated cache",
-    "../gurobi14_beta_review/": "Local-only private beta discussion; publication not authorized"
+    "QA images": "Local rendering review only",
+    "unrelated local material": "Outside this publication scope"
   }
 }
