@@ -1,0 +1,658 @@
+{
+  "generated_by": "build_figures.py",
+  "repository_head_at_build": "d3aba8787e097e7da482c7fbcc5e22e83b395df4",
+  "scope": "local read-only reanalysis; no new optimization or submission",
+  "source_files": {
+    "outputs/post_meeting_20260910/monitor/20260914T004739Z.json": {
+      "sha256": "d026c479f3b8f3d273d261c9ef4e1605c3fd42dd1ad68917d1a7786b373d655a",
+      "bytes": 22673169
+    },
+    "outputs/cumulative_budget_20260913/status_20260914T004739Z/comparison.csv": {
+      "sha256": "4eb225d30176540bb7eb1b9f5e5d74339ed6a19554fe7d66ae088a4d5540d327",
+      "bytes": 18426
+    },
+    "outputs/cumulative_budget_20260913/audit/budgets.csv": {
+      "sha256": "515c4c0c4986b8f8bd4458a9cc5a81d7fcefd5cb23cb3700599e8e5b280d90d2",
+      "bytes": 2941
+    },
+    "outputs/cumulative_budget_20260913/audit/targets.json": {
+      "sha256": "d61a1c7195ff06bff717fd79ef1ea14cf77c1aaa66cc304500f000d60ca18232",
+      "bytes": 357377
+    },
+    "outputs/cumulative_budget_20260913/audit/ancestry.json": {
+      "sha256": "5e915bcc87eb5eb173dc71197aa31e4ecb65686d3b75c0149a695cfce0600929",
+      "bytes": 908633
+    },
+    "outputs/week_20260921/evidence/k8_witness_summary.csv": {
+      "sha256": "be754518239649cf1e79626a8202406ef7e9ad4b895b4b880472e34f8eccb1dd",
+      "bytes": 8774
+    },
+    "outputs/week_20260921/evidence/k8_witness/c1_k08/augmented/391805_r0/gurobi.log": {
+      "sha256": "0609b7fdad528fc6f9fd149a3f89380782063b473134ab74892e75a7482c92f7",
+      "bytes": 16885
+    },
+    "outputs/week_20260921/evidence/k8_witness/c1_k08/control/391804_r0/gurobi.log": {
+      "sha256": "6c229b25b045023bde4e28a603b0142149e7f15f5b703860a71d3abbd4f088c6",
+      "bytes": 35220
+    },
+    "outputs/week_20260921/evidence/k8_witness/c2_k08/augmented/391811_r0/gurobi.log": {
+      "sha256": "232c96578cb1063dd93eeea78c02380eb200866c4311b84b8a57b4e52a4386a7",
+      "bytes": 63086
+    },
+    "outputs/week_20260921/evidence/k8_witness/c2_k08/control/391810_r0/gurobi.log": {
+      "sha256": "03efe3360fbca99fa79aadd52333615ce70a93a71cd8e1af1f6dbfc49911c8e4",
+      "bytes": 43855
+    },
+    "outputs/week_20260921/evidence/k8_witness/c3_k08/augmented/391813_r0/gurobi.log": {
+      "sha256": "64f237ed7f24af00aec1b9173c43f52f05c6c1a67da83d8b68f0e83d00ba6369",
+      "bytes": 9113
+    },
+    "outputs/week_20260921/evidence/k8_witness/c3_k08/control/391812_r0/gurobi.log": {
+      "sha256": "3a26820d24b8bee01cae3d4fcba3454a8bb547d6d426f88626de6b232fa244dd",
+      "bytes": 48876
+    },
+    "outputs/week_20260921/evidence/k8_witness/c4_k08/augmented/391807_r0/gurobi.log": {
+      "sha256": "633b56584e75953427f2520d9adc4541f0fe3716326dab04e476550dd24b1732",
+      "bytes": 11717
+    },
+    "outputs/week_20260921/evidence/k8_witness/c4_k08/control/391806_r0/gurobi.log": {
+      "sha256": "2c2ed84af2d8665e354ed339e43249176b2ac2c3d8c08afcae677ec0b60e8bdf",
+      "bytes": 30587
+    },
+    "outputs/week_20260921/evidence/k8_witness/c5_k08/augmented/391809_r0/gurobi.log": {
+      "sha256": "9886ea8d5420d55d1e9b3e4c79a1cadde8f6fbb03dbcbf00a2c1e9cc0b2b3668",
+      "bytes": 11319
+    },
+    "outputs/week_20260921/evidence/k8_witness/c5_k08/control/391808_r0/gurobi.log": {
+      "sha256": "8f7ed75f26ffe80cc21f3db01f47b9d545315173d4d02cae02c061b17c56b25f",
+      "bytes": 52108
+    },
+    "outputs/week_20260921/evidence/pilot_summary.csv": {
+      "sha256": "a48a89e55df91fb1a215d54208d09beaf1d832ba9fde4ba7cb3ebf6b7f91d625",
+      "bytes": 10530
+    },
+    "outputs/week_20260921/evidence/pilot/c1_k08/control_arm_a/586634_r0/gurobi.log": {
+      "sha256": "dc916a2ac99262b03a923072ff155e23366b2266fd9cbaae218e17d8e53981a0",
+      "bytes": 24357
+    },
+    "outputs/week_20260921/evidence/pilot/c1_k08/control_arm_b/586635_r0/gurobi.log": {
+      "sha256": "8528f29abc73d097f3301fdf196b128c788d8afe035d3447241cc2ef680c7ee6",
+      "bytes": 49745
+    },
+    "outputs/week_20260921/evidence/pilot/c1_k08/treatment/586633_r0/mip_gurobi.log": {
+      "sha256": "dffce1a7e0f674a897ef53a75444045e052c1657ab91fa4f24c48d76f96800ce",
+      "bytes": 13568
+    },
+    "outputs/week_20260921/evidence/pilot/c3_k08/control_arm_a/586637_r0/gurobi.log": {
+      "sha256": "9c9d67a0f41337f3a69dd9ad9b0ef381824d976a139d422e3db858d3c2c3cbbf",
+      "bytes": 47273
+    },
+    "outputs/week_20260921/evidence/pilot/c3_k08/control_arm_b/586638_r0/gurobi.log": {
+      "sha256": "982e9a789b4b3deca819869dc2904c9b337a70adf346daeeee56c6c44645dfcd",
+      "bytes": 82478
+    },
+    "outputs/week_20260921/evidence/pilot/c3_k08/treatment/586636_r0/mip_gurobi.log": {
+      "sha256": "8c6697812db2912e30a95276f496ec1499ef3d9a3cf6afcfb9c8085851e1e3ff",
+      "bytes": 16310
+    },
+    "outputs/week_20260921/evidence/pilot/c4_k08/control_arm_a/586640_r0/gurobi.log": {
+      "sha256": "49a6da3222e6da61776baa1fa6444a91e6cdc59e592850764e9c3c4d95203e77",
+      "bytes": 26912
+    },
+    "outputs/week_20260921/evidence/pilot/c4_k08/control_arm_b/586641_r0/gurobi.log": {
+      "sha256": "492e38ef819d3793f11074ac7a72268cda2c74502d736644effc1731af567fce",
+      "bytes": 38530
+    },
+    "outputs/week_20260921/evidence/pilot/c4_k08/treatment/586639_r0/mip_gurobi.log": {
+      "sha256": "f93f542f05b7967117348730ee5e05f8e1f3d35fd2785369f13eefb0b6609a6c",
+      "bytes": 17402
+    },
+    "outputs/week_20260921/evidence/pilot/c5_k08/control_arm_a/586643_r0/gurobi.log": {
+      "sha256": "f10f611ec33140bed83f19f2accafa2669e1b4fcd6e0c691c401a6869442887b",
+      "bytes": 46075
+    },
+    "outputs/week_20260921/evidence/pilot/c5_k08/control_arm_b/586644_r0/gurobi.log": {
+      "sha256": "5110152841a9f87cbef5e193a71b69776c1eda29554d7d07c6271f94c0ec95c6",
+      "bytes": 66250
+    },
+    "outputs/week_20260921/evidence/pilot/c5_k08/treatment/586642_r0/mip_gurobi.log": {
+      "sha256": "76d4e6fe8ec46d476276cbb644f6311cd10ee8627e0882683f30d5aff73462cc",
+      "bytes": 10622
+    },
+    "outputs/week_20260921/evidence/c1_followup_summary.csv": {
+      "sha256": "609d007df2ccd9203d6413ae673962a125e2ec58712ca007b27544113bbb2a6c",
+      "bytes": 1267
+    },
+    "outputs/week_20260921/evidence/c1_followup/628441_r0/gurobi.log": {
+      "sha256": "040a81d9e5dbf06adbd2196bcd9453c0d04a7e2d99cdcf96db006221d28369cf",
+      "bytes": 18087
+    },
+    "outputs/week_20260921/evidence/k15_12h_summary.csv": {
+      "sha256": "b52558aadeddfe57fc3f574b46f915ea4a34b7156f566a1858dcdae7f6b4e2aa",
+      "bytes": 9928
+    },
+    "outputs/week_20260921/evidence/k15_12h/c1_k15__heur/gurobi.log": {
+      "sha256": "13a01b653a5b0648bc2d51402a2261e605b72fc251f2924983d2543a76651d1a",
+      "bytes": 79128
+    },
+    "outputs/week_20260921/evidence/k15_12h/c1_k15__plain/gurobi.log": {
+      "sha256": "2b8d1b01f99b88d29362de4971b3e03a1569c5fbfc41ba96ac6b2144a24163d8",
+      "bytes": 36710
+    },
+    "outputs/week_20260921/evidence/k15_12h/c2_k15__heur/gurobi.log": {
+      "sha256": "fdfe880a249c62dff2b6c2e1e1fbe414d8fbe9d2b1b5b19b3cb16c3dc5471541",
+      "bytes": 88222
+    },
+    "outputs/week_20260921/evidence/k15_12h/c2_k15__plain/gurobi.log": {
+      "sha256": "3235cfd29292a4bff0bfa261f7df705e497354c2adb67aaa326b0747091984f6",
+      "bytes": 55356
+    },
+    "outputs/week_20260921/evidence/k15_12h/c3_k15__heur/gurobi.log": {
+      "sha256": "6f8b1bb888bb6718d1816606e6e448e6a9971cda8cf27352f71b2fe314bd04b6",
+      "bytes": 58491
+    },
+    "outputs/week_20260921/evidence/k15_12h/c3_k15__plain/gurobi.log": {
+      "sha256": "710a23ea86e7af2043b55b596bc7d1933285d1c1520aa5e1f91bf054148046bf",
+      "bytes": 239936
+    },
+    "outputs/week_20260921/evidence/k15_12h/c4_k15__heur/gurobi.log": {
+      "sha256": "24c1d718b5f02b219a40c0c5a35301ad885e6dc12084f2499032dffa33c4744a",
+      "bytes": 89442
+    },
+    "outputs/week_20260921/evidence/k15_12h/c4_k15__plain/gurobi.log": {
+      "sha256": "298ed4cd80f51fdaa9c661449d607b62b15789e506619d3fb339c5aacc2b6cc1",
+      "bytes": 37706
+    },
+    "outputs/week_20260921/evidence/k15_12h/c5_k15__heur/gurobi.log": {
+      "sha256": "83a4225edb2f3d655fecab356552ff8d6ede0ce11bd95f5f050d43f7e6c96626",
+      "bytes": 95698
+    },
+    "outputs/week_20260921/evidence/k15_12h/c5_k15__plain/gurobi.log": {
+      "sha256": "5a1c8316b812c9346492d4147c27b84409a9456d49f4cdd6e88c56232c9c1fe6",
+      "bytes": 109671
+    },
+    "outputs/week_20260921/evidence/k15_12h/c6_k15__heur/gurobi.log": {
+      "sha256": "f99fb8e1433256f523e820878745a6da4bc57f0786b47a490534b4b2ccb90216",
+      "bytes": 87575
+    },
+    "outputs/week_20260921/evidence/k15_12h/c6_k15__plain/gurobi.log": {
+      "sha256": "9589ff608c362794690d1ceedca7f99ca2befd19ce6395b289685a8bfe608faf",
+      "bytes": 42159
+    },
+    "outputs/week_20260921/evidence/mechanism_summary.csv": {
+      "sha256": "6a2158c6afa33e6e6b856aa0352ad817f04c8a239bddffcb1c3cb4c20e57a239",
+      "bytes": 1248
+    },
+    "outputs/week_20260921/evidence/pilot/c1_k08/treatment/586633_r0/timing.json": {
+      "sha256": "f8196cfdb256c8204815100bea9084d54a734d69589ffad15817334b69ac1148",
+      "bytes": 3327
+    },
+    "outputs/week_20260921/evidence/pilot/c3_k08/treatment/586636_r0/timing.json": {
+      "sha256": "e43e0bf1edcfb1e05f4937d3cb16d91f26cfcddf815dcbbacc90ce3446c82723",
+      "bytes": 2869
+    },
+    "outputs/week_20260921/evidence/pilot/c4_k08/treatment/586639_r0/timing.json": {
+      "sha256": "d887829690760d9b34254655177fe82423de8255ef29c205ec437fb6babf0e5f",
+      "bytes": 3240
+    },
+    "outputs/week_20260921/evidence/pilot/c5_k08/treatment/586642_r0/timing.json": {
+      "sha256": "2e6f4038fe059517748ab823a47471525dde705dc0fbd870717241727be37481",
+      "bytes": 3003
+    },
+    "outputs/controlled_comparison_20260913/status_20260913T063519Z/pairs.csv": {
+      "sha256": "867a98177db00952e33a46a47b651171cb3e129fe76af3497c53c9d36380f7c1",
+      "bytes": 9740
+    },
+    "outputs/controlled_comparison_20260913/status_20260913T063519Z/collection.json": {
+      "sha256": "aa5ca06d3087f7b43b7b65de732f7ff7b7963f50fefbbcbd04a1eba60215da32",
+      "bytes": 1435333
+    },
+    "outputs/controlled_comparison_20260913/manifest.json": {
+      "sha256": "feaf88e7432354cfd342bd7321bb4a0ef75c2e71f9515727a4c0c1aa6b4b8681",
+      "bytes": 18403
+    },
+    "outputs/week_20260921/capacity_strict/recovery/benchmark/646674_r0/result.json": {
+      "sha256": "e359d770902b1ca0359347a1a12097a0125371f8a0f4d4cf4a884d54765012ea",
+      "bytes": 128037
+    },
+    "outputs/cumulative_budget_20260913/manifest.json": {
+      "sha256": "eda4bdf60d0bfcf19d34c5a816a11d22355ba8734042d81178bd85738f564f01",
+      "bytes": 366971
+    },
+    "outputs/week_20260921/evidence/k15_manifest.json": {
+      "sha256": "1383ad1da91a513a659bd1dab53dc1fd95480cbc9200037df86a3d80a7b111c1",
+      "bytes": 6911
+    },
+    "outputs/week_20260921/capacity_strict/recovery/manifest.json": {
+      "sha256": "e24caae052edc0d3a44fc447a261353d990b3597445405b7e4e4efe273fcd103",
+      "bytes": 4015
+    },
+    "outputs/week_20260921/evidence/source_manifest.json": {
+      "sha256": "4c94d2f511e508b664e4e122db697a1d0b9534ea84e01048d03dd6715d486ccc",
+      "bytes": 58040
+    },
+    "outputs/week_20260921/evidence/pool_identity_remote_audit.json": {
+      "sha256": "7d9218d41079a305b35bfbf96a7e0084f83c04dac6865c1b59f221593058d74e",
+      "bytes": 10657
+    },
+    "outputs/week_20260921/evidence/pilot/c4_k08/control_arm_a/586640_r0/execution.json": {
+      "sha256": "d66a5e664f13486699fd4fc47aed0807e6862d30f8ee682d5682e930d81e15a2",
+      "bytes": 920
+    },
+    "outputs/week_20260921/evidence/pilot/c4_k08/treatment/586639_r0/execution.json": {
+      "sha256": "9565de86c811c6db7d4cb31c16548154aa9aa3aa01c17cb24ed6235db4d476ce",
+      "bytes": 4517
+    },
+    "outputs/week_20260921/evidence/pilot/c4_k08/control_arm_b/586641_r0/execution.json": {
+      "sha256": "9568ed19d94e44578de9535c5a062a6caa7d8436aec04dd4230987eea763caad",
+      "bytes": 920
+    },
+    "outputs/week_20260921/evidence/pilot/c5_k08/control_arm_a/586643_r0/execution.json": {
+      "sha256": "06ab76e95627c7291ebaa5a4e795e1af544810fb9541f09dfbab44e6c47d9f2c",
+      "bytes": 920
+    },
+    "outputs/week_20260921/evidence/pilot/c5_k08/treatment/586642_r0/execution.json": {
+      "sha256": "cb75fcfe3bc02ad1cd39d7fc3ad2043cc208326889a8c67f9e368cb6536994f1",
+      "bytes": 4246
+    },
+    "outputs/week_20260921/evidence/pilot/c5_k08/control_arm_b/586644_r0/execution.json": {
+      "sha256": "de2c99090647fa84fa01184c39d4da753fbcf5ea06acfc4dcddb5c20db2f940a",
+      "bytes": 920
+    },
+    "outputs/week_20260921/evidence/pilot/c1_k08/control_arm_a/586634_r0/execution.json": {
+      "sha256": "d4e76c0ee5ad64294a67128705a88add9e8741c9923787ae84d4a2fff00f4f05",
+      "bytes": 920
+    },
+    "outputs/week_20260921/evidence/pilot/c1_k08/treatment/586633_r0/execution.json": {
+      "sha256": "3f24df28b89f7c945e3f115e171c66318531e757d539b5cf05a7873540089b8d",
+      "bytes": 4566
+    },
+    "outputs/week_20260921/evidence/pilot/c1_k08/control_arm_b/586635_r0/execution.json": {
+      "sha256": "dfdffe4c1150ac0bc48227d78488cde0e1727524286a717385464437b2ce1e5c",
+      "bytes": 921
+    },
+    "outputs/week_20260921/evidence/pilot/c3_k08/control_arm_a/586637_r0/execution.json": {
+      "sha256": "fbac2dfa429a7a383bf28f81c376442dee0cb52e2e20c1317b57c456c45cdc9c",
+      "bytes": 920
+    },
+    "outputs/week_20260921/evidence/pilot/c3_k08/treatment/586636_r0/execution.json": {
+      "sha256": "7a190f174c14d6bad16fefd66e9cde7bdd6bd837f119948bde5b7b7463f7fb96",
+      "bytes": 4103
+    },
+    "outputs/week_20260921/evidence/pilot/c3_k08/control_arm_b/586638_r0/execution.json": {
+      "sha256": "fbf071b491a8ac3b16dcbef4a7b455e4f25548271e3547bce130c3cbe9bac470",
+      "bytes": 920
+    }
+  },
+  "checks": [
+    "c1_k05 result identity",
+    "c1_k05 matched input",
+    "c1_k05 payload agreement",
+    "c1_k05 both pricing certificates",
+    "c1_k08 result identity",
+    "c1_k08 matched input",
+    "c1_k08 payload agreement",
+    "c1_k08 both pricing certificates",
+    "c1_k10 result identity",
+    "c1_k10 matched input",
+    "c1_k10 payload agreement",
+    "c1_k10 both pricing certificates",
+    "c1_k15 result identity",
+    "c1_k15 matched input",
+    "c1_k15 payload agreement",
+    "c1_k15 both pricing certificates",
+    "c2_k05 result identity",
+    "c2_k05 matched input",
+    "c2_k05 payload agreement",
+    "c2_k05 both pricing certificates",
+    "c2_k08 result identity",
+    "c2_k08 matched input",
+    "c2_k08 payload agreement",
+    "c2_k08 both pricing certificates",
+    "c2_k10 result identity",
+    "c2_k10 matched input",
+    "c2_k10 payload agreement",
+    "c2_k10 both pricing certificates",
+    "c2_k15 result identity",
+    "c2_k15 matched input",
+    "c2_k15 payload agreement",
+    "c2_k15 both pricing certificates",
+    "c3_k05 result identity",
+    "c3_k05 matched input",
+    "c3_k05 payload agreement",
+    "c3_k05 both pricing certificates",
+    "c3_k08 result identity",
+    "c3_k08 matched input",
+    "c3_k08 payload agreement",
+    "c3_k08 both pricing certificates",
+    "c3_k10 result identity",
+    "c3_k10 matched input",
+    "c3_k10 payload agreement",
+    "c3_k10 both pricing certificates",
+    "c3_k15 result identity",
+    "c3_k15 matched input",
+    "c3_k15 payload agreement",
+    "c3_k15 both pricing certificates",
+    "c4_k05 result identity",
+    "c4_k05 matched input",
+    "c4_k05 payload agreement",
+    "c4_k05 both pricing certificates",
+    "c4_k08 result identity",
+    "c4_k08 matched input",
+    "c4_k08 payload agreement",
+    "c4_k08 both pricing certificates",
+    "c4_k10 result identity",
+    "c4_k10 matched input",
+    "c4_k10 payload agreement",
+    "c4_k10 both pricing certificates",
+    "c4_k15 result identity",
+    "c4_k15 matched input",
+    "c4_k15 payload agreement",
+    "c4_k15 both pricing certificates",
+    "c5_k05 result identity",
+    "c5_k05 matched input",
+    "c5_k05 payload agreement",
+    "c5_k05 both pricing certificates",
+    "c5_k08 result identity",
+    "c5_k08 matched input",
+    "c5_k08 payload agreement",
+    "c5_k08 both pricing certificates",
+    "c5_k10 result identity",
+    "c5_k10 matched input",
+    "c5_k10 payload agreement",
+    "c5_k10 both pricing certificates",
+    "c5_k15 result identity",
+    "c5_k15 matched input",
+    "c5_k15 payload agreement",
+    "c5_k15 both pricing certificates",
+    "c6_k05 result identity",
+    "c6_k05 matched input",
+    "c6_k05 payload agreement",
+    "c6_k05 both pricing certificates",
+    "c6_k08 result identity",
+    "c6_k08 matched input",
+    "c6_k08 payload agreement",
+    "c6_k08 both pricing certificates",
+    "c6_k10 result identity",
+    "c6_k10 matched input",
+    "c6_k10 payload agreement",
+    "c6_k10 both pricing certificates",
+    "c6_k15 result identity",
+    "c6_k15 matched input",
+    "c6_k15 payload agreement",
+    "c6_k15 both pricing certificates",
+    "c1_k08/augmented/391805_r0 log hash",
+    "c1_k08/augmented/391805_r0 fleet objective/bound proof line",
+    "c1_k08/control/391804_r0 log hash",
+    "c1_k08/control/391804_r0 fleet objective/bound proof line",
+    "c2_k08/augmented/391811_r0 log hash",
+    "c2_k08/augmented/391811_r0 fleet objective/bound proof line",
+    "c2_k08/control/391810_r0 log hash",
+    "c2_k08/control/391810_r0 fleet objective/bound proof line",
+    "c3_k08/augmented/391813_r0 log hash",
+    "c3_k08/augmented/391813_r0 fleet objective/bound proof line",
+    "c3_k08/control/391812_r0 log hash",
+    "c3_k08/control/391812_r0 fleet objective/bound proof line",
+    "c4_k08/augmented/391807_r0 log hash",
+    "c4_k08/augmented/391807_r0 fleet objective/bound proof line",
+    "c4_k08/control/391806_r0 log hash",
+    "c4_k08/control/391806_r0 fleet objective/bound proof line",
+    "c5_k08/augmented/391809_r0 log hash",
+    "c5_k08/augmented/391809_r0 fleet objective/bound proof line",
+    "c5_k08/control/391808_r0 log hash",
+    "c5_k08/control/391808_r0 fleet objective/bound proof line",
+    "c1_k08/control_arm_a/586634_r0 log hash",
+    "c1_k08/control_arm_a/586634_r0 fleet objective/bound proof line",
+    "c1_k08/control_arm_b/586635_r0 log hash",
+    "c1_k08/control_arm_b/586635_r0 fleet objective/bound proof line",
+    "c1_k08/treatment/586633_r0 log hash",
+    "c1_k08/treatment/586633_r0 fleet objective/bound proof line",
+    "c3_k08/control_arm_a/586637_r0 log hash",
+    "c3_k08/control_arm_a/586637_r0 fleet objective/bound proof line",
+    "c3_k08/control_arm_b/586638_r0 log hash",
+    "c3_k08/control_arm_b/586638_r0 fleet objective/bound proof line",
+    "c3_k08/treatment/586636_r0 log hash",
+    "c3_k08/treatment/586636_r0 fleet objective/bound proof line",
+    "c4_k08/control_arm_a/586640_r0 log hash",
+    "c4_k08/control_arm_a/586640_r0 fleet objective/bound proof line",
+    "c4_k08/control_arm_b/586641_r0 log hash",
+    "c4_k08/control_arm_b/586641_r0 fleet objective/bound proof line",
+    "c4_k08/treatment/586639_r0 log hash",
+    "c4_k08/treatment/586639_r0 fleet objective/bound proof line",
+    "c5_k08/control_arm_a/586643_r0 log hash",
+    "c5_k08/control_arm_a/586643_r0 fleet objective/bound proof line",
+    "c5_k08/control_arm_b/586644_r0 log hash",
+    "c5_k08/control_arm_b/586644_r0 fleet objective/bound proof line",
+    "c5_k08/treatment/586642_r0 log hash",
+    "c5_k08/treatment/586642_r0 fleet objective/bound proof line",
+    "628441_r0 log hash",
+    "628441_r0 fleet objective/bound proof line",
+    "c1_k15__heur log hash",
+    "c1_k15__heur fleet objective/bound proof line",
+    "c1_k15__plain log hash",
+    "c1_k15__plain fleet objective/bound proof line",
+    "c2_k15__heur log hash",
+    "c2_k15__heur fleet objective/bound proof line",
+    "c2_k15__plain log hash",
+    "c2_k15__plain fleet objective/bound proof line",
+    "c3_k15__heur log hash",
+    "c3_k15__heur fleet objective/bound proof line",
+    "c3_k15__plain log hash",
+    "c3_k15__plain fleet objective/bound proof line",
+    "c4_k15__heur log hash",
+    "c4_k15__heur fleet objective/bound proof line",
+    "c4_k15__plain log hash",
+    "c4_k15__plain fleet objective/bound proof line",
+    "c5_k15__heur log hash",
+    "c5_k15__heur fleet objective/bound proof line",
+    "c5_k15__plain log hash",
+    "c5_k15__plain fleet objective/bound proof line",
+    "c6_k15__heur log hash",
+    "c6_k15__heur fleet objective/bound proof line",
+    "c6_k15__plain log hash",
+    "c6_k15__plain fleet objective/bound proof line",
+    "plain has six k15 searches",
+    "heuristic has six k15 searches",
+    "w1_k08_index_r1 control payload identity/time",
+    "w1_k08_index_r1 control MIP identity",
+    "w1_k08_index_r1 treatment payload identity/time",
+    "w1_k08_index_r1 treatment MIP identity",
+    "w1_k08_index_r2 control payload identity/time",
+    "w1_k08_index_r2 control MIP identity",
+    "w1_k08_index_r2 treatment payload identity/time",
+    "w1_k08_index_r2 treatment MIP identity",
+    "w1_k08_pool_r1 control payload identity/time",
+    "w1_k08_pool_r1 control MIP identity",
+    "w1_k08_pool_r1 treatment payload identity/time",
+    "w1_k08_pool_r1 treatment MIP identity",
+    "w1_k08_pool_r2 control payload identity/time",
+    "w1_k08_pool_r2 control MIP identity",
+    "w1_k08_pool_r2 treatment payload identity/time",
+    "w1_k08_pool_r2 treatment MIP identity",
+    "w1_k08_master_r1 control payload identity/time",
+    "w1_k08_master_r1 control MIP identity",
+    "w1_k08_master_r1 treatment payload identity/time",
+    "w1_k08_master_r1 treatment MIP identity",
+    "w1_k08_master_r2 control payload identity/time",
+    "w1_k08_master_r2 control MIP identity",
+    "w1_k08_master_r2 treatment payload identity/time",
+    "w1_k08_master_r2 treatment MIP identity",
+    "w4_k10_index_r1 control payload identity/time",
+    "w4_k10_index_r1 control MIP identity",
+    "w4_k10_index_r1 treatment payload identity/time",
+    "w4_k10_index_r1 treatment MIP identity",
+    "w4_k10_index_r2 control payload identity/time",
+    "w4_k10_index_r2 control MIP identity",
+    "w4_k10_index_r2 treatment payload identity/time",
+    "w4_k10_index_r2 treatment MIP identity",
+    "w4_k10_pool_r1 control payload identity/time",
+    "w4_k10_pool_r1 control MIP identity",
+    "w4_k10_pool_r1 treatment payload identity/time",
+    "w4_k10_pool_r1 treatment MIP identity",
+    "w4_k10_pool_r2 control payload identity/time",
+    "w4_k10_pool_r2 control MIP identity",
+    "w4_k10_pool_r2 treatment payload identity/time",
+    "w4_k10_pool_r2 treatment MIP identity",
+    "w4_k10_master_r1 control payload identity/time",
+    "w4_k10_master_r1 control MIP identity",
+    "w4_k10_master_r1 treatment payload identity/time",
+    "w4_k10_master_r1 treatment MIP identity",
+    "w4_k10_master_r2 control payload identity/time",
+    "w4_k10_master_r2 control MIP identity",
+    "w4_k10_master_r2 treatment payload identity/time",
+    "w4_k10_master_r2 treatment MIP identity",
+    "w3_k15_index_r1 control payload identity/time",
+    "w3_k15_index_r1 control MIP identity",
+    "w3_k15_index_r1 treatment payload identity/time",
+    "w3_k15_index_r1 treatment MIP identity",
+    "w3_k15_index_r2 control payload identity/time",
+    "w3_k15_index_r2 control MIP identity",
+    "w3_k15_index_r2 treatment payload identity/time",
+    "w3_k15_index_r2 treatment MIP identity",
+    "w3_k15_pool_r1 control payload identity/time",
+    "w3_k15_pool_r1 control MIP identity",
+    "w3_k15_pool_r1 treatment payload identity/time",
+    "w3_k15_pool_r1 treatment MIP identity",
+    "w3_k15_pool_r2 control payload identity/time",
+    "w3_k15_pool_r2 control MIP identity",
+    "w3_k15_pool_r2 treatment payload identity/time",
+    "w3_k15_pool_r2 treatment MIP identity",
+    "w3_k15_master_r1 control payload identity/time",
+    "w3_k15_master_r1 control MIP identity",
+    "w3_k15_master_r1 treatment payload identity/time",
+    "w3_k15_master_r1 treatment MIP identity",
+    "w3_k15_master_r2 control payload identity/time",
+    "w3_k15_master_r2 control MIP identity",
+    "w3_k15_master_r2 treatment payload identity/time",
+    "w3_k15_master_r2 treatment MIP identity",
+    "w1_k08_full_index_r1 control payload identity/time",
+    "w1_k08_full_index_r1 treatment payload identity/time",
+    "w1_k08_full_index_r1 treatment MIP identity",
+    "w1_k08_full_index_r2 control payload identity/time",
+    "w1_k08_full_index_r2 treatment payload identity/time",
+    "w1_k08_full_index_r2 treatment MIP identity",
+    "w3_k15_full_index_r1 control payload identity/time",
+    "w3_k15_full_index_r1 treatment payload identity/time",
+    "w3_k15_full_index_r1 treatment MIP identity",
+    "w3_k15_full_index_r2 control payload identity/time",
+    "w3_k15_full_index_r2 treatment payload identity/time",
+    "w3_k15_full_index_r2 treatment MIP identity",
+    "w4_k10_full_index_r1 control payload identity/time",
+    "w4_k10_full_index_r1 treatment payload identity/time",
+    "w4_k10_full_index_r1 treatment MIP identity",
+    "w4_k10_full_index_r2 control payload identity/time",
+    "w4_k10_full_index_r2 treatment payload identity/time",
+    "w4_k10_full_index_r2 treatment MIP identity",
+    "packed benchmark checks passed",
+    "original_explicit five route replays",
+    "new_explicit five route replays",
+    "new_packed five route replays",
+    "packed benchmark identical input and lattice",
+    "fixed dual 0 identical minimum reduced cost",
+    "fixed dual 1 identical minimum reduced cost",
+    "fixed dual 2 identical minimum reduced cost",
+    "fixed dual 3 identical minimum reduced cost",
+    "fixed dual 4 identical minimum reduced cost"
+  ],
+  "check_count": 268,
+  "paired_instances": 24,
+  "controlled_instances": 3,
+  "controlled_order_repeats": 2,
+  "packed_instances": 1,
+  "packed_fixed_dual_vectors": 5,
+  "k15_distinct_pools": 6,
+  "k15_search_configurations": 2,
+  "paired_settings": {
+    "master_sense": "cover",
+    "battery_kwh": 240,
+    "charge_kw": 240,
+    "reserve_kwh": 0,
+    "terminal_floor": null,
+    "shared_station_capacity": false,
+    "tariff": "flat",
+    "charge_start_fee": 5,
+    "bus_coefficient": 100000,
+    "soc_step_kwh": 2.5,
+    "block_min": 5,
+    "columns_per_iter": 30,
+    "rc_epsilon": 0.0001,
+    "max_iters": 50000,
+    "fixed_sequence_index": true,
+    "skip_unused_incidence": false,
+    "initial_pool": "singletons",
+    "inherited_columns": false,
+    "mip_s": 3600,
+    "stage1_s": 1800,
+    "stage2_fleet": "<= validated incumbent"
+  },
+  "paired_source_hashes": {
+    "audit_sha256": "d61a1c7195ff06bff717fd79ef1ea14cf77c1aaa66cc304500f000d60ca18232",
+    "ancestry_sha256": "5e915bcc87eb5eb173dc71197aa31e4ecb65686d3b75c0149a695cfce0600929",
+    "static_sha256": {
+      "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+    },
+    "tooling_sha256": {
+      "campaign.py": "7a9b5ac7e077e767aaf7f06d79127422d4026e500025e57b6c3797242692cc54",
+      "worker.sub": "d53366431567cdfbdbbde34902187639b01545bda6d7e9a5a24a024ae256d2eb"
+    }
+  },
+  "controlled_settings": {
+    "battery_kwh": 240,
+    "block_minutes": 5,
+    "cg_seconds": 7200,
+    "charge_kw": 240,
+    "columns_per_iter": 30,
+    "inherit_time_limit_s": 0,
+    "inherit_workers": 8,
+    "master_sense": "cover",
+    "mip_seconds": 3600,
+    "mip_stage2_fleet": "<= validated stage1 incumbent",
+    "objective": "100000 + electricity + 5 * charge_starts",
+    "rc_epsilon": 0.0001,
+    "reserve_kwh": 0,
+    "return_soc_floor": null,
+    "shared_station_capacity": false,
+    "soc_step_kwh": 2.5,
+    "stage1_seconds": 1800,
+    "tariff": "flat",
+    "threads": 8
+  },
+  "controlled_execution_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+  "controlled_mip_execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "proof_scopes": {
+    "cg": "conservative expanded event-grid weighted objective at recorded reduced-cost tolerance",
+    "mip": "finite saved-pool fleet proof only",
+    "dispatch": "route replay does not establish exact-once service or shared capacity"
+  },
+  "output_hashes": {
+    "RESULTS_PREVIEW.md": "a774591d968db4debf35774cab8859618991054da39c77ab3605d6db6a9ff087",
+    "VISUAL_QA.md": "7daa717b4606888183da3e695b50aaeb09ff52815785edc79dbb0c91556129f2",
+    "build_figures.py": "2b82c8152406ff4154b864cf5e7fcc56343e50b2ed927609aac715a105bf7bba",
+    "experiment_settings.json": "26049608109df05fc5ecd91347c2a10a3c147dddce085090d8c560e7efb291d5",
+    "figure1_paired_budget.csv": "52940daf0ddebbb2cdf5a20f7f89b791797e4a68b7311c57198ac5b1536dafa9",
+    "figure1_paired_budget.pdf": "21815e07c91cf8000410ccfb7edf743a4c68cb71f0473c183377c1828510edeb",
+    "figure1_paired_budget.png": "88ef5a88bf5d8e52f1c210be65265212c45a3b7f2ba352e8da6bf791c1bcccef",
+    "figure1_paired_budget.svg": "2bac46a2dfa85d323bba67bcc881f720cc1f8c5aa76c89f70217fe102e8a41aa",
+    "figure2_c1_followup.csv": "609d007df2ccd9203d6413ae673962a125e2ec58712ca007b27544113bbb2a6c",
+    "figure2_k8_column_enrichment.pdf": "973adcf08761d2c2049d7c390395060a939ba71a815cfec2bd96268f96df4862",
+    "figure2_k8_column_enrichment.png": "b89de671fdac9e33e46b7122d9cb976e985f5951e8f8528879a8f7831e862355",
+    "figure2_k8_column_enrichment.svg": "4b402bded7f37bd56698942bdc6b8be4c84bff5319036e782a3eb9212ec67d49",
+    "figure2_k8_mechanism.csv": "6a2158c6afa33e6e6b856aa0352ad817f04c8a239bddffcb1c3cb4c20e57a239",
+    "figure2_k8_pilot.csv": "9027631abefc2305b3f60ec299d930c1e913311f5afeed22b647e220335f21c8",
+    "figure2_k8_witness.csv": "be754518239649cf1e79626a8202406ef7e9ad4b895b4b880472e34f8eccb1dd",
+    "figure3_k15_12h.csv": "b52558aadeddfe57fc3f574b46f915ea4a34b7156f566a1858dcdae7f6b4e2aa",
+    "figure3_k15_open_bounds.pdf": "3c700119fdfa61f2240bf0724cd09fc2410348cc052f994632a825ac383e31aa",
+    "figure3_k15_open_bounds.png": "a8b383be13247a0c5940ed615e8a1cc4c5f7f623bb924e310ad1aacd60953747",
+    "figure3_k15_open_bounds.svg": "5166ac9a0488a8d34bde776dce79105083c433999bfa79e4402fc955eece8c8b",
+    "figure4_controlled_algorithms.csv": "867a98177db00952e33a46a47b651171cb3e129fe76af3497c53c9d36380f7c1",
+    "figure4_controlled_algorithms.pdf": "15c71893492ca463dad9dbd2051efa2f59f7b59363ebdc18331c1ae6549bdf56",
+    "figure4_controlled_algorithms.png": "3405c8d15d467228a9a62cc6d3050cdd184e55bd4cc9cb1249e6215337a42eeb",
+    "figure4_controlled_algorithms.svg": "091ac8eed3e67781cb993523bed0478e55a80d85fe9da9b3c601b716f7c8125e",
+    "figure5_packed_benchmark.csv": "eb230fb1a5238d25f7fbe2131cf28e403d6b0953c5cd4afd9dc0521ee643a002",
+    "figure5_packed_benchmark.pdf": "5b00ebd17f11eb2ed031b7ae850dc8689177e4bb64304a450877e75d49f3602c",
+    "figure5_packed_benchmark.png": "21a89303141a4005e5c1f5b25f4aa0dc29fa0abe6d314b0547e9359c36f1ccc0",
+    "figure5_packed_benchmark.svg": "203b7693851cfb40a3a1aa0ee05738b9c23dc9c3743c55407a20d3c6f1373342"
+  }
+}
