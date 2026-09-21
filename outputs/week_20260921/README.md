@@ -1,5 +1,9 @@
 # Week of 21 September 2026 — EVSP–DR
 
+[Live research document](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.79m3d3x4h45m) · [This week's 14-slide deck](https://docs.google.com/presentation/d/1F6udjgkiPH51vMUcku7ZT3PhZPAxsQwUCi3TK9vFRDM/edit)
+
+[Deck PDF](slides/weekly_deck.pdf) · [Editable PowerPoint export](slides/weekly_deck.pptx) · [Research document snapshot](doc_verification/after.pdf) · [Publication and history-preservation checks](doc_verification/README.md)
+
 [Concise research journal](RESEARCH_JOURNAL.md) · [Full solver evidence and log-reading guide](evidence/README.md) · [Capacity and strict-physics audit](capacity_strict/README.md) · [Matched k5 figure](cleanup_physics/one_bus_k5_joint_matched.png)
 
 The eight jobs from the previous update have finished. Six capacity CGs produced completed pool MIPs; the C1 incumbent-transfer follow-up now proves eight buses; strict k15 used its budget building the graph and completed zero pricing iterations. The [journal](RESEARCH_JOURNAL.md) gives the eight-job table, interpretation, algorithm work and concise dated history.

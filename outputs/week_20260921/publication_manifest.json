@@ -12,8 +12,8 @@
   "included_files": [
     {
       "path": "README.md",
-      "bytes": 3572,
-      "sha256": "4347b7bdd57ddfefaa28200046a9cafcc124ec61727cbeaf4c48c73c6cf9c0d3"
+      "bytes": 4054,
+      "sha256": "ab4c9c0b3279d2a4ff871ef914583fed5d51bf97efdeb0662e811a166f7f9a10"
     },
     {
       "path": "RESEARCH_JOURNAL.html",
@@ -1016,9 +1016,24 @@
       "sha256": "05419f729e0e6606c455dd3dbe044ae59950ce040f3718dafee6523cd65c5699"
     },
     {
+      "path": "doc_verification/README.md",
+      "bytes": 2027,
+      "sha256": "6a188049e986767798b7f86f378b8dc729ff96c446c3fbccafc4df7f07519c9a"
+    },
+    {
+      "path": "doc_verification/after.pdf",
+      "bytes": 455688,
+      "sha256": "d4cdf189ae565eae1fab24922dc954514126f315d00df3556c5ecc6674842b37"
+    },
+    {
       "path": "doc_verification/before.md",
       "bytes": 12830,
       "sha256": "f172edc4403cfb5177bf7422087d6f350b62be63a66045938371f8b62d240c9f"
+    },
+    {
+      "path": "doc_verification/verification.json",
+      "bytes": 1014,
+      "sha256": "f311b68e890161e8a909bb4142870f7b6e0585b8039ab13ec04a87d41fc53217"
     },
     {
       "path": "evidence/LOG_EXCERPTS.md",
@@ -2066,6 +2081,16 @@
       "sha256": "e89c5bb2bc3f9bf5c09175ee2c9fd6935f0efd1c79b03071762416cea315a1b3"
     },
     {
+      "path": "slides/weekly_deck.pdf",
+      "bytes": 336547,
+      "sha256": "2365065286ba08ab55becc12310c93b271a30b35c64b0d1f573b866709880157"
+    },
+    {
+      "path": "slides/weekly_deck.pptx",
+      "bytes": 432142,
+      "sha256": "88d4d1806df6a5b55bd1db6bdb3c1fac6ea04e09adbf00f7f7c009157775d41e"
+    },
+    {
       "path": "strict_packed_source.patch",
       "bytes": 40037,
       "sha256": "432a8ad55df09dd06f868dbccde80cac4e0d938ad7718c64741bf0d71ef6a89e"
@@ -2073,24 +2098,44 @@
   ],
   "excluded_files": [
     {
+      "path": "PUBLIC_LINKS.json",
+      "bytes": 1936,
+      "reason": "Local publication bookkeeping or native-paste intermediate; authoritative reports and final exports published"
+    },
+    {
+      "path": "RESEARCH_JOURNAL_GOOGLE_DOCS.html",
+      "bytes": 9642,
+      "reason": "Local publication bookkeeping or native-paste intermediate; authoritative reports and final exports published"
+    },
+    {
+      "path": "RESEARCH_JOURNAL_GOOGLE_DOCS_BODY.html",
+      "bytes": 8982,
+      "reason": "Local publication bookkeeping or native-paste intermediate; authoritative reports and final exports published"
+    },
+    {
       "path": "capacity_strict/capacity21_audit.tgz",
       "bytes": 69172,
-      "reason": "Archive, Git bundle, raw column pool or solver LP; individual reports, logs, source patches and result records retained"
+      "reason": "Archive, Git bundle, raw column pool or solver LP; individual logs, source patches and result records retained"
+    },
+    {
+      "path": "capacity_strict/recovery/k16_startup_status.txt",
+      "bytes": 305,
+      "reason": "Local publication bookkeeping or native-paste intermediate; authoritative reports and final exports published"
     },
     {
       "path": "capacity_strict/recovery/strict_packed.bundle",
       "bytes": 10164,
-      "reason": "Archive, Git bundle, raw column pool or solver LP; individual reports, logs, source patches and result records retained"
+      "reason": "Archive, Git bundle, raw column pool or solver LP; individual logs, source patches and result records retained"
     },
     {
       "path": "capacity_strict/strict_original/cases/w5_k16_18E2/cg/341292_r0/pool.jsonl",
       "bytes": 1978173,
-      "reason": "Archive, Git bundle, raw column pool or solver LP; individual reports, logs, source patches and result records retained"
+      "reason": "Archive, Git bundle, raw column pool or solver LP; individual logs, source patches and result records retained"
     },
     {
       "path": "capacity_strict/strict_original.tgz",
       "bytes": 242836,
-      "reason": "Archive, Git bundle, raw column pool or solver LP; individual reports, logs, source patches and result records retained"
+      "reason": "Archive, Git bundle, raw column pool or solver LP; individual logs, source patches and result records retained"
     },
     {
       "path": "cleanup_physics/__pycache__/matched_fixed_windows.cpython-312.pyc",
@@ -2100,12 +2145,12 @@
     {
       "path": "cleanup_physics/fee0.lp",
       "bytes": 79306,
-      "reason": "Archive, Git bundle, raw column pool or solver LP; individual reports, logs, source patches and result records retained"
+      "reason": "Archive, Git bundle, raw column pool or solver LP; individual logs, source patches and result records retained"
     },
     {
       "path": "cleanup_physics/fee5.lp",
       "bytes": 80321,
-      "reason": "Archive, Git bundle, raw column pool or solver LP; individual reports, logs, source patches and result records retained"
+      "reason": "Archive, Git bundle, raw column pool or solver LP; individual logs, source patches and result records retained"
     },
     {
       "path": "cleanup_physics/inputs/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv",
@@ -2130,12 +2175,12 @@
     {
       "path": "cleanup_physics/saved_joint_fee0.lp",
       "bytes": 86963,
-      "reason": "Archive, Git bundle, raw column pool or solver LP; individual reports, logs, source patches and result records retained"
+      "reason": "Archive, Git bundle, raw column pool or solver LP; individual logs, source patches and result records retained"
     },
     {
       "path": "cleanup_physics/saved_joint_fee5.lp",
       "bytes": 86716,
-      "reason": "Archive, Git bundle, raw column pool or solver LP; individual reports, logs, source patches and result records retained"
+      "reason": "Archive, Git bundle, raw column pool or solver LP; individual logs, source patches and result records retained"
     },
     {
       "path": "cleanup_physics/test_venv/bin/Activate.ps1",
@@ -8358,104 +8403,194 @@
       "reason": "Environment or cache; not research evidence"
     },
     {
+      "path": "doc_verification/after.md",
+      "bytes": 10586,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/check-1.png",
+      "bytes": 73028,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/check-2.png",
+      "bytes": 140114,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/check-3.png",
+      "bytes": 107936,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/check-4.png",
+      "bytes": 90728,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/final-1.png",
+      "bytes": 103964,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/final-2.png",
+      "bytes": 218766,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/final-3.png",
+      "bytes": 176686,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/final-4.png",
+      "bytes": 130965,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/final-5.png",
+      "bytes": 117203,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/last-5.png",
+      "bytes": 135774,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/page-1.png",
+      "bytes": 103964,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/page-2.png",
+      "bytes": 218766,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/page-3.png",
+      "bytes": 165593,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/page-4.png",
+      "bytes": 125681,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/page-5.png",
+      "bytes": 117203,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/verified-5.png",
+      "bytes": 49149,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "doc_verification/verified-6.png",
+      "bytes": 105171,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
       "path": "publication_receipt.json",
-      "bytes": 368,
-      "reason": "Local publication bookkeeping or generated manifest"
+      "bytes": 751,
+      "reason": "Local publication bookkeeping or native-paste intermediate; authoritative reports and final exports published"
     },
     {
       "path": "slides/contact-1.png",
       "bytes": 277121,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/contact-2.png",
       "bytes": 284044,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/contact-3.png",
       "bytes": 103430,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "slides/final-03.png",
+      "bytes": 57013,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
+    },
+    {
+      "path": "slides/final-10.png",
+      "bytes": 92347,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/slide-01.png",
       "bytes": 37462,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/slide-02.png",
       "bytes": 78461,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/slide-03.png",
       "bytes": 56352,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/slide-04.png",
       "bytes": 97796,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/slide-05.png",
       "bytes": 96533,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/slide-06.png",
       "bytes": 101651,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/slide-07.png",
       "bytes": 59642,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/slide-08.png",
-      "bytes": 59966,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "bytes": 60156,
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/slide-09.png",
       "bytes": 90301,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/slide-10.png",
       "bytes": 83273,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/slide-11.png",
       "bytes": 91297,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/slide-12.png",
       "bytes": 191829,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/slide-13.png",
       "bytes": 98086,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     },
     {
       "path": "slides/slide-14.png",
       "bytes": 80742,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
-    },
-    {
-      "path": "slides/weekly_deck.pdf",
-      "bytes": 336729,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
-    },
-    {
-      "path": "slides/weekly_deck.pptx",
-      "bytes": 431603,
-      "reason": "Slide exports and QA excluded pending final export; live deck is authoritative"
+      "reason": "QA image or intermediate/base64 Markdown; final deck exports and document PDF are published"
     }
   ],
   "notes": [
@@ -8463,6 +8598,6 @@
     "Code changes are represented by exact commit references and source patches; they are not merged into this documentation branch.",
     "The evidence manifest includes source locations for files intentionally retained locally; omission is disclosed here."
   ],
-  "updated_utc": "2026-09-21T15:15:07.685100+00:00",
-  "update_note": "Verified benchmark646674 receipt and current k16 recovery status added; no slide exports or UI mutations."
+  "updated_utc": "2026-09-21T15:19:44.099609+00:00",
+  "update_note": "Final verified 14-slide deck PDF/PPTX, six-page document snapshot, and publication/history-preservation receipt added. Six original footer links retained; slide notes carry direct evidence links."
 }
