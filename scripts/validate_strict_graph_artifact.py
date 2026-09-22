@@ -1,0 +1,300 @@
+#!/usr/bin/env python3
+"""One strict k19 graph build, then isolated load parity; never CG or MIP."""
+import argparse
+from collections import Counter
+import importlib
+import json
+import math
+import os
+from pathlib import Path
+import resource
+import shutil
+import subprocess
+import sys
+import time
+
+from audit_strict_pool_lineage import (
+    MODEL_COMMIT, PARENT_COMMIT, canonical, compare_inherited, journal,
+    load_model, read_json, require, sha, write_new_json,
+)
+
+SCHEMA = "evsp-dr-strict-k19-full-graph-parity-v1"
+
+
+def context(root, manifest):
+    model_root = root / "model_code"
+    head = subprocess.check_output(["git", "-C", str(model_root), "rev-parse", "HEAD"], text=True).strip()
+    dirty = subprocess.check_output(["git", "-C", str(model_root), "status", "--porcelain", "--untracked-files=no"], text=True)
+    require(head == MODEL_COMMIT and not dirty.strip(), "model checkout must be clean exact fedf4214")
+    model = load_model(model_root, manifest["model_source_sha256"])
+    files = {key: root / "input_artifacts" / item["local_name"] for key, item in manifest["input_files"].items()}
+    for key, path in files.items():
+        require(sha(path) == manifest["input_files"][key]["sha256"], f"input hash mismatch: {key}")
+    status = read_json(files["k19_status"])
+    require(status["physics"] == manifest["physics"], "production physics mismatch")
+    args = model.runner.parser().parse_args(read_json(files["k19_command"])[2:])
+    require(args.arm == "parx60" and args.arc_mode == "lazy" and not args.resume, "unexpected original graph configuration")
+    args.expected_commit = MODEL_COMMIT
+    args.require_clean = True
+    os.chdir(model_root)
+    prov = model.runner.provenance(args, files["k19_instance"], files["prices"], files["reference"].parent)
+    problem = model.problem.build_problem(files["k19_instance"].parent, files["k19_instance"].name,
+        reference_data_dir=files["reference"].parent, max_station_to_trip_wait_min=args.max_station_wait_min)
+    require(len(problem.trips) == 331, "wrong production trip count")
+    prices = model.utils.load_station_hourly_prices(files["prices"],
+        sorted({model.utils.base_station_name(station) for station in model.problem.STATIONS}))
+    saved = journal(files["k19_pool"])
+    require(len(saved) == 8397, "wrong authenticated child pool size")
+    arcs = {(source, target): (travel, energy) for source, rows in problem.adjacency.items()
+            for target, travel, energy, _kind in rows}
+    def replay(route):
+        if route.get("trips") != [node for node in route.get("route_nodes", []) if type(node) is int]:
+            return "trip/node sequence mismatch"
+        return model.physical.validate_injected_route(problem, route, args.battery_kwh,
+            args.non_parx_kw, args.reserve_kwh, model.problem.HORIZON_MIN,
+            arrival_grace_min=0.0, arc_map=arcs, station_charge_kw=model.runner.station_power(args.arm))
+    return model, files, status, args, prov, problem, prices, saved, replay
+
+
+def fixed_duals(problem, saved, bus_cost):
+    """Two deterministic diagnostic vectors; neither is asserted to be an LP dual."""
+    counts = Counter(trip for route in saved for trip in route["trips"])
+    return [
+        ("zero", {trip: 0.0 for trip in problem.trips}),
+        ("saved_pool_frequency", {trip: bus_cost * (0.5 + (counts[trip] % 101) / 100.0)
+                                  for trip in problem.trips}),
+    ]
+
+
+def query_parity_records(network, problem, saved, replay, *, bus_cost, query_limit_s):
+    rows = []
+    for name, duals in fixed_duals(problem, saved, bus_cost):
+        started = time.perf_counter()
+        candidate = network.min_reduced_cost_route(duals, objective="combined-cost",
+            deadline=started + query_limit_s, clock=time.perf_counter)
+        require(candidate is not None, f"no path for fixed dual vector {name}")
+        record = candidate["_event_record"]
+        reason = replay(record)
+        require(reason is None, f"fixed-dual route physical replay failed: {reason}")
+        independent_rc = float(record["cost"]) - sum(duals[trip] for trip in record["trips"])
+        require(math.isclose(float(candidate["rc"]), independent_rc, abs_tol=1e-5, rel_tol=0.0), "independent reduced-cost mismatch")
+        rows.append({"name": name, "duals": [[trip, duals[trip]] for trip in problem.trips],
+            "duals_sha256": canonical([[trip, duals[trip]] for trip in problem.trips]),
+            "reduced_cost": float(candidate["rc"]), "independent_reduced_cost": independent_rc,
+            "route": record, "route_sha256": canonical(record), "physical_replay": "passed",
+            "runtime_s": time.perf_counter() - started})
+    return rows
+
+
+def regenerate_initial_pool(model, files, status, args, prov, problem, network, saved, replay, *, limit_s):
+    started = time.perf_counter()
+    checkpoint = model.runner.checkpoint_id(args, problem, prov)
+    inherited, metadata = model.inheritance.inherit_pool(files["k17_status"], files["k17_pool"],
+        files["k17_instance"], files["k19_instance"], expected_physics=status["physics"],
+        child_provenance=prov, new_checkpoint_id=checkpoint, route_validator=replay,
+        compatible_parent_commit=PARENT_COMMIT)
+    require(len(inherited) == 8343, "inherited route count mismatch")
+    routes = list(inherited)
+    keys = {model.runner.route_key(route) for route in routes}
+    singleton_checks = []
+    for trip in problem.trips:
+        require(time.perf_counter() - started < limit_s, "singleton regeneration phase deadline")
+        one_started = time.perf_counter()
+        record = network.fixed_sequence_record((trip,))
+        if record is None:
+            singleton_checks.append({"trip": trip, "feasible": False, "novel": False,
+                "record_sha256": None, "runtime_s": time.perf_counter() - one_started})
+            continue
+        require(replay(record) is None, f"fresh singleton physical replay failed: {trip}")
+        record.update(origin="exact_event_singleton", found_iter=0, cg_checkpoint_id=checkpoint)
+        key = model.runner.route_key(record)
+        novel = key not in keys
+        if novel:
+            keys.add(key)
+            routes.append(record)
+        singleton_checks.append({"trip": trip, "feasible": True, "novel": novel, "record_sha256": canonical(record),
+                                 "runtime_s": time.perf_counter() - one_started})
+    require(len(routes) == 8397 and sum(row["novel"] for row in singleton_checks) == 54,
+            "fresh initial pool does not contain expected8343+54 columns")
+    ordered_hash = compare_inherited(routes, saved, old_checkpoint=status["checkpoint"]["id"],
+        new_checkpoint=checkpoint, route_key=model.runner.route_key)
+    return {"initial_pool_columns": len(routes), "inherited_columns": len(inherited),
+        "singleton_queries": len(singleton_checks), "new_singleton_columns": 54,
+        "feasible_singleton_records": sum(row["feasible"] for row in singleton_checks),
+        "full_record_equality_to_saved_initial_pool": True, "normalized_fields": ["cg_checkpoint_id"],
+        "ordered_record_sha256": ordered_hash, "new_checkpoint_id": checkpoint,
+        "singleton_checks": singleton_checks, "inheritance": metadata,
+        "runtime_s": time.perf_counter() - started}
+
+
+def validate_cold_baseline(cold, manifest_hash, wrapper_commit):
+    require(cold.get("schema") == SCHEMA and cold.get("phase") == "cold"
+            and cold.get("status") == "passed", "invalid cold baseline state")
+    require(cold.get("manifest_sha256") == manifest_hash
+            and cold.get("wrapper_commit") == wrapper_commit
+            and cold.get("model_provenance", {}).get("git_commit") == MODEL_COMMIT,
+            "cold baseline source/manifest identity mismatch")
+    require(cold.get("initial_pool", {}).get("initial_pool_columns") == 8397,
+            "cold baseline initializer incomplete")
+
+
+def build_action(*, cache_exists, cold_exists, marker_exists, seal_exists):
+    if cache_exists and cold_exists and seal_exists:
+        return "reload_only"
+    require(not cache_exists and not cold_exists and not marker_exists and not seal_exists,
+            "partial previous graph preparation retained; manual review needed, no automatic second build")
+    return "cold_then_reload"
+
+
+def compare_phases(cold, loaded):
+    require(cold["identity_sha256"] == loaded["identity_sha256"], "cache identity differs between phases")
+    require(cold["payload_sha256"] == loaded["payload_sha256"], "cache payload differs between phases")
+    require(cold["graph_fingerprint"] == loaded["graph_fingerprint"], "cold/reloaded graph fingerprint mismatch")
+    require(cold["network"] == loaded["network"], "cold/reloaded graph metrics mismatch")
+    require(len(cold["queries"]) == len(loaded["queries"]) == 2, "exactly two production dual queries required")
+    for first, second in zip(cold["queries"], loaded["queries"]):
+        for field in ("name", "duals_sha256", "reduced_cost", "independent_reduced_cost", "route_sha256", "physical_replay"):
+            require(first[field] == second[field], f"cold/reloaded fixed-dual mismatch: {field}")
+    require(cold["initial_pool"]["ordered_record_sha256"] == loaded["initial_pool"]["ordered_record_sha256"],
+            "cold/reloaded initial pool mismatch")
+    require([row["record_sha256"] for row in cold["initial_pool"]["singleton_checks"]]
+            == [row["record_sha256"] for row in loaded["initial_pool"]["singleton_checks"]],
+            "cold/reloaded fresh singleton record mismatch")
+
+
+def phase(root, manifest, name, output):
+    started = time.perf_counter()
+    model, files, status, args, prov, problem, prices, saved, replay = context(root, manifest)
+    cache_module = importlib.import_module("strict_event_graph_cache")
+    identity = model.runner.strict_graph_identity(args, problem, prices, prov)
+    cache = root / "artifacts" / "k19_fedf4214.graph.cache"
+    operation_started = time.perf_counter()
+    print(json.dumps({"phase": name, "event": "graph_operation_started", "model_commit": MODEL_COMMIT}), flush=True)
+    if name == "cold":
+        network, cache_manifest = cache_module.prepare_graph_cache(cache, identity,
+            lambda: model.runner.build_network(args, problem, prices))
+    else:
+        network, cache_manifest = cache_module.load_graph_cache(cache, identity)
+    operation_s = time.perf_counter() - operation_started
+    metrics = network.metrics()
+    print(json.dumps({"phase": name, "event": "graph_operation_complete", "runtime_s": operation_s,
+                      "network": metrics}), flush=True)
+    for key, value in manifest["expected_network"].items():
+        require(metrics[key] == value, f"production graph size mismatch: {key}")
+    fingerprint_started = time.perf_counter()
+    fingerprint = cache_module.graph_fingerprint(network)
+    fingerprint_s = time.perf_counter() - fingerprint_started
+    queries = query_parity_records(network, problem, saved, replay, bus_cost=model.runner.BUS_COST_KX,
+                                   query_limit_s=manifest["limits"]["per_query_s"])
+    initial = regenerate_initial_pool(model, files, status, args, prov, problem, network, saved, replay,
+                                     limit_s=manifest["limits"]["initial_pool_s"])
+    result = {"schema": SCHEMA, "phase": name, "status": "passed", "model_provenance": prov,
+        "wrapper_commit": manifest["wrapper_commit"], "manifest_sha256": sha(root / "manifest.json"),
+        "cache_path": str(cache), "identity_sha256": cache_manifest["identity_sha256"],
+        "payload_sha256": cache_manifest["payload_sha256"], "cache_bytes": cache.stat().st_size,
+        "network": metrics, "graph_fingerprint": fingerprint, "fingerprint_s": fingerprint_s,
+        "graph_operation_s": operation_s, "source_graph_build_s": cache_manifest["build_s"],
+        "source_serialization_and_hash_s": cache_manifest["serialization_and_hash_s"],
+        "queries": queries, "initial_pool": initial, "runtime_s": time.perf_counter() - started,
+        "maxrss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+        "solver_started": False, "cg_started": False, "mip_started": False,
+        "cg_pricing_certificate": None, "fresh_initial_pool_equality_proved": True}
+    if name == "reload":
+        compare_phases(read_json(root / "artifacts" / "cold.json"), result)
+        result["cold_reload_parity"] = True
+    write_new_json(output, result)
+
+
+def worker(root, manifest):
+    attempt = root / "attempts" / (os.environ["SLURM_JOB_ID"] + "_r" + os.environ.get("SLURM_RESTART_COUNT", "0"))
+    attempt.mkdir(parents=True, exist_ok=False)
+    started = time.perf_counter()
+    artifacts = root / "artifacts"
+    artifacts.mkdir(exist_ok=True)
+    execution = {"wrapper_commit": manifest["wrapper_commit"], "model_commit": MODEL_COMMIT,
+        "manifest_sha256": sha(root / "manifest.json"), "job_id": os.environ["SLURM_JOB_ID"],
+        "restart": os.environ.get("SLURM_RESTART_COUNT", "0"), "host": os.uname().nodename,
+        "solver_started": False, "cg_started": False, "mip_started": False}
+    write_new_json(attempt / "execution.json", execution)
+    try:
+        for relative, expected in manifest["wrapper_source_sha256"].items():
+            require(sha(root / "code" / relative) == expected, f"wrapper source hash mismatch: {relative}")
+        require(sha(root / "wrapper_source.tar") == manifest["wrapper_archive_sha256"], "wrapper archive hash mismatch")
+        require(sha(root / "fedf_since_357.bundle") == manifest["model_bundle_sha256"], "model bundle hash mismatch")
+        lineage_root = Path(manifest["native_lineage_attempt"])
+        for name, expected in manifest["native_lineage_sha256"].items():
+            require(sha(lineage_root / name) == expected, f"native lineage proof changed: {name}")
+        proof = read_json(lineage_root / "gate_result.json")
+        require(proof["status"] == "passed" and proof["all_routes_physically_replayed"] == 8397
+                and proof["inherited_routes_replayed"] == 8343, "native lineage prerequisite did not pass")
+        require(shutil.disk_usage(artifacts).free >= manifest["minimum_disk_free_bytes"], "insufficient graph artifact disk headroom")
+        cache = artifacts / "k19_fedf4214.graph.cache"
+        cold = artifacts / "cold.json"
+        marker = artifacts / "BUILD_STARTED.json"
+        seal = artifacts / "COLD_COMPLETE.json"
+        resumed = build_action(cache_exists=cache.exists(), cold_exists=cold.exists(),
+            marker_exists=marker.exists(), seal_exists=seal.exists()) == "reload_only"
+        if resumed:
+            sealed = read_json(seal)
+            require(sealed["cold_sha256"] == sha(cold)
+                    and sealed["manifest_sha256"] == sha(root / "manifest.json"),
+                    "completed cold baseline seal mismatch")
+            validate_cold_baseline(read_json(cold), sha(root / "manifest.json"), manifest["wrapper_commit"])
+        else:
+            write_new_json(marker, execution)
+        environment = dict(os.environ, OPENBLAS_NUM_THREADS="1", OMP_NUM_THREADS="1",
+                           MKL_NUM_THREADS="1", PYTHONDONTWRITEBYTECODE="1")
+        script = root / "code" / "scripts" / "validate_strict_graph_artifact.py"
+        phases = [] if resumed else [("cold", cold, manifest["limits"]["cold_process_s"])]
+        phases.append(("reload", attempt / "reload.json", manifest["limits"]["reload_process_s"]))
+        commands = [{"phase": name, "command": [sys.executable, str(script), str(root),
+                     "--phase", name, "--out", str(destination)], "timeout_s": timeout}
+                    for name, destination, timeout in phases]
+        write_new_json(attempt / "commands.json", commands)
+        for plan in commands:
+            name, command, timeout = plan["phase"], plan["command"], plan["timeout_s"]
+            with (attempt / f"{name}.log").open("x") as log:
+                process = subprocess.run(command, cwd=root / "model_code", env=environment,
+                    stdout=log, stderr=subprocess.STDOUT, timeout=timeout)
+            require(process.returncode == 0, f"{name} phase failed; artifact/attempt preserved")
+            if name == "cold":
+                validate_cold_baseline(read_json(cold), sha(root / "manifest.json"), manifest["wrapper_commit"])
+                write_new_json(seal, {"cold_sha256": sha(cold),
+                    "manifest_sha256": sha(root / "manifest.json"), "wrapper_commit": manifest["wrapper_commit"]})
+        require(read_json(attempt / "reload.json")["cold_reload_parity"] is True, "reload parity missing")
+        full_graph_digest = sha(cache)
+        summary = {**execution, "status": "passed", "runtime_s": time.perf_counter() - started,
+            "reused_completed_cold_phase": resumed, "cold_sha256": sha(cold),
+            "reload_sha256": sha(attempt / "reload.json"), "cache_path": str(cache),
+            "full_graph_sha256": full_graph_digest, "cache_bytes": cache.stat().st_size,
+            "cold_and_reload_separate_processes": True,
+            "initial_pool_columns": 8397, "cold_reload_fixed_dual_vectors": 2,
+            "child_maxrss_kib": resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss,
+            "certificate": None, "giro_target_attainment": None}
+        write_new_json(attempt / "result.json", summary)
+        write_new_json(attempt / "COMPLETE.json", {"result_sha256": sha(attempt / "result.json"),
+            "manifest_sha256": sha(root / "manifest.json"), "cache_sha256": summary["full_graph_sha256"],
+            "model_commit": MODEL_COMMIT, "wrapper_commit": manifest["wrapper_commit"]})
+    except BaseException as error:
+        write_new_json(attempt / "FAILED.json", {**execution, "error": str(error), "runtime_s": time.perf_counter() - started})
+        raise
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("root", type=Path)
+    parser.add_argument("--phase", choices=("cold", "reload"))
+    parser.add_argument("--out", type=Path)
+    args = parser.parse_args()
+    root = args.root.resolve()
+    manifest = read_json(root / "manifest.json")
+    require(manifest["schema"] == SCHEMA and manifest["model_commit"] == MODEL_COMMIT, "wrong full-graph manifest/model pin")
+    if args.phase:
+        require(args.out is not None, "phase output is required")
+        phase(root, manifest, args.phase, args.out.resolve())
+    else:
+        worker(root, manifest)
+
+
+if __name__ == "__main__":
+    main()
