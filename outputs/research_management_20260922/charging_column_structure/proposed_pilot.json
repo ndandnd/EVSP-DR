@@ -1,0 +1,38 @@
+{
+  "status": "completed",
+  "cohort": "e1_short_k3",
+  "pool_path": "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/giro_k23_capacity_duals/results/e1_short_k3/pool.jsonl",
+  "variants": [
+    "original_active_minute_rows",
+    "identical_row_compression",
+    "endpoint_difference_with_continuous_occupancy_auxiliaries"
+  ],
+  "objective": "min sum(binary route selection)",
+  "trip_sense": "cover >=1",
+  "capacity_semantics": "Original one-minute conservative setup_start\u2192connection_end occupancy",
+  "seed": 0,
+  "threads": 4,
+  "time_limit_seconds_per_variant": 300,
+  "physics": "Unchanged stored18E1 strict-physics route payloads; no recharging or pricing",
+  "column_order": "Original JSONL order; no route dedup/filtering",
+  "initial_start": "No explicit MIP start for any variant",
+  "measurements": [
+    "construction time",
+    "original and presolved rows/cols/nnz",
+    "root LP objective/time",
+    "fleet incumbent/bound",
+    "nodes/work/runtime",
+    "same-original-B replay of chosen x",
+    "route-source/pool/coefficients hashes"
+  ],
+  "scope": "Finite saved pool formulation equivalence/performance only; no full-model bound or pricing certificate",
+  "lp_time_limit_seconds_per_variant": 30,
+  "execution_commit": "f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c",
+  "job_id": "729675",
+  "remote_root": "/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot",
+  "scheduler_state": "COMPLETED",
+  "scheduler_exit_code": "0:0",
+  "scheduler_elapsed": "00:00:06",
+  "collection": "pilot/collections/20260922T053756Z",
+  "solver_summary": "pilot/collections/20260922T053756Z/attempts/729675_r0/summary.json"
+}

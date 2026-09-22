@@ -1,0 +1,396 @@
+{
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/snapshots/20260922T054736Z.json",
+  "passed": false,
+  "jobs": [
+    {
+      "key": "c1_k08_fresh__prepare",
+      "state": null,
+      "reason": null,
+      "dependency_valid": true
+    },
+    {
+      "key": "c1_k08_fresh__default",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c1_k08_fresh__focus1",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c1_k08_fresh__focus2",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c1_k08_fresh__presparsify1",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c1_k08_fresh__strong_start",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c4_k08_fresh__prepare",
+      "state": null,
+      "reason": null,
+      "dependency_valid": true
+    },
+    {
+      "key": "c4_k08_fresh__default",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c4_k08_fresh__focus1",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c4_k08_fresh__focus2",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c4_k08_fresh__presparsify1",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c4_k08_fresh__strong_start",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c1_k15_fresh__prepare",
+      "state": null,
+      "reason": null,
+      "dependency_valid": true
+    },
+    {
+      "key": "c1_k15_fresh__default",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c1_k15_fresh__focus1",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c1_k15_fresh__focus2",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c1_k15_fresh__presparsify1",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c1_k15_fresh__strong_start",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c3_k15_fresh__prepare",
+      "state": null,
+      "reason": null,
+      "dependency_valid": true
+    },
+    {
+      "key": "c3_k15_fresh__default",
+      "state": "PENDING",
+      "reason": "DependencyNeverSatisfied",
+      "dependency_valid": true
+    },
+    {
+      "key": "c3_k15_fresh__focus1",
+      "state": "PENDING",
+      "reason": "DependencyNeverSatisfied",
+      "dependency_valid": true
+    },
+    {
+      "key": "c3_k15_fresh__focus2",
+      "state": "PENDING",
+      "reason": "DependencyNeverSatisfied",
+      "dependency_valid": true
+    },
+    {
+      "key": "c3_k15_fresh__presparsify1",
+      "state": "PENDING",
+      "reason": "DependencyNeverSatisfied",
+      "dependency_valid": true
+    },
+    {
+      "key": "c3_k15_fresh__strong_start",
+      "state": "PENDING",
+      "reason": "DependencyNeverSatisfied",
+      "dependency_valid": true
+    },
+    {
+      "key": "c1_k15_sequential__prepare",
+      "state": null,
+      "reason": null,
+      "dependency_valid": true
+    },
+    {
+      "key": "c1_k15_sequential__default",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c1_k15_sequential__focus1",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c1_k15_sequential__focus2",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c1_k15_sequential__presparsify1",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c1_k15_sequential__strong_start",
+      "state": "RUNNING",
+      "reason": "None",
+      "dependency_valid": false
+    },
+    {
+      "key": "c3_k15_fresh__prepare_v2",
+      "state": "FAILED",
+      "reason": "NonZeroExitCode",
+      "dependency_valid": true
+    },
+    {
+      "key": "c3_cost_diagnostic",
+      "state": null,
+      "reason": null,
+      "dependency_valid": true
+    }
+  ],
+  "preparation_artifacts": {
+    "/home/nc437/ladder-lite/mip_structure_20260922/results/c4_k08_fresh/prepare/729445_r0": {
+      "native_smoke.json": {
+        "passed": true,
+        "gurobi_version": "12.0.3",
+        "checks": [
+          {
+            "objective": "fleet",
+            "lp": 1.0,
+            "lower": 1.0,
+            "upper": 1.0
+          },
+          {
+            "objective": "charging",
+            "lp": 2.0,
+            "lower": 2.0,
+            "upper": 2.0
+          }
+        ]
+      },
+      "matrix.json": {
+        "case": "c4_k08_fresh",
+        "rows": 188,
+        "columns": 39668,
+        "nonzeros": 1057136,
+        "preparation_s": 52.69385900301859,
+        "strong_start_available": true,
+        "matrix_identity_sha256": "d27e254a66aaf9d608d0a7d1f40718650d74e8f790a3cb1fb46157be6051bb7a",
+        "matrix_file_sha256": "cb0ee7127269b9a046a4b2c631a9fd4505dc161d3bb8b8ca57e5a256d2fab7ca"
+      },
+      "COMPLETE.json": {
+        "case": "c4_k08_fresh",
+        "matrix_file": "/home/nc437/ladder-lite/mip_structure_20260922/results/c4_k08_fresh/prepare/729445_r0/matrix.npz",
+        "matrix_metadata": "/home/nc437/ladder-lite/mip_structure_20260922/results/c4_k08_fresh/prepare/729445_r0/matrix.json",
+        "matrix_metadata_sha256": "ee293faa9c157e2df8c8fbc129d597c0a2af6e37dcea3462a20965e5bf69824c",
+        "matrix_file_sha256": "cb0ee7127269b9a046a4b2c631a9fd4505dc161d3bb8b8ca57e5a256d2fab7ca",
+        "wall_s": 61.488383857067674,
+        "scientific_model_unchanged": true
+      }
+    },
+    "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k08_fresh/prepare/729439_r0": {
+      "native_smoke.json": {
+        "passed": true,
+        "gurobi_version": "12.0.3",
+        "checks": [
+          {
+            "objective": "fleet",
+            "lp": 1.0,
+            "lower": 1.0,
+            "upper": 1.0
+          },
+          {
+            "objective": "charging",
+            "lp": 2.0,
+            "lower": 2.0,
+            "upper": 2.0
+          }
+        ]
+      },
+      "matrix.json": {
+        "case": "c1_k08_fresh",
+        "rows": 194,
+        "columns": 39940,
+        "nonzeros": 1092654,
+        "preparation_s": 59.758112092036754,
+        "strong_start_available": true,
+        "matrix_identity_sha256": "63cebd926aa1af7da2b04b0339201ef71452ac588b6d95761430050fdd85cdac",
+        "matrix_file_sha256": "3c135607536f01891e6af7a546567cf7939733da80f8fbb8f5effacf94fe27e5"
+      },
+      "COMPLETE.json": {
+        "case": "c1_k08_fresh",
+        "matrix_file": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k08_fresh/prepare/729439_r0/matrix.npz",
+        "matrix_metadata": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k08_fresh/prepare/729439_r0/matrix.json",
+        "matrix_metadata_sha256": "d8b2e1ba899f665a2012d7453dd90e747b29522fbdf4e77ba3e6547dc236e822",
+        "matrix_file_sha256": "3c135607536f01891e6af7a546567cf7939733da80f8fbb8f5effacf94fe27e5",
+        "wall_s": 67.79632858280092,
+        "scientific_model_unchanged": true
+      }
+    },
+    "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_fresh/prepare/729451_r0": {
+      "native_smoke.json": {
+        "passed": true,
+        "gurobi_version": "12.0.3",
+        "checks": [
+          {
+            "objective": "fleet",
+            "lp": 1.0,
+            "lower": 1.0,
+            "upper": 1.0
+          },
+          {
+            "objective": "charging",
+            "lp": 2.0,
+            "lower": 2.0,
+            "upper": 2.0
+          }
+        ]
+      },
+      "matrix.json": {
+        "case": "c1_k15_fresh",
+        "rows": 364,
+        "columns": 79611,
+        "nonzeros": 2322459,
+        "preparation_s": 75.8903876747936,
+        "strong_start_available": true,
+        "matrix_identity_sha256": "ccb4a6b55eaca7624eb1f70ed5a97005f612c4ed130a0068401ac7effe750b3d",
+        "matrix_file_sha256": "eabb03bef450435021023d3c778ec35909d197b9065b757f86d5a2fea779b239"
+      },
+      "COMPLETE.json": {
+        "case": "c1_k15_fresh",
+        "matrix_file": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_fresh/prepare/729451_r0/matrix.npz",
+        "matrix_metadata": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_fresh/prepare/729451_r0/matrix.json",
+        "matrix_metadata_sha256": "68a6f618fca2663a83a17fb7601c93bc8ab2589f33275afaa176868bddbb30d3",
+        "matrix_file_sha256": "eabb03bef450435021023d3c778ec35909d197b9065b757f86d5a2fea779b239",
+        "wall_s": 89.0976690677926,
+        "scientific_model_unchanged": true
+      }
+    },
+    "/home/nc437/ladder-lite/mip_structure_20260922/results/c3_k15_fresh/prepare/729457_r0": {
+      "native_smoke.json": {
+        "passed": true,
+        "gurobi_version": "12.0.3",
+        "checks": [
+          {
+            "objective": "fleet",
+            "lp": 1.0,
+            "lower": 1.0,
+            "upper": 1.0
+          },
+          {
+            "objective": "charging",
+            "lp": 2.0,
+            "lower": 2.0,
+            "upper": 2.0
+          }
+        ]
+      }
+    },
+    "/home/nc437/ladder-lite/mip_structure_20260922/results/c3_k15_fresh/prepare/729775_r0": {
+      "native_smoke.json": {
+        "passed": true,
+        "gurobi_version": "12.0.3",
+        "checks": [
+          {
+            "objective": "fleet",
+            "lp": 1.0,
+            "lower": 1.0,
+            "upper": 1.0
+          },
+          {
+            "objective": "charging",
+            "lp": 2.0,
+            "lower": 2.0,
+            "upper": 2.0
+          }
+        ]
+      }
+    },
+    "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_sequential/prepare/729463_r0": {
+      "native_smoke.json": {
+        "passed": true,
+        "gurobi_version": "12.0.3",
+        "checks": [
+          {
+            "objective": "fleet",
+            "lp": 1.0,
+            "lower": 1.0,
+            "upper": 1.0
+          },
+          {
+            "objective": "charging",
+            "lp": 2.0,
+            "lower": 2.0,
+            "upper": 2.0
+          }
+        ]
+      },
+      "matrix.json": {
+        "case": "c1_k15_sequential",
+        "rows": 364,
+        "columns": 130468,
+        "nonzeros": 3541122,
+        "preparation_s": 105.6821770099923,
+        "strong_start_available": true,
+        "matrix_identity_sha256": "f7d0a404c3081edb304dee1d60856947c1751237c0559ba68bfad555f722d8a4",
+        "matrix_file_sha256": "df9d83811091aabcd560bd8706f880885bd3ee79546996aea1ca97db561866fc"
+      },
+      "COMPLETE.json": {
+        "case": "c1_k15_sequential",
+        "matrix_file": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_sequential/prepare/729463_r0/matrix.npz",
+        "matrix_metadata": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_sequential/prepare/729463_r0/matrix.json",
+        "matrix_metadata_sha256": "6385ac675bcd3e2b9b94544a478ee3ed951495f77dcec14a6dc3c677711dc646",
+        "matrix_file_sha256": "df9d83811091aabcd560bd8706f880885bd3ee79546996aea1ca97db561866fc",
+        "wall_s": 130.00275188218802,
+        "scientific_model_unchanged": true
+      }
+    }
+  }
+}

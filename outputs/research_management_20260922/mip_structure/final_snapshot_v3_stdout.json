@@ -1,0 +1,447 @@
+{
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/snapshots/20260922T055929Z.json",
+  "passed": true,
+  "checks": [
+    {
+      "key": "c1_k08_fresh__prepare",
+      "job_id": "729439",
+      "state": "COMPLETED",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k08_fresh__default",
+      "job_id": "729440",
+      "state": "RUNNING",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k08_fresh__focus1",
+      "job_id": "729441",
+      "state": "RUNNING",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k08_fresh__focus2",
+      "job_id": "729442",
+      "state": "COMPLETED",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k08_fresh__presparsify1",
+      "job_id": "729443",
+      "state": "COMPLETED",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k08_fresh__strong_start",
+      "job_id": "729444",
+      "state": "RUNNING",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c4_k08_fresh__prepare",
+      "job_id": "729445",
+      "state": "COMPLETED",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c4_k08_fresh__default",
+      "job_id": "729446",
+      "state": "COMPLETED",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c4_k08_fresh__focus1",
+      "job_id": "729447",
+      "state": "COMPLETED",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c4_k08_fresh__focus2",
+      "job_id": "729448",
+      "state": "COMPLETED",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c4_k08_fresh__presparsify1",
+      "job_id": "729449",
+      "state": "COMPLETED",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c4_k08_fresh__strong_start",
+      "job_id": "729450",
+      "state": "COMPLETED",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_fresh__prepare",
+      "job_id": "729451",
+      "state": "COMPLETED",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_fresh__default",
+      "job_id": "729452",
+      "state": "RUNNING",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_fresh__focus1",
+      "job_id": "729453",
+      "state": "RUNNING",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_fresh__focus2",
+      "job_id": "729454",
+      "state": "RUNNING",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_fresh__presparsify1",
+      "job_id": "729455",
+      "state": "RUNNING",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_fresh__strong_start",
+      "job_id": "729456",
+      "state": "RUNNING",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c3_k15_fresh__prepare",
+      "job_id": "729457",
+      "state": "FAILED",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c3_k15_fresh__default",
+      "job_id": "729458",
+      "state": "CANCELLED by 1646707",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c3_k15_fresh__focus1",
+      "job_id": "729459",
+      "state": "CANCELLED by 1646707",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c3_k15_fresh__focus2",
+      "job_id": "729460",
+      "state": "CANCELLED by 1646707",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c3_k15_fresh__presparsify1",
+      "job_id": "729461",
+      "state": "CANCELLED by 1646707",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c3_k15_fresh__strong_start",
+      "job_id": "729462",
+      "state": "CANCELLED by 1646707",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_sequential__prepare",
+      "job_id": "729463",
+      "state": "COMPLETED",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_sequential__default",
+      "job_id": "729464",
+      "state": "CANCELLED by 1646707",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_sequential__focus1",
+      "job_id": "729465",
+      "state": "CANCELLED by 1646707",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_sequential__focus2",
+      "job_id": "729466",
+      "state": "CANCELLED by 1646707",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_sequential__presparsify1",
+      "job_id": "729467",
+      "state": "CANCELLED by 1646707",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_sequential__strong_start",
+      "job_id": "729468",
+      "state": "CANCELLED by 1646707",
+      "role": "original",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c3_k15_fresh__prepare_v2",
+      "job_id": "729775",
+      "state": "FAILED",
+      "role": "superseded_failed_preparation",
+      "settings_passed": true,
+      "settings_evidence": "live_or_preserved_scontrol",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "cost_diagnostic",
+      "job_id": "729731",
+      "state": "COMPLETED",
+      "role": "diagnostic",
+      "settings_passed": null,
+      "settings_evidence": "diagnostic completion retained separately",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c3_k15_fresh__prepare__v3",
+      "job_id": "730241",
+      "state": "RUNNING",
+      "role": "active_recovery",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c3_k15_fresh__default__v3",
+      "job_id": "730242",
+      "state": "PENDING",
+      "role": "active_recovery",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": "730241"
+    },
+    {
+      "key": "c3_k15_fresh__focus1__v3",
+      "job_id": "730243",
+      "state": "PENDING",
+      "role": "active_recovery",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": "730241"
+    },
+    {
+      "key": "c3_k15_fresh__focus2__v3",
+      "job_id": "730244",
+      "state": "PENDING",
+      "role": "active_recovery",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": "730241"
+    },
+    {
+      "key": "c3_k15_fresh__presparsify1__v3",
+      "job_id": "730245",
+      "state": "PENDING",
+      "role": "active_recovery",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": "730241"
+    },
+    {
+      "key": "c3_k15_fresh__strong_start__v3",
+      "job_id": "730246",
+      "state": "PENDING",
+      "role": "active_recovery",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": "730241"
+    },
+    {
+      "key": "c1_k15_sequential__default__v3",
+      "job_id": "730247",
+      "state": "RUNNING",
+      "role": "active_recovery",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_sequential__focus1__v3",
+      "job_id": "730248",
+      "state": "RUNNING",
+      "role": "active_recovery",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_sequential__focus2__v3",
+      "job_id": "730249",
+      "state": "RUNNING",
+      "role": "active_recovery",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_sequential__presparsify1__v3",
+      "job_id": "730250",
+      "state": "RUNNING",
+      "role": "active_recovery",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "c1_k15_sequential__strong_start__v3",
+      "job_id": "730251",
+      "state": "COMPLETED",
+      "role": "active_recovery",
+      "settings_passed": true,
+      "settings_evidence": "recorded_submission_argv",
+      "dependency_valid": true,
+      "expected_preparation": null
+    },
+    {
+      "key": "loader_benchmark",
+      "job_id": "730235",
+      "state": "COMPLETED",
+      "role": "diagnostic",
+      "settings_passed": true,
+      "settings_evidence": "live_or_preserved_scontrol",
+      "dependency_valid": true,
+      "expected_preparation": null
+    }
+  ],
+  "completed_trial_artifacts": 8
+}

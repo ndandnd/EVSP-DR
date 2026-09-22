@@ -1,0 +1,199 @@
+{
+  "created_utc": "2026-09-22T05:32:58.832532+00:00",
+  "remote_root": "/home/nc437/ladder-lite/mip_structure_20260922",
+  "code_commit": "41b4383c5e4d32ba462a1ff7c82a75af9647d6c4",
+  "code_branch": "codex/mip-structure-20260922",
+  "code_worktree": "/tmp/evsp-mip-structure-20260922",
+  "native_execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "pinned_code": "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "native_mip_source_sha256": "bcb5a6b76040ff6ddfa932433d296a1f0f72207b28cbba738b1b4dd39f1eaac7",
+  "data_dir": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+  "gurobi_version": "12.0.3",
+  "runner_sha256": "58d9f897c0efc2e6fef17c5f6ec90bb002b267f16edb44e6ec9666c8a3111d66",
+  "core_sha256": "4ee34df3959af5441b82a4f29a003850f86f29ab4e4bfd4fad8aeafa80fc0518",
+  "tooling_sha256": {
+    "worker_recovery.sh": "b552ec4b92b79cefd2f34544b0f938f5c61adc09b7a641ab729626e39115180a",
+    "runner.py": "58d9f897c0efc2e6fef17c5f6ec90bb002b267f16edb44e6ec9666c8a3111d66",
+    "test_core.py": "fb946c06a2094da121d8f2327808ed869328ea211e89705469346f02a106dae2",
+    "core.py": "4ee34df3959af5441b82a4f29a003850f86f29ab4e4bfd4fad8aeafa80fc0518",
+    "README.md": "4df080066d973ef8cf60178d2791d381c92f43c159a38a8a774f5ce3345d4afa",
+    "launch.py": "1e15d712373d341ed71778ac3f4d0ae9ac3cb27fd79f2078d0cb229ee57bc681",
+    "worker.sh": "47824bef25642960fff9b4d491f03f5a12f6141ff215739a3c6d02c156b6701c"
+  },
+  "cases": [
+    {
+      "id": "c1_k08_fresh",
+      "source_case": "c1_k08",
+      "source_arm": "fresh",
+      "endpoint": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k08/mip_base/135595_r0/result.json",
+      "pins": {
+        "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k08/mip_base/135595_r0/result.json": "c9dc2e96492adc127590ad89b0d2bfbb13394f358dc49f64438380093245a631",
+        "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k08/base/135593_r0/cg.json": "c024cc4e235234ed4244abaa1e7738f3600c264a2ffe4c05c5026198b69d56b0",
+        "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k08/base/135593_r0/cg.json.columns.jsonl": "2e75b32ab3f2c11e7677892844b33c9fe8c0351529927d08980370c113d2845c",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      },
+      "rows": 194,
+      "columns": 39940,
+      "nonzeros": 1092654,
+      "target": 8,
+      "original_prepared_ordered_pool_sha256": "0bd60e44a073a52cd1b9e3109c3d1719b7a33266096a87b3deec04f6de9bd1d2",
+      "original_maxrss_kib": 4259232,
+      "original_fleet": 9,
+      "original_fleet_proven": true,
+      "source_local_json": "outputs/research_followup_20260921/battery_rounding/sources/c1_k08_base_result.json"
+    },
+    {
+      "id": "c4_k08_fresh",
+      "source_case": "c4_k08",
+      "source_arm": "fresh",
+      "endpoint": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c4_k08/mip_base/135655_r0/result.json",
+      "pins": {
+        "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c4_k08/mip_base/135655_r0/result.json": "7d5fdb4e6a73f4b6dbb6df9aace22ea50f60d30e96c25cdc518547c7df7da0be",
+        "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c4_k08/base/135653_r0/cg.json": "6d64febeeb1d25cc7245e38133c17ea696b76b4419f385d4219f3a17e5a63d4c",
+        "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c4_k08/base/135653_r0/cg.json.columns.jsonl": "c73aa81245a59305a48173a072d450a3b5faee7e4fd906d613c4eca97cd6bc64",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p04_20260908.csv": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      },
+      "rows": 188,
+      "columns": 39668,
+      "nonzeros": 1057136,
+      "target": 8,
+      "original_prepared_ordered_pool_sha256": "8087ffdbd3cacbeeaeff113e217d447d637b8f4123bc825d8bc38c78b91ce379",
+      "original_maxrss_kib": 4130700,
+      "original_fleet": 9,
+      "original_fleet_proven": true,
+      "source_local_json": "outputs/research_followup_20260921/battery_rounding/sources/c4_k08_base_result.json"
+    },
+    {
+      "id": "c1_k15_fresh",
+      "source_case": "c1_k15",
+      "source_arm": "fresh",
+      "endpoint": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k15/mip_base/135605_r0/result.json",
+      "pins": {
+        "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k15/mip_base/135605_r0/result.json": "0a553d6ae5b87fe448c13cc62ed7de7ab7682509f556bf9dc75168a2c6eda20b",
+        "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k15/base/135603_r0/cg.json": "4bd5821a72b96ac83b81f2474514aa3eceb8fcdd24106f80050e58bcfc91db7d",
+        "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k15/base/135603_r0/cg.json.columns.jsonl": "54a53afdab53c7f7dba73fd458d5c69c2025e19882776ba643e51478932f398c",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p01_20260908.csv": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      },
+      "rows": 364,
+      "columns": 79611,
+      "nonzeros": 2322459,
+      "target": 15,
+      "original_prepared_ordered_pool_sha256": "bcc328deac2d0a84d214848f5618bd70da1aab5b803a87c059c7f3d4b015e0b1",
+      "original_maxrss_kib": 5569856,
+      "original_fleet": 18,
+      "original_fleet_proven": false,
+      "source_local_json": "outputs/research_followup_20260921/battery_rounding/sources/c1_k15_base_result.json"
+    },
+    {
+      "id": "c3_k15_fresh",
+      "source_case": "c3_k15",
+      "source_arm": "fresh",
+      "endpoint": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/mip_base/135645_r0/result.json",
+      "pins": {
+        "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/mip_base/135645_r0/result.json": "484d0a9dbf511eac2aa144de6271fbdf0ca0ab1e789a1385c0712dc2f04d38f1",
+        "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/base/135643_r0/cg.json": "ee81a8b2d5215e8c00dcd88739426365d78ea6fd724f0b6f22ac132e2ce662eb",
+        "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/base/135643_r0/cg.json.columns.jsonl": "8fc224ddb3f0c9109f38549bc39d8f63749c8fa425a52a473c3d2d13319abb48",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p03_20260908.csv": "44d91ad2cd6604441b3ea36dfb77cda9f89901d14755ec30d502887f0efb3490",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      },
+      "rows": 302,
+      "columns": 38130,
+      "nonzeros": 896915,
+      "target": 15,
+      "original_prepared_ordered_pool_sha256": "c2b617feddc9befa15ec67ebe14fd782dc8d6c7212b140ba0c4252a1579634eb",
+      "original_maxrss_kib": 2728796,
+      "original_fleet": 18,
+      "original_fleet_proven": false,
+      "source_local_json": "outputs/research_followup_20260921/battery_rounding/sources/c3_k15_base_result.json"
+    },
+    {
+      "id": "c1_k15_sequential",
+      "source_case": "c1_k15",
+      "source_arm": "sequential",
+      "endpoint": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k15/mip_warm/135604_r0/result.json",
+      "pins": {
+        "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k15/mip_warm/135604_r0/result.json": "001928a91dc223802126891f401c767486da34db90b805fdccb7f1430df177ab",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k15/cg.json": "a84c91e12c33e6e59d5842673bb5cebaf65fc659817fa63f0bc1110053794eca",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k15/cg.json.columns.jsonl": "808d70f20e9d1a0518715422116458d5b6ab81ceea719c336d576adcddc650d3",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p01_20260908.csv": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      },
+      "rows": 364,
+      "columns": 130468,
+      "nonzeros": 3541122,
+      "target": 15,
+      "original_prepared_ordered_pool_sha256": "2cebf8ac70d00a78dd940f54564309399a5855c96f1df732e45cc1ebe6bf86c8",
+      "original_maxrss_kib": 6269472,
+      "original_fleet": 15,
+      "original_fleet_proven": true,
+      "source_local_json": "outputs/research_followup_20260921/battery_rounding/sources/c1_k15_warm_result.json"
+    }
+  ],
+  "arms": [
+    "default",
+    "focus1",
+    "focus2",
+    "presparsify1",
+    "strong_start"
+  ],
+  "model": {
+    "master": "set covering Ax>=1; binary route variables",
+    "fleet_objective": "sum x",
+    "charging_LP_objective": "sum (original route cost - 100000) x with <= original validated stage1 fleet cap",
+    "physics": {
+      "battery_kwh": 240,
+      "initial_soc_kwh": 240,
+      "charge_kw": 240,
+      "reserve_kwh": 0,
+      "terminal_floor": "none",
+      "shared_capacity": false,
+      "tariff": "original flat",
+      "start_fee": 5
+    },
+    "pool_order_and_cost": "fixed and SHA-authenticated; no reduction applied to parameter arms",
+    "trials": "fleet only; no charging MIP; no CG",
+    "same_pool_start": "default greedy pool partition all arms except offline original saved stage1 incumbent diagnostic",
+    "dual_screening": "signed quantized duals, objective coefficients rounded downward, all 0<=x<=1 box terms; exact integer arithmetic, strict test preserves incumbent ties; never used as model reduction in these trials"
+  },
+  "resources": {
+    "partition": "default_partition",
+    "cpus": 8,
+    "memory_gib": 32,
+    "allocation_wall": "02:00:00",
+    "fleet_seconds": 1800,
+    "LP_seconds_each": 300,
+    "structure_scan_seconds": 600,
+    "requeue": true,
+    "excluded_nodes": [
+      "scaglione-compute-01"
+    ],
+    "concurrency": "five independent preparations and 25 independent per-case-dependent trials, no throttle",
+    "reason": "Historical peak process MaxRSS spans 2,728,796\u20136,269,472 KiB (2.60\u20135.98 GiB). 32 GiB gives >5x measured maximum for physical preparation, compact matrix plus LP diagnostics and additional indexing; 2h bounds preparation plus a 30min fleet trial. True per-case preparation dependencies only."
+  },
+  "provenance_scope": "The native physical gate is rerun once per case and required to reproduce original prepared ordered-pool hash and native rows/vars/nnz. All later trials load only hash-bound compact incidence/cost/order. Source hashes checked before and after preparation.",
+  "historical_holds_mutated": false,
+  "approval": "Parent reviewed core/runner and explicitly approved five preparations and 25 trials after manifest/idempotence/smoke checks; source user authorized useful matrix/solver tests.",
+  "recovery": {
+    "scope": "Only failed C3k15 preparation; original manifest/code paths remain immutable; original trial runner continues to load the same matrix",
+    "failed_job": "729457",
+    "diagnostic_job": "729731",
+    "diagnosis_sha256": "a59d6d84163e26cb6175385323e2645bcc5208e94c00810f99e6e99925da36c2",
+    "negative_count": 32,
+    "min_negative": -2.9103830456733704e-11,
+    "max_negative": -1.4551915228366852e-11,
+    "change": "Retain exact signed coefficients; never remove a negative-cost victim by dominance; LP certificates already support signed costs. No matrix/objective/physics change."
+  }
+}

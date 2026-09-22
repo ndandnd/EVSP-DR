@@ -1,0 +1,28 @@
+{
+  "job_id": "729675",
+  "observed_utc": "2026-09-22T05:37:55.653067+00:00",
+  "state": "COMPLETED",
+  "reason": null,
+  "execution_commit": "f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c",
+  "remote_root": "/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot",
+  "effective_resources": {
+    "partition": "default_partition",
+    "cpus": 4,
+    "mem_gib": 4,
+    "wall_minutes": 30,
+    "exclude": "scaglione-compute-01",
+    "requeue": true
+  },
+  "node_exclusion_verified": true,
+  "held_jobs_untouched": true,
+  "submission_command": "/usr/local/slurm/current/bin/sbatch --parsable worker.sub",
+  "attempt_pattern": "attempts/729675_r<SLURM_RESTART_COUNT>",
+  "first_preflight_no_job": "Nonlogin shell sbatch not found; resolved before successful submission",
+  "collector": "python3 pilot/collect_pilot.py --job 729675",
+  "status": "completed",
+  "scheduler_state": "COMPLETED",
+  "scheduler_exit_code": "0:0",
+  "scheduler_elapsed": "00:00:06",
+  "collection": "pilot/collections/20260922T053756Z",
+  "solver_summary": "pilot/collections/20260922T053756Z/attempts/729675_r0/summary.json"
+}

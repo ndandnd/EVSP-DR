@@ -1,0 +1,241 @@
+Set parameter LicenseID to value 2674428
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "en-cc-unicorn-data-dirs.coecis.cornell.edu"
+Set parameter OutputFlag to value 1
+Set parameter LogFile to value "/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot/attempts/729675_r0/original_minute/mip.log"
+Set parameter Threads to value 4
+Set parameter Seed to value 0
+Set parameter TimeLimit to value 300
+Set parameter MIPGap to value 0.0001
+Set parameter LogFile to value "/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot/attempts/729675_r0/original_minute/lp.log"
+Set parameter TimeLimit to value 30
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  30
+Threads  4
+
+Optimize a model with 1789 rows, 321 columns and 44844 nonzeros
+Model fingerprint: 0xc0dd6e13
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 1491 rows and 0 columns
+Presolve time: 0.03s
+Presolved: 298 rows, 321 columns, 10227 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    0.0000000e+00   3.500000e+01   0.000000e+00      0s
+     144    3.0000000e+00   0.000000e+00   0.000000e+00      0s
+
+Solved in 144 iterations and 0.05 seconds (0.02 work units)
+Optimal objective  3.000000000e+00
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  300
+Threads  4
+
+Optimize a model with 1789 rows, 321 columns and 44844 nonzeros
+Model fingerprint: 0x2570488e
+Variable types: 0 continuous, 321 integer (321 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 35.0000000
+Presolve removed 1707 rows and 31 columns
+Presolve time: 0.12s
+Presolved: 82 rows, 290 columns, 5009 nonzeros
+Variable types: 0 continuous, 290 integer (290 binary)
+
+Root relaxation: objective 3.000000e+00, 131 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0    3.00000    0    9   35.00000    3.00000  91.4%     -    0s
+H    0     0                       3.0000000    3.00000  0.00%     -    0s
+     0     0    3.00000    0    9    3.00000    3.00000  0.00%     -    0s
+
+Explored 1 nodes (131 simplex iterations) in 0.34 seconds (0.03 work units)
+Thread count was 4 (of 8 available processors)
+
+Solution count 2: 3 35 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 3.000000000000e+00, best bound 3.000000000000e+00, gap 0.0000%
+
+User-callback calls 314, time in user-callback 0.00 sec
+Set parameter OutputFlag to value 1
+Set parameter LogFile to value "/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot/attempts/729675_r0/identical_rows/mip.log"
+Set parameter Threads to value 4
+Set parameter Seed to value 0
+Set parameter TimeLimit to value 300
+Set parameter MIPGap to value 0.0001
+Set parameter LogFile to value "/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot/attempts/729675_r0/identical_rows/lp.log"
+Set parameter TimeLimit to value 30
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  30
+Threads  4
+
+Optimize a model with 303 rows, 321 columns and 10232 nonzeros
+Model fingerprint: 0xed4fea2f
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 5 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 298 rows, 321 columns, 10227 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    0.0000000e+00   3.500000e+01   0.000000e+00      0s
+     144    3.0000000e+00   0.000000e+00   0.000000e+00      0s
+
+Solved in 144 iterations and 0.01 seconds (0.01 work units)
+Optimal objective  3.000000000e+00
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  300
+Threads  4
+
+Optimize a model with 303 rows, 321 columns and 10232 nonzeros
+Model fingerprint: 0x6ba0d9b9
+Variable types: 0 continuous, 321 integer (321 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 35.0000000
+Presolve removed 195 rows and 29 columns
+Presolve time: 0.04s
+Presolved: 108 rows, 292 columns, 5596 nonzeros
+Variable types: 0 continuous, 292 integer (292 binary)
+
+Root relaxation: objective 3.000000e+00, 150 iterations, 0.00 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0    3.00000    0    9   35.00000    3.00000  91.4%     -    0s
+H    0     0                       3.0000000    3.00000  0.00%     -    0s
+     0     0    3.00000    0    9    3.00000    3.00000  0.00%     -    0s
+
+Explored 1 nodes (150 simplex iterations) in 0.06 seconds (0.03 work units)
+Thread count was 4 (of 8 available processors)
+
+Solution count 2: 3 35 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 3.000000000000e+00, best bound 3.000000000000e+00, gap 0.0000%
+
+User-callback calls 365, time in user-callback 0.00 sec
+Set parameter OutputFlag to value 1
+Set parameter LogFile to value "/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot/attempts/729675_r0/endpoint_difference/mip.log"
+Set parameter Threads to value 4
+Set parameter Seed to value 0
+Set parameter TimeLimit to value 300
+Set parameter MIPGap to value 0.0001
+Set parameter LogFile to value "/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot/attempts/729675_r0/endpoint_difference/lp.log"
+Set parameter TimeLimit to value 30
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  30
+Threads  4
+
+Optimize a model with 307 rows, 593 columns and 7714 nonzeros
+Model fingerprint: 0x40f89e16
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 176 rows and 181 columns
+Presolve time: 0.01s
+Presolved: 131 rows, 412 columns, 7245 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    0.0000000e+00   3.500000e+01   0.000000e+00      0s
+     106    3.0000000e+00   0.000000e+00   0.000000e+00      0s
+
+Solved in 106 iterations and 0.01 seconds (0.01 work units)
+Optimal objective  3.000000000e+00
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  300
+Threads  4
+
+Optimize a model with 307 rows, 593 columns and 7714 nonzeros
+Model fingerprint: 0x3590da2f
+Variable types: 272 continuous, 321 integer (321 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 35.0000000
+Presolve removed 176 rows and 190 columns
+Presolve time: 0.08s
+Presolved: 131 rows, 403 columns, 6779 nonzeros
+Variable types: 0 continuous, 403 integer (403 binary)
+
+Root relaxation: objective 3.000000e+00, 166 iterations, 0.01 seconds (0.00 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+*    0     0               0       3.0000000    3.00000  0.00%     -    0s
+
+Explored 1 nodes (166 simplex iterations) in 0.10 seconds (0.03 work units)
+Thread count was 4 (of 8 available processors)
+
+Solution count 2: 3 35 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 3.000000000000e+00, best bound 3.000000000000e+00, gap 0.0000%
+
+User-callback calls 446, time in user-callback 0.00 sec
+{
+  "completed": true,
+  "out": "/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot/attempts/729675_r0",
+  "lp_objectives": [
+    2.9999999999999956,
+    2.9999999999999956,
+    3.0
+  ],
+  "proven_fleet_objectives": [
+    3.0,
+    3.0,
+    3.0
+  ],
+  "total_wall_s": 1.8683039788156748
+}

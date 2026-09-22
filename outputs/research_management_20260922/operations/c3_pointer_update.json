@@ -1,0 +1,28 @@
+{
+  "updated_utc": "2026-09-22T05:46:59.579239+00:00",
+  "recovery_receipt_sha256": "9d6d765bb185c86282030b3d40601f5f12642304b3727b090299074074aa04bc",
+  "verified_dependency_count": 5,
+  "active_predecessor": "729775",
+  "no_cluster_read": true,
+  "automation_unchanged_uses_current_continuation": true,
+  "files": [
+    {
+      "path": "outputs/research_management_20260921/MONITOR_CONTINUATION.md",
+      "before_sha256": "6864ab749fe400fc33e120c33191f4a028bedb6933c9813b0357d560e8c7fb85",
+      "after_sha256": "701fed79e4cb4a7fae603b7482180355056488deb51d39959108e8911869467b",
+      "historical_bytes_preserved": true
+    },
+    {
+      "path": "outputs/research_register/entries/20260922_overnight_structure_and_operations.md",
+      "before_sha256": "276f8437ed7e5bc961af59370df30a311404fc76f30fd6ebddebe65039f7d52e",
+      "after_sha256": "9ba60633ee79f9bbeb9de4de93e6ca739dd4f7701dcc407df96db1ceae4282e1",
+      "historical_bytes_preserved": true
+    },
+    {
+      "path": "outputs/research_register/README.md",
+      "before_sha256": "5bfddfaf564082d559cd86c0a17bbae15d50690fb417f14f555160c2c49706e9",
+      "after_sha256": "b49409b6f79c5e71d977ed4f42fb2ba13621d13b009e656c393ad794412516b1",
+      "historical_bytes_preserved": true
+    }
+  ]
+}

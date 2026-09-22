@@ -1,0 +1,27 @@
+{
+  "schema": "evsp-dr-strict-pool-physical-gate-v1",
+  "total_columns": 88607,
+  "accepted_columns": 88607,
+  "mip_unique_accepted_columns": 88607,
+  "mip_ordered_pool_sha256": "69870d85a9aba110d10a8ab558008bb1d71acce554283f1fa7c369e225391966",
+  "valid_as_recorded": 88607,
+  "deterministically_repaired": 0,
+  "rejected_columns": 0,
+  "valid_set_sha256": "211c1dbe312d997cb1e6d5c9cab5fdc0387a681fb3964023df5fb4e2a5ee3856",
+  "repaired_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "rejected_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "rejected_samples": [],
+  "master_cost_semantics": "expanded_grid_cost_unchanged",
+  "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+  "source_pricing_certified": true,
+  "continuous_cost_pricing_certified": false,
+  "persisted_charging_block_count": 546775,
+  "persisted_charging_block_payload_bytes": 110181189,
+  "input_hashes": {
+    "instance_sha256": "985760e3065f3ba1d7d62960ae77ff6d61e7d331eb3ebb6582cc774c4835e240",
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+  },
+  "source_reference_hashes_bound": true
+}

@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/nc437/ladder-lite/mip_structure_20260922/code_v2/runner.py", line 139, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/home/nc437/ladder-lite/mip_structure_20260922/code_v2/runner.py", line 137, in main
+    if args.mode=='prepare':prepare(args.root,manifest,case,out)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nc437/ladder-lite/mip_structure_20260922/code_v2/runner.py", line 80, in prepare
+    assert abs(sum(costs[j] for j in charging)-endpoint['two_stage']['stage2_variable_obj'])<1e-5
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

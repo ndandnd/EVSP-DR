@@ -1,0 +1,74 @@
+{
+  "status": "completed",
+  "execution_commit": "f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c",
+  "remote_root": "/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot",
+  "source_pool_sha256": "714cec263633e3fa8ac178052b3be595097c1990769503afcac86e3d5d11a845",
+  "input_gzip_mtime": 0,
+  "files": {
+    "run_pilot.py": {
+      "sha256": "224f019b7469067ee3e09d2020a4befc34966766007c4c16f15b26b80475afc4",
+      "bytes": 12277
+    },
+    "worker.sub": {
+      "sha256": "94f633b09c4488980f188d433ad23083129432d2e58f185a0aae68514e5b67f0",
+      "bytes": 1437
+    },
+    "inputs/pool.jsonl": {
+      "sha256": "714cec263633e3fa8ac178052b3be595097c1990769503afcac86e3d5d11a845",
+      "bytes": 2226491
+    },
+    "inputs/pool.jsonl.gz": {
+      "sha256": "236967aeae691c3f324b0142751a9f29f566b60557286480a2307937f32090e8",
+      "bytes": 194067
+    },
+    "execution_commit.txt": {
+      "sha256": "5f1dfde2c29444659592a1ff153726eeba08e2df4d38d75f9d6a0b0f3c7590c6",
+      "bytes": 41
+    },
+    "SCAGLIONE_RESOURCE_POLICY.read_20260922.md": {
+      "sha256": "f9c5982718da6ab758019ceb85e31b539aea5416adc51816bc4bae220728e40b",
+      "bytes": 4212
+    }
+  },
+  "resources": {
+    "partition": "default_partition",
+    "cpus": 4,
+    "mem_gib": 4,
+    "wall_minutes": 30,
+    "exclude": "scaglione-compute-01",
+    "requeue": true
+  },
+  "resource_reason": "321 binaries and at most593totalvariables/44844nonzeros;4GiB conservative modest solver allowance;30min covers3\u00d7(300sMIP+30sLP) plus build/I/O. Variants serial for matched single-hostpilot, not a CG-array throttle.",
+  "variant_order": [
+    "original_minute",
+    "identical_rows",
+    "endpoint_difference"
+  ],
+  "initialization": "No explicit MIP start for anyvariant; separately optimized LPdiagnostic is not transplanted into MIP",
+  "limits": {
+    "mip_seconds_each": 300,
+    "lp_seconds_each": 30
+  },
+  "confounding": "One small fixed-order single-case run; cold solver starts but process/license/cache warmup and machine noise can differ; no general or causal speed claim.",
+  "environment": {
+    "unset": [
+      "PYTHONPATH",
+      "PYTHONHOME",
+      "LD_LIBRARY_PATH",
+      "LM_LICENSE_FILE"
+    ],
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONHASHSEED": "0",
+    "GRB_LICENSE_FILE": "/share/apps/software/gurobi/gurobi.lic"
+  },
+  "license_file_readable_verified": true,
+  "slurm_bin": "/usr/local/slurm/current/bin",
+  "submission_preflight_note": "Initial nonlogin-shell sbatch was unavailable, exit127; no job created. Absolute Slurm path and explicit shared-license environment now configured.",
+  "job_id": "729675",
+  "scheduler_state": "COMPLETED",
+  "scheduler_exit_code": "0:0",
+  "scheduler_elapsed": "00:00:06",
+  "collection": "pilot/collections/20260922T053756Z",
+  "solver_summary": "pilot/collections/20260922T053756Z/attempts/729675_r0/summary.json"
+}

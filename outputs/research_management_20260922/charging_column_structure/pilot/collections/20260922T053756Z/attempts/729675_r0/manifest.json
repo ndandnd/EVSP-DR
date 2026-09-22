@@ -1,0 +1,63 @@
+{
+  "pool_path": "/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot/inputs/pool.jsonl",
+  "pool_sha256": "714cec263633e3fa8ac178052b3be595097c1990769503afcac86e3d5d11a845",
+  "script_sha256": "224f019b7469067ee3e09d2020a4befc34966766007c4c16f15b26b80475afc4",
+  "execution_commit": "f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c",
+  "inspected_reference_commit": "35770aae2c08e7d5a356cc3b673e67608e5b1036",
+  "original_pool_execution_commit": null,
+  "worker_sha256": "94f633b09c4488980f188d433ad23083129432d2e58f185a0aae68514e5b67f0",
+  "native_model": "run_giro_small_cg.py::_master",
+  "objective": "fleet sum(x)",
+  "master_sense": "cover",
+  "capacity_semantics": "saved strict18E1 route setup-to-disconnection any-overlap one-minute occupancy; union per route/site",
+  "initialization": "No explicit MIP start for any variant",
+  "proof_scope": "Finite saved pool only; no CG/pricing certificate; no changed charging physics",
+  "gurobi_version": [
+    12,
+    0,
+    3
+  ],
+  "python": "3.12.13",
+  "host": "snavely-cpu-02.cs.cornell.edu",
+  "settings": {
+    "seed": 0,
+    "threads": 4,
+    "mip_seconds": 300.0,
+    "lp_seconds": 30.0,
+    "mipgap": 0.0001
+  },
+  "variant_order": [
+    "original_minute",
+    "identical_rows",
+    "endpoint_difference"
+  ],
+  "dependencies": "Immutable copied JSONL only; no upstream scheduler dependency",
+  "scheduler": {
+    "SLURM_JOB_ID": "729675",
+    "SLURM_RESTART_COUNT": null,
+    "SLURM_JOB_PARTITION": "default_partition",
+    "SLURM_CPUS_PER_TASK": "4",
+    "SLURM_MEM_PER_NODE": "4096"
+  },
+  "preparation_seconds": 0.18617913499474525,
+  "expected_dimensions": {
+    "original_minute": {
+      "rows": 1789,
+      "columns": 321,
+      "binary": 321,
+      "nonzeros": 44844
+    },
+    "identical_rows": {
+      "rows": 303,
+      "columns": 321,
+      "binary": 321,
+      "nonzeros": 10232
+    },
+    "endpoint_difference": {
+      "rows": 307,
+      "columns": 593,
+      "binary": 321,
+      "nonzeros": 7714
+    }
+  }
+}

@@ -1,0 +1,32 @@
+#!/bin/bash
+#SBATCH --job-name=cap-repr-k3
+#SBATCH --partition=default_partition
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=4G
+#SBATCH --time=00:30:00
+#SBATCH --exclude=scaglione-compute-01
+#SBATCH --requeue
+#SBATCH --open-mode=append
+#SBATCH --output=capacity_repr_%j.out
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+test -r "${GRB_LICENSE_FILE}"
+pilot_root="${CAPACITY_PILOT_DIR:-${SLURM_SUBMIT_DIR:?Submit from the deployed pilot directory}}"
+python_bin="${CAPACITY_PILOT_PYTHON:-/home/nc437/evsp_env/bin/python}"
+attempt_parent="${CAPACITY_PILOT_ATTEMPTS:-${pilot_root}/attempts}"
+attempt_id="${SLURM_JOB_ID:?}_r${SLURM_RESTART_COUNT:-0}"
+export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
+mkdir -p "${attempt_parent}"
+test -f "${pilot_root}/run_pilot.py"
+test -f "${pilot_root}/inputs/pool.jsonl"
+# Each preempted/requeued attempt uses a fresh directory; previous results remain intact.
+# run_pilot.py itself refuses to overwrite any attempt directory.
+"${python_bin}" -u "${pilot_root}/run_pilot.py" \
+  --pool "${pilot_root}/inputs/pool.jsonl" \
+  --out "${attempt_parent}/${attempt_id}" \
+  --execution-commit "$(cat "${pilot_root}/execution_commit.txt")" \
+  --seed 0 --threads 4 --mip-seconds 300 --lp-seconds 30

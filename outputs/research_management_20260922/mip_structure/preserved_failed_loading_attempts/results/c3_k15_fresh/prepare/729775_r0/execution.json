@@ -1,0 +1,19 @@
+{
+  "manifest_path": "/home/nc437/ladder-lite/mip_structure_20260922/manifest_v2.json",
+  "manifest_sha256": "df2cb41ca237cae92643689e71886b46d7fe10cce475636fde623ce4a875a379",
+  "script_sha256": "58d9f897c0efc2e6fef17c5f6ec90bb002b267f16edb44e6ec9666c8a3111d66",
+  "core_sha256": "4ee34df3959af5441b82a4f29a003850f86f29ab4e4bfd4fad8aeafa80fc0518",
+  "code_commit": "41b4383c5e4d32ba462a1ff7c82a75af9647d6c4",
+  "argv": [
+    "/home/nc437/ladder-lite/mip_structure_20260922/code_v2/runner.py",
+    "/home/nc437/ladder-lite/mip_structure_20260922",
+    "prepare",
+    "c3_k15_fresh",
+    "--manifest",
+    "/home/nc437/ladder-lite/mip_structure_20260922/manifest_v2.json"
+  ],
+  "job_id": "729775",
+  "restart": "0",
+  "host": "jingjie-cpu-18.mae.cornell.edu",
+  "started_unix": 1790055951.3093388
+}

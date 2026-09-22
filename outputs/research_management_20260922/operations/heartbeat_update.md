@@ -1,0 +1,5 @@
+# Existing heartbeat updated — 22 September 2026
+
+Updated `unicorn-evsp-dr-research-progress` through the app automation API. Identity, active state, four-hour schedule, target task and creation timestamp were preserved and checked against the persisted TOML; no duplicate monitor. Before/after prompts are retained in heartbeat_before.json and heartbeat_after.json.
+
+Added the five-preparation/25-trial fixed-pool matrix campaign and completed capacity pilot729675, their source roots, attempt/gate requirements, and existing Doc tab destinations. Current user-supplied no-Slides instructions take precedence over earlier dated automatic-Slides records, which were retained. Quiet unchanged checks and scoped/reused collections remain required. Separately prepared same-physics graph reuse is a strict-CG backlog item; no autoqueued k20. Historical manager/register content was preserved byte-for-byte after the new current sections; hashes and assertions are in monitor_update_verification.json. No live Doc/Slides edits, cluster collection or submissions were performed during this integration.

@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "decode_wall_s": 1.2579790400341153,
+  "identity_check_wall_s": 0.8067484670318663,
+  "member_fetches": {
+    "indptr": 1,
+    "indices": 1,
+    "costs": 1
+  },
+  "rows": 364,
+  "columns": 130468,
+  "nonzeros": 3541122,
+  "maxrss_kib": 197360,
+  "matrix_identity_sha256": "f7d0a404c3081edb304dee1d60856947c1751237c0559ba68bfad555f722d8a4",
+  "matrix_file_sha256": "df9d83811091aabcd560bd8706f880885bd3ee79546996aea1ca97db561866fc",
+  "source_matrix": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_sequential/prepare/729463_r0/matrix.npz"
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "case": "c1_k15",
+    "log": "salvage/c1_k15/mip_gurobi.log",
+    "summaries": [
+      {
+        "line": 102,
+        "text": "Best objective 1.800000000000e+01, best bound 1.500000000000e+01, gap 16.6667%"
+      },
+      {
+        "line": 265,
+        "text": "Best objective 1.028711999997e+03, best bound 6.729433181407e+02, gap 34.5839%"
+      }
+    ]
+  },
+  {
+    "case": "c5_k15",
+    "log": "salvage/c5_k15/mip_gurobi.log",
+    "summaries": [
+      {
+        "line": 140,
+        "text": "Best objective 1.700000000000e+01, best bound 1.500000000000e+01, gap 11.7647%"
+      },
+      {
+        "line": 308,
+        "text": "Best objective 1.023039999997e+03, best bound 6.291324246510e+02, gap 38.5036%"
+      }
+    ]
+  }
+]

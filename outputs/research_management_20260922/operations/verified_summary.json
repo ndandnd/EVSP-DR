@@ -1,0 +1,240 @@
+{
+  "observed_utc": "2026-09-22T05:23:00.390887+00:00",
+  "checks_passed": 38,
+  "checks": [
+    {
+      "label": "copied hash salvage/c1_k15/receipt.json",
+      "passed": true
+    },
+    {
+      "label": "copied hash salvage/c1_k15/physical_gate.json",
+      "passed": true
+    },
+    {
+      "label": "copied hash salvage/c1_k15/result.json",
+      "passed": true
+    },
+    {
+      "label": "copied hash salvage/c1_k15/mip_gurobi.log",
+      "passed": true
+    },
+    {
+      "label": "copied hash salvage/c1_k15/mip_stderr.log",
+      "passed": true
+    },
+    {
+      "label": "copied hash salvage/c5_k15/receipt.json",
+      "passed": true
+    },
+    {
+      "label": "copied hash salvage/c5_k15/physical_gate.json",
+      "passed": true
+    },
+    {
+      "label": "copied hash salvage/c5_k15/result.json",
+      "passed": true
+    },
+    {
+      "label": "copied hash salvage/c5_k15/mip_gurobi.log",
+      "passed": true
+    },
+    {
+      "label": "copied hash salvage/c5_k15/mip_stderr.log",
+      "passed": true
+    },
+    {
+      "label": "copied hash strict_k19/CG_COMPLETE.json",
+      "passed": true
+    },
+    {
+      "label": "copied hash strict_k19/manifest.json",
+      "passed": true
+    },
+    {
+      "label": "copied hash strict_k19/668433_r0/COMPLETE.json",
+      "passed": true
+    },
+    {
+      "label": "copied hash strict_k19/mip/command.json",
+      "passed": true
+    },
+    {
+      "label": "c1_k15 receipt finished/immutable",
+      "passed": true
+    },
+    {
+      "label": "c1_k15 result hash",
+      "passed": true
+    },
+    {
+      "label": "c1_k15 input hashes",
+      "passed": true
+    },
+    {
+      "label": "c1_k15 native zero rejects/repairs",
+      "passed": true
+    },
+    {
+      "label": "c1_k15 pool identity",
+      "passed": true
+    },
+    {
+      "label": "c1_k15 original settings",
+      "passed": true
+    },
+    {
+      "label": "c1_k15 pinned code",
+      "passed": true
+    },
+    {
+      "label": "c1_k15 budget accounting",
+      "passed": true
+    },
+    {
+      "label": "c1_k15 two full log endpoints",
+      "passed": true
+    },
+    {
+      "label": "c1_k15 fleet log matches",
+      "passed": true
+    },
+    {
+      "label": "c5_k15 receipt finished/immutable",
+      "passed": true
+    },
+    {
+      "label": "c5_k15 result hash",
+      "passed": true
+    },
+    {
+      "label": "c5_k15 input hashes",
+      "passed": true
+    },
+    {
+      "label": "c5_k15 native zero rejects/repairs",
+      "passed": true
+    },
+    {
+      "label": "c5_k15 pool identity",
+      "passed": true
+    },
+    {
+      "label": "c5_k15 original settings",
+      "passed": true
+    },
+    {
+      "label": "c5_k15 pinned code",
+      "passed": true
+    },
+    {
+      "label": "c5_k15 budget accounting",
+      "passed": true
+    },
+    {
+      "label": "c5_k15 two full log endpoints",
+      "passed": true
+    },
+    {
+      "label": "c5_k15 fleet log matches",
+      "passed": true
+    },
+    {
+      "label": "strict published result hash",
+      "passed": true
+    },
+    {
+      "label": "strict declared pool hash",
+      "passed": true
+    },
+    {
+      "label": "strict zero iterations / budget",
+      "passed": true
+    },
+    {
+      "label": "strict initial pool accounting",
+      "passed": true
+    }
+  ],
+  "queue_display_rows": {
+    "PENDING": 117,
+    "RUNNING": 41
+  },
+  "baseline_allocations": {
+    "RUNNING": 39,
+    "COMPLETED": 5
+  },
+  "baseline_completed_ids": [
+    "661616_16",
+    "661616_23",
+    "661616_38",
+    "661616_39",
+    "661616_40"
+  ],
+  "salvage_results": [
+    {
+      "case": "c1_k15",
+      "job_id": "728184",
+      "scheduler": "COMPLETED",
+      "control_buses": 19,
+      "salvage_buses": 18,
+      "fleet_bound": 15.000000000000059,
+      "fleet_proven": false,
+      "target15_attained": false,
+      "pool_columns": 97470,
+      "gate_rejected": 0,
+      "gate_repaired": 0,
+      "charging_cost": 1028.7119999974966,
+      "charging_bound": 672.9433181406603,
+      "reported_overcovered_trips": 88,
+      "physical_replay_validated": true,
+      "duplicate_trip_removal_validated": false,
+      "shared_capacity_validated": false,
+      "solver_limit_s": 1852,
+      "actual_solver_runtime_s": 1857.081954240799,
+      "charged_dive_plus_solver_s": 7204.94370462792,
+      "gate_wall_s": 135.19393209088594,
+      "external_mip_overhead_s": 137.89145715953782
+    },
+    {
+      "case": "c5_k15",
+      "job_id": "728185",
+      "scheduler": "COMPLETED",
+      "control_buses": 16,
+      "salvage_buses": 17,
+      "fleet_bound": 15.00000000000005,
+      "fleet_proven": false,
+      "target15_attained": false,
+      "pool_columns": 88607,
+      "gate_rejected": 0,
+      "gate_repaired": 0,
+      "charging_cost": 1023.0399999965448,
+      "charging_bound": 629.1324246510301,
+      "reported_overcovered_trips": 83,
+      "physical_replay_validated": true,
+      "duplicate_trip_removal_validated": false,
+      "shared_capacity_validated": false,
+      "solver_limit_s": 3266,
+      "actual_solver_runtime_s": 3268.5309562683105,
+      "charged_dive_plus_solver_s": 7202.230225481326,
+      "gate_wall_s": 117.14922242192551,
+      "external_mip_overhead_s": 117.15482425456867
+    }
+  ],
+  "strict_k19": {
+    "parent_prefix": 19,
+    "subgroup_duties": 11,
+    "trips": 331,
+    "pricing_iterations": 0,
+    "network_build_s": 16292.771283254027,
+    "total_cg_runtime_s": 16330.941708945204,
+    "final": {
+      "artificial_total": 0.0,
+      "objective": 6400391.89043352,
+      "pool_columns": 8397,
+      "route_weight": 63.99999999999953
+    },
+    "certified": false,
+    "full_pool_independently_replayed_this_collection": false,
+    "inheritance_replay_recorded": true
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "fleet": {
+    "status": 2,
+    "wall_s": 0.8622566321864724,
+    "objective": "unit fleet",
+    "fleet_cap": null,
+    "matrix_identity_sha256": "63cebd926aa1af7da2b04b0339201ef71452ac588b6d95761430050fdd85cdac",
+    "solver_objective": 7.9999999999999964,
+    "lower_bound": 8.0,
+    "incumbent_upper_bound": 9.0,
+    "removable_fraction": 0.0,
+    "fix_zero_count": 0,
+    "fix_one_count": 0,
+    "certificate_sha256": "3ddf488c7fb4ddbcc44adf7edb2e0f5ccedd48145d64478367f4599698ffa63b"
+  },
+  "charging": {
+    "status": 2,
+    "wall_s": 1.3427783362567425,
+    "objective": "expanded-grid charging-related cost",
+    "fleet_cap": 9,
+    "matrix_identity_sha256": "63cebd926aa1af7da2b04b0339201ef71452ac588b6d95761430050fdd85cdac",
+    "solver_objective": 361.69328220342453,
+    "lower_bound": 361.6932813,
+    "incumbent_upper_bound": 426.82400006,
+    "removable_fraction": 0.010640961442163244,
+    "fix_zero_count": 425,
+    "fix_one_count": 0,
+    "certificate_sha256": "9c030c0669f98c4b29c4365c6edc06f97d9817f369a5ff957d22f48ec769b343"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "checked_utc": "2026-09-22T05:39:17.010121+00:00",
+  "automation_fields_preserved": [
+    "id",
+    "kind",
+    "name",
+    "status",
+    "rrule",
+    "target_thread_id",
+    "created_at"
+  ],
+  "no_duplicate_automation": true,
+  "files": [
+    {
+      "path": "outputs/research_management_20260921/MANAGER_PLAN.md",
+      "old_sha256": "bfd1af3df2e97a1b734c08ad8760149fb78f9265f933f825559877d8fa52bd72",
+      "new_sha256": "724c60ea78bd158e8c32206c94a756c43f447f2d473ac19d5ce80995b68dafc6",
+      "historical_bytes_preserved": true
+    },
+    {
+      "path": "outputs/research_management_20260921/MONITOR_CONTINUATION.md",
+      "old_sha256": "3d8ce797e9894a70e9e7459000a3e045b553093063136d8c9ea9f9695ab360bd",
+      "new_sha256": "6864ab749fe400fc33e120c33191f4a028bedb6933c9813b0357d560e8c7fb85",
+      "historical_bytes_preserved": true
+    },
+    {
+      "path": "outputs/research_register/ACTIVE_MONITOR_PLAN.md",
+      "old_sha256": "b241ea11fcc85841ff9e6ec754395efc993db846d4819e29e9feb1cef2bbaa5a",
+      "new_sha256": "afccca271764c498ced901a9d68ca1da333d006d2b8d69635b3b2cdaf57bce67",
+      "historical_bytes_preserved": true
+    },
+    {
+      "path": "outputs/research_register/README.md",
+      "old_sha256": "4647a5e5dc5d583d1398a75e57982f2441e82bc0e791395826c36056278a3622",
+      "new_sha256": "5bfddfaf564082d559cd86c0a17bbae15d50690fb417f14f555160c2c49706e9",
+      "historical_bytes_preserved": true
+    }
+  ]
+}

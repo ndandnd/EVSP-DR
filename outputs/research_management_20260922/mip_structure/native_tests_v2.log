@@ -1,0 +1,16 @@
+test_dominance_and_row_direction (test_core.CoreTests.test_dominance_and_row_direction) ... ok
+test_dual_upper_bound_contribution_required (test_core.CoreTests.test_dual_upper_bound_contribution_required) ... ok
+test_exhaustive_bounds_aware_certificates (test_core.CoreTests.test_exhaustive_bounds_aware_certificates) ... ok
+test_identical_ties_and_components (test_core.CoreTests.test_identical_ties_and_components) ... ok
+test_negative_cost_victim_is_retained (test_core.CoreTests.test_negative_cost_victim_is_retained) ... ok
+test_reject_invalid_starts (test_core.CoreTests.test_reject_invalid_starts) ... ok
+test_safe_dominance_preserves_optimum_and_fleet_cap (test_core.CoreTests.test_safe_dominance_preserves_optimum_and_fleet_cap) ... ok
+test_strict_screen_retains_equal_objective (test_core.CoreTests.test_strict_screen_retains_equal_objective) ... ok
+test_timeout_diagnostic_is_explicit (test_core.CoreTests.test_timeout_diagnostic_is_explicit) ... ok
+test_second_launch_submits_nothing_and_uncertain_intent_blocks (test_core.IdempotenceTests.test_second_launch_submits_nothing_and_uncertain_intent_blocks) ... ok
+test_case_specific_dependencies_and_resources (test_core.LaunchTests.test_case_specific_dependencies_and_resources) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.467s
+
+OK

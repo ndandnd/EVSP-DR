@@ -1,0 +1,27 @@
+{
+  "valid": true,
+  "dimensions": {
+    "original_minute": {
+      "rows": 1789,
+      "columns": 321,
+      "binary": 321,
+      "nonzeros": 44844
+    },
+    "identical_rows": {
+      "rows": 303,
+      "columns": 321,
+      "binary": 321,
+      "nonzeros": 10232
+    },
+    "endpoint_difference": {
+      "rows": 307,
+      "columns": 593,
+      "binary": 321,
+      "nonzeros": 7714
+    }
+  },
+  "coefficient_projection": "exact",
+  "rational_vectors_checked": 1000,
+  "solver_imported": false,
+  "preparation_seconds": 0.030249333009123802
+}

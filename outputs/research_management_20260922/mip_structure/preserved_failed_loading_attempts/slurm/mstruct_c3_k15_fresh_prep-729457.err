@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/nc437/ladder-lite/mip_structure_20260922/code/runner.py", line 139, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/home/nc437/ladder-lite/mip_structure_20260922/code/runner.py", line 137, in main
+    if args.mode=='prepare':prepare(args.root,manifest,case,out)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nc437/ladder-lite/mip_structure_20260922/code/runner.py", line 70, in prepare
+    assert len(set(hashes))==len(hashes);assert sum(map(len,columns))==case['nonzeros'];assert all(c>=0 and math.isfinite(c) for c in costs)
+                                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

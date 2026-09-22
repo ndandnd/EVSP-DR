@@ -1,0 +1,41 @@
+{
+  "collected_utc": "20260922T053756Z",
+  "job_id": "729675",
+  "remote_root": "/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot",
+  "scheduler": {
+    "squeue": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "sacct": {
+      "returncode": 0,
+      "stdout": "729675|COMPLETED|0:0|00:00:06||snavely-cpu-02|4\n729675.batch|COMPLETED|0:0|00:00:06|4252K|snavely-cpu-02|4\n729675.extern|COMPLETED|0:0|00:00:06||snavely-cpu-02|4\n",
+      "stderr": ""
+    },
+    "scontrol": {
+      "returncode": 0,
+      "stdout": "JobId=729675 JobName=cap-repr-k3 UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14317 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=COMPLETED Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:06 TimeLimit=00:30:00 TimeMin=N/A SubmitTime=2026-09-22T01:36:08 EligibleTime=2026-09-22T01:36:08 AccrueTime=2026-09-22T01:36:08 StartTime=2026-09-22T01:36:48 EndTime=2026-09-22T01:36:54 Deadline=N/A PreemptEligibleTime=2026-09-22T01:36:48 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-22T01:36:48 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3034349 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList=snavely-cpu-02 BatchHost=snavely-cpu-02 NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=4,mem=4G,node=1,billing=4 AllocTRES=cpu=4,mem=4G,node=1,billing=4 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=4 MinMemoryNode=4G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot/worker.sub WorkDir=/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot StdErr=/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot/capacity_repr_729675.out StdIn=/dev/null StdOut=/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot/capacity_repr_729675.out TresPerTask=cpu=4 \n",
+      "stderr": ""
+    }
+  },
+  "files_sha256": {
+    "attempts/729675_r0/manifest.json": "1b304a4d06df098c041b6fa4bb4a3c72db05a9f21eca21cc0f16d85a0b5562ca",
+    "attempts/729675_r0/progress.json": "cfbdb6488fbf751511ed8666f735e0f278db609af45ae7b02e34161f1b08dd95",
+    "attempts/729675_r0/summary.json": "202806a942504d1016ba5f15545d786d17f4b32cb13ab04e0f6eb34a09eb3122",
+    "attempts/729675_r0/original_minute/mip.log": "ef246096f28d1ecfb126f98ab60d4180cad152ba6b7ad22dd09be21ad9099cfc",
+    "attempts/729675_r0/original_minute/model.mps.gz": "3e6fb4f8a2c9f743afc2bdda3c3cd7024ccb4d052b87ae2c3592b9c2daa102cb",
+    "attempts/729675_r0/original_minute/lp.log": "260e546639a4edf47dc7b8407a5368552d15cae2f8f22b19c0c9ca79f6c0fe58",
+    "attempts/729675_r0/original_minute/result.json": "4b19b452b3b42cafaa40540903ef925cfb06331d98851c5aac15f31946b3465d",
+    "attempts/729675_r0/identical_rows/mip.log": "01ab5233efd2dfa512102df0227e812329473560ec99238973d4a1ffe5753bf1",
+    "attempts/729675_r0/identical_rows/model.mps.gz": "28ebe6681007a91c960565d2011082c42526e02aedd5130eea7229eb6a129426",
+    "attempts/729675_r0/identical_rows/lp.log": "05013c158b65352d021d2ce341eb262bb68302889db0b9e65b57ad0b51dbe4f6",
+    "attempts/729675_r0/identical_rows/result.json": "dee1922962a99dacc053eef2b1164b5b86231334651fc6296404c61f17230817",
+    "attempts/729675_r0/endpoint_difference/mip.log": "95faea011d0c5463defcfb82e108b6cd9a169eed9cb89dd149791ede0ad609e2",
+    "attempts/729675_r0/endpoint_difference/model.mps.gz": "af5e9a91b5f2727f3e51efac67b3532aba1be7e96024c76b7f9c56fc31ebb8ea",
+    "attempts/729675_r0/endpoint_difference/lp.log": "6fd8b412b938b1ac2c8ac6270a4a56e16ea7b27cfa409abf19c6150ec25327a8",
+    "attempts/729675_r0/endpoint_difference/result.json": "9a21cc1dafbc1043a310bb9788a17c2f71ab2f90d56a66bb633aac243f41822b",
+    "capacity_repr_729675.out": "d1cb2c25545ba274edfe8c32fbd66d5d53d05c22a1e932b0ef106d7e89eb0963"
+  },
+  "scope": "Read-only point-in-time copy; incomplete running logs are not final solver proofs"
+}

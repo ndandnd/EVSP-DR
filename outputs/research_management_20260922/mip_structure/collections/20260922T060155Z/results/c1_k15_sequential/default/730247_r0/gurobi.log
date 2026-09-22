@@ -1,0 +1,83 @@
+
+Gurobi 12.0.3 (linux64) logging started Tue Sep 22 01:58:54 2026
+
+Set parameter LogFile to value "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_sequential/default/730247_r0/gurobi.log"
+Set parameter Threads to value 8
+Set parameter Seed to value 0
+Set parameter MIPGap to value 0.0001
+Set parameter TimeLimit to value 1800
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6230 CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 8 threads
+
+Non-default parameters:
+TimeLimit  1800
+Threads  8
+
+Optimize a model with 364 rows, 130468 columns and 3541122 nonzeros
+Model fingerprint: 0x900c7b58
+Variable types: 0 continuous, 130468 integer (130468 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+
+Loaded user MIP start with objective 87
+
+Presolve removed 0 rows and 572 columns (presolve time = 5s)...
+Presolve removed 0 rows and 572 columns
+Presolve time: 8.64s
+Presolved: 364 rows, 129896 columns, 3531601 nonzeros
+Variable types: 0 continuous, 129896 integer (129896 binary)
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    0.0000000e+00   3.640000e+02   0.000000e+00      9s
+
+Starting sifting (using dual simplex for sub-problems)...
+
+    Iter     Pivots    Primal Obj      Dual Obj        Time
+       0          0     infinity      0.0000000e+00      9s
+       1        607   2.7025410e+02   5.0047055e+00      9s
+       2       1955   6.5652321e+01   7.5854551e+00      9s
+       3       4013   1.5449513e+01   9.4468689e+00     10s
+       4       6861   1.5024125e+01   1.0832310e+01     10s
+       5       8457   1.5000000e+01   1.5000000e+01     10s
+
+Sifting complete
+
+    8457    1.5000000e+01   0.000000e+00   0.000000e+00     11s
+
+Root relaxation: objective 1.500000e+01, 8457 iterations, 1.56 seconds (1.70 work units)
+Total elapsed time = 19.51s (DegenMoves)
+Total elapsed time = 23.85s (DegenMoves)
+Total elapsed time = 26.88s (DegenMoves)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   15.00000    0   70   87.00000   15.00000  82.8%     -   29s
+H    0     0                      20.0000000   15.00000  25.0%     -   29s
+H    0     0                      19.0000000   15.00000  21.1%     -   29s
+H    0     0                      17.0000000   15.00000  11.8%     -   29s
+H    0     0                      16.0000000   15.00000  6.25%     -   32s
+     0     0   15.00000    0   66   16.00000   15.00000  6.25%     -   36s
+     0     0   15.00000    0   37   16.00000   15.00000  6.25%     -   90s
+H    0     0                      15.0000000   15.00000  0.00%     -  104s
+     0     0   15.00000    0   37   15.00000   15.00000  0.00%     -  104s
+
+Cutting planes:
+  MIR: 1
+
+Explored 1 nodes (111054 simplex iterations) in 104.16 seconds (131.53 work units)
+Thread count was 8 (of 40 available processors)
+
+Solution count 6: 15 16 17 ... 87
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.500000000000e+01, best bound 1.500000000000e+01, gap 0.0000%
+
+User-callback calls 13417, time in user-callback 0.07 sec

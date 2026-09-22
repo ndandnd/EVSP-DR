@@ -1,0 +1,67 @@
+
+Gurobi 12.0.3 (linux64) logging started Tue Sep 22 01:36:09 2026
+
+Set parameter LogFile to value "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_fresh/prepare/729451_r0/fleet_lp.gurobi.log"
+Set parameter Threads to value 8
+Set parameter Seed to value 0
+Set parameter MIPGap to value 0.0001
+Set parameter TimeLimit to value 300
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6348 CPU @ 2.60GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 56 physical cores, 56 logical processors, using up to 8 threads
+
+Non-default parameters:
+TimeLimit  300
+Threads  8
+
+Optimize a model with 364 rows, 79611 columns and 2322459 nonzeros
+Model fingerprint: 0x0c64c45f
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve time: 0.57s
+Presolved: 364 rows, 79611 columns, 2322459 nonzeros
+
+Concurrent LP optimizer: primal simplex, dual simplex, and barrier
+Showing barrier log only...
+
+Ordering time: 0.00s
+
+Barrier statistics:
+ AA' NZ     : 6.050e+04
+ Factor NZ  : 6.643e+04 (roughly 30 MB of memory)
+ Factor Ops : 1.614e+07 (less than 1 second per iteration)
+ Threads    : 6
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0   7.97689974e+03  1.57997404e+01  1.43e+03 1.93e-01  6.49e-02     1s
+   1   8.43739035e+01  6.06880268e+00  1.20e+01 1.70e-02  6.95e-04     1s
+   2   4.38553323e+01  8.13966353e+00  4.87e+00 8.64e-03  3.12e-04     1s
+   3   2.23581681e+01  1.09807022e+01  1.14e+00 2.24e-03  9.85e-05     1s
+   4   1.67749468e+01  1.35383080e+01  2.20e-01 5.80e-04  2.86e-05     1s
+   5   1.57479498e+01  1.44806316e+01  8.00e-02 1.97e-04  1.10e-05     1s
+   6   1.52378134e+01  1.48373827e+01  2.29e-02 5.19e-05  3.56e-06     1s
+   7   1.50381345e+01  1.49834113e+01  3.44e-03 4.15e-06  4.62e-07     1s
+   8   1.50001015e+01  1.49999393e+01  8.65e-06 1.30e-08  1.47e-09     1s
+   9   1.50000000e+01  1.50000000e+01  9.39e-12 1.50e-14  1.65e-15     1s
+
+Barrier solved model in 9 iterations and 1.20 seconds (1.35 work units)
+Optimal objective 1.50000000e+01
+
+Crossover log...
+
+      31 DPushes remaining with DInf 0.0000000e+00                 1s
+       0 DPushes remaining with DInf 0.0000000e+00                 1s
+
+   39754 PPushes remaining with PInf 0.0000000e+00                 1s
+
+Solved with dual simplex
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+   12978    1.5000000e+01   0.000000e+00   0.000000e+00      2s
+
+Solved in 12978 iterations and 2.36 seconds (3.66 work units)
+Optimal objective  1.500000000e+01

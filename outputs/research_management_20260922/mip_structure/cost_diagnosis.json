@@ -1,0 +1,120 @@
+{
+  "source": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/base/135643_r0/cg.json.columns.jsonl",
+  "source_sha256": "8fc224ddb3f0c9109f38549bc39d8f63749c8fa425a52a473c3d2d13319abb48",
+  "raw_records": 38130,
+  "unique_incidence_columns": 38130,
+  "negative_count": 32,
+  "min_variable_cost": -2.9103830456733704e-11,
+  "max_variable_cost": 148.90400000009686,
+  "negative_max": -1.4551915228366852e-11,
+  "representative_negative": [
+    {
+      "ordinal": 28837,
+      "total": 99999.99999999997,
+      "variable": -2.9103830456733704e-11,
+      "cost_repr": "99999.99999999997",
+      "trip_count": 13,
+      "fields": {
+        "cost_semantics": "expanded_grid_cost",
+        "master_cost_semantics": "expanded_grid_cost",
+        "expanded_grid_cost": 99999.99999999997,
+        "continuous_realized_cost": 100000.0,
+        "origin": "event_time_pricing",
+        "found_iter": 952
+      },
+      "charging_stops": {
+        "stations": [],
+        "cst": [],
+        "cet": [],
+        "kwh": []
+      }
+    },
+    {
+      "ordinal": 33630,
+      "total": 99999.99999999997,
+      "variable": -2.9103830456733704e-11,
+      "cost_repr": "99999.99999999997",
+      "trip_count": 13,
+      "fields": {
+        "cost_semantics": "expanded_grid_cost",
+        "master_cost_semantics": "expanded_grid_cost",
+        "expanded_grid_cost": 99999.99999999997,
+        "continuous_realized_cost": 100000.0,
+        "origin": "event_time_pricing",
+        "found_iter": 1111
+      },
+      "charging_stops": {
+        "stations": [],
+        "cst": [],
+        "cet": [],
+        "kwh": []
+      }
+    },
+    {
+      "ordinal": 33631,
+      "total": 99999.99999999997,
+      "variable": -2.9103830456733704e-11,
+      "cost_repr": "99999.99999999997",
+      "trip_count": 13,
+      "fields": {
+        "cost_semantics": "expanded_grid_cost",
+        "master_cost_semantics": "expanded_grid_cost",
+        "expanded_grid_cost": 99999.99999999997,
+        "continuous_realized_cost": 100000.0,
+        "origin": "event_time_pricing",
+        "found_iter": 1111
+      },
+      "charging_stops": {
+        "stations": [],
+        "cst": [],
+        "cet": [],
+        "kwh": []
+      }
+    },
+    {
+      "ordinal": 34865,
+      "total": 99999.99999999997,
+      "variable": -2.9103830456733704e-11,
+      "cost_repr": "99999.99999999997",
+      "trip_count": 13,
+      "fields": {
+        "cost_semantics": "expanded_grid_cost",
+        "master_cost_semantics": "expanded_grid_cost",
+        "expanded_grid_cost": 99999.99999999997,
+        "continuous_realized_cost": 100000.0,
+        "origin": "event_time_pricing",
+        "found_iter": 1153
+      },
+      "charging_stops": {
+        "stations": [],
+        "cst": [],
+        "cet": [],
+        "kwh": []
+      }
+    },
+    {
+      "ordinal": 29804,
+      "total": 99999.99999999999,
+      "variable": -1.4551915228366852e-11,
+      "cost_repr": "99999.99999999999",
+      "trip_count": 12,
+      "fields": {
+        "cost_semantics": "expanded_grid_cost",
+        "master_cost_semantics": "expanded_grid_cost",
+        "expanded_grid_cost": 99999.99999999999,
+        "continuous_realized_cost": 100000.0,
+        "origin": "event_time_pricing",
+        "found_iter": 984
+      },
+      "charging_stops": {
+        "stations": [],
+        "cst": [],
+        "cet": [],
+        "kwh": []
+      }
+    }
+  ],
+  "nominal_subtracted_bus_cost": 100000,
+  "scope": "Exact source coefficients; no clamping or model mutation",
+  "created_unix": 1790055717.6455262
+}

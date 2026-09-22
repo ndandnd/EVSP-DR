@@ -1,0 +1,87 @@
+{
+  "case": "c4_k08_fresh",
+  "arm": "strong_start",
+  "model": "same-pool binary covering fleet-only",
+  "gurobi_version": "12.0.3",
+  "model_dimensions": {
+    "rows": 188,
+    "variables": 39668,
+    "nonzeros": 1057136
+  },
+  "effective_parameters": {
+    "Threads": 8,
+    "Seed": 0,
+    "TimeLimit": 1800.0,
+    "MIPGap": 0.0001,
+    "MIPFocus": 0,
+    "PreSparsify": -1,
+    "Presolve": -1,
+    "Method": -1
+  },
+  "artifact_loading_s": 194.8411624999717,
+  "model_build_wall_s": 0.6872183177620173,
+  "matrix_identity_sha256": "d27e254a66aaf9d608d0a7d1f40718650d74e8f790a3cb1fb46157be6051bb7a",
+  "prepared_metadata_sha256": "ee293faa9c157e2df8c8fbc129d597c0a2af6e37dcea3462a20965e5bf69824c",
+  "original_endpoint": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c4_k08/mip_base/135655_r0/result.json",
+  "threads": 8,
+  "seed": 0,
+  "time_limit_s": 1800,
+  "actual_optimize_wall_s": 601.2738738069311,
+  "gurobi_runtime_s": 601.2730529308319,
+  "gurobi_status": 2,
+  "fleet": 9,
+  "bound": 9.0,
+  "finite_pool_fleet_proven": true,
+  "target": 8,
+  "target_attained": false,
+  "selected_indices": [
+    30662,
+    36244,
+    36280,
+    37741,
+    37954,
+    38072,
+    38926,
+    39432,
+    39534
+  ],
+  "selected_route_hashes": [
+    "3571258630146c3484d20bfd4e4aa3f6299f358222d7f39e8ec487345b9fd057",
+    "4616640e40032839312c3b7b8701d8d3bcf055dd0a10e5479577220f49ecb34b",
+    "99a95e791edfff5c8ea6930834310436e92d47247ecd558238a704ad05e633ac",
+    "d7b24bcb6effdcb1c20f11c255dd8a96c2b4a6c94a08b835468e62dba92f4eb0",
+    "ba67b8110163ea2ff887b320954fd44e66e2da5928397aaa61943f60af463d6c",
+    "031374066e3ff94a5279de05cb4ef2d0da6abed8033c9573997e218a2300c6f1",
+    "622674118182ea491b32096fa7d9ad5a806cf2f44704bec1c1d09404e10d4894",
+    "a30134cd4675151d3b7de51dfea4e10ec01dfa83b4f7685b4a6e6db5151871ea",
+    "3ed40a82e6bc94fe930dac44b47874f32eb47921d9443f65dc756b5556e2b49b"
+  ],
+  "row_coverage_validated": true,
+  "shared_capacity_enforced": false,
+  "start_indices": [
+    30662,
+    36244,
+    36280,
+    37741,
+    37954,
+    38072,
+    38926,
+    39432,
+    39534
+  ],
+  "start_buses": 9,
+  "start_scope": "Offline saved stage-one incumbent from this exact ordered pool; original acquisition time excluded from new trial, not a timed algorithm",
+  "events": [
+    {
+      "runtime_s": 0.011134862899780273,
+      "fleet": 9.0,
+      "node_count": 0.0
+    }
+  ],
+  "first_target_time_s": null,
+  "host": "lisbeth.tech.cornell.edu",
+  "log_sha256": "e337a7bdf0b22c6839eaba7d1010c3b333faedb54f596c98f9316a61cbec87bb",
+  "start_acceptance_messages": [
+    "Loaded user MIP start with objective 9"
+  ]
+}

@@ -1,0 +1,31 @@
+
+Gurobi 12.0.3 (linux64) logging started Tue Sep 22 01:36:53 2026
+
+Set parameter LogFile to value "/share/scaglione/nc437/evsp-dr/charging_column_structure_20260922/pilot/attempts/729675_r0/endpoint_difference/lp.log"
+Set parameter TimeLimit to value 30
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  30
+Threads  4
+
+Optimize a model with 307 rows, 593 columns and 7714 nonzeros
+Model fingerprint: 0x40f89e16
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 176 rows and 181 columns
+Presolve time: 0.01s
+Presolved: 131 rows, 412 columns, 7245 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    0.0000000e+00   3.500000e+01   0.000000e+00      0s
+     106    3.0000000e+00   0.000000e+00   0.000000e+00      0s
+
+Solved in 106 iterations and 0.01 seconds (0.01 work units)
+Optimal objective  3.000000000e+00

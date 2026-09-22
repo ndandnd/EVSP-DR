@@ -1,0 +1,446 @@
+{
+  "completed": true,
+  "variants": [
+    {
+      "variant": "original_minute",
+      "dimensions": {
+        "rows": 1789,
+        "columns": 321,
+        "binary": 321,
+        "nonzeros": 44844
+      },
+      "model_fingerprint": 628115598,
+      "build_update_wall_s": 0.20722076576203108,
+      "lp_optimize_wall_s": 0.04947272827848792,
+      "lp": {
+        "Status": 2.0,
+        "SolCount": 1.0,
+        "Runtime": 0.048027992248535156,
+        "Work": 0.016770927280325258,
+        "NodeCount": 0.0,
+        "IterCount": 144.0,
+        "BarIterCount": 0.0,
+        "MemUsed": 0.00994484,
+        "MaxMemUsed": 0.00994484,
+        "objective": 2.9999999999999956
+      },
+      "lp_original_matrix_validation": {
+        "valid": true,
+        "violations": [],
+        "max_occupancy": {
+          "2190L": 1.000000000000003,
+          "4808": 1.000000000000003,
+          "3127L": 0,
+          "7880C": 0,
+          "JON_A": 0
+        },
+        "covered_trip_count": 35,
+        "scope": "Original saved trip-incidence and one-minute charger capacity rows; no new route-physics certification"
+      },
+      "mip_optimize_wall_s": 0.33922021416947246,
+      "mip": {
+        "Status": 2.0,
+        "SolCount": 2.0,
+        "Runtime": 0.33849000930786133,
+        "Work": 0.03163092298139492,
+        "NodeCount": 1.0,
+        "IterCount": 131.0,
+        "BarIterCount": 0.0,
+        "ObjBound": 3.0,
+        "MIPGap": 0.0,
+        "MemUsed": 0.002843744,
+        "MaxMemUsed": 0.00994484,
+        "objective": 3.0
+      },
+      "selected_indices": [
+        199,
+        274,
+        315
+      ],
+      "original_matrix_validation": {
+        "valid": true,
+        "violations": [],
+        "max_occupancy": {
+          "2190L": 1,
+          "4808": 1,
+          "3127L": 0,
+          "7880C": 0,
+          "JON_A": 0
+        },
+        "covered_trip_count": 35,
+        "scope": "Original saved trip-incidence and one-minute charger capacity rows; no new route-physics certification"
+      },
+      "finite_pool_fleet_proven": true,
+      "incumbent_events": [
+        {
+          "runtime_s": 0.08955907821655273,
+          "objective": 35.0,
+          "bound": -1e+100
+        },
+        {
+          "runtime_s": 0.2862551212310791,
+          "objective": 3.0,
+          "bound": 3.0
+        }
+      ],
+      "variant_total_wall_s": 0.7331163701601326,
+      "process_cumulative_maxrss_kib": 57520,
+      "lp_log_summary": {
+        "presolve_time_s": [
+          {
+            "line": 23,
+            "groups": [
+              "0.03"
+            ],
+            "text": "Presolve time: 0.03s"
+          }
+        ],
+        "root_relaxation": [],
+        "presolved_dimensions": [
+          {
+            "line": 24,
+            "groups": [
+              "298",
+              "321",
+              "10227"
+            ],
+            "text": "Presolved: 298 rows, 321 columns, 10227 nonzeros"
+          }
+        ]
+      },
+      "mip_log_summary": {
+        "presolve_time_s": [
+          {
+            "line": 28,
+            "groups": [
+              "0.12"
+            ],
+            "text": "Presolve time: 0.12s"
+          }
+        ],
+        "root_relaxation": [
+          {
+            "line": 32,
+            "groups": [
+              "3.000000e+00",
+              "131",
+              "0.00"
+            ],
+            "text": "Root relaxation: objective 3.000000e+00, 131 iterations, 0.00 seconds (0.00 work units)"
+          }
+        ],
+        "presolved_dimensions": [
+          {
+            "line": 29,
+            "groups": [
+              "82",
+              "290",
+              "5009"
+            ],
+            "text": "Presolved: 82 rows, 290 columns, 5009 nonzeros"
+          }
+        ]
+      }
+    },
+    {
+      "variant": "identical_rows",
+      "dimensions": {
+        "rows": 303,
+        "columns": 321,
+        "binary": 321,
+        "nonzeros": 10232
+      },
+      "model_fingerprint": 1805703609,
+      "build_update_wall_s": 0.028327613603323698,
+      "lp_optimize_wall_s": 0.015073102433234453,
+      "lp": {
+        "Status": 2.0,
+        "SolCount": 1.0,
+        "Runtime": 0.01462101936340332,
+        "Work": 0.006846221018012591,
+        "NodeCount": 0.0,
+        "IterCount": 144.0,
+        "BarIterCount": 0.0,
+        "MemUsed": 0.003615232,
+        "MaxMemUsed": 0.00994484,
+        "objective": 2.9999999999999956
+      },
+      "lp_original_matrix_validation": {
+        "valid": true,
+        "violations": [],
+        "max_occupancy": {
+          "2190L": 1.000000000000003,
+          "4808": 1.000000000000003,
+          "3127L": 0,
+          "7880C": 0,
+          "JON_A": 0
+        },
+        "covered_trip_count": 35,
+        "scope": "Original saved trip-incidence and one-minute charger capacity rows; no new route-physics certification"
+      },
+      "mip_optimize_wall_s": 0.05872593307867646,
+      "mip": {
+        "Status": 2.0,
+        "SolCount": 2.0,
+        "Runtime": 0.058036088943481445,
+        "Work": 0.025404788893656115,
+        "NodeCount": 1.0,
+        "IterCount": 150.0,
+        "BarIterCount": 0.0,
+        "ObjBound": 3.0,
+        "MIPGap": 0.0,
+        "MemUsed": 0.001079264,
+        "MaxMemUsed": 0.00994484,
+        "objective": 3.0
+      },
+      "selected_indices": [
+        199,
+        274,
+        315
+      ],
+      "original_matrix_validation": {
+        "valid": true,
+        "violations": [],
+        "max_occupancy": {
+          "2190L": 1,
+          "4808": 1,
+          "3127L": 0,
+          "7880C": 0,
+          "JON_A": 0
+        },
+        "covered_trip_count": 35,
+        "scope": "Original saved trip-incidence and one-minute charger capacity rows; no new route-physics certification"
+      },
+      "finite_pool_fleet_proven": true,
+      "incumbent_events": [
+        {
+          "runtime_s": 0.0009930133819580078,
+          "objective": 35.0,
+          "bound": -1e+100
+        },
+        {
+          "runtime_s": 0.05591702461242676,
+          "objective": 3.0,
+          "bound": 3.0000000000000004
+        }
+      ],
+      "variant_total_wall_s": 0.21213200502097607,
+      "process_cumulative_maxrss_kib": 58416,
+      "lp_log_summary": {
+        "presolve_time_s": [
+          {
+            "line": 23,
+            "groups": [
+              "0.00"
+            ],
+            "text": "Presolve time: 0.00s"
+          }
+        ],
+        "root_relaxation": [],
+        "presolved_dimensions": [
+          {
+            "line": 24,
+            "groups": [
+              "298",
+              "321",
+              "10227"
+            ],
+            "text": "Presolved: 298 rows, 321 columns, 10227 nonzeros"
+          }
+        ]
+      },
+      "mip_log_summary": {
+        "presolve_time_s": [
+          {
+            "line": 28,
+            "groups": [
+              "0.04"
+            ],
+            "text": "Presolve time: 0.04s"
+          }
+        ],
+        "root_relaxation": [
+          {
+            "line": 32,
+            "groups": [
+              "3.000000e+00",
+              "150",
+              "0.00"
+            ],
+            "text": "Root relaxation: objective 3.000000e+00, 150 iterations, 0.00 seconds (0.00 work units)"
+          }
+        ],
+        "presolved_dimensions": [
+          {
+            "line": 29,
+            "groups": [
+              "108",
+              "292",
+              "5596"
+            ],
+            "text": "Presolved: 108 rows, 292 columns, 5596 nonzeros"
+          }
+        ]
+      }
+    },
+    {
+      "variant": "endpoint_difference",
+      "dimensions": {
+        "rows": 307,
+        "columns": 593,
+        "binary": 321,
+        "nonzeros": 7714
+      },
+      "model_fingerprint": 898685487,
+      "build_update_wall_s": 0.04239864321425557,
+      "lp_optimize_wall_s": 0.01516684889793396,
+      "lp": {
+        "Status": 2.0,
+        "SolCount": 1.0,
+        "Runtime": 0.014698982238769531,
+        "Work": 0.006837238180057325,
+        "NodeCount": 0.0,
+        "IterCount": 106.0,
+        "BarIterCount": 0.0,
+        "MemUsed": 0.003675864,
+        "MaxMemUsed": 0.00994484,
+        "objective": 3.0
+      },
+      "lp_original_matrix_validation": {
+        "valid": true,
+        "violations": [],
+        "max_occupancy": {
+          "2190L": 1.0,
+          "4808": 1.0,
+          "3127L": 0,
+          "7880C": 0,
+          "JON_A": 0
+        },
+        "covered_trip_count": 35,
+        "scope": "Original saved trip-incidence and one-minute charger capacity rows; no new route-physics certification"
+      },
+      "mip_optimize_wall_s": 0.10023127682507038,
+      "mip": {
+        "Status": 2.0,
+        "SolCount": 2.0,
+        "Runtime": 0.09937000274658203,
+        "Work": 0.033846877473404306,
+        "NodeCount": 1.0,
+        "IterCount": 166.0,
+        "BarIterCount": 0.0,
+        "ObjBound": 3.0,
+        "MIPGap": 0.0,
+        "MemUsed": 0.001198096,
+        "MaxMemUsed": 0.00994484,
+        "objective": 3.0
+      },
+      "selected_indices": [
+        199,
+        274,
+        316
+      ],
+      "original_matrix_validation": {
+        "valid": true,
+        "violations": [],
+        "max_occupancy": {
+          "2190L": 1,
+          "4808": 1,
+          "3127L": 0,
+          "7880C": 0,
+          "JON_A": 0
+        },
+        "covered_trip_count": 35,
+        "scope": "Original saved trip-incidence and one-minute charger capacity rows; no new route-physics certification"
+      },
+      "finite_pool_fleet_proven": true,
+      "incumbent_events": [
+        {
+          "runtime_s": 0.0009291172027587891,
+          "objective": 35.0,
+          "bound": -1e+100
+        },
+        {
+          "runtime_s": 0.09519791603088379,
+          "objective": 3.0,
+          "bound": 3.0
+        }
+      ],
+      "variant_total_wall_s": 0.299571197014302,
+      "process_cumulative_maxrss_kib": 59184,
+      "lp_log_summary": {
+        "presolve_time_s": [
+          {
+            "line": 23,
+            "groups": [
+              "0.01"
+            ],
+            "text": "Presolve time: 0.01s"
+          }
+        ],
+        "root_relaxation": [],
+        "presolved_dimensions": [
+          {
+            "line": 24,
+            "groups": [
+              "131",
+              "412",
+              "7245"
+            ],
+            "text": "Presolved: 131 rows, 412 columns, 7245 nonzeros"
+          }
+        ]
+      },
+      "mip_log_summary": {
+        "presolve_time_s": [
+          {
+            "line": 28,
+            "groups": [
+              "0.08"
+            ],
+            "text": "Presolve time: 0.08s"
+          }
+        ],
+        "root_relaxation": [
+          {
+            "line": 32,
+            "groups": [
+              "3.000000e+00",
+              "166",
+              "0.01"
+            ],
+            "text": "Root relaxation: objective 3.000000e+00, 166 iterations, 0.01 seconds (0.00 work units)"
+          }
+        ],
+        "presolved_dimensions": [
+          {
+            "line": 29,
+            "groups": [
+              "131",
+              "403",
+              "6779"
+            ],
+            "text": "Presolved: 131 rows, 403 columns, 6779 nonzeros"
+          }
+        ]
+      }
+    }
+  ],
+  "total_wall_s": 1.8683039788156748,
+  "comparison_scope": "Exact formulations of identical fixed pool; timed-out incumbents may differ; compare proven fleet objectives and LP optima only when available",
+  "output_hashes": {
+    "manifest.json": "1b304a4d06df098c041b6fa4bb4a3c72db05a9f21eca21cc0f16d85a0b5562ca",
+    "progress.json": "cfbdb6488fbf751511ed8666f735e0f278db609af45ae7b02e34161f1b08dd95",
+    "original_minute/mip.log": "ef246096f28d1ecfb126f98ab60d4180cad152ba6b7ad22dd09be21ad9099cfc",
+    "original_minute/model.mps.gz": "3e6fb4f8a2c9f743afc2bdda3c3cd7024ccb4d052b87ae2c3592b9c2daa102cb",
+    "original_minute/lp.log": "260e546639a4edf47dc7b8407a5368552d15cae2f8f22b19c0c9ca79f6c0fe58",
+    "original_minute/result.json": "4b19b452b3b42cafaa40540903ef925cfb06331d98851c5aac15f31946b3465d",
+    "identical_rows/mip.log": "01ab5233efd2dfa512102df0227e812329473560ec99238973d4a1ffe5753bf1",
+    "identical_rows/model.mps.gz": "28ebe6681007a91c960565d2011082c42526e02aedd5130eea7229eb6a129426",
+    "identical_rows/lp.log": "05013c158b65352d021d2ce341eb262bb68302889db0b9e65b57ad0b51dbe4f6",
+    "identical_rows/result.json": "dee1922962a99dacc053eef2b1164b5b86231334651fc6296404c61f17230817",
+    "endpoint_difference/mip.log": "95faea011d0c5463defcfb82e108b6cd9a169eed9cb89dd149791ede0ad609e2",
+    "endpoint_difference/model.mps.gz": "af5e9a91b5f2727f3e51efac67b3532aba1be7e96024c76b7f9c56fc31ebb8ea",
+    "endpoint_difference/lp.log": "6fd8b412b938b1ac2c8ac6270a4a56e16ea7b27cfa409abf19c6150ec25327a8",
+    "endpoint_difference/result.json": "9a21cc1dafbc1043a310bb9788a17c2f71ab2f90d56a66bb633aac243f41822b"
+  }
+}

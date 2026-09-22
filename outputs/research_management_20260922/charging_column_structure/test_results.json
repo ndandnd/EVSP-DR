@@ -1,0 +1,27 @@
+{
+  "binary_selections_tested": 32,
+  "rational_selections_tested": 243,
+  "random_rational_cases_tested": 2000,
+  "exact_equivalence_passed": true,
+  "toy_A_shape": [
+    3,
+    5
+  ],
+  "toy_B_shape": [
+    5,
+    5
+  ],
+  "toy_D_shape": [
+    6,
+    5
+  ],
+  "toy_B_nnz": 10,
+  "toy_D_nnz": 12,
+  "conservative_bin_counterexample": {
+    "exact_peak": 1,
+    "one_minute_overlap_row_peak": 2
+  },
+  "long_interval_grid_rows": 100,
+  "long_interval_identical_adjacent_runs": 3,
+  "scope": "Exact rational algebra and enumeration; no optimizer calls; fixed intervals only"
+}

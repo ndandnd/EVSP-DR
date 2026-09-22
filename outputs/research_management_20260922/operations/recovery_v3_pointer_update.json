@@ -1,0 +1,41 @@
+{
+  "checked_utc": "2026-09-22T06:01:10.613642+00:00",
+  "receipt_sha256": "ef1eac44a4aa28484a51e4922167550851836315997725557f3344cdf6b65c4a",
+  "automation_identity_and_all_nonprompt_fields_preserved": true,
+  "noncampaign_prompt_sections_identical": true,
+  "four_hour_cadence": "FREQ=HOURLY;INTERVAL=4",
+  "status": "ACTIVE",
+  "no_cluster_read": true,
+  "files": [
+    {
+      "path": "outputs/research_management_20260921/MANAGER_PLAN.md",
+      "before_sha256": "724c60ea78bd158e8c32206c94a756c43f447f2d473ac19d5ce80995b68dafc6",
+      "after_sha256": "3f11b4fc0be44ace13fc33c50c06da285fad556834a4b72ed0f876d1fa72d26a",
+      "history_bytes_preserved": true
+    },
+    {
+      "path": "outputs/research_management_20260921/MONITOR_CONTINUATION.md",
+      "before_sha256": "701fed79e4cb4a7fae603b7482180355056488deb51d39959108e8911869467b",
+      "after_sha256": "b1a8f331f507323ae3357693568041a4b6db732becab863ca3c26ad4718fb24a",
+      "history_bytes_preserved": true
+    },
+    {
+      "path": "outputs/research_register/ACTIVE_MONITOR_PLAN.md",
+      "before_sha256": "afccca271764c498ced901a9d68ca1da333d006d2b8d69635b3b2cdaf57bce67",
+      "after_sha256": "cb8104a0d920bc96f597057a16aad30e033596ce0d0f0c50c7ae72b90dea77d8",
+      "history_bytes_preserved": true
+    },
+    {
+      "path": "outputs/research_register/README.md",
+      "before_sha256": "b49409b6f79c5e71d977ed4f42fb2ba13621d13b009e656c393ad794412516b1",
+      "after_sha256": "324daebe3d1e85e2834e9b045dfc48b10e7ce53f60f3116437f872075ab2e07b",
+      "history_bytes_preserved": true
+    },
+    {
+      "path": "outputs/research_register/entries/20260922_overnight_structure_and_operations.md",
+      "before_sha256": "9ba60633ee79f9bbeb9de4de93e6ca739dd4f7701dcc407df96db1ceae4282e1",
+      "after_sha256": "1a9d678be780453aaa093becb67247a4fc132ff56a9f41d36443c0bf4f9df34a",
+      "history_bytes_preserved": true
+    }
+  ]
+}
