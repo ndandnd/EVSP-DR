@@ -1,0 +1,191 @@
+{
+  "case": "c1_k08_fresh",
+  "arm": "presparsify1",
+  "model": "same-pool binary covering fleet-only",
+  "gurobi_version": "12.0.3",
+  "model_dimensions": {
+    "rows": 194,
+    "variables": 39940,
+    "nonzeros": 1092654
+  },
+  "effective_parameters": {
+    "Threads": 8,
+    "Seed": 0,
+    "TimeLimit": 1800.0,
+    "MIPGap": 0.0001,
+    "MIPFocus": 0,
+    "PreSparsify": 1,
+    "Presolve": -1,
+    "Method": -1
+  },
+  "artifact_loading_s": 224.65707482071593,
+  "model_build_wall_s": 0.6239730636589229,
+  "matrix_identity_sha256": "63cebd926aa1af7da2b04b0339201ef71452ac588b6d95761430050fdd85cdac",
+  "prepared_metadata_sha256": "d8b2e1ba899f665a2012d7453dd90e747b29522fbdf4e77ba3e6547dc236e822",
+  "original_endpoint": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k08/mip_base/135595_r0/result.json",
+  "threads": 8,
+  "seed": 0,
+  "time_limit_s": 1800,
+  "actual_optimize_wall_s": 984.827792389784,
+  "gurobi_runtime_s": 984.8275420665741,
+  "gurobi_status": 2,
+  "fleet": 9,
+  "bound": 9.0,
+  "finite_pool_fleet_proven": true,
+  "target": 8,
+  "target_attained": false,
+  "selected_indices": [
+    261,
+    389,
+    18847,
+    33978,
+    35875,
+    37444,
+    39408,
+    39775,
+    39901
+  ],
+  "selected_route_hashes": [
+    "d497997d04097d7ec48cf8d13737eb1423af7c02863b778a6c341c1c6de8766e",
+    "4ddc9e98d649447880365595778ecad441319d18f884dc6613ac315688f8ad89",
+    "7b84e1b20cee0d7d47c7a2c47bc7b50a348b8e713bfc78111fd78f5238971f4e",
+    "a3ba941761f808c7ae582a2ac2389c61aae8c199395dc986e469a73e52dde3fe",
+    "bbfde85f00aed9b91234c6f79ea3442f9c6371eb9e38bda7632634712aa98c58",
+    "447f6c0d7f88cc72b90fb4c394ce0a1252ff3d92169a7f9ef8a1496159590154",
+    "619cd3eaa1ff90317e05181d96b8175ac160f9051dc2d5bd43f9977a9901a408",
+    "d78102020dcf99a9712d36cfe16b398b288e9ea20e279bc1b1932ed3a3fa30b5",
+    "64c79bbd064defae20245c17b07dfe37f38a66f6b0c452823a52c26ceebe7c4b"
+  ],
+  "row_coverage_validated": true,
+  "shared_capacity_enforced": false,
+  "start_indices": [
+    194,
+    244,
+    25243,
+    39111,
+    36740,
+    1,
+    4,
+    10,
+    11,
+    12,
+    17,
+    20,
+    24,
+    25,
+    30,
+    31,
+    35,
+    37,
+    43,
+    44,
+    48,
+    49,
+    52,
+    54,
+    61,
+    62,
+    66,
+    67,
+    68,
+    71,
+    72,
+    75,
+    79,
+    83,
+    85,
+    89,
+    96,
+    98,
+    101,
+    103,
+    104,
+    108,
+    109,
+    111,
+    115,
+    118,
+    119,
+    124,
+    128,
+    131,
+    133,
+    135,
+    137,
+    152,
+    162,
+    171,
+    172,
+    180,
+    181,
+    183,
+    189,
+    191,
+    192
+  ],
+  "start_buses": 63,
+  "start_scope": "Same deterministic greedy pool partition as original saved run",
+  "events": [
+    {
+      "runtime_s": 0.012337923049926758,
+      "fleet": 63.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 2.5989840030670166,
+      "fleet": 58.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 5.323986053466797,
+      "fleet": 23.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 5.468427896499634,
+      "fleet": 18.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 5.499846935272217,
+      "fleet": 17.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 5.615844011306763,
+      "fleet": 15.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 5.679326057434082,
+      "fleet": 13.999999999999993,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 6.693168878555298,
+      "fleet": 11.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 7.801982879638672,
+      "fleet": 10.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 227.25538301467896,
+      "fleet": 9.0,
+      "node_count": 2088.0
+    },
+    {
+      "runtime_s": 984.8225338459015,
+      "fleet": 9.0,
+      "node_count": 32838.0
+    }
+  ],
+  "first_target_time_s": null,
+  "host": "scaglione-cpu-02.tech.cornell.edu",
+  "log_sha256": "8a692bc40417a9bba6e54f49b9390cb4cb4f2252172cf840fd946706af7cd9c8",
+  "start_acceptance_messages": [
+    "Loaded user MIP start with objective 63"
+  ]
+}

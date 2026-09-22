@@ -1,0 +1,1191 @@
+{
+  "collected_utc": "2026-09-22T07:57:42.307434+00:00",
+  "policy": {
+    "text": "# EVSP\u2013DR Scaglione resource policy\n\nStanding user instruction, confirmed 9 September 2026.\n\nReserve scaglione-compute-01 for GPU users. GPU jobs also need CPU resources; CPU-only jobs must not exhaust that node. Every EVSP\u2013DR Scaglione CPU/MIP submission must include `--exclude=scaglione-compute-01`. Note that scaglione-cpu-01 is a different node and is not the reserved GPU node.\n\nUse the remaining Scaglione CPU machines for MIP computations, subject to the scheduler and other users. Do not interpret the request to reduce usage as a blanket shutdown of all Scaglione work. Run column generation on default_partition where suitable; save supported checkpoints for preemption. A Gurobi incumbent checkpoint does not preserve its branch-and-bound tree.\n\nDo not release held historical campaigns automatically. Verify node exclusion in scontrol after submission. This policy remains in force until the user explicitly changes it.\n\nClarification, 10 September 2026: scaglione-compute-01 also belongs to default_partition. The exclusion is a physical-node reservation, not just a partition-specific rule. Include --exclude=scaglione-compute-01 in ALL EVSP\u2013DR CPU-only submissions, including default-partition CG, and verify the effective exclusion after submission.\n\n## Default-partition concurrency \u2014 user instruction, 10 September 2026\n\nFor independent EVSP\u2013DR column-generation cases on default_partition, use a default array concurrency of 50, or the number of cases if fewer than 50 exist. Do not impose arbitrary caps of 2, 16 or 24. A smaller cap requires a documented cluster restriction or concrete measured bottleneck (per-job RAM, aggregate node RAM, I/O, license service or other resource), with the reason recorded in the campaign manifest. More than 50 is allowed when justified by workload size and resource evidence.\n\nRequest realistic CPU and RAM per job; Slurm controls actual admission and reserves these resources. Raising the array throttle does not raise an individual job's memory limit. Preserve true data dependencies: a chain that imports the previous k's columns is sequential by design, not artificially throttled. If several independent chains exist, they may proceed in parallel.\n\nThis supersedes the earlier pilot default of 16. It does not release held historical jobs, change Scaglione MIP limits, or relax the scaglione-compute-01 exclusion. Verify actual array throttles and node exclusions after submission. At this audit, the Cornell Unicorn documentation and inspected user/QOS fields contain no explicit concurrency restriction below 50; this is not a claim that all system/parent-account limits are absent.\n\n## Overnight default-partition MIPs \u2014 11 September 2026 UTC\n\nThe user authorizes default_partition for the one-hour saved-pool MIPs, accepting preemption and lost branch-and-bound search. Pending fresh-covering MIPs may migrate there; retain exact scientific settings and true input dependencies. Keep per-attempt job IDs, scheduler states, timing/resource/priority samples and output hashes in the MIP preemption study. No automatic requeue for wrappers unable to restart safely; interrupted retries require unique attempt outputs and preserved prior records. Preemption risk is measured, not presumed zero. Existing Scaglione MIPs remain usable. scaglione-compute-01 remains excluded everywhere and held historical jobs stay untouched.\n\n## Default MIPs \u2014 user clarification 11 September evening\n\nUse default_partition for new table-filling MIPs. User accepts preemption and requeue; use restart-safe output paths and retain attempt statistics. Gurobi tree search restarts. Exclude scaglione-compute-01 and preserve held jobs. Overnight extension worker uses explicit --requeue and job/restart output directories.\n\n## Idle queue recovery \u2014 20 September 2026\n\nWhen no EVSP\u2013DR jobs are running, prioritize recovery of useful already-authorized work without waiting for another user prompt. Diagnose failed predecessors, right-size resources from evidence, and repair true dependencies. Preserve scientific settings and attempt records; do not release held historical jobs. Distinguish scheduler Priority/Resources waits from broken dependencies.\n",
+    "sha256": "f9c5982718da6ab758019ceb85e31b539aea5416adc51816bc4bae220728e40b"
+  },
+  "metadata": [
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k33/cache/661665_r0/execution.json",
+      "bytes": 1887,
+      "modified_unix": 1790059154.9971757
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k33/cache/661665_r0/network.pkl",
+      "bytes": 22923092324,
+      "modified_unix": 1790059061.4043107
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k33/cache/661665_r0/network.pkl.manifest.json",
+      "bytes": 1277,
+      "modified_unix": 1790059145.1668718
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k33/cache/661665_r0/progress.jsonl",
+      "bytes": 150776,
+      "modified_unix": 1790059145.1938725
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k34/cache/661666_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790015988.7120898
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k34/cache/661666_r0/progress.jsonl",
+      "bytes": 166332,
+      "modified_unix": 1790063834.3403676
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k35/cache/661667_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790015982.1508894
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k35/cache/661667_r0/progress.jsonl",
+      "bytes": 166319,
+      "modified_unix": 1790063825.3350987
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k36/cache/661746_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016048.871862
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k36/cache/661746_r0/progress.jsonl",
+      "bytes": 163593,
+      "modified_unix": 1790063857.7690613
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k37/cache/661747_r0/execution.json",
+      "bytes": 1888,
+      "modified_unix": 1790059138.3636613
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k37/cache/661747_r0/network.pkl",
+      "bytes": 30105041613,
+      "modified_unix": 1790059018.0950098
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k37/cache/661747_r0/network.pkl.manifest.json",
+      "bytes": 1277,
+      "modified_unix": 1790059126.2792878
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k37/cache/661747_r0/progress.jsonl",
+      "bytes": 151130,
+      "modified_unix": 1790059126.2822878
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k38/cache/661761_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016108.67858
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k38/cache/661761_r0/progress.jsonl",
+      "bytes": 166194,
+      "modified_unix": 1790063845.8587112
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k39/cache/661762_r0/execution.json",
+      "bytes": 1781,
+      "modified_unix": 1790016105.7284958
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k39/cache/661762_r0/progress.jsonl",
+      "bytes": 2062,
+      "modified_unix": 1790016355.8701882
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k39/cache/661762_r1/execution.json",
+      "bytes": 1780,
+      "modified_unix": 1790016598.1267881
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k39/cache/661762_r1/progress.jsonl",
+      "bytes": 164848,
+      "modified_unix": 1790063837.3564575
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k40/cache/661791_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016221.8750148
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k40/cache/661791_r0/progress.jsonl",
+      "bytes": 163708,
+      "modified_unix": 1790063813.2007365
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k33/cache/661813_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016282.8729036
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k33/cache/661813_r0/progress.jsonl",
+      "bytes": 165448,
+      "modified_unix": 1790063840.0405376
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k34/cache/661814_r0/execution.json",
+      "bytes": 1781,
+      "modified_unix": 1790016282.8729036
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k34/cache/661814_r0/progress.jsonl",
+      "bytes": 165200,
+      "modified_unix": 1790063851.8398886
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k35/cache/661833_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016350.3090122
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k35/cache/661833_r0/progress.jsonl",
+      "bytes": 164624,
+      "modified_unix": 1790063800.8033667
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k36/cache/661834_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016356.0711946
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k36/cache/661834_r0/progress.jsonl",
+      "bytes": 166592,
+      "modified_unix": 1790063816.1138234
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k37/cache/661835_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016356.8812203
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k37/cache/661835_r0/progress.jsonl",
+      "bytes": 165554,
+      "modified_unix": 1790063842.3796074
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k38/cache/661836_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016356.8812203
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k38/cache/661836_r0/progress.jsonl",
+      "bytes": 165381,
+      "modified_unix": 1790063827.5511649
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k39/cache/661837_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016356.1991987
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k39/cache/661837_r0/progress.jsonl",
+      "bytes": 3103,
+      "modified_unix": 1790016906.1759992
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k39/cache/661837_r1/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790017128.480276
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k39/cache/661837_r1/progress.jsonl",
+      "bytes": 159908,
+      "modified_unix": 1790063842.5886137
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k40/cache/661858_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016409.0928788
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k40/cache/661858_r0/progress.jsonl",
+      "bytes": 164319,
+      "modified_unix": 1790063837.272455
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k33/cache/661859_r0/execution.json",
+      "bytes": 1888,
+      "modified_unix": 1790050924.0722258
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k33/cache/661859_r0/network.pkl",
+      "bytes": 21864753185,
+      "modified_unix": 1790050860.8242989
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k33/cache/661859_r0/network.pkl.manifest.json",
+      "bytes": 1278,
+      "modified_unix": 1790050914.224923
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k33/cache/661859_r0/progress.jsonl",
+      "bytes": 122022,
+      "modified_unix": 1790050914.226923
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k34/cache/661882_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016467.83175
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k34/cache/661882_r0/progress.jsonl",
+      "bytes": 164225,
+      "modified_unix": 1790063813.8307555
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k35/cache/661883_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016472.3678927
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k35/cache/661883_r0/progress.jsonl",
+      "bytes": 163565,
+      "modified_unix": 1790063802.25541
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k36/cache/661898_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016529.1396737
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k36/cache/661898_r0/progress.jsonl",
+      "bytes": 164677,
+      "modified_unix": 1790063821.1419735
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k37/cache/661899_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016528.6986601
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k37/cache/661899_r0/progress.jsonl",
+      "bytes": 164678,
+      "modified_unix": 1790063828.930206
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k38/cache/661900_r0/execution.json",
+      "bytes": 1888,
+      "modified_unix": 1790057415.0752778
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k38/cache/661900_r0/network.pkl",
+      "bytes": 28786629834,
+      "modified_unix": 1790057317.8383284
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k38/cache/661900_r0/network.pkl.manifest.json",
+      "bytes": 1277,
+      "modified_unix": 1790057403.8029358
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k38/cache/661900_r0/progress.jsonl",
+      "bytes": 143622,
+      "modified_unix": 1790057403.8279366
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k33/cache/661934_r0/execution.json",
+      "bytes": 1888,
+      "modified_unix": 1790061089.0028944
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k33/cache/661934_r0/network.pkl",
+      "bytes": 22990401693,
+      "modified_unix": 1790060983.2827327
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k33/cache/661934_r0/network.pkl.manifest.json",
+      "bytes": 1278,
+      "modified_unix": 1790061074.7484848
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k33/cache/661934_r0/progress.jsonl",
+      "bytes": 154573,
+      "modified_unix": 1790061074.7514849
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k34/cache/661935_r0/execution.json",
+      "bytes": 1887,
+      "modified_unix": 1790051973.6701365
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k34/cache/661935_r0/network.pkl",
+      "bytes": 24907050264,
+      "modified_unix": 1790051899.085882
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k34/cache/661935_r0/network.pkl.manifest.json",
+      "bytes": 1277,
+      "modified_unix": 1790051959.122696
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k34/cache/661935_r0/progress.jsonl",
+      "bytes": 125085,
+      "modified_unix": 1790051959.125696
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k35/cache/661936_r0/execution.json",
+      "bytes": 1887,
+      "modified_unix": 1790054963.4773357
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k35/cache/661936_r0/network.pkl",
+      "bytes": 25623239427,
+      "modified_unix": 1790054886.7627497
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k35/cache/661936_r0/network.pkl.manifest.json",
+      "bytes": 1277,
+      "modified_unix": 1790054952.0589542
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k35/cache/661936_r0/progress.jsonl",
+      "bytes": 134783,
+      "modified_unix": 1790054952.0599542
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k36/cache/661937_r0/execution.json",
+      "bytes": 1887,
+      "modified_unix": 1790057332.7727814
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k36/cache/661937_r0/network.pkl",
+      "bytes": 27092809533,
+      "modified_unix": 1790057238.1819034
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k36/cache/661937_r0/network.pkl.manifest.json",
+      "bytes": 1278,
+      "modified_unix": 1790057322.4294677
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k36/cache/661937_r0/progress.jsonl",
+      "bytes": 143375,
+      "modified_unix": 1790057322.4324677
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k37/cache/661938_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016595.5757108
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k37/cache/661938_r0/progress.jsonl",
+      "bytes": 1443,
+      "modified_unix": 1790016661.77271
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k37/cache/661938_r1/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016892.237574
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k37/cache/661938_r1/progress.jsonl",
+      "bytes": 162705,
+      "modified_unix": 1790063819.481924
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k38/cache/661939_r0/execution.json",
+      "bytes": 1781,
+      "modified_unix": 1790016595.5757108
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k38/cache/661939_r0/progress.jsonl",
+      "bytes": 1445,
+      "modified_unix": 1790016661.7577097
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k38/cache/661939_r1/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016889.2494829
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k38/cache/661939_r1/progress.jsonl",
+      "bytes": 163137,
+      "modified_unix": 1790063856.5280252
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k39/cache/661940_r0/execution.json",
+      "bytes": 1781,
+      "modified_unix": 1790016596.3637347
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k39/cache/661940_r0/progress.jsonl",
+      "bytes": 163866,
+      "modified_unix": 1790063856.3210192
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k33/cache/661941_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016595.8197181
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k33/cache/661941_r0/progress.jsonl",
+      "bytes": 86606,
+      "modified_unix": 1790041166.9624956
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k33/cache/661941_r1/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790041410.9939556
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k33/cache/661941_r1/progress.jsonl",
+      "bytes": 79139,
+      "modified_unix": 1790063814.5667775
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k34/cache/661942_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016595.7577162
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k34/cache/661942_r0/progress.jsonl",
+      "bytes": 163600,
+      "modified_unix": 1790063848.0687773
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k35/cache/661943_r0/execution.json",
+      "bytes": 1888,
+      "modified_unix": 1790062257.0015304
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k35/cache/661943_r0/network.pkl",
+      "bytes": 25033423773,
+      "modified_unix": 1790062151.65007
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k35/cache/661943_r0/network.pkl.manifest.json",
+      "bytes": 1278,
+      "modified_unix": 1790062245.8951664
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k35/cache/661943_r0/progress.jsonl",
+      "bytes": 158236,
+      "modified_unix": 1790062245.9911697
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k36/cache/661944_r0/execution.json",
+      "bytes": 1780,
+      "modified_unix": 1790016593.8916597
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k36/cache/661944_r0/progress.jsonl",
+      "bytes": 163254,
+      "modified_unix": 1790063863.5792305
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k37/cache/661945_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016594.961692
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k37/cache/661945_r0/progress.jsonl",
+      "bytes": 85979,
+      "modified_unix": 1790041064.207398
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k37/cache/661945_r1/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790041411.6899767
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k37/cache/661945_r1/progress.jsonl",
+      "bytes": 78099,
+      "modified_unix": 1790063844.7836792
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k38/cache/661946_r0/execution.json",
+      "bytes": 1781,
+      "modified_unix": 1790016594.964692
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k38/cache/661946_r0/progress.jsonl",
+      "bytes": 85753,
+      "modified_unix": 1790041056.470168
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k38/cache/661946_r1/execution.json",
+      "bytes": 1781,
+      "modified_unix": 1790041411.6939766
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k38/cache/661946_r1/progress.jsonl",
+      "bytes": 78579,
+      "modified_unix": 1790063829.4522216
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k39/cache/661947_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016594.961692
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k39/cache/661947_r0/progress.jsonl",
+      "bytes": 86184,
+      "modified_unix": 1790041105.868646
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k39/cache/661947_r1/execution.json",
+      "bytes": 1781,
+      "modified_unix": 1790041412.696007
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k39/cache/661947_r1/progress.jsonl",
+      "bytes": 78726,
+      "modified_unix": 1790063824.235066
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k40/cache/661948_r0/execution.json",
+      "bytes": 1781,
+      "modified_unix": 1790016594.961692
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k40/cache/661948_r0/progress.jsonl",
+      "bytes": 162375,
+      "modified_unix": 1790063816.4848347
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k33/cache/661949_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016595.618712
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k33/cache/661949_r0/progress.jsonl",
+      "bytes": 13221,
+      "modified_unix": 1790020053.7781205
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k33/cache/661949_r1/execution.json",
+      "bytes": 1781,
+      "modified_unix": 1790020275.4517236
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k33/cache/661949_r1/progress.jsonl",
+      "bytes": 151523,
+      "modified_unix": 1790063858.9430954
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k34/cache/661950_r0/execution.json",
+      "bytes": 1887,
+      "modified_unix": 1790044925.8131804
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k34/cache/661950_r0/network.pkl",
+      "bytes": 23952589445,
+      "modified_unix": 1790044867.3154318
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k34/cache/661950_r0/network.pkl.manifest.json",
+      "bytes": 1278,
+      "modified_unix": 1790044916.8679073
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k34/cache/661950_r0/progress.jsonl",
+      "bytes": 100825,
+      "modified_unix": 1790044916.8979082
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k35/cache/661951_r0/execution.json",
+      "bytes": 1887,
+      "modified_unix": 1790047715.8120804
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k35/cache/661951_r0/network.pkl",
+      "bytes": 25681330921,
+      "modified_unix": 1790047662.6655517
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k35/cache/661951_r0/network.pkl.manifest.json",
+      "bytes": 1278,
+      "modified_unix": 1790047708.0268621
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k35/cache/661951_r0/progress.jsonl",
+      "bytes": 110536,
+      "modified_unix": 1790047708.0288622
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k36/cache/661952_r0/execution.json",
+      "bytes": 1888,
+      "modified_unix": 1790048377.3122933
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k36/cache/661952_r0/network.pkl",
+      "bytes": 26298131650,
+      "modified_unix": 1790048317.6145535
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k36/cache/661952_r0/network.pkl.manifest.json",
+      "bytes": 1277,
+      "modified_unix": 1790048368.7120428
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k36/cache/661952_r0/progress.jsonl",
+      "bytes": 112685,
+      "modified_unix": 1790048368.7360435
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k37/cache/661953_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016595.8927205
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k37/cache/661953_r0/progress.jsonl",
+      "bytes": 3290,
+      "modified_unix": 1790017209.8989244
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k37/cache/661953_r1/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790017370.1839175
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k37/cache/661953_r1/progress.jsonl",
+      "bytes": 159682,
+      "modified_unix": 1790063862.0081847
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k38/cache/661954_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016594.160668
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k38/cache/661954_r0/progress.jsonl",
+      "bytes": 164467,
+      "modified_unix": 1790063856.6340282
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k39/cache/661616_r0/execution.json",
+      "bytes": 1782,
+      "modified_unix": 1790016598.1267881
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k39/cache/661616_r0/progress.jsonl",
+      "bytes": 165212,
+      "modified_unix": 1790063837.44546
+    }
+  ],
+  "queue": {
+    "returncode": 0,
+    "stdout": "661741|drX_w6_k40_cg|PENDING|0:00|(Dependency)|afterok:661616_15(unfulfilled),afterok:661739(unfulfilled)\n661739|drX_w6_k39_cg|PENDING|0:00|(Dependency)|afterok:661616_43(unfulfilled),afterok:661736(unfulfilled)\n661736|drX_w6_k38_cg|PENDING|0:00|(Dependency)|afterok:661616_42(unfulfilled),afterok:661733(unfulfilled)\n661733|drX_w6_k37_cg|PENDING|0:00|(Dependency)|afterok:661616_41(unfulfilled),afterok:661731(unfulfilled)\n661731|drX_w6_k36_cg|PENDING|0:00|(Dependency)|afterok:661729(unfulfilled)\n661729|drX_w6_k35_cg|PENDING|0:00|(Dependency)|afterok:661727(unfulfilled)\n661727|drX_w6_k34_cg|PENDING|0:00|(Dependency)|afterok:661724(unfulfilled)\n661724|drX_w6_k33_cg|PENDING|0:00|(Dependency)|afterok:661616_37(unfulfilled)\n661721|drX_w5_k40_cg|PENDING|0:00|(Dependency)|afterok:661616_36(unfulfilled),afterok:661719(unfulfilled)\n661719|drX_w5_k39_cg|PENDING|0:00|(Dependency)|afterok:661616_35(unfulfilled),afterok:661717(unfulfilled)\n661717|drX_w5_k38_cg|PENDING|0:00|(Dependency)|afterok:661616_34(unfulfilled),afterok:661715(unfulfilled)\n661715|drX_w5_k37_cg|PENDING|0:00|(Dependency)|afterok:661616_33(unfulfilled),afterok:661713(unfulfilled)\n661713|drX_w5_k36_cg|PENDING|0:00|(Dependency)|afterok:661616_32(unfulfilled),afterok:661711(unfulfilled)\n661711|drX_w5_k35_cg|PENDING|0:00|(Dependency)|afterok:661709(unfulfilled)\n661709|drX_w5_k34_cg|PENDING|0:00|(Dependency)|afterok:661616_30(unfulfilled),afterok:661707(unfulfilled)\n661707|drX_w5_k33_cg|PENDING|0:00|(Dependency)|afterok:661616_29(unfulfilled)\n661705|drX_w4_k40_cg|PENDING|0:00|(Dependency)|afterok:661616_7(unfulfilled),afterok:661703(unfulfilled)\n661703|drX_w4_k39_cg|PENDING|0:00|(Dependency)|afterok:661616_28(unfulfilled),afterok:661701(unfulfilled)\n661701|drX_w4_k38_cg|PENDING|0:00|(Dependency)|afterok:661616_27(unfulfilled),afterok:661699(unfulfilled)\n661699|drX_w4_k37_cg|PENDING|0:00|(Dependency)|afterok:661616_26(unfulfilled),afterok:661697(unfulfilled)\n661697|drX_w4_k36_cg|PENDING|0:00|(Dependency)|afterok:661695(unfulfilled)\n661695|drX_w4_k35_cg|PENDING|0:00|(Dependency)|afterok:661693(unfulfilled)\n661693|drX_w4_k34_cg|PENDING|0:00|(Dependency)|afterok:661691(unfulfilled)\n661686|drX_w3_k40_cg|PENDING|0:00|(Dependency)|afterok:661616_15(unfulfilled),afterok:661684(unfulfilled)\n661684|drX_w3_k39_cg|PENDING|0:00|(Dependency)|afterok:661616_14(unfulfilled),afterok:661682(unfulfilled)\n661682|drX_w3_k38_cg|PENDING|0:00|(Dependency)|afterok:661680(unfulfilled)\n661680|drX_w3_k37_cg|PENDING|0:00|(Dependency)|afterok:661616_20(unfulfilled),afterok:661678(unfulfilled)\n661678|drX_w3_k36_cg|PENDING|0:00|(Dependency)|afterok:661616_19(unfulfilled),afterok:661676(unfulfilled)\n661676|drX_w3_k35_cg|PENDING|0:00|(Dependency)|afterok:661616_18(unfulfilled),afterok:661670(unfulfilled)\n661670|drX_w3_k34_cg|PENDING|0:00|(Dependency)|afterok:661616_17(unfulfilled),afterok:661668(unfulfilled)\n661650|drX_w2_k40_cg|PENDING|0:00|(Dependency)|afterok:661616_15(unfulfilled),afterok:661648(unfulfilled)\n661648|drX_w2_k39_cg|PENDING|0:00|(Dependency)|afterok:661616_14(unfulfilled),afterok:661646(unfulfilled)\n661646|drX_w2_k38_cg|PENDING|0:00|(Dependency)|afterok:661616_13(unfulfilled),afterok:661644(unfulfilled)\n661644|drX_w2_k37_cg|PENDING|0:00|(Dependency)|afterok:661616_12(unfulfilled),afterok:661642(unfulfilled)\n661642|drX_w2_k36_cg|PENDING|0:00|(Dependency)|afterok:661616_11(unfulfilled),afterok:661640(unfulfilled)\n661640|drX_w2_k35_cg|PENDING|0:00|(Dependency)|afterok:661616_10(unfulfilled),afterok:661638(unfulfilled)\n661638|drX_w2_k34_cg|PENDING|0:00|(Dependency)|afterok:661616_9(unfulfilled),afterok:661636(unfulfilled)\n661636|drX_w2_k33_cg|PENDING|0:00|(Dependency)|afterok:661616_8(unfulfilled)\n661633|drX_w1_k40_cg|PENDING|0:00|(Dependency)|afterok:661616_7(unfulfilled),afterok:661631(unfulfilled)\n661631|drX_w1_k39_cg|PENDING|0:00|(Dependency)|afterok:661616_6(unfulfilled),afterok:661629(unfulfilled)\n661629|drX_w1_k38_cg|PENDING|0:00|(Dependency)|afterok:661616_5(unfulfilled),afterok:661627(unfulfilled)\n661627|drX_w1_k37_cg|PENDING|0:00|(Dependency)|afterok:661625(unfulfilled)\n661625|drX_w1_k36_cg|PENDING|0:00|(Dependency)|afterok:661616_3(unfulfilled),afterok:661622(unfulfilled)\n661622|drX_w1_k35_cg|PENDING|0:00|(Dependency)|afterok:661616_2(unfulfilled),afterok:661620(unfulfilled)\n661620|drX_w1_k34_cg|PENDING|0:00|(Dependency)|afterok:661616_1(unfulfilled),afterok:661618(unfulfilled)\n661742|drX_w6_k40_mip|PENDING|0:00|(Dependency)|afterok:661741(unfulfilled)\n661740|drX_w6_k39_mip|PENDING|0:00|(Dependency)|afterok:661739(unfulfilled)\n661738|drX_w6_k38_mip|PENDING|0:00|(Dependency)|afterok:661736(unfulfilled)\n661735|drX_w6_k37_mip|PENDING|0:00|(Dependency)|afterok:661733(unfulfilled)\n661732|drX_w6_k36_mip|PENDING|0:00|(Dependency)|afterok:661731(unfulfilled)\n661730|drX_w6_k35_mip|PENDING|0:00|(Dependency)|afterok:661729(unfulfilled)\n661728|drX_w6_k34_mip|PENDING|0:00|(Dependency)|afterok:661727(unfulfilled)\n661726|drX_w6_k33_mip|PENDING|0:00|(Dependency)|afterok:661724(unfulfilled)\n661722|drX_w5_k40_mip|PENDING|0:00|(Dependency)|afterok:661721(unfulfilled)\n661720|drX_w5_k39_mip|PENDING|0:00|(Dependency)|afterok:661719(unfulfilled)\n661718|drX_w5_k38_mip|PENDING|0:00|(Dependency)|afterok:661717(unfulfilled)\n661716|drX_w5_k37_mip|PENDING|0:00|(Dependency)|afterok:661715(unfulfilled)\n661714|drX_w5_k36_mip|PENDING|0:00|(Dependency)|afterok:661713(unfulfilled)\n661712|drX_w5_k35_mip|PENDING|0:00|(Dependency)|afterok:661711(unfulfilled)\n661710|drX_w5_k34_mip|PENDING|0:00|(Dependency)|afterok:661709(unfulfilled)\n661708|drX_w5_k33_mip|PENDING|0:00|(Dependency)|afterok:661707(unfulfilled)\n661706|drX_w4_k40_mip|PENDING|0:00|(Dependency)|afterok:661705(unfulfilled)\n661704|drX_w4_k39_mip|PENDING|0:00|(Dependency)|afterok:661703(unfulfilled)\n661702|drX_w4_k38_mip|PENDING|0:00|(Dependency)|afterok:661701(unfulfilled)\n661700|drX_w4_k37_mip|PENDING|0:00|(Dependency)|afterok:661699(unfulfilled)\n661698|drX_w4_k36_mip|PENDING|0:00|(Dependency)|afterok:661697(unfulfilled)\n661696|drX_w4_k35_mip|PENDING|0:00|(Dependency)|afterok:661695(unfulfilled)\n661694|drX_w4_k34_mip|PENDING|0:00|(Dependency)|afterok:661693(unfulfilled)\n661692|drX_w4_k33_mip|PENDING|0:00|(Dependency)|afterok:661691(unfulfilled)\n661687|drX_w3_k40_mip|PENDING|0:00|(Dependency)|afterok:661686(unfulfilled)\n661685|drX_w3_k39_mip|PENDING|0:00|(Dependency)|afterok:661684(unfulfilled)\n661683|drX_w3_k38_mip|PENDING|0:00|(Dependency)|afterok:661682(unfulfilled)\n661681|drX_w3_k37_mip|PENDING|0:00|(Dependency)|afterok:661680(unfulfilled)\n661679|drX_w3_k36_mip|PENDING|0:00|(Dependency)|afterok:661678(unfulfilled)\n661677|drX_w3_k35_mip|PENDING|0:00|(Dependency)|afterok:661676(unfulfilled)\n661671|drX_w3_k34_mip|PENDING|0:00|(Dependency)|afterok:661670(unfulfilled)\n661669|drX_w3_k33_mip|PENDING|0:00|(Dependency)|afterok:661668(unfulfilled)\n661651|drX_w2_k40_mip|PENDING|0:00|(Dependency)|afterok:661650(unfulfilled)\n661649|drX_w2_k39_mip|PENDING|0:00|(Dependency)|afterok:661648(unfulfilled)\n661647|drX_w2_k38_mip|PENDING|0:00|(Dependency)|afterok:661646(unfulfilled)\n661645|drX_w2_k37_mip|PENDING|0:00|(Dependency)|afterok:661644(unfulfilled)\n661643|drX_w2_k36_mip|PENDING|0:00|(Dependency)|afterok:661642(unfulfilled)\n661641|drX_w2_k35_mip|PENDING|0:00|(Dependency)|afterok:661640(unfulfilled)\n661639|drX_w2_k34_mip|PENDING|0:00|(Dependency)|afterok:661638(unfulfilled)\n661637|drX_w2_k33_mip|PENDING|0:00|(Dependency)|afterok:661636(unfulfilled)\n661634|drX_w1_k40_mip|PENDING|0:00|(Dependency)|afterok:661633(unfulfilled)\n661632|drX_w1_k39_mip|PENDING|0:00|(Dependency)|afterok:661631(unfulfilled)\n661630|drX_w1_k38_mip|PENDING|0:00|(Dependency)|afterok:661629(unfulfilled)\n661628|drX_w1_k37_mip|PENDING|0:00|(Dependency)|afterok:661627(unfulfilled)\n661626|drX_w1_k36_mip|PENDING|0:00|(Dependency)|afterok:661625(unfulfilled)\n661623|drX_w1_k35_mip|PENDING|0:00|(Dependency)|afterok:661622(unfulfilled)\n661621|drX_w1_k34_mip|PENDING|0:00|(Dependency)|afterok:661620(unfulfilled)\n661619|drX_w1_k33_mip|PENDING|0:00|(Dependency)|afterok:661618(unfulfilled)\n341319|rvS29_18E2mip|PENDING|0:00|(JobHeldUser)|afterok:341318(unfulfilled)\n341318|rvS29_18E2cg|PENDING|0:00|(JobHeldUser)|afterok:341314(unfulfilled)\n341315|rvS27_18E2mip|PENDING|0:00|(JobHeldUser)|afterok:341314(unfulfilled)\n341314|rvS27_18E2cg|PENDING|0:00|(JobHeldUser)|afterok:341310(unfulfilled)\n341311|rvS25_18E2mip|PENDING|0:00|(JobHeldUser)|afterok:341310(unfulfilled)\n341310|rvS25_18E2cg|PENDING|0:00|(JobHeldUser)|afterok:341308(unfulfilled)\n341309|rvS24_18E2mip|PENDING|0:00|(JobHeldUser)|afterok:341308(unfulfilled)\n341308|rvS24_18E2cg|PENDING|0:00|(JobHeldUser)|afterok:341306(unfulfilled)\n341307|rvS23_18E2mip|PENDING|0:00|(JobHeldUser)|afterok:341306(unfulfilled)\n341306|rvS23_18E2cg|PENDING|0:00|(JobHeldUser)|afterok:341304(unfulfilled)\n341305|rvS22_18E2mip|PENDING|0:00|(JobHeldUser)|afterok:341304(unfulfilled)\n341304|rvS22_18E2cg|PENDING|0:00|(JobHeldUser)|afterok:341302(unfulfilled)\n341303|rvS21_18E2mip|PENDING|0:00|(JobHeldUser)|afterok:341302(unfulfilled)\n341302|rvS21_18E2cg|PENDING|0:00|(JobHeldUser)|afterok:341300(unfulfilled)\n341301|rvS20_18E2mip|PENDING|0:00|(JobHeldUser)|afterok:341300(unfulfilled)\n341300|rvS20_18E2cg|PENDING|0:00|(JobHeldUser)|afterok:341298(unfulfilled)\n341299|rvS19_18E2mip|PENDING|0:00|(JobHeldUser)|afterok:341298(unfulfilled)\n341298|rvS19_18E2cg|PENDING|0:00|(JobHeldUser)|afterok:341294(unfulfilled)\n341295|rvS17_18E2mip|PENDING|0:00|(JobHeldUser)|afterok:341294(unfulfilled)\n341294|rvS17_18E2cg|PENDING|0:00|(JobHeldAdmin)|afterok:341292(failed)\n341293|rvS16_18E2mip|PENDING|0:00|(JobHeldAdmin)|afterok:341292(failed)\n661618|drX_w1_k33_cg|RUNNING|47:27|dean-compute-01|(null)\n661691|drX_w4_k33_cg|RUNNING|43:46|cyu-cpu-01|(null)\n661668|drX_w3_k33_cg|RUNNING|3:34:12|kim-cpu-04|(null)\n661616_29|drX_graphs|RUNNING|6:14:17|unicorn-cpu-76|(null)\n661616_33|drX_graphs|RUNNING|6:14:17|unicorn-cpu-75|(null)\n661616_34|drX_graphs|RUNNING|6:14:17|sonic-cpu-02|(null)\n661616_35|drX_graphs|RUNNING|6:14:17|unicorn-cpu-87|(null)\n661616_37|drX_graphs|RUNNING|12:06:46|kim-cpu-01|(null)\n661616_41|drX_graphs|RUNNING|12:54:56|garg-cpu-02|(null)\n661616_14|drX_graphs|RUNNING|12:58:56|kim-cpu-05|(null)\n661616_26|drX_graphs|RUNNING|13:02:56|jingjie-cpu-22|(null)\n661616_27|drX_graphs|RUNNING|13:02:56|jingjie-cpu-07|(null)\n661616_6|drX_graphs|RUNNING|13:07:57|portal-compute-01|(null)\n661616_28|drX_graphs|RUNNING|13:07:57|unicorn-compute-05|(null)\n661616_30|drX_graphs|RUNNING|13:07:57|coecis-compute-02|(null)\n661616_32|drX_graphs|RUNNING|13:07:57|dgx2-compute-04|(null)\n661616_36|drX_graphs|RUNNING|13:07:57|dgx2-compute-02|(null)\n661616_42|drX_graphs|RUNNING|13:07:57|ellis-compute-02|(null)\n661616_43|drX_graphs|RUNNING|13:07:57|portal-compute-01|(null)\n661616_19|drX_graphs|RUNNING|13:08:57|unicorn-cpu-76|(null)\n661616_20|drX_graphs|RUNNING|13:08:57|jingjie-cpu-01|(null)\n661616_17|drX_graphs|RUNNING|13:09:57|unicorn-cpu-87|(null)\n661616_18|drX_graphs|RUNNING|13:09:57|jingjie-cpu-20|(null)\n661616_15|drX_graphs|RUNNING|13:10:57|sonic-cpu-01|(null)\n661616_10|drX_graphs|RUNNING|13:11:55|unicorn-cpu-73|(null)\n661616_11|drX_graphs|RUNNING|13:11:55|lodi-cpu-01|(null)\n661616_12|drX_graphs|RUNNING|13:11:55|dean-cpu-01|(null)\n661616_13|drX_graphs|RUNNING|13:11:55|dean-cpu-01|(null)\n661616_8|drX_graphs|RUNNING|13:13:01|sablab-cpu-01|(null)\n661616_9|drX_graphs|RUNNING|13:13:01|sablab-cpu-01|(null)\n661616_7|drX_graphs|RUNNING|13:14:02|kim-cpu-02|(null)\n661616_5|drX_graphs|RUNNING|13:16:02|cliprelabs-cpu-01|(null)\n661616_3|drX_graphs|RUNNING|13:17:02|kim-cpu-05|(null)\n661616_1|drX_graphs|RUNNING|13:18:02|kim-cpu-02|(null)\n661616_2|drX_graphs|RUNNING|13:18:02|sablab-cpu-01|(null)\n537227_36|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_37|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_38|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_39|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_40|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_41|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_42|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_43|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_44|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_45|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_46|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_47|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_48|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_49|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_50|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_51|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_52|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_53|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_54|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_55|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_56|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_57|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_58|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_59|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_60|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_61|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_62|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_63|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_64|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_65|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_66|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_67|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n537227_68|tpmR2d7a25b33|PENDING|0:00|(JobHeldUser)|(null)\n",
+    "stderr": ""
+  },
+  "accounting": {
+    "returncode": 0,
+    "stdout": "661616_0|drX_graphs|COMPLETED|12:01:24||96G|0:0|garg-cpu-01|2026-09-21T14:39:41|2026-09-22T02:41:05|2\n661616_0.batch|batch|COMPLETED|12:01:24|38892820K||0:0|garg-cpu-01|2026-09-21T14:39:41|2026-09-22T02:41:05|2\n661616_0.extern|extern|COMPLETED|12:01:25|||0:0|garg-cpu-01|2026-09-21T14:39:41|2026-09-22T02:41:06|2\n661616_1|drX_graphs|RUNNING|13:18:03||96G|0:0|kim-cpu-02|2026-09-21T14:39:41|Unknown|2\n661616_1.batch|batch|RUNNING|13:18:03|||0:0|kim-cpu-02|2026-09-21T14:39:41|Unknown|2\n661616_1.extern|extern|RUNNING|13:18:03|||0:0|kim-cpu-02|2026-09-21T14:39:41|Unknown|2\n661616_2|drX_graphs|RUNNING|13:18:03||96G|0:0|sablab-cpu-01|2026-09-21T14:39:41|Unknown|2\n661616_2.batch|batch|RUNNING|13:18:03|||0:0|sablab-cpu-01|2026-09-21T14:39:41|Unknown|2\n661616_2.extern|extern|RUNNING|13:18:03|||0:0|sablab-cpu-01|2026-09-21T14:39:41|Unknown|2\n661616_3|drX_graphs|RUNNING|13:17:03||96G|0:0|kim-cpu-05|2026-09-21T14:40:41|Unknown|2\n661616_3.batch|batch|RUNNING|13:17:03|||0:0|kim-cpu-05|2026-09-21T14:40:41|Unknown|2\n661616_3.extern|extern|RUNNING|13:17:03|||0:0|kim-cpu-05|2026-09-21T14:40:41|Unknown|2\n661616_4|drX_graphs|COMPLETED|11:59:08||96G|0:0|petro-cpu-01|2026-09-21T14:40:41|2026-09-22T02:39:49|2\n661616_4.batch|batch|COMPLETED|11:59:08|67928384K||0:0|petro-cpu-01|2026-09-21T14:40:41|2026-09-22T02:39:49|2\n661616_4.extern|extern|COMPLETED|11:59:08|||0:0|petro-cpu-01|2026-09-21T14:40:41|2026-09-22T02:39:49|2\n661616_5|drX_graphs|RUNNING|13:16:03||96G|0:0|cliprelabs-cpu-01|2026-09-21T14:41:41|Unknown|2\n661616_5.batch|batch|RUNNING|13:16:03|||0:0|cliprelabs-cpu-01|2026-09-21T14:41:41|Unknown|2\n661616_5.extern|extern|RUNNING|13:16:03|||0:0|cliprelabs-cpu-01|2026-09-21T14:41:41|Unknown|2\n661616_6|drX_graphs|PREEMPTED|00:04:07||96G|0:0|yin-cpu-01|2026-09-21T14:41:41|2026-09-21T14:45:48|2\n661616_6.batch|batch|CANCELLED|00:04:36|677704K||0:9|yin-cpu-01|2026-09-21T14:41:41|2026-09-21T14:46:17|2\n661616_6.extern|extern|COMPLETED|00:04:36|||0:0|yin-cpu-01|2026-09-21T14:41:41|2026-09-21T14:46:17|2\n661616_7|drX_graphs|RUNNING|13:14:03||96G|0:0|kim-cpu-02|2026-09-21T14:43:41|Unknown|2\n661616_7.batch|batch|RUNNING|13:14:03|||0:0|kim-cpu-02|2026-09-21T14:43:41|Unknown|2\n661616_7.extern|extern|RUNNING|13:14:03|||0:0|kim-cpu-02|2026-09-21T14:43:41|Unknown|2\n661616_8|drX_graphs|RUNNING|13:13:02||96G|0:0|sablab-cpu-01|2026-09-21T14:44:42|Unknown|2\n661616_8.batch|batch|RUNNING|13:13:02|||0:0|sablab-cpu-01|2026-09-21T14:44:42|Unknown|2\n661616_8.extern|extern|RUNNING|13:13:02|||0:0|sablab-cpu-01|2026-09-21T14:44:42|Unknown|2\n661616_9|drX_graphs|RUNNING|13:13:02||96G|0:0|sablab-cpu-01|2026-09-21T14:44:42|Unknown|2\n661616_9.batch|batch|RUNNING|13:13:02|||0:0|sablab-cpu-01|2026-09-21T14:44:42|Unknown|2\n661616_9.extern|extern|RUNNING|13:13:02|||0:0|sablab-cpu-01|2026-09-21T14:44:42|Unknown|2\n661616_10|drX_graphs|RUNNING|13:11:56||96G|0:0|unicorn-cpu-73|2026-09-21T14:45:48|Unknown|2\n661616_10.batch|batch|RUNNING|13:11:56|||0:0|unicorn-cpu-73|2026-09-21T14:45:48|Unknown|2\n661616_10.extern|extern|RUNNING|13:11:56|||0:0|unicorn-cpu-73|2026-09-21T14:45:48|Unknown|2\n661616_11|drX_graphs|RUNNING|13:11:56||96G|0:0|lodi-cpu-01|2026-09-21T14:45:48|Unknown|2\n661616_11.batch|batch|RUNNING|13:11:56|||0:0|lodi-cpu-01|2026-09-21T14:45:48|Unknown|2\n661616_11.extern|extern|RUNNING|13:11:56|||0:0|lodi-cpu-01|2026-09-21T14:45:48|Unknown|2\n661616_12|drX_graphs|RUNNING|13:11:56||96G|0:0|dean-cpu-01|2026-09-21T14:45:48|Unknown|2\n661616_12.batch|batch|RUNNING|13:11:56|||0:0|dean-cpu-01|2026-09-21T14:45:48|Unknown|2\n661616_12.extern|extern|RUNNING|13:11:56|||0:0|dean-cpu-01|2026-09-21T14:45:48|Unknown|2\n661616_13|drX_graphs|RUNNING|13:11:56||96G|0:0|dean-cpu-01|2026-09-21T14:45:48|Unknown|2\n661616_13.batch|batch|RUNNING|13:11:56|||0:0|dean-cpu-01|2026-09-21T14:45:48|Unknown|2\n661616_13.extern|extern|RUNNING|13:11:56|||0:0|dean-cpu-01|2026-09-21T14:45:48|Unknown|2\n661616_14|drX_graphs|PREEMPTED|00:09:31||96G|0:0|lin-cpu-01|2026-09-21T14:45:48|2026-09-21T14:55:19|2\n661616_14.batch|batch|CANCELLED|00:10:01|1282908K||0:9|lin-cpu-01|2026-09-21T14:45:48|2026-09-21T14:55:49|2\n661616_14.extern|extern|COMPLETED|00:10:01|||0:0|lin-cpu-01|2026-09-21T14:45:48|2026-09-21T14:55:49|2\n661616_15|drX_graphs|RUNNING|13:10:58||96G|0:0|sonic-cpu-01|2026-09-21T14:46:46|Unknown|2\n661616_15.batch|batch|RUNNING|13:10:58|||0:0|sonic-cpu-01|2026-09-21T14:46:46|Unknown|2\n661616_15.extern|extern|RUNNING|13:10:58|||0:0|sonic-cpu-01|2026-09-21T14:46:46|Unknown|2\n661616_16|drX_graphs|COMPLETED|09:36:02||96G|0:0|yin-cpu-01|2026-09-21T14:46:46|2026-09-22T00:22:48|2\n661616_16.batch|batch|COMPLETED|09:36:02|37726756K||0:0|yin-cpu-01|2026-09-21T14:46:46|2026-09-22T00:22:48|2\n661616_16.extern|extern|COMPLETED|09:36:02|||0:0|yin-cpu-01|2026-09-21T14:46:46|2026-09-22T00:22:48|2\n661616_17|drX_graphs|RUNNING|13:09:58||96G|0:0|unicorn-cpu-87|2026-09-21T14:47:46|Unknown|2\n661616_17.batch|batch|RUNNING|13:09:58|||0:0|unicorn-cpu-87|2026-09-21T14:47:46|Unknown|2\n661616_17.extern|extern|RUNNING|13:09:58|||0:0|unicorn-cpu-87|2026-09-21T14:47:46|Unknown|2\n661616_18|drX_graphs|RUNNING|13:09:58||96G|0:0|jingjie-cpu-20|2026-09-21T14:47:46|Unknown|2\n661616_18.batch|batch|RUNNING|13:09:58|||0:0|jingjie-cpu-20|2026-09-21T14:47:46|Unknown|2\n661616_18.extern|extern|RUNNING|13:09:58|||0:0|jingjie-cpu-20|2026-09-21T14:47:46|Unknown|2\n661616_19|drX_graphs|RUNNING|13:08:58||96G|0:0|unicorn-cpu-76|2026-09-21T14:48:46|Unknown|2\n661616_19.batch|batch|RUNNING|13:08:58|||0:0|unicorn-cpu-76|2026-09-21T14:48:46|Unknown|2\n661616_19.extern|extern|RUNNING|13:08:58|||0:0|unicorn-cpu-76|2026-09-21T14:48:46|Unknown|2\n661616_20|drX_graphs|RUNNING|13:08:58||96G|0:0|jingjie-cpu-01|2026-09-21T14:48:46|Unknown|2\n661616_20.batch|batch|RUNNING|13:08:58|||0:0|jingjie-cpu-01|2026-09-21T14:48:46|Unknown|2\n661616_20.extern|extern|RUNNING|13:08:58|||0:0|jingjie-cpu-01|2026-09-21T14:48:46|Unknown|2\n661616_21|drX_graphs|COMPLETED|11:22:13||96G|0:0|petro-cpu-01|2026-09-21T14:48:46|2026-09-22T02:10:59|2\n661616_21.batch|batch|COMPLETED|11:22:13|59961564K||0:0|petro-cpu-01|2026-09-21T14:48:46|2026-09-22T02:10:59|2\n661616_21.extern|extern|COMPLETED|11:22:13|||0:0|petro-cpu-01|2026-09-21T14:48:46|2026-09-22T02:10:59|2\n661616_22|drX_graphs|COMPLETED|12:23:31||96G|0:0|luxlab-cpu-01|2026-09-21T14:49:46|2026-09-22T03:13:17|2\n661616_22.batch|batch|COMPLETED|12:23:31|56258100K||0:0|luxlab-cpu-01|2026-09-21T14:49:46|2026-09-22T03:13:17|2\n661616_22.extern|extern|COMPLETED|12:23:31|||0:0|luxlab-cpu-01|2026-09-21T14:49:46|2026-09-22T03:13:17|2\n661616_23|drX_graphs|COMPLETED|09:50:39||96G|0:0|scaglione-cpu-03|2026-09-21T14:49:46|2026-09-22T00:40:25|2\n661616_23.batch|batch|COMPLETED|09:50:39|50049872K||0:0|scaglione-cpu-03|2026-09-21T14:49:46|2026-09-22T00:40:25|2\n661616_23.extern|extern|COMPLETED|09:50:39|||0:0|scaglione-cpu-03|2026-09-21T14:49:46|2026-09-22T00:40:25|2\n661616_24|drX_graphs|COMPLETED|10:40:17||96G|0:0|mzhang-cpu-01|2026-09-21T14:49:46|2026-09-22T01:30:03|2\n661616_24.batch|batch|COMPLETED|10:40:17|46719304K||0:0|mzhang-cpu-01|2026-09-21T14:49:46|2026-09-22T01:30:03|2\n661616_24.extern|extern|COMPLETED|10:40:18|||0:0|mzhang-cpu-01|2026-09-21T14:49:46|2026-09-22T01:30:04|2\n661616_25|drX_graphs|COMPLETED|11:19:49||96G|0:0|mzhang-cpu-01|2026-09-21T14:49:46|2026-09-22T02:09:35|2\n661616_25.batch|batch|COMPLETED|11:19:49|56227664K||0:0|mzhang-cpu-01|2026-09-21T14:49:46|2026-09-22T02:09:35|2\n661616_25.extern|extern|COMPLETED|11:19:51|||0:0|mzhang-cpu-01|2026-09-21T14:49:46|2026-09-22T02:09:37|2\n661616_26|drX_graphs|PREEMPTED|00:01:04||96G|0:0|lisbeth|2026-09-21T14:49:46|2026-09-21T14:50:50|2\n661616_26.batch|batch|CANCELLED|00:01:35|434100K||0:9|lisbeth|2026-09-21T14:49:46|2026-09-21T14:51:21|2\n661616_26.extern|extern|COMPLETED|00:01:34|||0:0|lisbeth|2026-09-21T14:49:46|2026-09-21T14:51:20|2\n661616_27|drX_graphs|PREEMPTED|00:01:36||96G|0:0|lisbeth|2026-09-21T14:49:46|2026-09-21T14:51:22|2\n661616_27.batch|batch|CANCELLED|00:02:06|512948K||0:9|lisbeth|2026-09-21T14:49:46|2026-09-21T14:51:52|2\n661616_27.extern|extern|COMPLETED|00:02:06|||0:0|lisbeth|2026-09-21T14:49:46|2026-09-21T14:51:52|2\n661616_28|drX_graphs|RUNNING|13:07:58||96G|0:0|unicorn-compute-05|2026-09-21T14:49:46|Unknown|2\n661616_28.batch|batch|RUNNING|13:07:58|||0:0|unicorn-compute-05|2026-09-21T14:49:46|Unknown|2\n661616_28.extern|extern|RUNNING|13:07:58|||0:0|unicorn-compute-05|2026-09-21T14:49:46|Unknown|2\n661616_29|drX_graphs|PREEMPTED|06:49:51||96G|0:0|sablab-gpu-02|2026-09-21T14:49:46|2026-09-21T21:39:37|2\n661616_29.batch|batch|CANCELLED|06:50:22|18906692K||0:9|sablab-gpu-02|2026-09-21T14:49:46|2026-09-21T21:40:08|2\n661616_29.extern|extern|COMPLETED|06:50:22|||0:0|sablab-gpu-02|2026-09-21T14:49:46|2026-09-21T21:40:08|2\n661616_30|drX_graphs|RUNNING|13:07:58||96G|0:0|coecis-compute-02|2026-09-21T14:49:46|Unknown|2\n661616_30.batch|batch|RUNNING|13:07:58|||0:0|coecis-compute-02|2026-09-21T14:49:46|Unknown|2\n661616_30.extern|extern|RUNNING|13:07:58|||0:0|coecis-compute-02|2026-09-21T14:49:46|Unknown|2\n661616_31|drX_graphs|COMPLETED|12:43:16||96G|0:0|lil-compute-01|2026-09-21T14:49:46|2026-09-22T03:33:02|2\n661616_31.batch|batch|COMPLETED|12:43:16|60844028K||0:0|lil-compute-01|2026-09-21T14:49:46|2026-09-22T03:33:02|2\n661616_31.extern|extern|COMPLETED|12:43:16|||0:0|lil-compute-01|2026-09-21T14:49:46|2026-09-22T03:33:02|2\n661616_32|drX_graphs|RUNNING|13:07:58||96G|0:0|dgx2-compute-04|2026-09-21T14:49:46|Unknown|2\n661616_32.batch|batch|RUNNING|13:07:58|||0:0|dgx2-compute-04|2026-09-21T14:49:46|Unknown|2\n661616_32.extern|extern|RUNNING|13:07:58|||0:0|dgx2-compute-04|2026-09-21T14:49:46|Unknown|2\n661616_33|drX_graphs|PREEMPTED|06:47:40||96G|0:0|dgx2-compute-02|2026-09-21T14:49:46|2026-09-21T21:37:26|2\n661616_33.batch|batch|CANCELLED|06:48:11|20965296K||0:9|dgx2-compute-02|2026-09-21T14:49:46|2026-09-21T21:37:57|2\n661616_33.extern|extern|COMPLETED|06:48:10|||0:0|dgx2-compute-02|2026-09-21T14:49:46|2026-09-21T21:37:56|2\n661616_34|drX_graphs|PREEMPTED|06:47:40||96G|0:0|dgx2-compute-02|2026-09-21T14:49:46|2026-09-21T21:37:26|2\n661616_34.batch|batch|CANCELLED|06:48:11|20857428K||0:9|dgx2-compute-02|2026-09-21T14:49:46|2026-09-21T21:37:57|2\n661616_34.extern|extern|COMPLETED|06:48:10|||0:0|dgx2-compute-02|2026-09-21T14:49:46|2026-09-21T21:37:56|2\n661616_35|drX_graphs|PREEMPTED|06:48:12||96G|0:0|dgx2-compute-02|2026-09-21T14:49:46|2026-09-21T21:37:58|2\n661616_35.batch|batch|CANCELLED|06:48:43|20893656K||0:9|dgx2-compute-02|2026-09-21T14:49:46|2026-09-21T21:38:29|2\n661616_35.extern|extern|COMPLETED|06:48:43|||0:0|dgx2-compute-02|2026-09-21T14:49:46|2026-09-21T21:38:29|2\n661616_36|drX_graphs|RUNNING|13:07:58||96G|0:0|dgx2-compute-02|2026-09-21T14:49:46|Unknown|2\n661616_36.batch|batch|RUNNING|13:07:58|||0:0|dgx2-compute-02|2026-09-21T14:49:46|Unknown|2\n661616_36.extern|extern|RUNNING|13:07:58|||0:0|dgx2-compute-02|2026-09-21T14:49:46|Unknown|2\n661616_37|drX_graphs|PREEMPTED|00:57:57||96G|0:0|kuleshov-compute-01|2026-09-21T14:49:46|2026-09-21T15:47:43|2\n661616_37.batch|batch|CANCELLED|00:58:28|4044828K||0:9|kuleshov-compute-01|2026-09-21T14:49:46|2026-09-21T15:48:14|2\n661616_37.extern|extern|COMPLETED|00:58:28|||0:0|kuleshov-compute-01|2026-09-21T14:49:46|2026-09-21T15:48:14|2\n661616_38|drX_graphs|COMPLETED|07:52:45||96G|0:0|shmatikov-compute-02|2026-09-21T14:49:46|2026-09-21T22:42:31|2\n661616_38.batch|batch|COMPLETED|07:52:45|40813400K||0:0|shmatikov-compute-02|2026-09-21T14:49:46|2026-09-21T22:42:31|2\n661616_38.extern|extern|COMPLETED|07:52:45|||0:0|shmatikov-compute-02|2026-09-21T14:49:46|2026-09-21T22:42:31|2\n661616_39|drX_graphs|COMPLETED|08:39:27||96G|0:0|rocky|2026-09-21T14:49:46|2026-09-21T23:29:13|2\n661616_39.batch|batch|COMPLETED|08:39:27|44812224K||0:0|rocky|2026-09-21T14:49:46|2026-09-21T23:29:13|2\n661616_39.extern|extern|COMPLETED|08:39:27|||0:0|rocky|2026-09-21T14:49:46|2026-09-21T23:29:13|2\n661616_40|drX_graphs|COMPLETED|08:50:30||96G|0:0|rocky|2026-09-21T14:49:46|2026-09-21T23:40:16|2\n661616_40.batch|batch|COMPLETED|08:50:30|57162008K||0:0|rocky|2026-09-21T14:49:46|2026-09-21T23:40:16|2\n661616_40.extern|extern|COMPLETED|08:50:30|||0:0|rocky|2026-09-21T14:49:46|2026-09-21T23:40:16|2\n661616_41|drX_graphs|PREEMPTED|00:10:21||96G|0:0|davis-compute-02|2026-09-21T14:49:46|2026-09-21T15:00:07|2\n661616_41.batch|batch|CANCELLED|00:10:50|1316004K||0:9|davis-compute-02|2026-09-21T14:49:46|2026-09-21T15:00:36|2\n661616_41.extern|extern|COMPLETED|00:10:50|||0:0|davis-compute-02|2026-09-21T14:49:46|2026-09-21T15:00:36|2\n661616_42|drX_graphs|RUNNING|13:07:58||96G|0:0|ellis-compute-02|2026-09-21T14:49:46|Unknown|2\n661616_42.batch|batch|RUNNING|13:07:58|||0:0|ellis-compute-02|2026-09-21T14:49:46|Unknown|2\n661616_42.extern|extern|RUNNING|13:07:58|||0:0|ellis-compute-02|2026-09-21T14:49:46|Unknown|2\n661616_43|drX_graphs|RUNNING|13:07:58||96G|0:0|portal-compute-01|2026-09-21T14:49:46|Unknown|2\n661616_43.batch|batch|RUNNING|13:07:58|||0:0|portal-compute-01|2026-09-21T14:49:46|Unknown|2\n661616_43.extern|extern|RUNNING|13:07:58|||0:0|portal-compute-01|2026-09-21T14:49:46|Unknown|2\n661618|drX_w1_k33_cg|RUNNING|00:47:28||96G|0:0|dean-compute-01|2026-09-22T03:10:16|Unknown|8\n661618.batch|batch|RUNNING|00:47:28|||0:0|dean-compute-01|2026-09-22T03:10:16|Unknown|8\n661618.extern|extern|RUNNING|00:47:28|||0:0|dean-compute-01|2026-09-22T03:10:16|Unknown|8\n661619|drX_w1_k33_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661620|drX_w1_k34_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661621|drX_w1_k34_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661622|drX_w1_k35_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661623|drX_w1_k35_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661625|drX_w1_k36_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661626|drX_w1_k36_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661627|drX_w1_k37_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661628|drX_w1_k37_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661629|drX_w1_k38_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661630|drX_w1_k38_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661631|drX_w1_k39_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661632|drX_w1_k39_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661633|drX_w1_k40_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661634|drX_w1_k40_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661636|drX_w2_k33_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661637|drX_w2_k33_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661638|drX_w2_k34_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661639|drX_w2_k34_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661640|drX_w2_k35_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661641|drX_w2_k35_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661642|drX_w2_k36_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661643|drX_w2_k36_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661644|drX_w2_k37_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661645|drX_w2_k37_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661646|drX_w2_k38_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661647|drX_w2_k38_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661648|drX_w2_k39_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661649|drX_w2_k39_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661650|drX_w2_k40_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661651|drX_w2_k40_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661668|drX_w3_k33_cg|RUNNING|03:34:13||96G|0:0|kim-cpu-04|2026-09-22T00:23:31|Unknown|8\n661668.batch|batch|RUNNING|03:34:13|||0:0|kim-cpu-04|2026-09-22T00:23:31|Unknown|8\n661668.extern|extern|RUNNING|03:34:13|||0:0|kim-cpu-04|2026-09-22T00:23:31|Unknown|8\n661669|drX_w3_k33_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661670|drX_w3_k34_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661671|drX_w3_k34_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661676|drX_w3_k35_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661677|drX_w3_k35_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661678|drX_w3_k36_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661679|drX_w3_k36_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661680|drX_w3_k37_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661681|drX_w3_k37_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661682|drX_w3_k38_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661683|drX_w3_k38_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661684|drX_w3_k39_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661685|drX_w3_k39_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661686|drX_w3_k40_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661687|drX_w3_k40_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661691|drX_w4_k33_cg|RUNNING|00:43:47||96G|0:0|cyu-cpu-01|2026-09-22T03:13:57|Unknown|8\n661691.batch|batch|RUNNING|00:43:47|||0:0|cyu-cpu-01|2026-09-22T03:13:57|Unknown|8\n661691.extern|extern|RUNNING|00:43:47|||0:0|cyu-cpu-01|2026-09-22T03:13:57|Unknown|8\n661692|drX_w4_k33_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661693|drX_w4_k34_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661694|drX_w4_k34_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661695|drX_w4_k35_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661696|drX_w4_k35_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661697|drX_w4_k36_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661698|drX_w4_k36_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661699|drX_w4_k37_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661700|drX_w4_k37_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661701|drX_w4_k38_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661702|drX_w4_k38_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661703|drX_w4_k39_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661704|drX_w4_k39_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661705|drX_w4_k40_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661706|drX_w4_k40_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661707|drX_w5_k33_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661708|drX_w5_k33_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661709|drX_w5_k34_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661710|drX_w5_k34_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661711|drX_w5_k35_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661712|drX_w5_k35_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661713|drX_w5_k36_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661714|drX_w5_k36_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661715|drX_w5_k37_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661716|drX_w5_k37_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661717|drX_w5_k38_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661718|drX_w5_k38_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661719|drX_w5_k39_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661720|drX_w5_k39_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661721|drX_w5_k40_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661722|drX_w5_k40_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661724|drX_w6_k33_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661726|drX_w6_k33_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661727|drX_w6_k34_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661728|drX_w6_k34_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661729|drX_w6_k35_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661730|drX_w6_k35_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661731|drX_w6_k36_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661732|drX_w6_k36_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661733|drX_w6_k37_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661735|drX_w6_k37_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661736|drX_w6_k38_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661738|drX_w6_k38_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661739|drX_w6_k39_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661740|drX_w6_k39_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661741|drX_w6_k40_cg|PENDING|00:00:00||96G|0:0|None assigned|Unknown|Unknown|0\n661742|drX_w6_k40_mip|PENDING|00:00:00||24G|0:0|None assigned|Unknown|Unknown|0\n661616_6|drX_graphs|RUNNING|13:07:58||96G|0:0|portal-compute-01|2026-09-21T14:49:46|Unknown|2\n661616_6.batch|batch|RUNNING|13:07:58|||0:0|portal-compute-01|2026-09-21T14:49:46|Unknown|2\n661616_6.extern|extern|RUNNING|13:07:58|||0:0|portal-compute-01|2026-09-21T14:49:46|Unknown|2\n661616_26|drX_graphs|RUNNING|13:02:57||96G|0:0|jingjie-cpu-22|2026-09-21T14:54:47|Unknown|2\n661616_26.batch|batch|RUNNING|13:02:57|||0:0|jingjie-cpu-22|2026-09-21T14:54:47|Unknown|2\n661616_26.extern|extern|RUNNING|13:02:57|||0:0|jingjie-cpu-22|2026-09-21T14:54:47|Unknown|2\n661616_27|drX_graphs|RUNNING|13:02:57||96G|0:0|jingjie-cpu-07|2026-09-21T14:54:47|Unknown|2\n661616_27.batch|batch|RUNNING|13:02:57|||0:0|jingjie-cpu-07|2026-09-21T14:54:47|Unknown|2\n661616_27.extern|extern|RUNNING|13:02:57|||0:0|jingjie-cpu-07|2026-09-21T14:54:47|Unknown|2\n661616_14|drX_graphs|RUNNING|12:58:57||96G|0:0|kim-cpu-05|2026-09-21T14:58:47|Unknown|2\n661616_14.batch|batch|RUNNING|12:58:57|||0:0|kim-cpu-05|2026-09-21T14:58:47|Unknown|2\n661616_14.extern|extern|RUNNING|12:58:57|||0:0|kim-cpu-05|2026-09-21T14:58:47|Unknown|2\n661616_41|drX_graphs|RUNNING|12:54:57||96G|0:0|garg-cpu-02|2026-09-21T15:02:47|Unknown|2\n661616_41.batch|batch|RUNNING|12:54:57|||0:0|garg-cpu-02|2026-09-21T15:02:47|Unknown|2\n661616_41.extern|extern|RUNNING|12:54:57|||0:0|garg-cpu-02|2026-09-21T15:02:47|Unknown|2\n661616_37|drX_graphs|RUNNING|12:06:47||96G|0:0|kim-cpu-01|2026-09-21T15:50:57|Unknown|2\n661616_37.batch|batch|RUNNING|12:06:47|||0:0|kim-cpu-01|2026-09-21T15:50:57|Unknown|2\n661616_37.extern|extern|RUNNING|12:06:47|||0:0|kim-cpu-01|2026-09-21T15:50:57|Unknown|2\n668433|packS_w5_k19_18E2__cg|COMPLETED|04:32:35||16G|0:0|snavely-cpu-11|2026-09-21T20:02:51|2026-09-22T00:35:26|8\n668433.batch|batch|COMPLETED|04:32:35|6301824K||0:0|snavely-cpu-11|2026-09-21T20:02:51|2026-09-22T00:35:26|8\n668433.extern|extern|COMPLETED|04:32:35|||0:0|snavely-cpu-11|2026-09-21T20:02:51|2026-09-22T00:35:26|8\n668434|packS_w5_k19_18E2__mip|COMPLETED|01:00:14||24G|0:0|snavely-cpu-11|2026-09-22T00:35:35|2026-09-22T01:35:49|8\n668434.batch|batch|COMPLETED|01:00:14|1130064K||0:0|snavely-cpu-11|2026-09-22T00:35:35|2026-09-22T01:35:49|8\n668434.extern|extern|COMPLETED|01:00:14|||0:0|snavely-cpu-11|2026-09-22T00:35:35|2026-09-22T01:35:49|8\n661616_33|drX_graphs|RUNNING|06:14:18||96G|0:0|unicorn-cpu-75|2026-09-21T21:43:26|Unknown|2\n661616_33.batch|batch|RUNNING|06:14:18|||0:0|unicorn-cpu-75|2026-09-21T21:43:26|Unknown|2\n661616_33.extern|extern|RUNNING|06:14:18|||0:0|unicorn-cpu-75|2026-09-21T21:43:26|Unknown|2\n661616_34|drX_graphs|RUNNING|06:14:18||96G|0:0|sonic-cpu-02|2026-09-21T21:43:26|Unknown|2\n661616_34.batch|batch|RUNNING|06:14:18|||0:0|sonic-cpu-02|2026-09-21T21:43:26|Unknown|2\n661616_34.extern|extern|RUNNING|06:14:18|||0:0|sonic-cpu-02|2026-09-21T21:43:26|Unknown|2\n661616_35|drX_graphs|RUNNING|06:14:18||96G|0:0|unicorn-cpu-87|2026-09-21T21:43:26|Unknown|2\n661616_35.batch|batch|RUNNING|06:14:18|||0:0|unicorn-cpu-87|2026-09-21T21:43:26|Unknown|2\n661616_35.extern|extern|RUNNING|06:14:18|||0:0|unicorn-cpu-87|2026-09-21T21:43:26|Unknown|2\n661616_29|drX_graphs|RUNNING|06:14:18||96G|0:0|unicorn-cpu-76|2026-09-21T21:43:26|Unknown|2\n661616_29.batch|batch|RUNNING|06:14:18|||0:0|unicorn-cpu-76|2026-09-21T21:43:26|Unknown|2\n661616_29.extern|extern|RUNNING|06:14:18|||0:0|unicorn-cpu-76|2026-09-21T21:43:26|Unknown|2\n",
+    "stderr": ""
+  },
+  "cg_attempts": [
+    "cg/668433_r0"
+  ],
+  "mip_attempts": [
+    "mip/668434_r0"
+  ],
+  "files": [
+    {
+      "local": "baseline/jobs.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/jobs.json",
+      "bytes": 219524,
+      "sha256": "c50b81cf137ad33d0fb7be497dd6a0abeb153285cfabef93ad43ef599367f4a0"
+    },
+    {
+      "local": "baseline/manifest.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/manifest.json",
+      "bytes": 355449,
+      "sha256": "e3d7164834a388b69def78840acf6038129d9aa8dddc18f9db3bcfe6e575046e"
+    },
+    {
+      "local": "baseline/cases/w1_k33/cache/661665_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k33/cache/661665_r0/execution.json",
+      "bytes": 1887,
+      "sha256": "9aad62bc8d51b37c2072bbe2d795f379a6231e5b18fc25d2a0470c379bb3f83e"
+    },
+    {
+      "local": "baseline/cases/w1_k33/cache/661665_r0/network.pkl.manifest.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k33/cache/661665_r0/network.pkl.manifest.json",
+      "bytes": 1277,
+      "sha256": "7e9b8c371f5d12a4b4165a2494026b48fece521003968687dbef64128feed396"
+    },
+    {
+      "local": "baseline/cases/w1_k33/cg/661618_r0/cg.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k33/cg/661618_r0/cg.json",
+      "bytes": 10014,
+      "sha256": "8b70c40e6c2930395d927deb655a81ae16b5d6a9789bff5a19c62d449f7397aa"
+    },
+    {
+      "local": "baseline/cases/w1_k34/cache/661666_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k34/cache/661666_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "90fc46ff24b6dcb0183d79178937f72c7e9c51a568bd4d985353b4c9dfd7de84"
+    },
+    {
+      "local": "baseline/cases/w1_k35/cache/661667_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k35/cache/661667_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "b242f54584c85e3b3cae10324f36e96b41144231ebbaead7cd95ac46f92dd229"
+    },
+    {
+      "local": "baseline/cases/w1_k36/cache/661746_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k36/cache/661746_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "8ad58c99dfddc64173625bdd80e7e18753c0b4ff328f307ad653e34ca326e8f9"
+    },
+    {
+      "local": "baseline/cases/w1_k37/cache/661747_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k37/cache/661747_r0/execution.json",
+      "bytes": 1888,
+      "sha256": "a63ace081468b23ed00897414f4fb8cfffb19cd3e612854deef63a544ae6b563"
+    },
+    {
+      "local": "baseline/cases/w1_k37/cache/661747_r0/network.pkl.manifest.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k37/cache/661747_r0/network.pkl.manifest.json",
+      "bytes": 1277,
+      "sha256": "92a59bb1794327aca5ed676930f9104f2bbaee9e0c4af937928eb405144b64db"
+    },
+    {
+      "local": "baseline/cases/w1_k38/cache/661761_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k38/cache/661761_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "3aea809e7bb6c6ec361097ba9ed6d82003a47646fce629751271c6ce378065b3"
+    },
+    {
+      "local": "baseline/cases/w1_k39/cache/661762_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k39/cache/661762_r0/execution.json",
+      "bytes": 1781,
+      "sha256": "f89c9d069779fe3310da1759e92916ebd372ed97e46d802adccc08c311183698"
+    },
+    {
+      "local": "baseline/cases/w1_k39/cache/661762_r1/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k39/cache/661762_r1/execution.json",
+      "bytes": 1780,
+      "sha256": "b167eb31ce04020246dd296125b376f62c06db8230ad58b709883e2f03bd7da6"
+    },
+    {
+      "local": "baseline/cases/w1_k40/cache/661791_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k40/cache/661791_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "ee9eac423844582ba47dc2983a882ebae2574d8986fc8bc7ced3247133ec4ca3"
+    },
+    {
+      "local": "baseline/cases/w2_k33/cache/661813_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k33/cache/661813_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "8506f0668f69cf49303a69028e38d6785674e3da8c76301c3c811ff013b35938"
+    },
+    {
+      "local": "baseline/cases/w2_k34/cache/661814_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k34/cache/661814_r0/execution.json",
+      "bytes": 1781,
+      "sha256": "a84e7c214e7f038c707eb038da1fbd879550825c5e21a3e06555d47776ec0b51"
+    },
+    {
+      "local": "baseline/cases/w2_k35/cache/661833_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k35/cache/661833_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "7f4a8c7130689c0a1c3087c0bb169a2676498e55aaa4c86cd4142df84d502649"
+    },
+    {
+      "local": "baseline/cases/w2_k36/cache/661834_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k36/cache/661834_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "5b263144d088a5922758c4b07992ece672629e368293da774cdfef4d65722f9e"
+    },
+    {
+      "local": "baseline/cases/w2_k37/cache/661835_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k37/cache/661835_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "41d855b5eda079e62103d3dfe20da8c3c6740ad5d714550e3c0d288d53c063de"
+    },
+    {
+      "local": "baseline/cases/w2_k38/cache/661836_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k38/cache/661836_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "f3798fba34cc2dcea238c6bdb94e6f91c8502d4fd2bdf570451616c74bd4b0c6"
+    },
+    {
+      "local": "baseline/cases/w2_k39/cache/661837_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k39/cache/661837_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "347b39b4ea961cb5e918ab1a63a3114614c95fe7ef52c5af5ddfc2967eaef62c"
+    },
+    {
+      "local": "baseline/cases/w2_k39/cache/661837_r1/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k39/cache/661837_r1/execution.json",
+      "bytes": 1782,
+      "sha256": "8da035aebb50dfde45eaba8a76ceabb9f44665f7753442e60187471235ddea5c"
+    },
+    {
+      "local": "baseline/cases/w2_k40/cache/661858_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w2_k40/cache/661858_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "955664de9309e48f3129f04a186c4d2c8bae2edb92f18d30081e03aceaf70059"
+    },
+    {
+      "local": "baseline/cases/w3_k33/cache/661859_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k33/cache/661859_r0/execution.json",
+      "bytes": 1888,
+      "sha256": "64d20a629f39edc558ce8ecb23a3d0efa4190b0f75487f05a76a498e9a4608b7"
+    },
+    {
+      "local": "baseline/cases/w3_k33/cache/661859_r0/network.pkl.manifest.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k33/cache/661859_r0/network.pkl.manifest.json",
+      "bytes": 1278,
+      "sha256": "0ee42c0f2118845d25f9cd6c5a712c50a2f1fc01047a813102d5636597dc75d2"
+    },
+    {
+      "local": "baseline/cases/w3_k33/cg/661668_r0/cg.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k33/cg/661668_r0/cg.json",
+      "bytes": 242571,
+      "sha256": "46e4ba6911957b8f5ea45cf2ad4bf3ec43a1975ca9a4d820a6a6f886ab7b3d7a"
+    },
+    {
+      "local": "baseline/cases/w3_k34/cache/661882_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k34/cache/661882_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "23116918c7c0276104e686db637c819da0c17ee8e15e5a70156e53118a8b7db7"
+    },
+    {
+      "local": "baseline/cases/w3_k35/cache/661883_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k35/cache/661883_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "92b9af929dfd28338235f2c5049142ae371dc6effb7bae0d6d2b2196871fccd7"
+    },
+    {
+      "local": "baseline/cases/w3_k36/cache/661898_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k36/cache/661898_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "39770bba8cf8e1b50d3851f7f39f13a493ff68290232915caa660bc869e13127"
+    },
+    {
+      "local": "baseline/cases/w3_k37/cache/661899_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k37/cache/661899_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "03c0e3647229a28a5dc27f3f9e6d8701c20afac0850f45ff246f2f4603c03c8f"
+    },
+    {
+      "local": "baseline/cases/w3_k38/cache/661900_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k38/cache/661900_r0/execution.json",
+      "bytes": 1888,
+      "sha256": "03585377e74c13c7a8aba9c29fa86dea23ff44eb74a0bd251151a27e338ae052"
+    },
+    {
+      "local": "baseline/cases/w3_k38/cache/661900_r0/network.pkl.manifest.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w3_k38/cache/661900_r0/network.pkl.manifest.json",
+      "bytes": 1277,
+      "sha256": "775c748366a2c1d8b55eeacc3777cff2ef29ce228bef34933b0d56acf11fd920"
+    },
+    {
+      "local": "baseline/cases/w4_k33/cache/661934_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k33/cache/661934_r0/execution.json",
+      "bytes": 1888,
+      "sha256": "f5266331cee6953613518b5049cd3783dd3ec98c1aa3c74bd3d3edd804e9a8a5"
+    },
+    {
+      "local": "baseline/cases/w4_k33/cache/661934_r0/network.pkl.manifest.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k33/cache/661934_r0/network.pkl.manifest.json",
+      "bytes": 1278,
+      "sha256": "51fc7ea6637d4893ed8f41dd2db195288e9519ea7ff8bc97109dc7d11abeca6b"
+    },
+    {
+      "local": "baseline/cases/w4_k33/cg/661691_r0/cg.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k33/cg/661691_r0/cg.json",
+      "bytes": 262582,
+      "sha256": "be66cc35ead5e03316c921e683c529c2ffcd6e7feac6dc288138abebb88b0502"
+    },
+    {
+      "local": "baseline/cases/w4_k34/cache/661935_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k34/cache/661935_r0/execution.json",
+      "bytes": 1887,
+      "sha256": "c8bb4be79ea6143b0f93ddb9a5e360541382d1c7c47dc1ea6afbaac30084ceff"
+    },
+    {
+      "local": "baseline/cases/w4_k34/cache/661935_r0/network.pkl.manifest.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k34/cache/661935_r0/network.pkl.manifest.json",
+      "bytes": 1277,
+      "sha256": "ad1f3d51d42e73beda37ba2405de547ae1a0d9ed3951ddccbb6bc10c72214ac1"
+    },
+    {
+      "local": "baseline/cases/w4_k35/cache/661936_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k35/cache/661936_r0/execution.json",
+      "bytes": 1887,
+      "sha256": "c8e0ec41dc0a79f7028825d988cb20f6821d7bebd6c94ead253f7f0cda9b5daa"
+    },
+    {
+      "local": "baseline/cases/w4_k35/cache/661936_r0/network.pkl.manifest.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k35/cache/661936_r0/network.pkl.manifest.json",
+      "bytes": 1277,
+      "sha256": "2342ec7c499f3e5736f6dadc4b1cab6004ba6b300da248f21881d75df590f560"
+    },
+    {
+      "local": "baseline/cases/w4_k36/cache/661937_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k36/cache/661937_r0/execution.json",
+      "bytes": 1887,
+      "sha256": "820b305ed57eb83b92b18d74523fb13e7c121e83c9076353fcfa5dabfc414f91"
+    },
+    {
+      "local": "baseline/cases/w4_k36/cache/661937_r0/network.pkl.manifest.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k36/cache/661937_r0/network.pkl.manifest.json",
+      "bytes": 1278,
+      "sha256": "6440ec4ffe58f8e6ce8453bfb65f09a5fb804c9305cb2f9f6e2ac531341ee142"
+    },
+    {
+      "local": "baseline/cases/w4_k37/cache/661938_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k37/cache/661938_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "edcb0ec99109d8ebf9dd12054e363f955a41e4a254a8000f24f18a47a81e53ef"
+    },
+    {
+      "local": "baseline/cases/w4_k37/cache/661938_r1/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k37/cache/661938_r1/execution.json",
+      "bytes": 1782,
+      "sha256": "84dd17f5c4a78d7c0b48b9bae32c128ad4a49ca213fef6d5952f3026e6d478fd"
+    },
+    {
+      "local": "baseline/cases/w4_k38/cache/661939_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k38/cache/661939_r0/execution.json",
+      "bytes": 1781,
+      "sha256": "4370c517fe1a30ee0602ddce52247f8f0640ba5f65ae6133fb61691ab8d6ffbb"
+    },
+    {
+      "local": "baseline/cases/w4_k38/cache/661939_r1/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k38/cache/661939_r1/execution.json",
+      "bytes": 1782,
+      "sha256": "89fff9694fcb1d29a551e2d95ef815316dbb5626dafa2c37bc69306d7870fc03"
+    },
+    {
+      "local": "baseline/cases/w4_k39/cache/661940_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w4_k39/cache/661940_r0/execution.json",
+      "bytes": 1781,
+      "sha256": "015da32473694080a70ccf7c85442491bf72bd1291d81b8f1f8e960b629d2354"
+    },
+    {
+      "local": "baseline/cases/w5_k33/cache/661941_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k33/cache/661941_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "675531ffce45978dec6e7471be184af243da2ac870af6da82983d9acc78ff4d3"
+    },
+    {
+      "local": "baseline/cases/w5_k33/cache/661941_r1/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k33/cache/661941_r1/execution.json",
+      "bytes": 1782,
+      "sha256": "584e292df00a6ef0faf0c41cea0c2d0ac3f9fa099e4070824b1ecaf8e588a130"
+    },
+    {
+      "local": "baseline/cases/w5_k34/cache/661942_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k34/cache/661942_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "3b898bfa6f437c7ba2388fd05af3e96ad3b275c510299c523c296679b8959694"
+    },
+    {
+      "local": "baseline/cases/w5_k35/cache/661943_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k35/cache/661943_r0/execution.json",
+      "bytes": 1888,
+      "sha256": "197b8d7a708a5fd14d575e5f7fd9bd9a2d73b20ba5b3cd24e818a602d5542b05"
+    },
+    {
+      "local": "baseline/cases/w5_k35/cache/661943_r0/network.pkl.manifest.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k35/cache/661943_r0/network.pkl.manifest.json",
+      "bytes": 1278,
+      "sha256": "2fd8d4599c9c1a149761ab24c607a63fd39efb804fe71febaba225a22a8349db"
+    },
+    {
+      "local": "baseline/cases/w5_k36/cache/661944_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k36/cache/661944_r0/execution.json",
+      "bytes": 1780,
+      "sha256": "b0face94c9273bad8934eb0b7feda674fc378cca081ee6781d670deab40b3775"
+    },
+    {
+      "local": "baseline/cases/w5_k37/cache/661945_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k37/cache/661945_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "1e9214df07841881ae646a71ffa454bf018b0cb758cf2075b79bb0ae0776482b"
+    },
+    {
+      "local": "baseline/cases/w5_k37/cache/661945_r1/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k37/cache/661945_r1/execution.json",
+      "bytes": 1782,
+      "sha256": "1a42cb0b75d5d9f58b734b12ec8b1f8d9e33dc5189b09570fcdb2ddd756c9830"
+    },
+    {
+      "local": "baseline/cases/w5_k38/cache/661946_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k38/cache/661946_r0/execution.json",
+      "bytes": 1781,
+      "sha256": "684b32417d060e0054d5a74cf4328a5b85f649cddec69b51e2c78f2e586811c0"
+    },
+    {
+      "local": "baseline/cases/w5_k38/cache/661946_r1/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k38/cache/661946_r1/execution.json",
+      "bytes": 1781,
+      "sha256": "c92a18253503393e51d538939aab9179fbdf7dc8f77c206a6fad98e7f0ce44d3"
+    },
+    {
+      "local": "baseline/cases/w5_k39/cache/661947_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k39/cache/661947_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "708e01fb777897fac71d8ffcc7cd576df6c65b99f6af0dbec8d5a86afad772d1"
+    },
+    {
+      "local": "baseline/cases/w5_k39/cache/661947_r1/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k39/cache/661947_r1/execution.json",
+      "bytes": 1781,
+      "sha256": "56aa19b0436ad229d67090193abeed5a0d9b3aabd92cd8ac7f0513521618a9ab"
+    },
+    {
+      "local": "baseline/cases/w5_k40/cache/661948_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w5_k40/cache/661948_r0/execution.json",
+      "bytes": 1781,
+      "sha256": "a44e689bcf728960b844a5913d0682266f154ef14682c32c86db458e751ec0c5"
+    },
+    {
+      "local": "baseline/cases/w6_k33/cache/661949_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k33/cache/661949_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "7f1239a03c3395f0ed787e7467c348025f90a8245b743a2445fe8e2ae5a7d28d"
+    },
+    {
+      "local": "baseline/cases/w6_k33/cache/661949_r1/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k33/cache/661949_r1/execution.json",
+      "bytes": 1781,
+      "sha256": "45a3ba697324c1d98f71ae502850e3064623fde11c352b180cc92decadb7b84c"
+    },
+    {
+      "local": "baseline/cases/w6_k34/cache/661950_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k34/cache/661950_r0/execution.json",
+      "bytes": 1887,
+      "sha256": "7b9c3d61e95d7460bf64f92dbad040bc9cb5e291c195ddbdfefc66f5e8c0fcbd"
+    },
+    {
+      "local": "baseline/cases/w6_k34/cache/661950_r0/network.pkl.manifest.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k34/cache/661950_r0/network.pkl.manifest.json",
+      "bytes": 1278,
+      "sha256": "b24d7e99fd676a860091d8f5f1b1f5f1d0e79102f18c97b89a025ee06ec5dbf7"
+    },
+    {
+      "local": "baseline/cases/w6_k35/cache/661951_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k35/cache/661951_r0/execution.json",
+      "bytes": 1887,
+      "sha256": "567cb480c7dea8fe96267a6ec59f6a4640c0c9299d7734411a60a1507be67578"
+    },
+    {
+      "local": "baseline/cases/w6_k35/cache/661951_r0/network.pkl.manifest.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k35/cache/661951_r0/network.pkl.manifest.json",
+      "bytes": 1278,
+      "sha256": "3c22a0495b90789a10b3308f1cf128d2fa537938eafe3d84b78d68fd8fee257d"
+    },
+    {
+      "local": "baseline/cases/w6_k36/cache/661952_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k36/cache/661952_r0/execution.json",
+      "bytes": 1888,
+      "sha256": "c3312381900234596301015c8487af554636ada6462fa987d151c8cba48185a1"
+    },
+    {
+      "local": "baseline/cases/w6_k36/cache/661952_r0/network.pkl.manifest.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k36/cache/661952_r0/network.pkl.manifest.json",
+      "bytes": 1277,
+      "sha256": "f5c51431142d414475659c961c76d55287d424e63ca2ed82962c612d97d85064"
+    },
+    {
+      "local": "baseline/cases/w6_k37/cache/661953_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k37/cache/661953_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "30e892ebbfbb01e6e90430f7b487352937e93ce6a5ba3d6d6e8d5a0dad2fc41e"
+    },
+    {
+      "local": "baseline/cases/w6_k37/cache/661953_r1/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k37/cache/661953_r1/execution.json",
+      "bytes": 1782,
+      "sha256": "95d57e66380f02e8ec4da467cfb2e502f54af9d0a523d887271527a372cc31b4"
+    },
+    {
+      "local": "baseline/cases/w6_k38/cache/661954_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k38/cache/661954_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "40251925cc29e3644192281c41744b2b2dccb9ce0e0d769757ba522984cf4bce"
+    },
+    {
+      "local": "baseline/cases/w6_k39/cache/661616_r0/execution.json",
+      "remote": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w6_k39/cache/661616_r0/execution.json",
+      "bytes": 1782,
+      "sha256": "1fd3ccadae57137e28f18f6106ab863b1f7585aa5d5e71bc58d9e43f1a245b4a"
+    },
+    {
+      "local": "strict/manifest.json",
+      "remote": "/home/nc437/ladder-lite/strict_packed_successors_20260921/manifest.json",
+      "bytes": 5459,
+      "sha256": "ebb1d567d00adf5ae59be47440ec9aa37cd0ee36e6afc029ec8404177e00d06e"
+    },
+    {
+      "local": "strict/jobs.json",
+      "remote": "/home/nc437/ladder-lite/strict_packed_successors_20260921/jobs.json",
+      "bytes": 10423,
+      "sha256": "ac66c62dc22f355e02f3d3fde768751d488bd6bb36ee25d0dd436e9dbe9d36ad"
+    },
+    {
+      "local": "strict/k19/CG_COMPLETE.json",
+      "remote": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k19_18E2/CG_COMPLETE.json",
+      "bytes": 391,
+      "sha256": "4d3046df3babb3742d13e176ea7cc5c2ccc4fbb42af7b03b2ce03cd434cd40dc"
+    },
+    {
+      "local": "strict/k19/cg/COMPLETE.json",
+      "remote": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k19_18E2/cg/668433_r0/COMPLETE.json",
+      "bytes": 318,
+      "sha256": "44a3116cb237d5de03a99f57702e1a53ad64099cbd05c086ad251772404f6674"
+    },
+    {
+      "local": "strict/k19/cg/command.json",
+      "remote": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k19_18E2/cg/668433_r0/command.json",
+      "bytes": 1397,
+      "sha256": "4e20f68937205f4d5d7b938a5df871af5c545878ef1eb849397c096c86706314"
+    },
+    {
+      "local": "strict/k19/cg/result.json",
+      "remote": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k19_18E2/cg/668433_r0/result.json",
+      "bytes": 3901,
+      "sha256": "febde0587cea7940e34632f477fe32821674a2cc6fbfbc7e0054ce58b432ef03"
+    },
+    {
+      "local": "strict/k19/cg/result.json.gurobi.log",
+      "remote": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k19_18E2/cg/668433_r0/result.json.gurobi.log",
+      "bytes": 3840,
+      "sha256": "6e74ac580188825c5e330387af342de8cee2e60ea7324ae588c2f54644ffbbfb"
+    },
+    {
+      "local": "strict/k19/cg/solver.log",
+      "remote": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k19_18E2/cg/668433_r0/solver.log",
+      "bytes": 4155,
+      "sha256": "a5d927a0f198e5a6ceda7fb12fe3f7e1f08aeb86a1044b30c71a08cf783b4fd2"
+    },
+    {
+      "local": "strict/k19/mip/COMPLETE.json",
+      "remote": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k19_18E2/mip/668434_r0/COMPLETE.json",
+      "bytes": 319,
+      "sha256": "29d1f8748113cf5ec3699eabe54fe455330a5f244fdbaf3e058c4553940ec9f4"
+    },
+    {
+      "local": "strict/k19/mip/command.json",
+      "remote": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k19_18E2/mip/668434_r0/command.json",
+      "bytes": 1140,
+      "sha256": "7a5504f16b1b5e532cbda2522d0ee500d25cfa9926d389a9b483ff78680647c2"
+    },
+    {
+      "local": "strict/k19/mip/result.json",
+      "remote": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k19_18E2/mip/668434_r0/result.json",
+      "bytes": 7856,
+      "sha256": "c0151c2ea6e27cd1f6af2bfa2feb310fb2ddbf52d40f363477df900cb7185e13"
+    },
+    {
+      "local": "strict/k19/mip/result.json.gurobi.log",
+      "remote": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k19_18E2/mip/668434_r0/result.json.gurobi.log",
+      "bytes": 34186,
+      "sha256": "03aaa52eb2822173dc3fa4df7b57cd01aa3622a4405f15e188fdb8eccf3528fa"
+    },
+    {
+      "local": "strict/k19/mip/solver.log",
+      "remote": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k19_18E2/mip/668434_r0/solver.log",
+      "bytes": 34470,
+      "sha256": "540aca8ec2bc33598ef45e962e27866543c024c2ba0db4de80665085a35a198e"
+    }
+  ]
+}

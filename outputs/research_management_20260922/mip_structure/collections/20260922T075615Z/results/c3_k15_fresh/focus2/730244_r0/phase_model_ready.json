@@ -1,0 +1,19 @@
+{
+  "build_wall_s": 0.9735363009385765,
+  "dimensions": {
+    "rows": 302,
+    "variables": 38130,
+    "nonzeros": 896915
+  },
+  "parameters": {
+    "Threads": 8,
+    "Seed": 0,
+    "TimeLimit": 1800.0,
+    "MIPGap": 0.0001,
+    "MIPFocus": 2,
+    "PreSparsify": -1,
+    "Presolve": -1,
+    "Method": -1
+  },
+  "ready_unix": 1790056793.2768588
+}

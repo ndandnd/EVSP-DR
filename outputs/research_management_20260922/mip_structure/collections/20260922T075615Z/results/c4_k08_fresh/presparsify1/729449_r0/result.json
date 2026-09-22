@@ -1,0 +1,182 @@
+{
+  "case": "c4_k08_fresh",
+  "arm": "presparsify1",
+  "model": "same-pool binary covering fleet-only",
+  "gurobi_version": "12.0.3",
+  "model_dimensions": {
+    "rows": 188,
+    "variables": 39668,
+    "nonzeros": 1057136
+  },
+  "effective_parameters": {
+    "Threads": 8,
+    "Seed": 0,
+    "TimeLimit": 1800.0,
+    "MIPGap": 0.0001,
+    "MIPFocus": 0,
+    "PreSparsify": 1,
+    "Presolve": -1,
+    "Method": -1
+  },
+  "artifact_loading_s": 218.27751876134425,
+  "model_build_wall_s": 0.7844452187418938,
+  "matrix_identity_sha256": "d27e254a66aaf9d608d0a7d1f40718650d74e8f790a3cb1fb46157be6051bb7a",
+  "prepared_metadata_sha256": "ee293faa9c157e2df8c8fbc129d597c0a2af6e37dcea3462a20965e5bf69824c",
+  "original_endpoint": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c4_k08/mip_base/135655_r0/result.json",
+  "threads": 8,
+  "seed": 0,
+  "time_limit_s": 1800,
+  "actual_optimize_wall_s": 756.0587868290022,
+  "gurobi_runtime_s": 756.0584828853607,
+  "gurobi_status": 2,
+  "fleet": 9,
+  "bound": 8.99999999999999,
+  "finite_pool_fleet_proven": true,
+  "target": 8,
+  "target_attained": false,
+  "selected_indices": [
+    30662,
+    34392,
+    36055,
+    37024,
+    37966,
+    38072,
+    38082,
+    38741,
+    39164
+  ],
+  "selected_route_hashes": [
+    "3571258630146c3484d20bfd4e4aa3f6299f358222d7f39e8ec487345b9fd057",
+    "a8bc9f0b51846c9d04f16893c82ddd53f69bfcc456bcf2b7fb33e2f4a94c4411",
+    "ce01d45aa7777dbcecba6c07d4ad6278cea84f9ec35a5ed85dd796d7c8621757",
+    "55d064f84220b5d8a792830711b6b6d11e957e5bc6084ecd3c88d71059601f37",
+    "4a8decdfca182c1adfd9f94be5b637e2ca973c80ba08b6064e96c9837c809cfb",
+    "031374066e3ff94a5279de05cb4ef2d0da6abed8033c9573997e218a2300c6f1",
+    "72e5e62e908d8e93b9448c7765bd583855287832453d02775e3ee7c75aed4b1b",
+    "f54452f855ca586dcff18461c57bac01e959040490d26303e55fcacab4801806",
+    "ee9efe8f02528a159926d582585fd9a0b0bf0b5603edee7ad177729fffd1c714"
+  ],
+  "row_coverage_validated": true,
+  "shared_capacity_enforced": false,
+  "start_indices": [
+    188,
+    219,
+    38888,
+    31004,
+    30655,
+    0,
+    3,
+    5,
+    10,
+    16,
+    20,
+    23,
+    24,
+    25,
+    29,
+    30,
+    32,
+    36,
+    37,
+    43,
+    45,
+    46,
+    52,
+    56,
+    64,
+    66,
+    68,
+    75,
+    76,
+    82,
+    83,
+    86,
+    88,
+    90,
+    93,
+    96,
+    98,
+    103,
+    105,
+    109,
+    110,
+    112,
+    113,
+    117,
+    118,
+    119,
+    123,
+    124,
+    126,
+    128,
+    130,
+    134,
+    136,
+    140,
+    141,
+    144,
+    147,
+    150,
+    182
+  ],
+  "start_buses": 59,
+  "start_scope": "Same deterministic greedy pool partition as original saved run",
+  "events": [
+    {
+      "runtime_s": 0.010617971420288086,
+      "fleet": 59.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 5.544781923294067,
+      "fleet": 21.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 5.550279855728149,
+      "fleet": 19.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 5.581058979034424,
+      "fleet": 15.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 6.048893928527832,
+      "fleet": 14.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 6.209424018859863,
+      "fleet": 13.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 6.366678953170776,
+      "fleet": 12.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 6.806643009185791,
+      "fleet": 11.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 9.980080842971802,
+      "fleet": 10.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 62.314440965652466,
+      "fleet": 8.99999999999999,
+      "node_count": 0.0
+    }
+  ],
+  "first_target_time_s": null,
+  "host": "sablab-cpu-01.ece.cornell.edu",
+  "log_sha256": "604470dabc7cda7b936b9e1201afffd7af199875a0eda6cb2423674e16a73fd7",
+  "start_acceptance_messages": [
+    "Loaded user MIP start with objective 59"
+  ]
+}

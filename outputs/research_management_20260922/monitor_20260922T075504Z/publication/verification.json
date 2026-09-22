@@ -1,0 +1,582 @@
+{
+  "status": "pass",
+  "checks": [
+    {
+      "name": "slide counts 39 -> 41",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "only slides 10 and 39 semantically changed",
+      "pass": true,
+      "detail": {
+        "raw_xml_changed": [
+          3,
+          7,
+          8,
+          10,
+          14,
+          27,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          39
+        ],
+        "normalized_xml_changed": [
+          10,
+          39
+        ]
+      }
+    },
+    {
+      "name": "all original table styles unchanged except generated IDs",
+      "pass": true,
+      "detail": {
+        "before": 1,
+        "after": 2
+      }
+    },
+    {
+      "name": "all original embedded media bytes preserved",
+      "pass": true,
+      "detail": 8
+    },
+    {
+      "name": "original image relationships still target identical image content",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 40 has one editable native table",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 41 has one editable native table",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 40 all 36 cells including header match",
+      "pass": true,
+      "detail": {
+        "observed": [
+          [
+            "Pool",
+            "Default",
+            "Focus 1",
+            "Focus 2",
+            "Sparsify",
+            "Saved start"
+          ],
+          [
+            "C1 k8 fresh",
+            "9",
+            "9",
+            "9",
+            "9",
+            "9"
+          ],
+          [
+            "C4 k8 fresh",
+            "9",
+            "9",
+            "9",
+            "9",
+            "9"
+          ],
+          [
+            "C1 k15 fresh",
+            "18",
+            "18",
+            "18",
+            "19",
+            "18"
+          ],
+          [
+            "C3 k15 fresh",
+            "18",
+            "18",
+            "18",
+            "17",
+            "17"
+          ],
+          [
+            "C1 k15 seq.",
+            "15",
+            "15",
+            "15",
+            "15",
+            "15"
+          ]
+        ],
+        "expected": [
+          [
+            "Pool",
+            "Default",
+            "Focus 1",
+            "Focus 2",
+            "Sparsify",
+            "Saved start"
+          ],
+          [
+            "C1 k8 fresh",
+            "9",
+            "9",
+            "9",
+            "9",
+            "9"
+          ],
+          [
+            "C4 k8 fresh",
+            "9",
+            "9",
+            "9",
+            "9",
+            "9"
+          ],
+          [
+            "C1 k15 fresh",
+            "18",
+            "18",
+            "18",
+            "19",
+            "18"
+          ],
+          [
+            "C3 k15 fresh",
+            "18",
+            "18",
+            "18",
+            "17",
+            "17"
+          ],
+          [
+            "C1 k15 seq.",
+            "15",
+            "15",
+            "15",
+            "15",
+            "15"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "original_minute optimum and original matrix validation",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "identical_rows optimum and original matrix validation",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "endpoint_difference optimum and original matrix validation",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 41 all 20 cells match source dimensions and Gurobi Runtime",
+      "pass": true,
+      "detail": {
+        "observed": [
+          [
+            "Representation",
+            "Rows",
+            "Nonzeros",
+            "Presolved nonzeros",
+            "MIP seconds"
+          ],
+          [
+            "Minute rows",
+            "1,789",
+            "44,844",
+            "5,009",
+            "0.338"
+          ],
+          [
+            "Repeated rows merged",
+            "303",
+            "10,232",
+            "5,596",
+            "0.058"
+          ],
+          [
+            "Start/end + occupancy",
+            "307",
+            "7,714",
+            "6,779",
+            "0.099"
+          ]
+        ],
+        "expected": [
+          [
+            "Representation",
+            "Rows",
+            "Nonzeros",
+            "Presolved nonzeros",
+            "MIP seconds"
+          ],
+          [
+            "Minute rows",
+            "1,789",
+            "44,844",
+            "5,009",
+            "0.338"
+          ],
+          [
+            "Repeated rows merged",
+            "303",
+            "10,232",
+            "5,596",
+            "0.058"
+          ],
+          [
+            "Start/end + occupancy",
+            "307",
+            "7,714",
+            "6,779",
+            "0.099"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "slide 40 sequential proof times",
+      "pass": true,
+      "detail": "104 / 105 / 81 / 1,779 / 11"
+    },
+    {
+      "name": "slide 40 finite-pool/time-limit/start caveats",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "fleet source supports proof and time-limit claims",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 41 finite-pool/equivalence/speed caveats",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Gurobi Runtime explicitly documented in slide text or notes",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 10 strict endpoint matches operations",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 10 graph hours round correctly",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 39 caveats present",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 40 native table grid inside slide",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 41 native table grid inside slide",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "original first three Doc tables unchanged; fourth only intended Runtime header clarification",
+      "pass": true,
+      "detail": {
+        "before_count": 4,
+        "after_count": 5,
+        "intended_fourth_table_change": "MIP, s -> Gurobi Runtime, s"
+      }
+    },
+    {
+      "name": "new Doc table has complete 5x6 body and header",
+      "pass": true,
+      "detail": [
+        [
+          "Pool",
+          "Default",
+          "Focus 1",
+          "Focus 2",
+          "PreSparsify 1",
+          "Saved start"
+        ],
+        [
+          "C1 k8 fresh",
+          "9",
+          "9",
+          "9",
+          "9",
+          "9"
+        ],
+        [
+          "C4 k8 fresh",
+          "9",
+          "9",
+          "9",
+          "9",
+          "9"
+        ],
+        [
+          "C1 k15 fresh",
+          "18",
+          "18",
+          "18",
+          "19",
+          "18"
+        ],
+        [
+          "C3 k15 fresh",
+          "18",
+          "18",
+          "18",
+          "17",
+          "17"
+        ],
+        [
+          "C1 k15 sequential",
+          "15",
+          "15",
+          "15",
+          "15",
+          "15"
+        ]
+      ]
+    },
+    {
+      "name": "Doc completed trial count/caveats",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Doc sequential times match",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Doc capacity table numeric cells match recorded build time and Gurobi Runtime",
+      "pass": true,
+      "detail": {
+        "observed": [
+          [
+            "Formulation",
+            "Build, s",
+            "Gurobi Runtime, s",
+            "Presolved nonzeros"
+          ],
+          [
+            "Original minute rows",
+            "0.207",
+            "0.338",
+            "5,009"
+          ],
+          [
+            "Merged rows",
+            "0.028",
+            "0.058",
+            "5,596"
+          ],
+          [
+            "Start/end equations",
+            "0.042",
+            "0.099",
+            "6,779"
+          ]
+        ],
+        "expected_numeric": [
+          [
+            "Formulation",
+            "Build, s",
+            "Gurobi Runtime, s",
+            "Presolved nonzeros"
+          ],
+          [
+            "Minute rows",
+            "0.207",
+            "0.338",
+            "5,009"
+          ],
+          [
+            "Merged rows",
+            "0.028",
+            "0.058",
+            "5,596"
+          ],
+          [
+            "Start/end occupancy",
+            "0.042",
+            "0.099",
+            "6,779"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "columns figure references unchanged",
+      "pass": true,
+      "detail": {
+        "before": 0,
+        "after": 0
+      }
+    },
+    {
+      "name": "current figure references unchanged",
+      "pass": true,
+      "detail": {
+        "before": 0,
+        "after": 0
+      }
+    },
+    {
+      "name": "front page exactly three targeted lines replaced",
+      "pass": true,
+      "detail": [
+        {
+          "tag": "replace",
+          "before_lines": [
+            1,
+            1
+          ],
+          "after_lines": [
+            1,
+            1
+          ]
+        },
+        {
+          "tag": "replace",
+          "before_lines": [
+            29,
+            29
+          ],
+          "after_lines": [
+            29,
+            29
+          ]
+        },
+        {
+          "tag": "replace",
+          "before_lines": [
+            78,
+            78
+          ],
+          "after_lines": [
+            78,
+            78
+          ]
+        }
+      ]
+    },
+    {
+      "name": "matrix figure references unchanged",
+      "pass": true,
+      "detail": {
+        "before": 0,
+        "after": 0
+      }
+    },
+    {
+      "name": "matrix exactly one paragraph line replaced",
+      "pass": true,
+      "detail": [
+        {
+          "tag": "replace",
+          "before_lines": [
+            126,
+            126
+          ],
+          "after_lines": [
+            126,
+            126
+          ]
+        }
+      ]
+    }
+  ],
+  "check_count": 32,
+  "failed": [],
+  "capacity_timing_metrics": [
+    {
+      "variant": "original_minute",
+      "gurobi_runtime_s": 0.33849000930786133,
+      "optimize_wall_s": 0.33922021416947246
+    },
+    {
+      "variant": "identical_rows",
+      "gurobi_runtime_s": 0.058036088943481445,
+      "optimize_wall_s": 0.05872593307867646
+    },
+    {
+      "variant": "endpoint_difference",
+      "gurobi_runtime_s": 0.09937000274658203,
+      "optimize_wall_s": 0.10023127682507038
+    }
+  ],
+  "table_bounds_emu": [
+    {
+      "slide": 40,
+      "x": 304800,
+      "y": 1295400,
+      "grid_width": 7896225,
+      "row_height_sum": 2514600,
+      "slide_width": 9144000,
+      "slide_height": 5143500
+    },
+    {
+      "slide": 41,
+      "x": 304800,
+      "y": 1295400,
+      "grid_width": 8048625,
+      "row_height_sum": 1676400,
+      "slide_width": 9144000,
+      "slide_height": 5143500
+    }
+  ],
+  "source_hashes": {
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T075504Z/publication/slides_before.pptx": "5f06555da8b67af0a3720f81e7c41a863165c9ce2d50b536caa51fa72a4507c2",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T075504Z/publication/slides_after.pptx": "59d7c8853430667234731f965b3b0f6774a4784c3de1dfc36535a1118df29092",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T075504Z/publication/slides_after.pdf": "38eec5925b13c2105340fe036da11c51d569b2d047756cae74569d8be6fa2118",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T075504Z/publication/columns_after.pdf": "833011033a349f984f6e22c42cc3321607e517878f8edd6e24368947db14488c",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T075504Z/mip_structure/results.csv": "2935de90efc62dad223e6aa0ad8df62e00ac37f1f2d91b8ce4748dad469895b5",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/charging_column_structure/pilot/results.csv": "df4e7e2a0e08ddbdf8e96ec2d70e5fc7a20999631084a8655725328ac2d3e2b4",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T075504Z/operations/README.md": "f1d607ddde47e21971d22c78f9ea9193be54f7ce748f72b7ec47500fd0d98ab8",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T075504Z/publication/columns_before.md": "4fe25f474c85e33e522f9e78f62e1223152f0b2f12b6c368bd32cd80bf5fe566",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T075504Z/publication/columns_after.md": "8885cc8c270f505115cc5f9fc1618a28f4a3b5eaa9a7ed14d40d0fc4914c4436",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T075504Z/publication/current_before.md": "a767ba06efc57a8676e2f5646212eb5ce3a42b9ca8989f35993b7812290292b0",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T075504Z/publication/current_after.md": "42e23722725ea5bdc6dcea6d7a6d6bbe430e4cc80f526e4a9a47d24dd15ad0cf",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T075504Z/publication/matrix_before.md": "0fac7497f931f5e22b1d807ba90daef4a929e5e3d1323ab7ef04778c62c6d87a",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T075504Z/publication/matrix_after.md": "f226dd9d6640da73e5974db50c9ae29ef09cbde6672682690a9ebae706d52c5f"
+  },
+  "limitations": [
+    "Markdown exports prove document text, tables and figure references; they do not expose the live Doc native object schema.",
+    "Slide semantic equivalence normalizes only regenerated table style GUIDs after checking identical style definitions.",
+    "Native table coordinates use grid widths and nominal row heights; PDF visual review checks actual rendered expansion."
+  ],
+  "visual_review": {
+    "slides": [
+      10,
+      39,
+      40,
+      41
+    ],
+    "result": "Final saved PDF slides 10, 39, 40 and 41 inspected: no clipping, overlap or missing table text."
+  }
+}

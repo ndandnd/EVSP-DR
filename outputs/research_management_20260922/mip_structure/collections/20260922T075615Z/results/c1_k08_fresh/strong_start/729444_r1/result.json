@@ -1,0 +1,92 @@
+{
+  "case": "c1_k08_fresh",
+  "arm": "strong_start",
+  "model": "same-pool binary covering fleet-only",
+  "gurobi_version": "12.0.3",
+  "model_dimensions": {
+    "rows": 194,
+    "variables": 39940,
+    "nonzeros": 1092654
+  },
+  "effective_parameters": {
+    "Threads": 8,
+    "Seed": 0,
+    "TimeLimit": 1800.0,
+    "MIPGap": 0.0001,
+    "MIPFocus": 0,
+    "PreSparsify": -1,
+    "Presolve": -1,
+    "Method": -1
+  },
+  "artifact_loading_s": 335.9687898149714,
+  "model_build_wall_s": 1.0380265209823847,
+  "matrix_identity_sha256": "63cebd926aa1af7da2b04b0339201ef71452ac588b6d95761430050fdd85cdac",
+  "prepared_metadata_sha256": "d8b2e1ba899f665a2012d7453dd90e747b29522fbdf4e77ba3e6547dc236e822",
+  "original_endpoint": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k08/mip_base/135595_r0/result.json",
+  "threads": 8,
+  "seed": 0,
+  "time_limit_s": 1800,
+  "actual_optimize_wall_s": 1388.3071512090974,
+  "gurobi_runtime_s": 1388.3050549030304,
+  "gurobi_status": 2,
+  "fleet": 9,
+  "bound": 9.0,
+  "finite_pool_fleet_proven": true,
+  "target": 8,
+  "target_attained": false,
+  "selected_indices": [
+    278,
+    390,
+    11060,
+    32793,
+    36748,
+    36871,
+    39593,
+    39758,
+    39901
+  ],
+  "selected_route_hashes": [
+    "f4641950746794a123d4784aeacc94b9eaf2b24960e6731444262444118e95a0",
+    "874aa89b599a006b5b993ef00b920406a306aaf3eb9ce45210ccff5cd021b136",
+    "33b02dcd9bd259cc0ff5500e4bc302ed3cc7d4dba65ee4b67767c8dc88b98ed5",
+    "0b47b7d576bdd120ee0ecdb8d539281d0743f60c676ad0a2732d4edc4ed65591",
+    "77c8158cf1be633df9b1c50f3bde8fd774efb3d8532f6a7473a29a088946375b",
+    "00b40baccbd64b6fa365889edf9281ea98590692e4ce97938c6eb18ce44b9149",
+    "290e4948f432aa295160f65ae71d1bc1432f356b913deccbb79e2251075948d9",
+    "f5ccc3246e70cd6ca1bcc333812ee86555ed90d0a276be7b0ca9e0369623bb60",
+    "64c79bbd064defae20245c17b07dfe37f38a66f6b0c452823a52c26ceebe7c4b"
+  ],
+  "row_coverage_validated": true,
+  "shared_capacity_enforced": false,
+  "start_indices": [
+    278,
+    390,
+    11060,
+    32793,
+    36748,
+    36871,
+    39593,
+    39758,
+    39901
+  ],
+  "start_buses": 9,
+  "start_scope": "Offline saved stage-one incumbent from this exact ordered pool; original acquisition time excluded from new trial, not a timed algorithm",
+  "events": [
+    {
+      "runtime_s": 0.02112293243408203,
+      "fleet": 9.0,
+      "node_count": 0.0
+    },
+    {
+      "runtime_s": 1388.298919916153,
+      "fleet": 9.0,
+      "node_count": 34273.0
+    }
+  ],
+  "first_target_time_s": null,
+  "host": "jingjie-cpu-05.mae.cornell.edu",
+  "log_sha256": "e8cb054ecb02df0ffbc98454d2dd3becf017c3f1addfec8a1e6beefbd6e5bf17",
+  "start_acceptance_messages": [
+    "Loaded user MIP start with objective 9"
+  ]
+}

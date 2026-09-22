@@ -1,0 +1,114 @@
+{
+  "validation": {
+    "job": "668429",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=00:15:00",
+      "--job-name=packS_validation",
+      "--output=/home/nc437/ladder-lite/strict_packed_successors_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/strict_packed_successors_20260921/%j.err",
+      "/home/nc437/ladder-lite/strict_packed_successors_20260921/worker.sh",
+      "/home/nc437/ladder-lite/strict_packed_successors_20260921",
+      "validation"
+    ],
+    "verified": "JobId=668429 JobName=packS_validation UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14317 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:15:00 TimeMin=N/A SubmitTime=2026-09-21T15:53:32 EligibleTime=2026-09-21T15:53:32 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-21T15:53:32 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3128513 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=8G,node=1,billing=2 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=8G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/strict_packed_successors_20260921/worker.sh WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/strict_packed_successors_20260921/668429.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/strict_packed_successors_20260921/668429.out TresPerTask=cpu=2 \n"
+  },
+  "w5_k17_18E2__cg": {
+    "job": "668430",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=8",
+      "--mem=16G",
+      "--time=06:00:00",
+      "--job-name=packS_w5_k17_18E2__cg",
+      "--output=/home/nc437/ladder-lite/strict_packed_successors_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/strict_packed_successors_20260921/%j.err",
+      "--dependency=afterok:668429",
+      "--kill-on-invalid-dep=yes",
+      "/home/nc437/ladder-lite/strict_packed_successors_20260921/worker.sh",
+      "/home/nc437/ladder-lite/strict_packed_successors_20260921",
+      "cg",
+      "w5_k17_18E2"
+    ],
+    "verified": "JobId=668430 JobName=packS_w5_k17_18E2__cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14318 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:668429(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=06:00:00 TimeMin=N/A SubmitTime=2026-09-21T15:53:33 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-21T15:53:33 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3128513 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/strict_packed_successors_20260921/worker.sh WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/strict_packed_successors_20260921/668430.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/strict_packed_successors_20260921/668430.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  "w5_k17_18E2__mip": {
+    "job": "668432",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=01:15:00",
+      "--job-name=packS_w5_k17_18E2__mip",
+      "--output=/home/nc437/ladder-lite/strict_packed_successors_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/strict_packed_successors_20260921/%j.err",
+      "--dependency=afterok:668430",
+      "--kill-on-invalid-dep=yes",
+      "/home/nc437/ladder-lite/strict_packed_successors_20260921/worker.sh",
+      "/home/nc437/ladder-lite/strict_packed_successors_20260921",
+      "mip",
+      "w5_k17_18E2"
+    ],
+    "verified": "JobId=668432 JobName=packS_w5_k17_18E2__mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14318 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:668430(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=01:15:00 TimeMin=N/A SubmitTime=2026-09-21T15:53:33 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-21T15:53:33 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3128513 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/strict_packed_successors_20260921/worker.sh WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/strict_packed_successors_20260921/668432.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/strict_packed_successors_20260921/668432.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  "w5_k19_18E2__cg": {
+    "job": "668433",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=8",
+      "--mem=16G",
+      "--time=06:00:00",
+      "--job-name=packS_w5_k19_18E2__cg",
+      "--output=/home/nc437/ladder-lite/strict_packed_successors_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/strict_packed_successors_20260921/%j.err",
+      "--dependency=afterok:668430",
+      "--kill-on-invalid-dep=yes",
+      "/home/nc437/ladder-lite/strict_packed_successors_20260921/worker.sh",
+      "/home/nc437/ladder-lite/strict_packed_successors_20260921",
+      "cg",
+      "w5_k19_18E2"
+    ],
+    "verified": "JobId=668433 JobName=packS_w5_k19_18E2__cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14318 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:668430(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=06:00:00 TimeMin=N/A SubmitTime=2026-09-21T15:53:34 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-21T15:53:34 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3128513 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/strict_packed_successors_20260921/worker.sh WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/strict_packed_successors_20260921/668433.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/strict_packed_successors_20260921/668433.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  "w5_k19_18E2__mip": {
+    "job": "668434",
+    "command": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--requeue",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=01:15:00",
+      "--job-name=packS_w5_k19_18E2__mip",
+      "--output=/home/nc437/ladder-lite/strict_packed_successors_20260921/%j.out",
+      "--error=/home/nc437/ladder-lite/strict_packed_successors_20260921/%j.err",
+      "--dependency=afterok:668433",
+      "--kill-on-invalid-dep=yes",
+      "/home/nc437/ladder-lite/strict_packed_successors_20260921/worker.sh",
+      "/home/nc437/ladder-lite/strict_packed_successors_20260921",
+      "mip",
+      "w5_k19_18E2"
+    ],
+    "verified": "JobId=668434 JobName=packS_w5_k19_18E2__mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14318 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:668433(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=01:15:00 TimeMin=N/A SubmitTime=2026-09-21T15:53:34 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-21T15:53:34 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3128513 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/strict_packed_successors_20260921/worker.sh WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/strict_packed_successors_20260921/668434.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/strict_packed_successors_20260921/668434.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  }
+}

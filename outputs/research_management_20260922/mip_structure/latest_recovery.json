@@ -1,11 +1,11 @@
 {
-  "created_utc": "2026-09-22T06:01:55.415081+00:00",
-  "status": "Five preparations complete; eleven valid endpoints complete; fourteen trials running. No failed active dependencies.",
+  "created_utc": "2026-09-22T08:00:13.926841+00:00",
+  "status": "All25 active trials completed;15 finite-pool proofs and10 normal optimizer time limits; no active recovery needed.",
   "manifest": "manifest_v3.json",
   "source_code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
   "recovery_receipt": "recovery_v3.json",
-  "snapshot": "snapshots/20260922T060155Z.json",
-  "collection": "collections/20260922T060155Z/receipt.json",
+  "snapshot": "snapshots/20260922T075615Z.json",
+  "collection": "collections/20260922T075615Z/receipt.json",
   "original_jobs": "jobs.json",
   "original_failures_preserved": [
     "729457",
@@ -28,9 +28,9 @@
   "native_tests": 13,
   "benchmark_passed": true,
   "snapshot_passed": true,
-  "completed_trial_count": 11,
+  "completed_trial_count": 25,
   "completed_preparation_count": 5,
-  "result_table": "endpoint_results_latest.csv",
+  "result_table": "../monitor_20260922T075504Z/mip_structure/results.csv",
   "preparation_table": "preparation_results_latest.csv",
   "monitor_snapshot": "snapshot.py",
   "monitor_collector": "collect.py",
@@ -42,6 +42,10 @@
     "preparation_results_latest.csv": "f9e0a261c6c9981221a1d351771dc08a800f3f16d4cb4439d44f6ecdd4d8f686",
     "native_tests_v3.log": "16d4445fc7438356a46bfa6f04483daaf6fe6b55ab8c20e78805c3c94520ebe5",
     "local_tests_v3.log": "67d00aba9b32910080e55c30c214388c452f7de292883f0979d5e0db019680c6",
-    "loader_benchmark_v3.json": "b6f9e4664a8ce0bb0833d9bb2819d83816684e02d998d78d6d09e6d93ad20c3e"
-  }
+    "loader_benchmark_v3.json": "b6f9e4664a8ce0bb0833d9bb2819d83816684e02d998d78d6d09e6d93ad20c3e",
+    "../monitor_20260922T075504Z/mip_structure/results.csv": "2935de90efc62dad223e6aa0ad8df62e00ac37f1f2d91b8ce4748dad469895b5"
+  },
+  "endpoint_audit": "../monitor_20260922T075504Z/mip_structure/verification.json",
+  "endpoint_report": "../monitor_20260922T075504Z/mip_structure/README.md",
+  "recovery_needed": false
 }

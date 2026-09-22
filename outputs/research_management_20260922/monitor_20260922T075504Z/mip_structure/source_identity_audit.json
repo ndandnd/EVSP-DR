@@ -1,0 +1,2433 @@
+{
+  "checks": [
+    {
+      "check": "model unchanged across original and v3",
+      "passed": true
+    },
+    {
+      "check": "manifest.json code source hashes",
+      "passed": true
+    },
+    {
+      "check": "manifest_v3.json code source hashes",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh complete gate hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh npz actual bytes hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh metadata hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh native original ordered pool",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh original endpoint hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh pinned source declarations",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh native physical admission",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__default single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__default result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__default full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__default execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__default runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__default matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__default metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__default start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__default start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__default selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__default selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__default same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__default no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__default saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus1 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus1 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus1 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus1 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus1 start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus1 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus1 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus2 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus2 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus2 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus2 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus2 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus2 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus2 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus2 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus2 start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus2 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus2 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus2 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus2 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__focus2 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__presparsify1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__presparsify1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__presparsify1 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__presparsify1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__presparsify1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__presparsify1 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__presparsify1 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__presparsify1 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__presparsify1 start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__presparsify1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__presparsify1 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__presparsify1 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__presparsify1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__presparsify1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__strong_start single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__strong_start result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__strong_start full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__strong_start execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__strong_start runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__strong_start matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__strong_start metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__strong_start start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__strong_start start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__strong_start selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__strong_start selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__strong_start same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__strong_start no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k08_fresh__strong_start saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh complete gate hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh npz actual bytes hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh metadata hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh native original ordered pool",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh original endpoint hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh pinned source declarations",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh native physical admission",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__default single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__default result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__default full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__default execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__default runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__default matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__default metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__default start_indices",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__default start_count",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__default selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__default selected_count",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__default same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__default no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__default saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus1 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus1 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus1 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus1 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus1 start_count",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus1 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus1 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus2 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus2 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus2 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus2 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus2 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus2 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus2 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus2 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus2 start_count",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus2 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus2 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus2 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus2 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__focus2 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__presparsify1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__presparsify1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__presparsify1 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__presparsify1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__presparsify1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__presparsify1 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__presparsify1 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__presparsify1 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__presparsify1 start_count",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__presparsify1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__presparsify1 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__presparsify1 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__presparsify1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__presparsify1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__strong_start single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__strong_start result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__strong_start full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__strong_start execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__strong_start runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__strong_start matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__strong_start metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__strong_start start_indices",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__strong_start start_count",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__strong_start selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__strong_start selected_count",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__strong_start same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__strong_start no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c4_k08_fresh__strong_start saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh complete gate hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh npz actual bytes hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh metadata hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh native original ordered pool",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh original endpoint hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh pinned source declarations",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh native physical admission",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__default single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__default result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__default full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__default execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__default runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__default matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__default metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__default start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__default start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__default selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__default selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__default same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__default no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__default saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus1 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus1 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus1 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus1 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus1 start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus1 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus1 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus2 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus2 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus2 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus2 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus2 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus2 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus2 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus2 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus2 start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus2 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus2 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus2 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus2 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__focus2 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__presparsify1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__presparsify1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__presparsify1 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__presparsify1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__presparsify1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__presparsify1 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__presparsify1 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__presparsify1 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__presparsify1 start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__presparsify1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__presparsify1 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__presparsify1 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__presparsify1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__presparsify1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__strong_start single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__strong_start result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__strong_start full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__strong_start execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__strong_start runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__strong_start matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__strong_start metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__strong_start start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__strong_start start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__strong_start selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__strong_start selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__strong_start same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__strong_start no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_fresh__strong_start saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh complete gate hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh npz actual bytes hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh metadata hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh native original ordered pool",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh original endpoint hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh pinned source declarations",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh native physical admission",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__default single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__default result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__default full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__default execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__default runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__default matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__default metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__default start_indices",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__default start_count",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__default selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__default selected_count",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__default same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__default no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__default saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus1 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus1 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus1 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus1 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus1 start_count",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus1 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus1 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus2 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus2 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus2 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus2 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus2 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus2 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus2 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus2 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus2 start_count",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus2 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus2 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus2 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus2 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__focus2 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__presparsify1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__presparsify1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__presparsify1 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__presparsify1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__presparsify1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__presparsify1 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__presparsify1 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__presparsify1 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__presparsify1 start_count",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__presparsify1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__presparsify1 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__presparsify1 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__presparsify1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__presparsify1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__strong_start single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__strong_start result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__strong_start full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__strong_start execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__strong_start runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__strong_start matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__strong_start metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__strong_start start_indices",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__strong_start start_count",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__strong_start selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__strong_start selected_count",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__strong_start same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__strong_start no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c3_k15_fresh__strong_start saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential complete gate hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential npz actual bytes hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential metadata hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential native original ordered pool",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential original endpoint hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential pinned source declarations",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential native physical admission",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__default single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__default result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__default full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__default execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__default runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__default matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__default metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__default start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__default start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__default selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__default selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__default same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__default no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__default saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus1 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus1 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus1 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus1 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus1 start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus1 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus1 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus2 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus2 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus2 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus2 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus2 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus2 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus2 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus2 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus2 start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus2 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus2 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus2 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus2 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__focus2 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__presparsify1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__presparsify1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__presparsify1 full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__presparsify1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__presparsify1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__presparsify1 matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__presparsify1 metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__presparsify1 start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__presparsify1 start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__presparsify1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__presparsify1 selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__presparsify1 same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__presparsify1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__presparsify1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__strong_start single completed active attempt",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__strong_start result_complete_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__strong_start full_log_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__strong_start execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__strong_start runner_core_pins",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__strong_start matrix_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__strong_start metadata_hash",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__strong_start start_indices",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__strong_start start_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__strong_start selected_route_identity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__strong_start selected_count",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__strong_start same_dimensions",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__strong_start no_shared_capacity",
+      "passed": true
+    },
+    {
+      "check": "c1_k15_sequential__strong_start saved_start_native_indices",
+      "passed": true
+    }
+  ],
+  "preparations": {
+    "c1_k08_fresh": {
+      "rows": 194,
+      "columns": 39940,
+      "nonzeros": 1092654,
+      "matrix_identity_sha256": "63cebd926aa1af7da2b04b0339201ef71452ac588b6d95761430050fdd85cdac",
+      "matrix_file_sha256": "3c135607536f01891e6af7a546567cf7939733da80f8fbb8f5effacf94fe27e5",
+      "ordered_native_pool_sha256": "0bd60e44a073a52cd1b9e3109c3d1719b7a33266096a87b3deec04f6de9bd1d2",
+      "physical_pool_audit": {
+        "schema": "evsp-dr-strict-pool-physical-gate-v1",
+        "total_columns": 39940,
+        "accepted_columns": 39940,
+        "mip_unique_accepted_columns": 39940,
+        "mip_ordered_pool_sha256": "0bd60e44a073a52cd1b9e3109c3d1719b7a33266096a87b3deec04f6de9bd1d2",
+        "valid_as_recorded": 39940,
+        "deterministically_repaired": 0,
+        "rejected_columns": 0,
+        "valid_set_sha256": "e3084efd6b1f07c9d0bf47c0f2069197819cfd4f780cd1b19134988f1ff45577",
+        "repaired_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rejected_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rejected_samples": [],
+        "master_cost_semantics": "expanded_grid_cost_unchanged",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "source_pricing_certified": true,
+        "continuous_cost_pricing_certified": false,
+        "persisted_charging_block_count": 243249,
+        "persisted_charging_block_payload_bytes": 49045956,
+        "input_hashes": {
+          "instance_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+          "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+          "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+          "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+        },
+        "source_reference_hashes_bound": true
+      },
+      "strong_start_available": true,
+      "signed_costs": null,
+      "source_integer_witness_cost": null,
+      "source_stage2_solver_objective": null,
+      "source_integer_witness_minus_solver_objective": null,
+      "complete_path": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k08_fresh/prepare/729439_r0/COMPLETE.json",
+      "metadata_sha256": "d8b2e1ba899f665a2012d7453dd90e747b29522fbdf4e77ba3e6547dc236e822"
+    },
+    "c4_k08_fresh": {
+      "rows": 188,
+      "columns": 39668,
+      "nonzeros": 1057136,
+      "matrix_identity_sha256": "d27e254a66aaf9d608d0a7d1f40718650d74e8f790a3cb1fb46157be6051bb7a",
+      "matrix_file_sha256": "cb0ee7127269b9a046a4b2c631a9fd4505dc161d3bb8b8ca57e5a256d2fab7ca",
+      "ordered_native_pool_sha256": "8087ffdbd3cacbeeaeff113e217d447d637b8f4123bc825d8bc38c78b91ce379",
+      "physical_pool_audit": {
+        "schema": "evsp-dr-strict-pool-physical-gate-v1",
+        "total_columns": 39668,
+        "accepted_columns": 39668,
+        "mip_unique_accepted_columns": 39668,
+        "mip_ordered_pool_sha256": "8087ffdbd3cacbeeaeff113e217d447d637b8f4123bc825d8bc38c78b91ce379",
+        "valid_as_recorded": 39668,
+        "deterministically_repaired": 0,
+        "rejected_columns": 0,
+        "valid_set_sha256": "5eeec67551f41eed7640b751cae7705841e7121c769de76af783442cbb6366d5",
+        "repaired_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rejected_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rejected_samples": [],
+        "master_cost_semantics": "expanded_grid_cost_unchanged",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "source_pricing_certified": true,
+        "continuous_cost_pricing_certified": false,
+        "persisted_charging_block_count": 231468,
+        "persisted_charging_block_payload_bytes": 46634731,
+        "input_hashes": {
+          "instance_sha256": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+          "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+          "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+          "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+        },
+        "source_reference_hashes_bound": true
+      },
+      "strong_start_available": true,
+      "signed_costs": null,
+      "source_integer_witness_cost": null,
+      "source_stage2_solver_objective": null,
+      "source_integer_witness_minus_solver_objective": null,
+      "complete_path": "/home/nc437/ladder-lite/mip_structure_20260922/results/c4_k08_fresh/prepare/729445_r0/COMPLETE.json",
+      "metadata_sha256": "ee293faa9c157e2df8c8fbc129d597c0a2af6e37dcea3462a20965e5bf69824c"
+    },
+    "c1_k15_fresh": {
+      "rows": 364,
+      "columns": 79611,
+      "nonzeros": 2322459,
+      "matrix_identity_sha256": "ccb4a6b55eaca7624eb1f70ed5a97005f612c4ed130a0068401ac7effe750b3d",
+      "matrix_file_sha256": "eabb03bef450435021023d3c778ec35909d197b9065b757f86d5a2fea779b239",
+      "ordered_native_pool_sha256": "bcc328deac2d0a84d214848f5618bd70da1aab5b803a87c059c7f3d4b015e0b1",
+      "physical_pool_audit": {
+        "schema": "evsp-dr-strict-pool-physical-gate-v1",
+        "total_columns": 79611,
+        "accepted_columns": 79611,
+        "mip_unique_accepted_columns": 79611,
+        "mip_ordered_pool_sha256": "bcc328deac2d0a84d214848f5618bd70da1aab5b803a87c059c7f3d4b015e0b1",
+        "valid_as_recorded": 79611,
+        "deterministically_repaired": 0,
+        "rejected_columns": 0,
+        "valid_set_sha256": "3551e4edcbc39a0363af6e99fd66cee92434977fcc9e0c2cf3c3b865d0f4e58e",
+        "repaired_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rejected_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rejected_samples": [],
+        "master_cost_semantics": "expanded_grid_cost_unchanged",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "source_pricing_certified": true,
+        "continuous_cost_pricing_certified": false,
+        "persisted_charging_block_count": 462472,
+        "persisted_charging_block_payload_bytes": 93296778,
+        "input_hashes": {
+          "instance_sha256": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+          "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+          "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+          "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+        },
+        "source_reference_hashes_bound": true
+      },
+      "strong_start_available": true,
+      "signed_costs": null,
+      "source_integer_witness_cost": null,
+      "source_stage2_solver_objective": null,
+      "source_integer_witness_minus_solver_objective": null,
+      "complete_path": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_fresh/prepare/729451_r0/COMPLETE.json",
+      "metadata_sha256": "68a6f618fca2663a83a17fb7601c93bc8ab2589f33275afaa176868bddbb30d3"
+    },
+    "c3_k15_fresh": {
+      "rows": 302,
+      "columns": 38130,
+      "nonzeros": 896915,
+      "matrix_identity_sha256": "d6e8a3cdbadb3e0ded791b855d5a2bd4c7e594e46d7e7087805b6b44f76f0ba8",
+      "matrix_file_sha256": "29f4de5d7533f14cdf68699baf2384bf027e64a1903535f77e979229f70de215",
+      "ordered_native_pool_sha256": "c2b617feddc9befa15ec67ebe14fd782dc8d6c7212b140ba0c4252a1579634eb",
+      "physical_pool_audit": {
+        "schema": "evsp-dr-strict-pool-physical-gate-v1",
+        "total_columns": 38130,
+        "accepted_columns": 38130,
+        "mip_unique_accepted_columns": 38130,
+        "mip_ordered_pool_sha256": "c2b617feddc9befa15ec67ebe14fd782dc8d6c7212b140ba0c4252a1579634eb",
+        "valid_as_recorded": 38130,
+        "deterministically_repaired": 0,
+        "rejected_columns": 0,
+        "valid_set_sha256": "79363495cb1acabb15bc222a8607849a501688ab147de45c11886bfca2409a70",
+        "repaired_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rejected_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rejected_samples": [],
+        "master_cost_semantics": "expanded_grid_cost_unchanged",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "source_pricing_certified": true,
+        "continuous_cost_pricing_certified": false,
+        "persisted_charging_block_count": 157704,
+        "persisted_charging_block_payload_bytes": 31785934,
+        "input_hashes": {
+          "instance_sha256": "44d91ad2cd6604441b3ea36dfb77cda9f89901d14755ec30d502887f0efb3490",
+          "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+          "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+          "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+        },
+        "source_reference_hashes_bound": true
+      },
+      "strong_start_available": true,
+      "signed_costs": {
+        "negative_count": 32,
+        "min": -2.9103830456733704e-11,
+        "max": 148.90400000009686
+      },
+      "source_integer_witness_cost": 676.215999999913,
+      "source_stage2_solver_objective": 676.2159718853597,
+      "source_integer_witness_minus_solver_objective": 2.8114553288105526e-05,
+      "complete_path": "/home/nc437/ladder-lite/mip_structure_20260922/results/c3_k15_fresh/prepare/730241_r0/COMPLETE.json",
+      "metadata_sha256": "f2a70be3e50283ca5d7f4430c53bd28a68a5a6666c54dba437cc7b6d6a46dedb"
+    },
+    "c1_k15_sequential": {
+      "rows": 364,
+      "columns": 130468,
+      "nonzeros": 3541122,
+      "matrix_identity_sha256": "f7d0a404c3081edb304dee1d60856947c1751237c0559ba68bfad555f722d8a4",
+      "matrix_file_sha256": "df9d83811091aabcd560bd8706f880885bd3ee79546996aea1ca97db561866fc",
+      "ordered_native_pool_sha256": "2cebf8ac70d00a78dd940f54564309399a5855c96f1df732e45cc1ebe6bf86c8",
+      "physical_pool_audit": {
+        "schema": "evsp-dr-strict-pool-physical-gate-v1",
+        "total_columns": 130468,
+        "accepted_columns": 130468,
+        "mip_unique_accepted_columns": 130468,
+        "mip_ordered_pool_sha256": "2cebf8ac70d00a78dd940f54564309399a5855c96f1df732e45cc1ebe6bf86c8",
+        "valid_as_recorded": 130468,
+        "deterministically_repaired": 0,
+        "rejected_columns": 0,
+        "valid_set_sha256": "2a8d3bdd6fcfdddd5e231e329ba6a1a59aec7fedaf4100f3a026046643eb85cc",
+        "repaired_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rejected_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "rejected_samples": [],
+        "master_cost_semantics": "expanded_grid_cost_unchanged",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "source_pricing_certified": true,
+        "continuous_cost_pricing_certified": false,
+        "persisted_charging_block_count": 598686,
+        "persisted_charging_block_payload_bytes": 120952961,
+        "input_hashes": {
+          "instance_sha256": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+          "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+          "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+          "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+        },
+        "source_reference_hashes_bound": true
+      },
+      "strong_start_available": true,
+      "signed_costs": null,
+      "source_integer_witness_cost": null,
+      "source_stage2_solver_objective": null,
+      "source_integer_witness_minus_solver_objective": null,
+      "complete_path": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_sequential/prepare/729463_r0/COMPLETE.json",
+      "metadata_sha256": "6385ac675bcd3e2b9b94544a478ee3ed951495f77dcec14a6dc3c677711dc646"
+    }
+  },
+  "rows": [
+    {
+      "key": "c1_k08_fresh__default",
+      "job_id": "729440",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k08_fresh/default/729440_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "1e8884a2429c2d9ff72d1c5a3f660746888649bb4f9943f9f1d20fe1a17e76c7",
+      "log_sha256": "c9622ad5a473821f4b33104fd152e39726d6aa8ccaf7f392075596fbc4a61b90"
+    },
+    {
+      "key": "c1_k08_fresh__focus1",
+      "job_id": "729441",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k08_fresh/focus1/729441_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "8f75492617cc80613c3cd5b073addf8ee71f60c09a63294816a98b209c11c73e",
+      "log_sha256": "8f7d9555ab39a18ed2ebad3f46019e7e38b503afe17f1003e98eae06244b89aa"
+    },
+    {
+      "key": "c1_k08_fresh__focus2",
+      "job_id": "729442",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k08_fresh/focus2/729442_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "cb80870da94216bbcdfcd29376d24f0593cf5c17e3e961eecea7468c8f33360c",
+      "log_sha256": "8bc3c265d620e89782ad3640cd24f9e72db9a7f1c4408637cb6054992a7f7dd0"
+    },
+    {
+      "key": "c1_k08_fresh__presparsify1",
+      "job_id": "729443",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k08_fresh/presparsify1/729443_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "3aa2af5a7d21017b433f98726262c7f1aaa41ca12695ce451f32a4691ec4e3a4",
+      "log_sha256": "8a692bc40417a9bba6e54f49b9390cb4cb4f2252172cf840fd946706af7cd9c8"
+    },
+    {
+      "key": "c1_k08_fresh__strong_start",
+      "job_id": "729444",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k08_fresh/strong_start/729444_r1",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "e79fd295baf8676485ee2889d2fc99fcbbd87bfce5fa532301317f36861b91ea",
+      "log_sha256": "e8cb054ecb02df0ffbc98454d2dd3becf017c3f1addfec8a1e6beefbd6e5bf17"
+    },
+    {
+      "key": "c4_k08_fresh__default",
+      "job_id": "729446",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c4_k08_fresh/default/729446_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "458175e2c8550ce6d42816ef67fb8683ce83f3bf9d7a253d533cb62a7586d814",
+      "log_sha256": "6b35e44e42ca2b0e5aa788520eaf9cc86bc7b25163f1fd7472dfa4e9e81be713"
+    },
+    {
+      "key": "c4_k08_fresh__focus1",
+      "job_id": "729447",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c4_k08_fresh/focus1/729447_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "c893dc696d184785a703d05e41d67c47daa12ced0b60d2dfa79e4d75c4b26d05",
+      "log_sha256": "d7bd521df4f4744c95724b7740ea708ae9fc91b2b784324e38a8a6374dec7b43"
+    },
+    {
+      "key": "c4_k08_fresh__focus2",
+      "job_id": "729448",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c4_k08_fresh/focus2/729448_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "8bdc0c6c301c2a2bb2cbb873e821760d23458d1dfae4f6f6bffd733005c5740b",
+      "log_sha256": "f49f0980a6265aec242b33d813607d735cc0f30c2ab64104f3eb40cbd88fca2b"
+    },
+    {
+      "key": "c4_k08_fresh__presparsify1",
+      "job_id": "729449",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c4_k08_fresh/presparsify1/729449_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "978cc59dc854edbef6e8c8947aee77bdf451333b63a7eb9f9c1b299b962ba7f1",
+      "log_sha256": "604470dabc7cda7b936b9e1201afffd7af199875a0eda6cb2423674e16a73fd7"
+    },
+    {
+      "key": "c4_k08_fresh__strong_start",
+      "job_id": "729450",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c4_k08_fresh/strong_start/729450_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "a1023893fe8acac345e1c4d6871485884d522bc1458bb0be4aa711b5eb8b4b33",
+      "log_sha256": "e337a7bdf0b22c6839eaba7d1010c3b333faedb54f596c98f9316a61cbec87bb"
+    },
+    {
+      "key": "c1_k15_fresh__default",
+      "job_id": "729452",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_fresh/default/729452_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "5f440716c76256b03799186cc2d1ded81902fe204ae2a313b06d46f86d6a242b",
+      "log_sha256": "7fd615c828aaf090734a33e678ce2fbbc13e7e1d0ed42b4a5fa5826824726934"
+    },
+    {
+      "key": "c1_k15_fresh__focus1",
+      "job_id": "729453",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_fresh/focus1/729453_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "5cad950c16fbc809ddbb7e6668885d9e41070edda13fa610550ef02a142f1330",
+      "log_sha256": "391b6c7d4c02532af0d45fcee8f9b9b038fc316e9fe9b33779475f1d1daf6d06"
+    },
+    {
+      "key": "c1_k15_fresh__focus2",
+      "job_id": "729454",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_fresh/focus2/729454_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "fb9c5328382c5a16e7bee2ce272c2d9053e3050e280f1af123f246f80aee27bd",
+      "log_sha256": "4877c2fc5ced70e8d64de6850e17f6134e945b801519cae2431b7cda7e02e94c"
+    },
+    {
+      "key": "c1_k15_fresh__presparsify1",
+      "job_id": "729455",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_fresh/presparsify1/729455_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "5566cfe26edaee0478a80a4e754d8441c3e0eff27d0dd248235610f3996ef79d",
+      "log_sha256": "6c1152c87ed546edec63a87d8ba2849760e949427002b26265819a2fe275b244"
+    },
+    {
+      "key": "c1_k15_fresh__strong_start",
+      "job_id": "729456",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_fresh/strong_start/729456_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "manifest_sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "result_sha256": "1e8562585e6709566137c8b365704de17ee71133c568bd3763eac63f55542ef0",
+      "log_sha256": "28a8810282850d9d6c2e6a44dc0af211bb40200c141d25b67014496f00c53f5f"
+    },
+    {
+      "key": "c3_k15_fresh__default",
+      "job_id": "730242",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c3_k15_fresh/default/730242_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "manifest_sha256": "9b1fd2ab71fbc8fed6e01c3e9e4035f5b8ea5dd81cd18259427358a90f65879f",
+      "result_sha256": "72582bbc1da99e71bb5c8a080026c136d9677662a4d99fd3d4e8b17adee7c25c",
+      "log_sha256": "f5bfb5ad9e09348ed741894289fd32eea8eb0cbd32ef2ab35f7b8820ac2675cf"
+    },
+    {
+      "key": "c3_k15_fresh__focus1",
+      "job_id": "730243",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c3_k15_fresh/focus1/730243_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "manifest_sha256": "9b1fd2ab71fbc8fed6e01c3e9e4035f5b8ea5dd81cd18259427358a90f65879f",
+      "result_sha256": "9a46cb069690023e2cc31af1a19fe26f44a79a15f353a3843d74f09e9a0676c6",
+      "log_sha256": "080717a2f63d2bba1a2110f0a4e308494ee98ff3130bebaaee5f97fa10ec3c4e"
+    },
+    {
+      "key": "c3_k15_fresh__focus2",
+      "job_id": "730244",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c3_k15_fresh/focus2/730244_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "manifest_sha256": "9b1fd2ab71fbc8fed6e01c3e9e4035f5b8ea5dd81cd18259427358a90f65879f",
+      "result_sha256": "b46be122da0634000d4769dccf120f71f30ec7dcadc0f6360f76d6af3d0fd63b",
+      "log_sha256": "753b4d8c7088de3c5d506be24f099d08f681051b0b59e7df51c666356509573e"
+    },
+    {
+      "key": "c3_k15_fresh__presparsify1",
+      "job_id": "730245",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c3_k15_fresh/presparsify1/730245_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "manifest_sha256": "9b1fd2ab71fbc8fed6e01c3e9e4035f5b8ea5dd81cd18259427358a90f65879f",
+      "result_sha256": "b206812191a28bc8f2214c1807fc55c091fbcc29029f03a8caa09b10f4c7d65c",
+      "log_sha256": "95531194edfb5644c1a0b0c413217a76fa3963a3b7946dcc47c0ae6608fa86ed"
+    },
+    {
+      "key": "c3_k15_fresh__strong_start",
+      "job_id": "730246",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c3_k15_fresh/strong_start/730246_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "manifest_sha256": "9b1fd2ab71fbc8fed6e01c3e9e4035f5b8ea5dd81cd18259427358a90f65879f",
+      "result_sha256": "915cff67b77c820d64e05dfa3eb260659eabfc748c4d408543b2a3dfaf047f6f",
+      "log_sha256": "24cec6f4d772b1925506dd8f372064494fc576d1d1d90e6fcdeae0e7aa339288"
+    },
+    {
+      "key": "c1_k15_sequential__default",
+      "job_id": "730247",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_sequential/default/730247_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "manifest_sha256": "9b1fd2ab71fbc8fed6e01c3e9e4035f5b8ea5dd81cd18259427358a90f65879f",
+      "result_sha256": "25f43eaf1812f2806fd401058c6165e50b41e0326dd580eae63766eaa12f3cc0",
+      "log_sha256": "d890aa7cdfb2a98a454ac2815da8cd5e870a2a76494aa1b1aa8d16f25bfbfd0c"
+    },
+    {
+      "key": "c1_k15_sequential__focus1",
+      "job_id": "730248",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_sequential/focus1/730248_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "manifest_sha256": "9b1fd2ab71fbc8fed6e01c3e9e4035f5b8ea5dd81cd18259427358a90f65879f",
+      "result_sha256": "d7cbb70233390b632e4a1650d9535a71a3f2e406706205b4a8da0f1b8e46d1b4",
+      "log_sha256": "f064acdfc9f30a25f34da317a4916cc329965ae4d516f9c201a727bece08ff3f"
+    },
+    {
+      "key": "c1_k15_sequential__focus2",
+      "job_id": "730249",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_sequential/focus2/730249_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "manifest_sha256": "9b1fd2ab71fbc8fed6e01c3e9e4035f5b8ea5dd81cd18259427358a90f65879f",
+      "result_sha256": "5774cbb3468db1e3adcec9d82ccade96a6ef6c414244de33ed43589131434363",
+      "log_sha256": "943cf0fa1a9fe9d3a7a073cb9fa611bf50058ba0fc647ba60c335571c9771747"
+    },
+    {
+      "key": "c1_k15_sequential__presparsify1",
+      "job_id": "730250",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_sequential/presparsify1/730250_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "manifest_sha256": "9b1fd2ab71fbc8fed6e01c3e9e4035f5b8ea5dd81cd18259427358a90f65879f",
+      "result_sha256": "c26ec458f379bdacdd8262aa4110b699fdc15155ef97ba807864a5db76af5516",
+      "log_sha256": "4699a548115942fdd4076abceb40ce730e474fa1ffe1e13ebbd68ad559f5d588"
+    },
+    {
+      "key": "c1_k15_sequential__strong_start",
+      "job_id": "730251",
+      "attempt": "/home/nc437/ladder-lite/mip_structure_20260922/results/c1_k15_sequential/strong_start/730251_r0",
+      "checks": {
+        "result_complete_hash": true,
+        "full_log_hash": true,
+        "execution_manifest_hash": true,
+        "runner_core_pins": true,
+        "matrix_identity": true,
+        "metadata_hash": true,
+        "start_indices": true,
+        "start_count": true,
+        "selected_route_identity": true,
+        "selected_count": true,
+        "same_dimensions": true,
+        "no_shared_capacity": true,
+        "saved_start_native_indices": true
+      },
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "manifest_sha256": "9b1fd2ab71fbc8fed6e01c3e9e4035f5b8ea5dd81cd18259427358a90f65879f",
+      "result_sha256": "757db43a9562d9012f688d54fbc72ff181e938b90ff9c91f456275759bedbafa",
+      "log_sha256": "120c5e459336519988b5f2785d275db82f8518bfa17c05589493a9d03238fff7"
+    }
+  ],
+  "physics": {
+    "battery_kwh": 240,
+    "initial_soc_kwh": 240,
+    "charge_kw": 240,
+    "reserve_kwh": 0,
+    "terminal_floor": "none",
+    "shared_capacity": false,
+    "tariff": "original flat",
+    "start_fee": 5
+  },
+  "model": {
+    "master": "set covering Ax>=1; binary route variables",
+    "fleet_objective": "sum x",
+    "charging_LP_objective": "sum (original route cost - 100000) x with <= original validated stage1 fleet cap",
+    "physics": {
+      "battery_kwh": 240,
+      "initial_soc_kwh": 240,
+      "charge_kw": 240,
+      "reserve_kwh": 0,
+      "terminal_floor": "none",
+      "shared_capacity": false,
+      "tariff": "original flat",
+      "start_fee": 5
+    },
+    "pool_order_and_cost": "fixed and SHA-authenticated; no reduction applied to parameter arms",
+    "trials": "fleet only; no charging MIP; no CG",
+    "same_pool_start": "default greedy pool partition all arms except offline original saved stage1 incumbent diagnostic",
+    "dual_screening": "signed quantized duals, objective coefficients rounded downward, all 0<=x<=1 box terms; exact integer arithmetic, strict test preserves incumbent ties; never used as model reduction in these trials"
+  },
+  "source_manifests": {
+    "manifest.json": {
+      "sha256": "8b54469a4692eb8da537a9911bfe7d86c06b57cf65763f87364151f5f331dcd4",
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "source_hash_checks": {
+        "core.py": true,
+        "runner.py": true,
+        "launch.py": true,
+        "worker.sh": true,
+        "test_core.py": true
+      }
+    },
+    "manifest_v3.json": {
+      "sha256": "9b1fd2ab71fbc8fed6e01c3e9e4035f5b8ea5dd81cd18259427358a90f65879f",
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "source_hash_checks": {
+        "worker_recovery.sh": true,
+        "runner.py": true,
+        "test_core.py": true,
+        "core.py": true,
+        "benchmark_loader.py": true,
+        "README.md": true,
+        "launch.py": true,
+        "worker.sh": true,
+        "worker_recovery_v3.sh": true,
+        "benchmark_loader.sh": true
+      }
+    }
+  },
+  "passed": true
+}

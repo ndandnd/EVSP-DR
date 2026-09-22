@@ -1,5 +1,8 @@
 # Frozen-pool MIP structure and solver pilot — 22 September
 
+**Final result update, 22 September07:56UTC:** all25 trials completed and738 audit checks pass. Fifteen prove the finite-pool fleet optimum; ten terminate normally at the30-minute allowance. All k8 arms prove9; all sequential C1 k15 arms prove15. Fresh C1 k15 ends18 except PreSparsify1=19; fresh C3 k15 ends18 except PreSparsify1/saved start=17, all bound15/open. Solver-setting effects are mixed; saved-incumbent acquisition and loading revisions remain excluded from optimizer-time comparisons. [Final25-cell tables, full logs and audit](../monitor_20260922T075504Z/mip_structure/README.md). No recovery is needed. The earlier partial snapshots below remain historical evidence.
+
+
 **Recovery v3 is accepted with the scientific model unchanged.** All five preparations have authenticated matrices. C3 v3 preparation **730241 completed**, replacing preserved failures 729457 and 729775. Its five replacement trials are **730242–730246**. Sequential C1 k15 loader-only attempts 729464–729468 were stopped before any Gurobi log existed and replaced by **730247–730251**, reusing preparation 729463. All 15 healthy original trials were left untouched. See [latest recovery pointer](latest_recovery.json), [v3 receipt](recovery_v3.json), and [immutable v3 manifest](manifest_v3.json).
 
 At the first v3 snapshot, eight trial endpoints are complete: all five C4 k8 arms prove fleet 9; C1 k8 MIPFocus2 and PreSparsify1 prove fleet 9; sequential C1 k15 offline strong-start proves fleet 15 in **11.150 optimizer seconds** (1.362 seconds loading, 4.104 seconds building). This is a partial pilot, not a completed arm comparison.

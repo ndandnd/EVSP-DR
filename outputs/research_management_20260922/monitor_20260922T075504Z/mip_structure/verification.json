@@ -1,0 +1,5043 @@
+{
+  "created_utc": "2026-09-22T08:00:13.926841+00:00",
+  "snapshot_utc": "2026-09-22T07:56:15.279727+00:00",
+  "passed": true,
+  "checks_count": 738,
+  "completed_cells": 25,
+  "finite_pool_proofs": 15,
+  "time_limits": 10,
+  "target_matches": 5,
+  "rows": [
+    {
+      "case": "c1_k08_fresh",
+      "arm": "default",
+      "fleet": 9,
+      "bound": 9.0,
+      "finite_pool_fleet_proven": true,
+      "target": 8,
+      "target_attained": false,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 1232.9922347809188,
+      "gurobi_runtime_s": 1232.991856098175,
+      "artifact_loading_s": 346.2560620130971,
+      "model_build_wall_s": 1.084925090894103,
+      "start_buses": 63,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "63cebd926aa1af7da2b04b0339201ef71452ac588b6d95761430050fdd85cdac",
+      "host": "jingjie-cpu-10.mae.cornell.edu",
+      "job_id": "729440",
+      "status": "OPTIMAL",
+      "relative_gap": 0.0,
+      "work_units": 2773.96,
+      "log_explored_seconds": 1232.99,
+      "runtime_minus_log_explored_seconds": 0.0018560981750397332,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 194,
+      "model_columns": 39940,
+      "model_nonzeros": 1092654,
+      "result_sha256": "1e8884a2429c2d9ff72d1c5a3f660746888649bb4f9943f9f1d20fe1a17e76c7",
+      "log_sha256": "c9622ad5a473821f4b33104fd152e39726d6aa8ccaf7f392075596fbc4a61b90",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/default/729440_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/default/729440_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.0,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c1_k08_fresh",
+      "arm": "focus1",
+      "fleet": 9,
+      "bound": 9.0,
+      "finite_pool_fleet_proven": true,
+      "target": 8,
+      "target_attained": false,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 1472.5399426692165,
+      "gurobi_runtime_s": 1472.539551973343,
+      "artifact_loading_s": 341.15046046534553,
+      "model_build_wall_s": 1.1184686780907214,
+      "start_buses": 63,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "63cebd926aa1af7da2b04b0339201ef71452ac588b6d95761430050fdd85cdac",
+      "host": "kim-cpu-05.physics.cornell.edu",
+      "job_id": "729441",
+      "status": "OPTIMAL",
+      "relative_gap": 0.0,
+      "work_units": 2883.44,
+      "log_explored_seconds": 1472.54,
+      "runtime_minus_log_explored_seconds": -0.0004480266570681124,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 194,
+      "model_columns": 39940,
+      "model_nonzeros": 1092654,
+      "result_sha256": "8f75492617cc80613c3cd5b073addf8ee71f60c09a63294816a98b209c11c73e",
+      "log_sha256": "8f7d9555ab39a18ed2ebad3f46019e7e38b503afe17f1003e98eae06244b89aa",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/focus1/729441_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/focus1/729441_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.1942816030231214,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c1_k08_fresh",
+      "arm": "focus2",
+      "fleet": 9,
+      "bound": 9.0,
+      "finite_pool_fleet_proven": true,
+      "target": 8,
+      "target_attained": false,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 849.5876704500988,
+      "gurobi_runtime_s": 849.587418794632,
+      "artifact_loading_s": 226.40261166496202,
+      "model_build_wall_s": 0.6279193740338087,
+      "start_buses": 63,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "63cebd926aa1af7da2b04b0339201ef71452ac588b6d95761430050fdd85cdac",
+      "host": "scaglione-cpu-02.tech.cornell.edu",
+      "job_id": "729442",
+      "status": "OPTIMAL",
+      "relative_gap": 0.0,
+      "work_units": 2398.02,
+      "log_explored_seconds": 849.58,
+      "runtime_minus_log_explored_seconds": 0.0074187946319170806,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 194,
+      "model_columns": 39940,
+      "model_nonzeros": 1092654,
+      "result_sha256": "cb80870da94216bbcdfcd29376d24f0593cf5c17e3e961eecea7468c8f33360c",
+      "log_sha256": "8bc3c265d620e89782ad3640cd24f9e72db9a7f1c4408637cb6054992a7f7dd0",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/focus2/729442_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/focus2/729442_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 0.6890454347435981,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c1_k08_fresh",
+      "arm": "presparsify1",
+      "fleet": 9,
+      "bound": 9.0,
+      "finite_pool_fleet_proven": true,
+      "target": 8,
+      "target_attained": false,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 984.827792389784,
+      "gurobi_runtime_s": 984.8275420665741,
+      "artifact_loading_s": 224.65707482071593,
+      "model_build_wall_s": 0.6239730636589229,
+      "start_buses": 63,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "63cebd926aa1af7da2b04b0339201ef71452ac588b6d95761430050fdd85cdac",
+      "host": "scaglione-cpu-02.tech.cornell.edu",
+      "job_id": "729443",
+      "status": "OPTIMAL",
+      "relative_gap": 0.0,
+      "work_units": 2898.27,
+      "log_explored_seconds": 984.82,
+      "runtime_minus_log_explored_seconds": 0.0075420665740466575,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 194,
+      "model_columns": 39940,
+      "model_nonzeros": 1092654,
+      "result_sha256": "3aa2af5a7d21017b433f98726262c7f1aaa41ca12695ce451f32a4691ec4e3a4",
+      "log_sha256": "8a692bc40417a9bba6e54f49b9390cb4cb4f2252172cf840fd946706af7cd9c8",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/presparsify1/729443_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/presparsify1/729443_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 0.7987299227109655,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c1_k08_fresh",
+      "arm": "strong_start",
+      "fleet": 9,
+      "bound": 9.0,
+      "finite_pool_fleet_proven": true,
+      "target": 8,
+      "target_attained": false,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 1388.3071512090974,
+      "gurobi_runtime_s": 1388.3050549030304,
+      "artifact_loading_s": 335.9687898149714,
+      "model_build_wall_s": 1.0380265209823847,
+      "start_buses": 9,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "63cebd926aa1af7da2b04b0339201ef71452ac588b6d95761430050fdd85cdac",
+      "host": "jingjie-cpu-05.mae.cornell.edu",
+      "job_id": "729444",
+      "status": "OPTIMAL",
+      "relative_gap": 0.0,
+      "work_units": 2938.85,
+      "log_explored_seconds": 1388.3,
+      "runtime_minus_log_explored_seconds": 0.0050549030304409825,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "offline saved original stage1 incumbent",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 194,
+      "model_columns": 39940,
+      "model_nonzeros": 1092654,
+      "result_sha256": "e79fd295baf8676485ee2889d2fc99fcbbd87bfce5fa532301317f36861b91ea",
+      "log_sha256": "e8cb054ecb02df0ffbc98454d2dd3becf017c3f1addfec8a1e6beefbd6e5bf17",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/strong_start/729444_r1/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/strong_start/729444_r1/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.1259658512413708,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c1_k15_fresh",
+      "arm": "default",
+      "fleet": 18,
+      "bound": 15.000000000000048,
+      "finite_pool_fleet_proven": false,
+      "target": 15,
+      "target_attained": false,
+      "gurobi_status": 9,
+      "actual_optimize_wall_s": 1800.0723960772157,
+      "gurobi_runtime_s": 1800.072098016739,
+      "artifact_loading_s": 899.4025890380144,
+      "model_build_wall_s": 1.211820931173861,
+      "start_buses": 129,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "ccb4a6b55eaca7624eb1f70ed5a97005f612c4ed130a0068401ac7effe750b3d",
+      "host": "lisbeth.tech.cornell.edu",
+      "job_id": "729452",
+      "status": "TIME_LIMIT",
+      "relative_gap": 0.166666666666664,
+      "work_units": 4773.48,
+      "log_explored_seconds": 1800.07,
+      "runtime_minus_log_explored_seconds": 0.002098016738955266,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 364,
+      "model_columns": 79611,
+      "model_nonzeros": 2322459,
+      "result_sha256": "5f440716c76256b03799186cc2d1ded81902fe204ae2a313b06d46f86d6a242b",
+      "log_sha256": "7fd615c828aaf090734a33e678ce2fbbc13e7e1d0ed42b4a5fa5826824726934",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/default/729452_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/default/729452_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.0,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c1_k15_fresh",
+      "arm": "focus1",
+      "fleet": 18,
+      "bound": 15.000000000000046,
+      "finite_pool_fleet_proven": false,
+      "target": 15,
+      "target_attained": false,
+      "gurobi_status": 9,
+      "actual_optimize_wall_s": 1800.125896425452,
+      "gurobi_runtime_s": 1800.12553191185,
+      "artifact_loading_s": 949.7312829340808,
+      "model_build_wall_s": 1.7171432529576123,
+      "start_buses": 129,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "ccb4a6b55eaca7624eb1f70ed5a97005f612c4ed130a0068401ac7effe750b3d",
+      "host": "lisbeth.tech.cornell.edu",
+      "job_id": "729453",
+      "status": "TIME_LIMIT",
+      "relative_gap": 0.1666666666666641,
+      "work_units": 4584.09,
+      "log_explored_seconds": 1800.08,
+      "runtime_minus_log_explored_seconds": 0.045531911850048346,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 364,
+      "model_columns": 79611,
+      "model_nonzeros": 2322459,
+      "result_sha256": "5cad950c16fbc809ddbb7e6668885d9e41070edda13fa610550ef02a142f1330",
+      "log_sha256": "391b6c7d4c02532af0d45fcee8f9b9b038fc316e9fe9b33779475f1d1daf6d06",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/focus1/729453_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/focus1/729453_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.0000297212202982,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c1_k15_fresh",
+      "arm": "focus2",
+      "fleet": 18,
+      "bound": 15.000000000000025,
+      "finite_pool_fleet_proven": false,
+      "target": 15,
+      "target_attained": false,
+      "gurobi_status": 9,
+      "actual_optimize_wall_s": 1800.3566821892746,
+      "gurobi_runtime_s": 1800.356241941452,
+      "artifact_loading_s": 940.5321915382519,
+      "model_build_wall_s": 1.7636043638922274,
+      "start_buses": 129,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "ccb4a6b55eaca7624eb1f70ed5a97005f612c4ed130a0068401ac7effe750b3d",
+      "host": "lisbeth.tech.cornell.edu",
+      "job_id": "729454",
+      "status": "TIME_LIMIT",
+      "relative_gap": 0.1666666666666653,
+      "work_units": 3824.64,
+      "log_explored_seconds": 1800.08,
+      "runtime_minus_log_explored_seconds": 0.2762419414520991,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 364,
+      "model_columns": 79611,
+      "model_nonzeros": 2322459,
+      "result_sha256": "fb9c5328382c5a16e7bee2ce272c2d9053e3050e280f1af123f246f80aee27bd",
+      "log_sha256": "4877c2fc5ced70e8d64de6850e17f6134e945b801519cae2431b7cda7e02e94c",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/focus2/729454_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/focus2/729454_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.000157930376955,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c1_k15_fresh",
+      "arm": "presparsify1",
+      "fleet": 19,
+      "bound": 15.000000000000215,
+      "finite_pool_fleet_proven": false,
+      "target": 15,
+      "target_attained": false,
+      "gurobi_status": 9,
+      "actual_optimize_wall_s": 1800.0653831702657,
+      "gurobi_runtime_s": 1800.0650780200958,
+      "artifact_loading_s": 1001.0028541530482,
+      "model_build_wall_s": 2.0774417449720204,
+      "start_buses": 129,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "ccb4a6b55eaca7624eb1f70ed5a97005f612c4ed130a0068401ac7effe750b3d",
+      "host": "lisbeth.tech.cornell.edu",
+      "job_id": "729455",
+      "status": "TIME_LIMIT",
+      "relative_gap": 0.21052631578946238,
+      "work_units": 3732.97,
+      "log_explored_seconds": 1800.06,
+      "runtime_minus_log_explored_seconds": 0.005078020095879765,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 364,
+      "model_columns": 79611,
+      "model_nonzeros": 2322459,
+      "result_sha256": "5566cfe26edaee0478a80a4e754d8441c3e0eff27d0dd248235610f3996ef79d",
+      "log_sha256": "6c1152c87ed546edec63a87d8ba2849760e949427002b26265819a2fe275b244",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/presparsify1/729455_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/presparsify1/729455_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 0.9999961040972767,
+      "fleet_difference_from_default": 1
+    },
+    {
+      "case": "c1_k15_fresh",
+      "arm": "strong_start",
+      "fleet": 18,
+      "bound": 15.000000000000048,
+      "finite_pool_fleet_proven": false,
+      "target": 15,
+      "target_attained": false,
+      "gurobi_status": 9,
+      "actual_optimize_wall_s": 1800.0863699461333,
+      "gurobi_runtime_s": 1800.0859899520874,
+      "artifact_loading_s": 889.9740354907699,
+      "model_build_wall_s": 1.2581296591088176,
+      "start_buses": 18,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "ccb4a6b55eaca7624eb1f70ed5a97005f612c4ed130a0068401ac7effe750b3d",
+      "host": "lisbeth.tech.cornell.edu",
+      "job_id": "729456",
+      "status": "TIME_LIMIT",
+      "relative_gap": 0.166666666666664,
+      "work_units": 4458.46,
+      "log_explored_seconds": 1800.07,
+      "runtime_minus_log_explored_seconds": 0.01598995208746601,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "offline saved original stage1 incumbent",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 364,
+      "model_columns": 79611,
+      "model_nonzeros": 2322459,
+      "result_sha256": "1e8562585e6709566137c8b365704de17ee71133c568bd3763eac63f55542ef0",
+      "log_sha256": "28a8810282850d9d6c2e6a44dc0af211bb40200c141d25b67014496f00c53f5f",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/strong_start/729456_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/strong_start/729456_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.0000077629482838,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c1_k15_sequential",
+      "arm": "default",
+      "fleet": 15,
+      "bound": 15.0,
+      "finite_pool_fleet_proven": true,
+      "target": 15,
+      "target_attained": true,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 104.16801027674228,
+      "gurobi_runtime_s": 104.16754388809204,
+      "artifact_loading_s": 1.4077758421190083,
+      "model_build_wall_s": 3.846947479993105,
+      "start_buses": 87,
+      "first_target_time_s": 104.11170983314514,
+      "matrix_identity_sha256": "f7d0a404c3081edb304dee1d60856947c1751237c0559ba68bfad555f722d8a4",
+      "host": "jingjie-cpu-22.mae.cornell.edu",
+      "job_id": "730247",
+      "status": "OPTIMAL",
+      "relative_gap": 0.0,
+      "work_units": 131.53,
+      "log_explored_seconds": 104.16,
+      "runtime_minus_log_explored_seconds": 0.007543888092044426,
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 364,
+      "model_columns": 130468,
+      "model_nonzeros": 3541122,
+      "result_sha256": "25f43eaf1812f2806fd401058c6165e50b41e0326dd580eae63766eaa12f3cc0",
+      "log_sha256": "d890aa7cdfb2a98a454ac2815da8cd5e870a2a76494aa1b1aa8d16f25bfbfd0c",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/default/730247_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/default/730247_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.0,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c1_k15_sequential",
+      "arm": "focus1",
+      "fleet": 15,
+      "bound": 15.0,
+      "finite_pool_fleet_proven": true,
+      "target": 15,
+      "target_attained": true,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 105.08831007219851,
+      "gurobi_runtime_s": 105.0874330997467,
+      "artifact_loading_s": 1.3530922001227736,
+      "model_build_wall_s": 3.649253913667053,
+      "start_buses": 87,
+      "first_target_time_s": 105.03446412086487,
+      "matrix_identity_sha256": "f7d0a404c3081edb304dee1d60856947c1751237c0559ba68bfad555f722d8a4",
+      "host": "jingjie-cpu-06.mae.cornell.edu",
+      "job_id": "730248",
+      "status": "OPTIMAL",
+      "relative_gap": 0.0,
+      "work_units": 132.24,
+      "log_explored_seconds": 105.08,
+      "runtime_minus_log_explored_seconds": 0.007433099746705807,
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 364,
+      "model_columns": 130468,
+      "model_nonzeros": 3541122,
+      "result_sha256": "d7cbb70233390b632e4a1650d9535a71a3f2e406706205b4a8da0f1b8e46d1b4",
+      "log_sha256": "f064acdfc9f30a25f34da317a4916cc329965ae4d516f9c201a727bece08ff3f",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/focus1/730248_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/focus1/730248_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.0088347640797908,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c1_k15_sequential",
+      "arm": "focus2",
+      "fleet": 15,
+      "bound": 14.999999999999998,
+      "finite_pool_fleet_proven": true,
+      "target": 15,
+      "target_attained": true,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 80.75172843690962,
+      "gurobi_runtime_s": 80.75095295906067,
+      "artifact_loading_s": 1.346311328932643,
+      "model_build_wall_s": 3.548326290678233,
+      "start_buses": 87,
+      "first_target_time_s": 80.68918299674988,
+      "matrix_identity_sha256": "f7d0a404c3081edb304dee1d60856947c1751237c0559ba68bfad555f722d8a4",
+      "host": "jingjie-cpu-08.mae.cornell.edu",
+      "job_id": "730249",
+      "status": "OPTIMAL",
+      "relative_gap": 1.1842378929335003e-16,
+      "work_units": 98.72,
+      "log_explored_seconds": 80.74,
+      "runtime_minus_log_explored_seconds": 0.010952959060674061,
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 364,
+      "model_columns": 130468,
+      "model_nonzeros": 3541122,
+      "result_sha256": "5774cbb3468db1e3adcec9d82ccade96a6ef6c414244de33ed43589131434363",
+      "log_sha256": "943cf0fa1a9fe9d3a7a073cb9fa611bf50058ba0fc647ba60c335571c9771747",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/focus2/730249_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/focus2/730249_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 0.7752065938705863,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c1_k15_sequential",
+      "arm": "presparsify1",
+      "fleet": 15,
+      "bound": 15.0,
+      "finite_pool_fleet_proven": true,
+      "target": 15,
+      "target_attained": true,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 1779.486721611116,
+      "gurobi_runtime_s": 1779.4859330654144,
+      "artifact_loading_s": 1.3211871339008212,
+      "model_build_wall_s": 3.5304148951545358,
+      "start_buses": 87,
+      "first_target_time_s": 1779.3997120857239,
+      "matrix_identity_sha256": "f7d0a404c3081edb304dee1d60856947c1751237c0559ba68bfad555f722d8a4",
+      "host": "jingjie-cpu-15.mae.cornell.edu",
+      "job_id": "730250",
+      "status": "OPTIMAL",
+      "relative_gap": 0.0,
+      "work_units": 3010.59,
+      "log_explored_seconds": 1779.47,
+      "runtime_minus_log_explored_seconds": 0.015933065414401426,
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 364,
+      "model_columns": 130468,
+      "model_nonzeros": 3541122,
+      "result_sha256": "c26ec458f379bdacdd8262aa4110b699fdc15155ef97ba807864a5db76af5516",
+      "log_sha256": "4699a548115942fdd4076abceb40ce730e474fa1ffe1e13ebbd68ad559f5d588",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/presparsify1/730250_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/presparsify1/730250_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 17.082852181620524,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c1_k15_sequential",
+      "arm": "strong_start",
+      "fleet": 15,
+      "bound": 15.0,
+      "finite_pool_fleet_proven": true,
+      "target": 15,
+      "target_attained": true,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 11.149610604159534,
+      "gurobi_runtime_s": 11.148597002029419,
+      "artifact_loading_s": 1.361515725031495,
+      "model_build_wall_s": 4.104151820298284,
+      "start_buses": 15,
+      "first_target_time_s": 0.053175926208496094,
+      "matrix_identity_sha256": "f7d0a404c3081edb304dee1d60856947c1751237c0559ba68bfad555f722d8a4",
+      "host": "jingjie-cpu-17.mae.cornell.edu",
+      "job_id": "730251",
+      "status": "OPTIMAL",
+      "relative_gap": 0.0,
+      "work_units": 8.29,
+      "log_explored_seconds": 11.14,
+      "runtime_minus_log_explored_seconds": 0.008597002029418377,
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "start_kind": "offline saved original stage1 incumbent",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 364,
+      "model_columns": 130468,
+      "model_nonzeros": 3541122,
+      "result_sha256": "757db43a9562d9012f688d54fbc72ff181e938b90ff9c91f456275759bedbafa",
+      "log_sha256": "120c5e459336519988b5f2785d275db82f8518bfa17c05589493a9d03238fff7",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/strong_start/730251_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/strong_start/730251_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 0.10703488119374131,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c3_k15_fresh",
+      "arm": "default",
+      "fleet": 18,
+      "bound": 15.000000000000025,
+      "finite_pool_fleet_proven": false,
+      "target": 15,
+      "target_attained": false,
+      "gurobi_status": 9,
+      "actual_optimize_wall_s": 1800.0315718781203,
+      "gurobi_runtime_s": 1800.0311992168427,
+      "artifact_loading_s": 0.35621081478893757,
+      "model_build_wall_s": 1.0102432640269399,
+      "start_buses": 100,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "d6e8a3cdbadb3e0ded791b855d5a2bd4c7e594e46d7e7087805b6b44f76f0ba8",
+      "host": "jingjie-cpu-10.mae.cornell.edu",
+      "job_id": "730242",
+      "status": "TIME_LIMIT",
+      "relative_gap": 0.1666666666666653,
+      "work_units": 4564.45,
+      "log_explored_seconds": 1800.03,
+      "runtime_minus_log_explored_seconds": 0.001199216842678652,
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 302,
+      "model_columns": 38130,
+      "model_nonzeros": 896915,
+      "result_sha256": "72582bbc1da99e71bb5c8a080026c136d9677662a4d99fd3d4e8b17adee7c25c",
+      "log_sha256": "f5bfb5ad9e09348ed741894289fd32eea8eb0cbd32ef2ab35f7b8820ac2675cf",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/default/730242_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/default/730242_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.0,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c3_k15_fresh",
+      "arm": "focus1",
+      "fleet": 18,
+      "bound": 15.000000000000025,
+      "finite_pool_fleet_proven": false,
+      "target": 15,
+      "target_attained": false,
+      "gurobi_status": 9,
+      "actual_optimize_wall_s": 1800.04506888194,
+      "gurobi_runtime_s": 1800.0424590110779,
+      "artifact_loading_s": 0.39335389202460647,
+      "model_build_wall_s": 0.9737203628756106,
+      "start_buses": 100,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "d6e8a3cdbadb3e0ded791b855d5a2bd4c7e594e46d7e7087805b6b44f76f0ba8",
+      "host": "jingjie-cpu-16.mae.cornell.edu",
+      "job_id": "730243",
+      "status": "TIME_LIMIT",
+      "relative_gap": 0.1666666666666653,
+      "work_units": 3951.37,
+      "log_explored_seconds": 1800.04,
+      "runtime_minus_log_explored_seconds": 0.002459011077917239,
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 302,
+      "model_columns": 38130,
+      "model_nonzeros": 896915,
+      "result_sha256": "9a46cb069690023e2cc31af1a19fe26f44a79a15f353a3843d74f09e9a0676c6",
+      "log_sha256": "080717a2f63d2bba1a2110f0a4e308494ee98ff3130bebaaee5f97fa10ec3c4e",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/focus1/730243_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/focus1/730243_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.0000074982039375,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c3_k15_fresh",
+      "arm": "focus2",
+      "fleet": 18,
+      "bound": 15.000000000000055,
+      "finite_pool_fleet_proven": false,
+      "target": 15,
+      "target_attained": false,
+      "gurobi_status": 9,
+      "actual_optimize_wall_s": 1800.0352854183875,
+      "gurobi_runtime_s": 1800.0348739624023,
+      "artifact_loading_s": 0.4079593797214329,
+      "model_build_wall_s": 0.9735363009385765,
+      "start_buses": 100,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "d6e8a3cdbadb3e0ded791b855d5a2bd4c7e594e46d7e7087805b6b44f76f0ba8",
+      "host": "jingjie-cpu-17.mae.cornell.edu",
+      "job_id": "730244",
+      "status": "TIME_LIMIT",
+      "relative_gap": 0.1666666666666636,
+      "work_units": 3276.44,
+      "log_explored_seconds": 1800.03,
+      "runtime_minus_log_explored_seconds": 0.004873962402371035,
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 302,
+      "model_columns": 38130,
+      "model_nonzeros": 896915,
+      "result_sha256": "b46be122da0634000d4769dccf120f71f30ec7dcadc0f6360f76d6af3d0fd63b",
+      "log_sha256": "753b4d8c7088de3c5d506be24f099d08f681051b0b59e7df51c666356509573e",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/focus2/730244_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/focus2/730244_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.0000020630417406,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c3_k15_fresh",
+      "arm": "presparsify1",
+      "fleet": 17,
+      "bound": 15.000000000001029,
+      "finite_pool_fleet_proven": false,
+      "target": 15,
+      "target_attained": false,
+      "gurobi_status": 9,
+      "actual_optimize_wall_s": 1800.0306920241565,
+      "gurobi_runtime_s": 1800.0303299427032,
+      "artifact_loading_s": 0.46258351439610124,
+      "model_build_wall_s": 0.8529205648228526,
+      "start_buses": 100,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "d6e8a3cdbadb3e0ded791b855d5a2bd4c7e594e46d7e7087805b6b44f76f0ba8",
+      "host": "jingjie-cpu-17.mae.cornell.edu",
+      "job_id": "730245",
+      "status": "TIME_LIMIT",
+      "relative_gap": 0.11764705882346892,
+      "work_units": 4490.19,
+      "log_explored_seconds": 1800.03,
+      "runtime_minus_log_explored_seconds": 0.00032994270327435515,
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 302,
+      "model_columns": 38130,
+      "model_nonzeros": 896915,
+      "result_sha256": "b206812191a28bc8f2214c1807fc55c091fbcc29029f03a8caa09b10f4c7d65c",
+      "log_sha256": "95531194edfb5644c1a0b0c413217a76fa3963a3b7946dcc47c0ae6608fa86ed",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/presparsify1/730245_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/presparsify1/730245_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 0.9999995112008158,
+      "fleet_difference_from_default": -1
+    },
+    {
+      "case": "c3_k15_fresh",
+      "arm": "strong_start",
+      "fleet": 17,
+      "bound": 15.000000000000059,
+      "finite_pool_fleet_proven": false,
+      "target": 15,
+      "target_attained": false,
+      "gurobi_status": 9,
+      "actual_optimize_wall_s": 1800.022630651947,
+      "gurobi_runtime_s": 1800.022192955017,
+      "artifact_loading_s": 0.3902959239203483,
+      "model_build_wall_s": 1.064076297916472,
+      "start_buses": 18,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "d6e8a3cdbadb3e0ded791b855d5a2bd4c7e594e46d7e7087805b6b44f76f0ba8",
+      "host": "jingjie-cpu-18.mae.cornell.edu",
+      "job_id": "730246",
+      "status": "TIME_LIMIT",
+      "relative_gap": 0.11764705882352597,
+      "work_units": 4658.57,
+      "log_explored_seconds": 1800.02,
+      "runtime_minus_log_explored_seconds": 0.0021929550171080336,
+      "code_commit": "74906efe7d8787c82795d6dd80a640a56a594beb",
+      "start_kind": "offline saved original stage1 incumbent",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 302,
+      "model_columns": 38130,
+      "model_nonzeros": 896915,
+      "result_sha256": "915cff67b77c820d64e05dfa3eb260659eabfc748c4d408543b2a3dfaf047f6f",
+      "log_sha256": "24cec6f4d772b1925506dd8f372064494fc576d1d1d90e6fcdeae0e7aa339288",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/strong_start/730246_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/strong_start/730246_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 0.9999950327392514,
+      "fleet_difference_from_default": -1
+    },
+    {
+      "case": "c4_k08_fresh",
+      "arm": "default",
+      "fleet": 9,
+      "bound": 9.0,
+      "finite_pool_fleet_proven": true,
+      "target": 8,
+      "target_attained": false,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 461.95708586391993,
+      "gurobi_runtime_s": 461.9568428993225,
+      "artifact_loading_s": 215.01275239512324,
+      "model_build_wall_s": 0.5303177109453827,
+      "start_buses": 59,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "d27e254a66aaf9d608d0a7d1f40718650d74e8f790a3cb1fb46157be6051bb7a",
+      "host": "mzhang-cpu-01.mae.cornell.edu",
+      "job_id": "729446",
+      "status": "OPTIMAL",
+      "relative_gap": 0.0,
+      "work_units": 1611.48,
+      "log_explored_seconds": 461.95,
+      "runtime_minus_log_explored_seconds": 0.006842899322521134,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 188,
+      "model_columns": 39668,
+      "model_nonzeros": 1057136,
+      "result_sha256": "458175e2c8550ce6d42816ef67fb8683ce83f3bf9d7a253d533cb62a7586d814",
+      "log_sha256": "6b35e44e42ca2b0e5aa788520eaf9cc86bc7b25163f1fd7472dfa4e9e81be713",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/default/729446_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/default/729446_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.0,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c4_k08_fresh",
+      "arm": "focus1",
+      "fleet": 9,
+      "bound": 9.0,
+      "finite_pool_fleet_proven": true,
+      "target": 8,
+      "target_attained": false,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 700.6527135709766,
+      "gurobi_runtime_s": 700.6524701118469,
+      "artifact_loading_s": 205.77095974399708,
+      "model_build_wall_s": 0.5030567410867661,
+      "start_buses": 59,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "d27e254a66aaf9d608d0a7d1f40718650d74e8f790a3cb1fb46157be6051bb7a",
+      "host": "mzhang-cpu-01.mae.cornell.edu",
+      "job_id": "729447",
+      "status": "OPTIMAL",
+      "relative_gap": 0.0,
+      "work_units": 2232.84,
+      "log_explored_seconds": 700.65,
+      "runtime_minus_log_explored_seconds": 0.0024701118469465655,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 188,
+      "model_columns": 39668,
+      "model_nonzeros": 1057136,
+      "result_sha256": "c893dc696d184785a703d05e41d67c47daa12ced0b60d2dfa79e4d75c4b26d05",
+      "log_sha256": "d7bd521df4f4744c95724b7740ea708ae9fc91b2b784324e38a8a6374dec7b43",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/focus1/729447_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/focus1/729447_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.516705198407477,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c4_k08_fresh",
+      "arm": "focus2",
+      "fleet": 9,
+      "bound": 9.0,
+      "finite_pool_fleet_proven": true,
+      "target": 8,
+      "target_attained": false,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 511.8087495157961,
+      "gurobi_runtime_s": 511.80850410461426,
+      "artifact_loading_s": 205.8432999891229,
+      "model_build_wall_s": 0.4859213810414076,
+      "start_buses": 59,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "d27e254a66aaf9d608d0a7d1f40718650d74e8f790a3cb1fb46157be6051bb7a",
+      "host": "mzhang-cpu-01.mae.cornell.edu",
+      "job_id": "729448",
+      "status": "OPTIMAL",
+      "relative_gap": 0.0,
+      "work_units": 1505.06,
+      "log_explored_seconds": 511.81,
+      "runtime_minus_log_explored_seconds": -0.0014958953857444612,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 188,
+      "model_columns": 39668,
+      "model_nonzeros": 1057136,
+      "result_sha256": "8bdc0c6c301c2a2bb2cbb873e821760d23458d1dfae4f6f6bffd733005c5740b",
+      "log_sha256": "f49f0980a6265aec242b33d813607d735cc0f30c2ab64104f3eb40cbd88fca2b",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/focus2/729448_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/focus2/729448_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.1079140577715072,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c4_k08_fresh",
+      "arm": "presparsify1",
+      "fleet": 9,
+      "bound": 8.99999999999999,
+      "finite_pool_fleet_proven": true,
+      "target": 8,
+      "target_attained": false,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 756.0587868290022,
+      "gurobi_runtime_s": 756.0584828853607,
+      "artifact_loading_s": 218.27751876134425,
+      "model_build_wall_s": 0.7844452187418938,
+      "start_buses": 59,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "d27e254a66aaf9d608d0a7d1f40718650d74e8f790a3cb1fb46157be6051bb7a",
+      "host": "sablab-cpu-01.ece.cornell.edu",
+      "job_id": "729449",
+      "status": "OPTIMAL",
+      "relative_gap": 1.1842378929335002e-15,
+      "work_units": 1675.61,
+      "log_explored_seconds": 756.05,
+      "runtime_minus_log_explored_seconds": 0.008482885360763248,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "original deterministic greedy partition",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 188,
+      "model_columns": 39668,
+      "model_nonzeros": 1057136,
+      "result_sha256": "978cc59dc854edbef6e8c8947aee77bdf451333b63a7eb9f9c1b299b962ba7f1",
+      "log_sha256": "604470dabc7cda7b936b9e1201afffd7af199875a0eda6cb2423674e16a73fd7",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/presparsify1/729449_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/presparsify1/729449_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.636642904643564,
+      "fleet_difference_from_default": 0
+    },
+    {
+      "case": "c4_k08_fresh",
+      "arm": "strong_start",
+      "fleet": 9,
+      "bound": 9.0,
+      "finite_pool_fleet_proven": true,
+      "target": 8,
+      "target_attained": false,
+      "gurobi_status": 2,
+      "actual_optimize_wall_s": 601.2738738069311,
+      "gurobi_runtime_s": 601.2730529308319,
+      "artifact_loading_s": 194.8411624999717,
+      "model_build_wall_s": 0.6872183177620173,
+      "start_buses": 9,
+      "first_target_time_s": null,
+      "matrix_identity_sha256": "d27e254a66aaf9d608d0a7d1f40718650d74e8f790a3cb1fb46157be6051bb7a",
+      "host": "lisbeth.tech.cornell.edu",
+      "job_id": "729450",
+      "status": "OPTIMAL",
+      "relative_gap": 0.0,
+      "work_units": 1471.47,
+      "log_explored_seconds": 601.27,
+      "runtime_minus_log_explored_seconds": 0.0030529308319273696,
+      "code_commit": "94eabb25b5f1da9b24708320eaaec15a760c5f0e",
+      "start_kind": "offline saved original stage1 incumbent",
+      "offline_acquisition_time_included": false,
+      "preparation_time_included": false,
+      "model_rows": 188,
+      "model_columns": 39668,
+      "model_nonzeros": 1057136,
+      "result_sha256": "a1023893fe8acac345e1c4d6871485884d522bc1458bb0be4aa711b5eb8b4b33",
+      "log_sha256": "e337a7bdf0b22c6839eaba7d1010c3b333faedb54f596c98f9316a61cbec87bb",
+      "source_result": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/strong_start/729450_r0/result.json",
+      "source_log": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/strong_start/729450_r0/gurobi.log",
+      "optimizer_runtime_ratio_to_default": 1.301579502092647,
+      "fleet_difference_from_default": 0
+    }
+  ],
+  "checks": [
+    {
+      "cell": "c1_k08_fresh__default",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__default",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__default",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__default",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__default",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__default",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__default",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__default",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__default",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__default",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__default",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__default",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__default",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__default",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus1",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus1",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus1",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus1",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus1",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus1",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus1",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus1",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus1",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus1",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus1",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus1",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus1",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus1",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus2",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus2",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus2",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus2",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus2",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus2",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus2",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus2",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus2",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus2",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus2",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus2",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus2",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__focus2",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__presparsify1",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__presparsify1",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__presparsify1",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__presparsify1",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__presparsify1",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__presparsify1",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__presparsify1",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__presparsify1",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__presparsify1",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__presparsify1",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__presparsify1",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__presparsify1",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__presparsify1",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__presparsify1",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__strong_start",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__strong_start",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__strong_start",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__strong_start",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__strong_start",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__strong_start",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__strong_start",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__strong_start",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__strong_start",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__strong_start",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__strong_start",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__strong_start",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__strong_start",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k08_fresh__strong_start",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__default",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__default",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__default",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__default",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__default",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__default",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__default",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__default",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__default",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__default",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__default",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__default",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__default",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__default",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus1",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus1",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus1",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus1",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus1",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus1",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus1",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus1",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus1",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus1",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus1",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus1",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus1",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus1",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus2",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus2",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus2",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus2",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus2",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus2",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus2",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus2",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus2",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus2",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus2",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus2",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus2",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__focus2",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__presparsify1",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__presparsify1",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__presparsify1",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__presparsify1",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__presparsify1",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__presparsify1",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__presparsify1",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__presparsify1",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__presparsify1",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__presparsify1",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__presparsify1",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__presparsify1",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__presparsify1",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__presparsify1",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__strong_start",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__strong_start",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__strong_start",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__strong_start",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__strong_start",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__strong_start",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__strong_start",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__strong_start",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__strong_start",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__strong_start",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__strong_start",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__strong_start",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__strong_start",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c4_k08_fresh__strong_start",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__default",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__default",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__default",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__default",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__default",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__default",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__default",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__default",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__default",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__default",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__default",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__default",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__default",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__default",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus1",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus1",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus1",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus1",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus1",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus1",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus1",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus1",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus1",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus1",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus1",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus1",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus1",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus1",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus2",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus2",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus2",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus2",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus2",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus2",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus2",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus2",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus2",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus2",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus2",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus2",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus2",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__focus2",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__presparsify1",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__presparsify1",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__presparsify1",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__presparsify1",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__presparsify1",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__presparsify1",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__presparsify1",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__presparsify1",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__presparsify1",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__presparsify1",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__presparsify1",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__presparsify1",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__presparsify1",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__presparsify1",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__strong_start",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__strong_start",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__strong_start",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__strong_start",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__strong_start",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__strong_start",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__strong_start",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__strong_start",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__strong_start",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__strong_start",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__strong_start",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__strong_start",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__strong_start",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_fresh__strong_start",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__default",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__default",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__default",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__default",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__default",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__default",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__default",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__default",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__default",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__default",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__default",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__default",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__default",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__default",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus1",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus1",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus1",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus1",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus1",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus1",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus1",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus1",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus1",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus1",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus1",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus1",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus1",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus1",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus2",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus2",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus2",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus2",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus2",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus2",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus2",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus2",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus2",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus2",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus2",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus2",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus2",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__focus2",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__presparsify1",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__presparsify1",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__presparsify1",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__presparsify1",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__presparsify1",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__presparsify1",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__presparsify1",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__presparsify1",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__presparsify1",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__presparsify1",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__presparsify1",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__presparsify1",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__presparsify1",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__presparsify1",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__strong_start",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__strong_start",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__strong_start",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__strong_start",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__strong_start",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__strong_start",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__strong_start",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__strong_start",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__strong_start",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__strong_start",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__strong_start",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__strong_start",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__strong_start",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c3_k15_fresh__strong_start",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__default",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__default",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__default",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__default",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__default",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__default",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__default",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__default",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__default",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__default",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__default",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__default",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__default",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__default",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus1",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus1",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus1",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus1",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus1",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus1",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus1",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus1",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus1",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus1",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus1",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus1",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus1",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus1",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus2",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus2",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus2",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus2",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus2",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus2",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus2",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus2",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus2",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus2",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus2",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus2",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus2",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__focus2",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__presparsify1",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__presparsify1",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__presparsify1",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__presparsify1",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__presparsify1",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__presparsify1",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__presparsify1",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__presparsify1",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__presparsify1",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__presparsify1",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__presparsify1",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__presparsify1",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__presparsify1",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__presparsify1",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__strong_start",
+      "check": "completed scheduler state",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__strong_start",
+      "check": "source identity checks",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__strong_start",
+      "check": "effective parameters unchanged except arm",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__strong_start",
+      "check": "native original dimensions",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__strong_start",
+      "check": "native accepted intended start",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__strong_start",
+      "check": "native final objective/bound",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__strong_start",
+      "check": "native explored time precedes final Runtime (under 1s difference)",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__strong_start",
+      "check": "wall versus optimizer runtime",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__strong_start",
+      "check": "finite pool proof arithmetic",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__strong_start",
+      "check": "native termination",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__strong_start",
+      "check": "target match",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__strong_start",
+      "check": "coverage recorded after validation",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__strong_start",
+      "check": "native version",
+      "passed": true
+    },
+    {
+      "cell": "c1_k15_sequential__strong_start",
+      "check": "first target callback",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "model unchanged across original and v3",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "manifest.json code source hashes",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "manifest_v3.json code source hashes",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh complete gate hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh npz actual bytes hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh metadata hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh native original ordered pool",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh original endpoint hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh pinned source declarations",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh native physical admission",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__default single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__default result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__default full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__default execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__default runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__default matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__default metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__default start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__default start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__default selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__default selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__default same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__default no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__default saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus1 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus1 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus1 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus1 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus1 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus1 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus1 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus2 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus2 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus2 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus2 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus2 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus2 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus2 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus2 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus2 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus2 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus2 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus2 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus2 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__focus2 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__presparsify1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__presparsify1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__presparsify1 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__presparsify1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__presparsify1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__presparsify1 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__presparsify1 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__presparsify1 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__presparsify1 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__presparsify1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__presparsify1 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__presparsify1 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__presparsify1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__presparsify1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__strong_start single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__strong_start result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__strong_start full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__strong_start execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__strong_start runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__strong_start matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__strong_start metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__strong_start start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__strong_start start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__strong_start selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__strong_start selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__strong_start same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__strong_start no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k08_fresh__strong_start saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh complete gate hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh npz actual bytes hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh metadata hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh native original ordered pool",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh original endpoint hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh pinned source declarations",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh native physical admission",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__default single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__default result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__default full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__default execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__default runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__default matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__default metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__default start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__default start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__default selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__default selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__default same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__default no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__default saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus1 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus1 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus1 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus1 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus1 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus1 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus1 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus2 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus2 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus2 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus2 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus2 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus2 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus2 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus2 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus2 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus2 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus2 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus2 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus2 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__focus2 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__presparsify1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__presparsify1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__presparsify1 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__presparsify1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__presparsify1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__presparsify1 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__presparsify1 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__presparsify1 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__presparsify1 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__presparsify1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__presparsify1 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__presparsify1 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__presparsify1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__presparsify1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__strong_start single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__strong_start result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__strong_start full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__strong_start execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__strong_start runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__strong_start matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__strong_start metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__strong_start start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__strong_start start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__strong_start selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__strong_start selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__strong_start same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__strong_start no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c4_k08_fresh__strong_start saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh complete gate hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh npz actual bytes hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh metadata hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh native original ordered pool",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh original endpoint hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh pinned source declarations",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh native physical admission",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__default single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__default result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__default full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__default execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__default runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__default matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__default metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__default start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__default start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__default selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__default selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__default same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__default no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__default saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus1 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus1 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus1 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus1 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus1 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus1 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus1 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus2 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus2 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus2 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus2 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus2 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus2 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus2 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus2 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus2 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus2 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus2 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus2 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus2 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__focus2 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__presparsify1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__presparsify1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__presparsify1 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__presparsify1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__presparsify1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__presparsify1 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__presparsify1 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__presparsify1 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__presparsify1 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__presparsify1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__presparsify1 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__presparsify1 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__presparsify1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__presparsify1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__strong_start single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__strong_start result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__strong_start full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__strong_start execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__strong_start runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__strong_start matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__strong_start metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__strong_start start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__strong_start start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__strong_start selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__strong_start selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__strong_start same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__strong_start no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_fresh__strong_start saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh complete gate hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh npz actual bytes hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh metadata hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh native original ordered pool",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh original endpoint hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh pinned source declarations",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh native physical admission",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__default single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__default result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__default full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__default execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__default runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__default matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__default metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__default start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__default start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__default selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__default selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__default same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__default no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__default saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus1 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus1 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus1 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus1 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus1 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus1 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus1 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus2 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus2 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus2 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus2 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus2 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus2 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus2 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus2 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus2 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus2 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus2 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus2 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus2 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__focus2 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__presparsify1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__presparsify1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__presparsify1 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__presparsify1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__presparsify1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__presparsify1 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__presparsify1 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__presparsify1 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__presparsify1 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__presparsify1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__presparsify1 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__presparsify1 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__presparsify1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__presparsify1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__strong_start single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__strong_start result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__strong_start full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__strong_start execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__strong_start runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__strong_start matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__strong_start metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__strong_start start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__strong_start start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__strong_start selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__strong_start selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__strong_start same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__strong_start no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c3_k15_fresh__strong_start saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential complete gate hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential npz actual bytes hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential metadata hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential native original ordered pool",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential original endpoint hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential pinned source declarations",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential native physical admission",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__default single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__default result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__default full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__default execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__default runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__default matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__default metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__default start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__default start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__default selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__default selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__default same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__default no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__default saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus1 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus1 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus1 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus1 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus1 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus1 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus1 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus2 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus2 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus2 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus2 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus2 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus2 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus2 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus2 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus2 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus2 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus2 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus2 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus2 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__focus2 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__presparsify1 single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__presparsify1 result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__presparsify1 full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__presparsify1 execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__presparsify1 runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__presparsify1 matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__presparsify1 metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__presparsify1 start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__presparsify1 start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__presparsify1 selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__presparsify1 selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__presparsify1 same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__presparsify1 no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__presparsify1 saved_start_native_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__strong_start single completed active attempt",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__strong_start result_complete_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__strong_start full_log_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__strong_start execution_manifest_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__strong_start runner_core_pins",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__strong_start matrix_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__strong_start metadata_hash",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__strong_start start_indices",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__strong_start start_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__strong_start selected_route_identity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__strong_start selected_count",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__strong_start same_dimensions",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__strong_start no_shared_capacity",
+      "passed": true
+    },
+    {
+      "cell": "source_audit",
+      "check": "c1_k15_sequential__strong_start saved_start_native_indices",
+      "passed": true
+    }
+  ],
+  "source_artifacts": [
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/default/729440_r0/result.json",
+      "sha256": "1e8884a2429c2d9ff72d1c5a3f660746888649bb4f9943f9f1d20fe1a17e76c7"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/default/729440_r0/gurobi.log",
+      "sha256": "c9622ad5a473821f4b33104fd152e39726d6aa8ccaf7f392075596fbc4a61b90"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/default/729440_r0/execution.json",
+      "sha256": "8ae6be4d1c738dfb422eb54217829f3ca782dd64c16329a13abc63ccadea3805"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/default/729440_r0/COMPLETE.json",
+      "sha256": "2d9db6b1634379cc8b6af20e98cf5b9c36ec909ee148bb663a93d55629e80924"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/focus1/729441_r0/result.json",
+      "sha256": "8f75492617cc80613c3cd5b073addf8ee71f60c09a63294816a98b209c11c73e"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/focus1/729441_r0/gurobi.log",
+      "sha256": "8f7d9555ab39a18ed2ebad3f46019e7e38b503afe17f1003e98eae06244b89aa"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/focus1/729441_r0/execution.json",
+      "sha256": "746a48534b4a5e0bac8bceb5bbdf159016bbc2b13ff1badecebe2547687edffd"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/focus1/729441_r0/COMPLETE.json",
+      "sha256": "6ca3581584becdd0bc6b77fbef557d9780dff8256790892615fae4093deef540"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/focus2/729442_r0/result.json",
+      "sha256": "cb80870da94216bbcdfcd29376d24f0593cf5c17e3e961eecea7468c8f33360c"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/focus2/729442_r0/gurobi.log",
+      "sha256": "8bc3c265d620e89782ad3640cd24f9e72db9a7f1c4408637cb6054992a7f7dd0"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/focus2/729442_r0/execution.json",
+      "sha256": "6b185e62f5b781e903232dd39ca51f22165e2d028b53ebb0749672c76915d302"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/focus2/729442_r0/COMPLETE.json",
+      "sha256": "79aa4e7c57c172d3339ae9abf926f996f73ec6c3de469bfea676ab04299cffdd"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/presparsify1/729443_r0/result.json",
+      "sha256": "3aa2af5a7d21017b433f98726262c7f1aaa41ca12695ce451f32a4691ec4e3a4"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/presparsify1/729443_r0/gurobi.log",
+      "sha256": "8a692bc40417a9bba6e54f49b9390cb4cb4f2252172cf840fd946706af7cd9c8"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/presparsify1/729443_r0/execution.json",
+      "sha256": "4c9d9e4a2179c85d7e167bf5cc5c3f2f4c056fd77135dd4cf199e997862dd387"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/presparsify1/729443_r0/COMPLETE.json",
+      "sha256": "10966b789003b9a6d0774d4712a8c30e04b61647338b915e695105f567a2ce01"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/strong_start/729444_r1/result.json",
+      "sha256": "e79fd295baf8676485ee2889d2fc99fcbbd87bfce5fa532301317f36861b91ea"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/strong_start/729444_r1/gurobi.log",
+      "sha256": "e8cb054ecb02df0ffbc98454d2dd3becf017c3f1addfec8a1e6beefbd6e5bf17"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/strong_start/729444_r1/execution.json",
+      "sha256": "3d0f2114ecac56e6a476d69f6ad830289cfbf48c04904c92ebedcded53936ba9"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k08_fresh/strong_start/729444_r1/COMPLETE.json",
+      "sha256": "9265cb8b3eb73df4bc94212da90127d9a1170f79038b66d9ce9b9e7a8a07c8f7"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/default/729446_r0/result.json",
+      "sha256": "458175e2c8550ce6d42816ef67fb8683ce83f3bf9d7a253d533cb62a7586d814"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/default/729446_r0/gurobi.log",
+      "sha256": "6b35e44e42ca2b0e5aa788520eaf9cc86bc7b25163f1fd7472dfa4e9e81be713"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/default/729446_r0/execution.json",
+      "sha256": "c3989c102ce677c59a06e0992c16d02a1007edea800bd9510bd0ef1b94aa93be"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/default/729446_r0/COMPLETE.json",
+      "sha256": "0dc79536d2b1e571188bc28311419705778f9536b0d65f5bbab252195f4a5d8d"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/focus1/729447_r0/result.json",
+      "sha256": "c893dc696d184785a703d05e41d67c47daa12ced0b60d2dfa79e4d75c4b26d05"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/focus1/729447_r0/gurobi.log",
+      "sha256": "d7bd521df4f4744c95724b7740ea708ae9fc91b2b784324e38a8a6374dec7b43"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/focus1/729447_r0/execution.json",
+      "sha256": "54e0121eb7a2c8a770fb0f524f0085214f478ebc77ca728705985a87be430263"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/focus1/729447_r0/COMPLETE.json",
+      "sha256": "00612b77da13e906d29eedc2d553d98cc88e03171156f4b6f546baaf31854497"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/focus2/729448_r0/result.json",
+      "sha256": "8bdc0c6c301c2a2bb2cbb873e821760d23458d1dfae4f6f6bffd733005c5740b"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/focus2/729448_r0/gurobi.log",
+      "sha256": "f49f0980a6265aec242b33d813607d735cc0f30c2ab64104f3eb40cbd88fca2b"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/focus2/729448_r0/execution.json",
+      "sha256": "f8b7a85012d9c1888a4bc9799b3e5f54447845fe809aebf6449f84e49f542dec"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/focus2/729448_r0/COMPLETE.json",
+      "sha256": "f299659f73ed0c2801a02df704ae0191f2cd529b08b661e0184cf57378e5bfed"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/presparsify1/729449_r0/result.json",
+      "sha256": "978cc59dc854edbef6e8c8947aee77bdf451333b63a7eb9f9c1b299b962ba7f1"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/presparsify1/729449_r0/gurobi.log",
+      "sha256": "604470dabc7cda7b936b9e1201afffd7af199875a0eda6cb2423674e16a73fd7"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/presparsify1/729449_r0/execution.json",
+      "sha256": "82818aa9022d5c9b3c2e924c367f4d8ea1a6b60bacb5d15030bc53237a61ad96"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/presparsify1/729449_r0/COMPLETE.json",
+      "sha256": "efdf25798c27cc86d0dfa052a61dfa1a960589f111b77277e82a187bc5bfb61f"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/strong_start/729450_r0/result.json",
+      "sha256": "a1023893fe8acac345e1c4d6871485884d522bc1458bb0be4aa711b5eb8b4b33"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/strong_start/729450_r0/gurobi.log",
+      "sha256": "e337a7bdf0b22c6839eaba7d1010c3b333faedb54f596c98f9316a61cbec87bb"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/strong_start/729450_r0/execution.json",
+      "sha256": "1c28de602dbaf3e757209f8bbf80314b5b2437ace1b8f466dd38a17205b4e14c"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c4_k08_fresh/strong_start/729450_r0/COMPLETE.json",
+      "sha256": "a518c56f0cb281b470aafd8eec07a43c307aee759cca9871edb9ddbb50113b16"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/default/729452_r0/result.json",
+      "sha256": "5f440716c76256b03799186cc2d1ded81902fe204ae2a313b06d46f86d6a242b"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/default/729452_r0/gurobi.log",
+      "sha256": "7fd615c828aaf090734a33e678ce2fbbc13e7e1d0ed42b4a5fa5826824726934"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/default/729452_r0/execution.json",
+      "sha256": "5fbefe8c6a3b3eeab5ddc8161bfe4c454b3ac3f20ca72ba36cab527c792d9f39"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/default/729452_r0/COMPLETE.json",
+      "sha256": "9eed9744bfa9d2c05ed45837d199a38a8785dce1d5f67bf4a1d00433603681d1"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/focus1/729453_r0/result.json",
+      "sha256": "5cad950c16fbc809ddbb7e6668885d9e41070edda13fa610550ef02a142f1330"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/focus1/729453_r0/gurobi.log",
+      "sha256": "391b6c7d4c02532af0d45fcee8f9b9b038fc316e9fe9b33779475f1d1daf6d06"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/focus1/729453_r0/execution.json",
+      "sha256": "caccfa5b393eed13c4840e2facf14e4ef05e88decdc5e1b59fb8068c6fd73a0b"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/focus1/729453_r0/COMPLETE.json",
+      "sha256": "8eafe52fd588351910168f90aa077677f4002e2f7a1145231269d26cf5e1d9b3"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/focus2/729454_r0/result.json",
+      "sha256": "fb9c5328382c5a16e7bee2ce272c2d9053e3050e280f1af123f246f80aee27bd"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/focus2/729454_r0/gurobi.log",
+      "sha256": "4877c2fc5ced70e8d64de6850e17f6134e945b801519cae2431b7cda7e02e94c"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/focus2/729454_r0/execution.json",
+      "sha256": "515f71db82697f6a37b580ee9e0f75d52da6f05b4f32c54d53971727fc7b7f25"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/focus2/729454_r0/COMPLETE.json",
+      "sha256": "e1419674ff41ae6f8f328f2f6eb0d747a1f9fca9add9e00c9a21d94490b2914c"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/presparsify1/729455_r0/result.json",
+      "sha256": "5566cfe26edaee0478a80a4e754d8441c3e0eff27d0dd248235610f3996ef79d"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/presparsify1/729455_r0/gurobi.log",
+      "sha256": "6c1152c87ed546edec63a87d8ba2849760e949427002b26265819a2fe275b244"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/presparsify1/729455_r0/execution.json",
+      "sha256": "b82aa81604790617bfd997c91a20ce5318c05438b5d5f27ad04ec33b61d97211"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/presparsify1/729455_r0/COMPLETE.json",
+      "sha256": "3f32457e3e4d36191b3f87834557bf3ea14c03f404a554052f9748d6fbeac59e"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/strong_start/729456_r0/result.json",
+      "sha256": "1e8562585e6709566137c8b365704de17ee71133c568bd3763eac63f55542ef0"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/strong_start/729456_r0/gurobi.log",
+      "sha256": "28a8810282850d9d6c2e6a44dc0af211bb40200c141d25b67014496f00c53f5f"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/strong_start/729456_r0/execution.json",
+      "sha256": "5380421161a1264550f996008b1f2a23195a788c02bf6fea5f7f54595d303e21"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_fresh/strong_start/729456_r0/COMPLETE.json",
+      "sha256": "aa774d1cda4556384edcd419fbd9cc46e45417cfc7552ebad96f42e417408c45"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/default/730242_r0/result.json",
+      "sha256": "72582bbc1da99e71bb5c8a080026c136d9677662a4d99fd3d4e8b17adee7c25c"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/default/730242_r0/gurobi.log",
+      "sha256": "f5bfb5ad9e09348ed741894289fd32eea8eb0cbd32ef2ab35f7b8820ac2675cf"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/default/730242_r0/execution.json",
+      "sha256": "34eac65adebffcbdd08396aef3c2101e0e74c3a76f5a8dbb2e8a829ee87abc5d"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/default/730242_r0/COMPLETE.json",
+      "sha256": "d5f6b4f7e8cbd80b6cdfe997cd222159a376aa72f5c8ac56349cb665695650b2"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/focus1/730243_r0/result.json",
+      "sha256": "9a46cb069690023e2cc31af1a19fe26f44a79a15f353a3843d74f09e9a0676c6"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/focus1/730243_r0/gurobi.log",
+      "sha256": "080717a2f63d2bba1a2110f0a4e308494ee98ff3130bebaaee5f97fa10ec3c4e"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/focus1/730243_r0/execution.json",
+      "sha256": "4cfaf07894ced02de8f5d6fa42a989dd73c83911d2dbb17eccf43e370f66310c"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/focus1/730243_r0/COMPLETE.json",
+      "sha256": "157b25e264ee12ed28ca51dcd410f90cfc510d0bbc424411267d6c8f74f21cf7"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/focus2/730244_r0/result.json",
+      "sha256": "b46be122da0634000d4769dccf120f71f30ec7dcadc0f6360f76d6af3d0fd63b"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/focus2/730244_r0/gurobi.log",
+      "sha256": "753b4d8c7088de3c5d506be24f099d08f681051b0b59e7df51c666356509573e"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/focus2/730244_r0/execution.json",
+      "sha256": "3abcbaf5477afbc9c9e49504f9f1fa51f2b002bc980de41025bee247de4e680f"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/focus2/730244_r0/COMPLETE.json",
+      "sha256": "5adb7626b1923ebb486a306ae4dfd3255fa1acfdae20a4e7357ccc729a02c3bd"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/presparsify1/730245_r0/result.json",
+      "sha256": "b206812191a28bc8f2214c1807fc55c091fbcc29029f03a8caa09b10f4c7d65c"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/presparsify1/730245_r0/gurobi.log",
+      "sha256": "95531194edfb5644c1a0b0c413217a76fa3963a3b7946dcc47c0ae6608fa86ed"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/presparsify1/730245_r0/execution.json",
+      "sha256": "23f398856228cd63943b54b973cae9eec75c9a429375aa0a8402e6d340aa68b1"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/presparsify1/730245_r0/COMPLETE.json",
+      "sha256": "80eba1675728019011d4d185780ffa83358f50cb20df6258e7cb911daf2bb373"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/strong_start/730246_r0/result.json",
+      "sha256": "915cff67b77c820d64e05dfa3eb260659eabfc748c4d408543b2a3dfaf047f6f"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/strong_start/730246_r0/gurobi.log",
+      "sha256": "24cec6f4d772b1925506dd8f372064494fc576d1d1d90e6fcdeae0e7aa339288"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/strong_start/730246_r0/execution.json",
+      "sha256": "6c7495eed26b61fea18dd56804cad1d052675d83b30721a654860c4c20717b18"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c3_k15_fresh/strong_start/730246_r0/COMPLETE.json",
+      "sha256": "fae5f8bd3485ecd57fcbb7190cd01939d80a8b798b6de2c86ea072d768d303ae"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/default/730247_r0/result.json",
+      "sha256": "25f43eaf1812f2806fd401058c6165e50b41e0326dd580eae63766eaa12f3cc0"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/default/730247_r0/gurobi.log",
+      "sha256": "d890aa7cdfb2a98a454ac2815da8cd5e870a2a76494aa1b1aa8d16f25bfbfd0c"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/default/730247_r0/execution.json",
+      "sha256": "1a3cede0543e1d94141218f2ffd3e517b2a9bf6b9f88c61874bbc131345e5081"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/default/730247_r0/COMPLETE.json",
+      "sha256": "242d588776b3d4cff68949c4986f72af066ef897490f128da97c9ae6d26e0887"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/focus1/730248_r0/result.json",
+      "sha256": "d7cbb70233390b632e4a1650d9535a71a3f2e406706205b4a8da0f1b8e46d1b4"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/focus1/730248_r0/gurobi.log",
+      "sha256": "f064acdfc9f30a25f34da317a4916cc329965ae4d516f9c201a727bece08ff3f"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/focus1/730248_r0/execution.json",
+      "sha256": "cda395df2695826d9197e3215ef10971274ec204442d26818f2fedf9b7053692"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/focus1/730248_r0/COMPLETE.json",
+      "sha256": "1cb21c238a7fd0792ce2a1fffe7034b4cad34e4375f81b2650cbf87df82eb192"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/focus2/730249_r0/result.json",
+      "sha256": "5774cbb3468db1e3adcec9d82ccade96a6ef6c414244de33ed43589131434363"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/focus2/730249_r0/gurobi.log",
+      "sha256": "943cf0fa1a9fe9d3a7a073cb9fa611bf50058ba0fc647ba60c335571c9771747"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/focus2/730249_r0/execution.json",
+      "sha256": "51a366730f381d75419a20a720b51d4d8b133c264d42e62d9069021f4671d140"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/focus2/730249_r0/COMPLETE.json",
+      "sha256": "f0dc83c952fb0a6d4c7bf80ea1afc04c7535a67873b257e180208a1e36bcf480"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/presparsify1/730250_r0/result.json",
+      "sha256": "c26ec458f379bdacdd8262aa4110b699fdc15155ef97ba807864a5db76af5516"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/presparsify1/730250_r0/gurobi.log",
+      "sha256": "4699a548115942fdd4076abceb40ce730e474fa1ffe1e13ebbd68ad559f5d588"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/presparsify1/730250_r0/execution.json",
+      "sha256": "e37c2479435d5a89f077d49ca774c49ca0a614f4f17120bf4237cf547198815c"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/presparsify1/730250_r0/COMPLETE.json",
+      "sha256": "5c49ada79e6ce2657e0ac24a192b0d9c64367776ac71c7aa742f954a8b3b7c94"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/strong_start/730251_r0/result.json",
+      "sha256": "757db43a9562d9012f688d54fbc72ff181e938b90ff9c91f456275759bedbafa"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/strong_start/730251_r0/gurobi.log",
+      "sha256": "120c5e459336519988b5f2785d275db82f8518bfa17c05589493a9d03238fff7"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/strong_start/730251_r0/execution.json",
+      "sha256": "68bb907c5860e4dc7d54a1bfa003e82d9aeac5ce1ea3cc55a1c04f3e1f12893c"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/results/c1_k15_sequential/strong_start/730251_r0/COMPLETE.json",
+      "sha256": "aff73099ef227dd51af81a51a592a87293576efb06ed03e339d6274d7f6d6b3d"
+    }
+  ],
+  "original_collection_receipt": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/mip_structure/collections/20260922T075615Z/receipt.json",
+  "scheduler_snapshot_sha256": "64cd2e2a1b72e66d52d9fd3178366ab2ba18200aef206f422dfdf7f2bb8ce775",
+  "source_audit_sha256": "ea4e19e14bbf0de00fcf7170169d6aa5890877c28a1bb6ed89fcfc69d0c60b7d",
+  "results_csv_sha256": "2935de90efc62dad223e6aa0ad8df62e00ac37f1f2d91b8ce4748dad469895b5",
+  "new_jobs_submitted": 0,
+  "recovery_needed": false,
+  "limitations": [
+    "Single seed0 and different assigned hardware: descriptive pilot, not robust causal ranking.",
+    "Offline saved-incumbent acquisition time excluded.",
+    "Optimizer time excludes loading/preparation/model build; original and v3 loader revisions differ.",
+    "Finite-pool covering proofs only, shared charger capacity omitted, duplicate service possible, historical240kWh/240kW physics."
+  ]
+}
