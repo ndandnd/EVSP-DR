@@ -1,0 +1,158 @@
+
+Gurobi 12.0.3 (linux64) logging started Sun Sep 13 14:19:28 2026
+
+Set parameter LogFile to value "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c4_k05/mip_warm/135649_r0/gurobi.log"
+Set parameter OutputFlag to value 1
+Set parameter TimeLimit to value 3600
+Set parameter MIPGap to value 0.0001
+Set parameter Threads to value 8
+Set parameter TimeLimit to value 1800
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6230 CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 8 threads
+
+Non-default parameters:
+TimeLimit  1800
+Threads  8
+
+Optimize a model with 104 rows, 15452 columns and 291475 nonzeros
+Model fingerprint: 0x9afdf690
+Variable types: 0 continuous, 15452 integer (15452 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+
+Loaded user MIP start with objective 19
+
+Presolve removed 0 rows and 5197 columns
+Presolve time: 0.45s
+Presolved: 104 rows, 10255 columns, 200890 nonzeros
+Found heuristic solution: objective 17.0000000
+Variable types: 0 continuous, 10255 integer (10255 binary)
+
+Root relaxation: objective 5.000000e+00, 513 iterations, 0.12 seconds (0.19 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+*    0     0               0       5.0000000    5.00000  0.00%     -    0s
+
+Explored 1 nodes (4720 simplex iterations) in 0.94 seconds (0.84 work units)
+Thread count was 8 (of 40 available processors)
+
+Solution count 3: 5 17 19 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 5.000000000000e+00, best bound 5.000000000000e+00, gap 0.0000%
+
+User-callback calls 350, time in user-callback 0.00 sec
+Set parameter TimeLimit to value 3.5987258749008179e+03
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6230 CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 8 threads
+
+Non-default parameters:
+TimeLimit  3.5987258749008179e+03
+Threads  8
+
+Optimize a model with 105 rows, 15452 columns and 306927 nonzeros
+Model fingerprint: 0xaf87c3a3
+Variable types: 0 continuous, 15452 integer (15452 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [5e+00, 1e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 5e+00]
+
+Loaded user MIP start with objective 338.936
+MIP start from previous solve did not produce a new incumbent solution
+
+Presolve removed 0 rows and 455 columns
+Presolve time: 0.38s
+Presolved: 105 rows, 14997 columns, 295878 nonzeros
+Variable types: 0 continuous, 14997 integer (14997 binary)
+
+Root relaxation: objective 2.215718e+02, 1582 iterations, 0.60 seconds (1.05 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0  221.57185    0   40  338.93600  221.57185  34.6%     -    1s
+H    0     0                     323.7680000  221.57185  31.6%     -    1s
+     0     0  221.90400    0   26  323.76800  221.90400  31.5%     -    1s
+H    0     0                     316.4560000  221.90400  29.9%     -    2s
+H    0     0                     309.4720000  221.90400  28.3%     -    2s
+H    0     0                     307.4080000  221.90400  27.8%     -    2s
+H    0     0                     277.8160000  221.90400  20.1%     -    2s
+H    0     0                     276.0800000  221.90400  19.6%     -    3s
+H    0     0                     234.0960000  221.90400  5.21%     -    3s
+H    0     0                     233.8480000  222.07280  5.04%     -    4s
+     0     0  222.07280    0   50  233.84800  222.07280  5.04%     -    4s
+     0     0  222.22350    0   51  233.84800  222.22350  4.97%     -    5s
+     0     0  222.22350    0   41  233.84800  222.22350  4.97%     -    6s
+     0     0  222.22350    0   48  233.84800  222.22350  4.97%     -    7s
+     0     0  222.47050    0   52  233.84800  222.47050  4.87%     -    7s
+     0     0  222.48855    0   54  233.84800  222.48855  4.86%     -    7s
+     0     0  222.61268    0   51  233.84800  222.61268  4.80%     -    7s
+     0     0  222.88221    0   58  233.84800  222.88221  4.69%     -    7s
+     0     0  223.42163    0   59  233.84800  223.42163  4.46%     -    7s
+     0     0  223.42163    0   41  233.84800  223.42163  4.46%     -    7s
+     0     0  223.42163    0   55  233.84800  223.42163  4.46%     -    8s
+     0     0  223.42163    0   64  233.84800  223.42163  4.46%     -    8s
+     0     0  223.42575    0   62  233.84800  223.42575  4.46%     -    8s
+     0     0  223.82274    0   69  233.84800  223.82274  4.29%     -    8s
+     0     0  223.91758    0   80  233.84800  223.91758  4.25%     -    8s
+     0     0  223.92398    0   82  233.84800  223.92398  4.24%     -    8s
+     0     0  223.94249    0   81  233.84800  223.94249  4.24%     -    8s
+     0     0  223.95016    0   79  233.84800  223.95016  4.23%     -    8s
+     0     0  224.21592    0   77  233.84800  224.21592  4.12%     -    8s
+     0     0  224.22741    0   79  233.84800  224.22741  4.11%     -    8s
+     0     0  224.24379    0   76  233.84800  224.24379  4.11%     -    8s
+     0     0  224.44173    0   77  233.84800  224.44173  4.02%     -    8s
+     0     0  224.54679    0   81  233.84800  224.54679  3.98%     -    8s
+     0     0  224.57570    0   84  233.84800  224.57570  3.97%     -    8s
+     0     0  224.58874    0   87  233.84800  224.58874  3.96%     -    8s
+     0     0  224.58993    0   87  233.84800  224.58993  3.96%     -    8s
+     0     0  224.80699    0   88  233.84800  224.80699  3.87%     -    8s
+     0     0  224.80699    0   88  233.84800  224.80699  3.87%     -    8s
+     0     0  224.80699    0   41  233.84800  224.80699  3.87%     -    8s
+     0     0  224.80699    0   67  233.84800  224.80699  3.87%     -    9s
+     0     0  224.80699    0   66  233.84800  224.80699  3.87%     -    9s
+     0     0  224.80699    0   65  233.84800  224.80699  3.87%     -    9s
+     0     0  224.80699    0   63  233.84800  224.80699  3.87%     -    9s
+     0     0  224.80699    0   79  233.84800  224.80699  3.87%     -    9s
+     0     0  224.80699    0   77  233.84800  224.80699  3.87%     -    9s
+     0     0  224.80699    0   79  233.84800  224.80699  3.87%     -    9s
+     0     0  224.80699    0   81  233.84800  224.80699  3.87%     -    9s
+     0     0  224.80699    0   85  233.84800  224.80699  3.87%     -    9s
+     0     0  224.80699    0   86  233.84800  224.80699  3.87%     -    9s
+     0     0  224.80699    0   89  233.84800  224.80699  3.87%     -    9s
+     0     0  224.80699    0   93  233.84800  224.80699  3.87%     -    9s
+     0     0  224.87890    0   89  233.84800  224.87890  3.84%     -    9s
+     0     0  224.89063    0   93  233.84800  224.89063  3.83%     -    9s
+     0     0  224.89367    0   96  233.84800  224.89367  3.83%     -    9s
+     0     0  224.93982    0   89  233.84800  224.93982  3.81%     -    9s
+     0     0  224.94226    0   92  233.84800  224.94226  3.81%     -    9s
+     0     0  225.18982    0   90  233.84800  225.18982  3.70%     -    9s
+     0     0  225.27777    0   90  233.84800  225.27777  3.66%     -    9s
+     0     2  225.27777    0   90  233.84800  225.27777  3.66%     -    9s
+    82     3  226.89856   42   85  233.84800  226.89856  2.97%  81.1   10s
+
+Cutting planes:
+  Cover: 9
+  MIR: 52
+  Zero half: 13
+
+Explored 250 nodes (20454 simplex iterations) in 10.49 seconds (10.20 work units)
+Thread count was 8 (of 40 available processors)
+
+Solution count 9: 233.848 234.096 276.08 ... 338.936
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 2.338480000000e+02, best bound 2.338480000000e+02, gap 0.0000%
+
+User-callback calls 3906, time in user-callback 0.01 sec

@@ -1,0 +1,11 @@
+{
+  "scope": "Read-only source/log/documentation audit; no optimizers",
+  "execution_source_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "source_file": "src/run_exact_pool_mip.py",
+  "source_sha256": "bcb5a6b76040ff6ddfa932433d296a1f0f72207b28cbba738b1b4dd39f1eaac7",
+  "evidence_log": "outputs/research_followup_20260921/mip_matrix_audit/sources/c3_k15_fresh_gurobi.log",
+  "evidence_log_sha256": "d740013e0601bc01da27aa49957dc80d3669028f87c48c2fb89d572e2d8d791d",
+  "notes_sha256": "d60fc53840371484c07d8ddb5f20deab5538a7a60fa148e4ef1ada4cb0ba892c",
+  "date": "2026-09-22",
+  "resources": "Local file reads and official Gurobi web documentation only; no jobs or dependencies"
+}

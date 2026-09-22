@@ -1,0 +1,94 @@
+
+Gurobi 12.0.3 (linux64) logging started Sun Sep 13 14:20:14 2026
+
+Set parameter LogFile to value "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c6_k05/mip_warm/135691_r0/gurobi.log"
+Set parameter OutputFlag to value 1
+Set parameter TimeLimit to value 3600
+Set parameter MIPGap to value 0.0001
+Set parameter Threads to value 8
+Set parameter TimeLimit to value 1800
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6230 CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 8 threads
+
+Non-default parameters:
+TimeLimit  1800
+Threads  8
+
+Optimize a model with 79 rows, 10249 columns and 141114 nonzeros
+Model fingerprint: 0x03497eb6
+Variable types: 0 continuous, 10249 integer (10249 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+
+Loaded user MIP start with objective 16
+
+Presolve removed 0 rows and 2795 columns
+Presolve time: 0.17s
+Presolved: 79 rows, 7454 columns, 110275 nonzeros
+Variable types: 0 continuous, 7454 integer (7454 binary)
+Found heuristic solution: objective 10.0000000
+
+Root relaxation: objective 5.000000e+00, 363 iterations, 0.06 seconds (0.08 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+*    0     0               0       5.0000000    5.00000  0.00%     -    0s
+
+Explored 1 nodes (3909 simplex iterations) in 0.41 seconds (0.34 work units)
+Thread count was 8 (of 40 available processors)
+
+Solution count 3: 5 10 16 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 5.000000000000e+00, best bound 5.000000000000e+00, gap 0.0000%
+
+User-callback calls 249, time in user-callback 0.00 sec
+Set parameter TimeLimit to value 3.5994116363525391e+03
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 6230 CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 8 threads
+
+Non-default parameters:
+TimeLimit  3.5994116363525391e+03
+Threads  8
+
+Optimize a model with 80 rows, 10249 columns and 151363 nonzeros
+Model fingerprint: 0xefea3ea7
+Variable types: 0 continuous, 10249 integer (10249 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e-11, 7e+01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 5e+00]
+
+Loaded user MIP start with objective 187.432
+MIP start from previous solve did not produce a new incumbent solution
+
+Presolve removed 0 rows and 332 columns
+Presolve time: 0.19s
+Presolved: 80 rows, 9917 columns, 146957 nonzeros
+Variable types: 0 continuous, 9917 integer (9917 binary)
+
+Root relaxation: objective 1.416400e+02, 596 iterations, 0.12 seconds (0.20 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+*    0     0               0     141.6400000  141.64000  0.00%     -    0s
+
+Explored 1 nodes (596 simplex iterations) in 0.35 seconds (0.42 work units)
+Thread count was 8 (of 40 available processors)
+
+Solution count 2: 141.64 187.432 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.416400000000e+02, best bound 1.416400000000e+02, gap 0.0000%
+
+User-callback calls 259, time in user-callback 0.00 sec
