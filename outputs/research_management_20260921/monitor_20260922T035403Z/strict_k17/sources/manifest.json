@@ -1,0 +1,118 @@
+{
+  "created_unix": 1790020412.1860442,
+  "code": "/home/nc437/ladder-lite/strict_packed_20260921/code",
+  "execution_commit": "35770aae2c08e7d5a356cc3b673e67608e5b1036",
+  "original_campaign": "/home/nc437/ladder-lite/review_strict_c5_20260916",
+  "parent_receipt": "/home/nc437/ladder-lite/strict_packed_20260921/CG_COMPLETE.json",
+  "cases": [
+    {
+      "id": "w5_k17_18E2",
+      "global_target_k": 17,
+      "group": "18E2",
+      "group_reference_duties": 10,
+      "duties": [
+        "13322",
+        "13319",
+        "13317",
+        "13320",
+        "13316uwt",
+        "13312",
+        "13314",
+        "13305",
+        "13304",
+        "13326"
+      ],
+      "trip_count": 277,
+      "input": "inputs/w5_k17_18E2.csv",
+      "input_sha256": "95a79cdcb9a84d135fb086626f511cd377dbc31427d98ac696ea4801c7e51c88",
+      "previous_group_case": "w5_k16_18E2",
+      "arm": "parx60",
+      "non_parx_kw": 240,
+      "battery_kwh": 239.01,
+      "reserve_kwh": 35.8515,
+      "cg_wall_s": 14400,
+      "max_iters": 100000,
+      "mip_wall_s": 3600,
+      "threads": 8
+    },
+    {
+      "id": "w5_k19_18E2",
+      "global_target_k": 19,
+      "group": "18E2",
+      "group_reference_duties": 11,
+      "duties": [
+        "13322",
+        "13319",
+        "13317",
+        "13320",
+        "13316uwt",
+        "13312",
+        "13314",
+        "13305",
+        "13304",
+        "13326",
+        "13303"
+      ],
+      "trip_count": 331,
+      "input": "inputs/w5_k19_18E2.csv",
+      "input_sha256": "81ff2322b0241227ce4871767b7e6e68fa6a5ea4b53af1064743342e30612bd7",
+      "previous_group_case": "w5_k17_18E2",
+      "arm": "parx60",
+      "non_parx_kw": 240,
+      "battery_kwh": 239.01,
+      "reserve_kwh": 35.8515,
+      "cg_wall_s": 14400,
+      "max_iters": 100000,
+      "mip_wall_s": 3600,
+      "threads": 8
+    }
+  ],
+  "input_hashes": {
+    "/home/nc437/ladder-lite/review_strict_c5_20260916/manifest.json": "63f6b4de393954bf1619f73e5a5ad20c6c92179f773b2d3b1efea2f41d815d61",
+    "/home/nc437/ladder-lite/strict_packed_20260921/manifest.json": "e24caae052edc0d3a44fc447a261353d990b3597445405b7e4e4efe273fcd103",
+    "/home/nc437/ladder-lite/strict_packed_20260921/CG_COMPLETE.json": "2b9a1a348f553fa9f87d6242982403713edd16cadccc1ade4d35371b61e4696c",
+    "/home/nc437/ladder-lite/strict_packed_20260921/cg/646675_r0/result.json": "1ce2024a745b91b9809cfed57dd5665a37978156ae6b2aa2a17618a22d9226ee",
+    "/home/nc437/ladder-lite/strict_packed_20260921/cg/646675_r0/pool.jsonl": "b31a713a57991b17d688454a00be668e4e9d1b98cb8d5be9d295fd6ff302f736",
+    "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k17_18E2.csv": "95a79cdcb9a84d135fb086626f511cd377dbc31427d98ac696ea4801c7e51c88",
+    "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k19_18E2.csv": "81ff2322b0241227ce4871767b7e6e68fa6a5ea4b53af1064743342e30612bd7",
+    "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k16_18E2.csv": "8f895e07bc7dab9bc6b3ed3744ec36beb9a3efed7e48fbe0a2e32f24a85ba730",
+    "/home/nc437/ladder-lite/strict_packed_20260921/code/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "/home/nc437/ladder-lite/strict_packed_20260921/code/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "/home/nc437/ladder-lite/strict_packed_20260921/code/data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+  },
+  "tooling_sha256": {
+    "worker.py": "3d51fde7ba2477ab43513539c58b6700247416de49453b9e01e4db988c92d482",
+    "worker.sh": "0de45e7ecc138c1efe36623daab06f4f2f0d0b78d1c18d0bea14d80bd2f270c4",
+    "launch.py": "1f4c92bbbc818b79d957559d2409ca411b5eaf5897ddc8719df0fa492af3b6e8"
+  },
+  "physics": {
+    "battery_kwh": 239.01,
+    "capacity_enforced": false,
+    "charger_counts": {},
+    "event_block_min": 5,
+    "initial_soc_kwh": 239.01,
+    "max_station_wait_min": 1560.0,
+    "non_parx_kw": 240.0,
+    "parx_capacity": "unlimited",
+    "parx_kw": 60.0,
+    "reserve_kwh": 35.8515,
+    "soc_step_kwh": 2.5,
+    "terminal_soc_constraint": "reserve_only"
+  },
+  "master": "set covering",
+  "objective": "CG100000*fractional_route_weight+charging_related_cost; MIP fleet then charging",
+  "initialization": "entire immediate previous-group CG pool with authenticated bytes/trip remapping and every route physical replay; no GIRO columns",
+  "resources": {
+    "validation": "2CPU/8G/15m",
+    "cg": "8CPU/16G/6h allocation; original4h including graph construction perattempt",
+    "mip": "8CPU/24G/75m allocation; original1h solve perattempt"
+  },
+  "resource_reason": "k16 batchMaxRSS4124768K=3.9337GiB,256trips. Quadratic331trip projection6.576GiB;16GiB leaves2.43x headroom. Keep8threads unchanged. Graph115.38min included in4h budget. k20notqueued:367trip quadratic graphprojection237min nearly consumes4h; awaitk17/k19timing. No compatible strict graph cache exists; baseline caches have different physics and cannot be reused.",
+  "dependencies": "validation->k17CG->k19CG; each MIP waits only its ownCG; k18adds no18E2 duty, original previous_group_case is k17->k19",
+  "excluded_nodes": [
+    "scaglione-compute-01"
+  ],
+  "partition": "default_partition",
+  "old_held_jobs_mutated": false,
+  "restart_policy": "distinct job/restart outputs;CGcopies latest available atomic pool checkpoint and physically validates onresume;MIPrestarts tree. Everyattempt records4hCG/1hMIP exposure separately."
+}

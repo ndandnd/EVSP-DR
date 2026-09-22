@@ -1,0 +1,90 @@
+[
+  {
+    "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/operations/finalcheck_20260922/k15_artifacts/results/c3_k15/treatment_s20260921/704513_r0/mip_gurobi.log",
+    "sha256": "e1f4440eeb0eb13775b0dbe815b331de1bc155da7fed410bd02acd566fbfbe1d",
+    "lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 15"
+      },
+      {
+        "line": 63,
+        "text": "Best objective 1.500000000000e+01, best bound 1.500000000000e+01, gap 0.0000%"
+      },
+      {
+        "line": 86,
+        "text": "Loaded user MIP start with objective 576.44"
+      },
+      {
+        "line": 337,
+        "text": "Best objective 5.699919999999e+02, best bound 5.076694256025e+02, gap 10.9339%"
+      }
+    ]
+  },
+  {
+    "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/operations/finalcheck_20260922/k15_artifacts/results/c3_k15/control_s20260921/704512_r0/mip_gurobi.log",
+    "sha256": "2828d5f1ef690e3d742882856c55fc5f3be6a10810c4e26554047cce253d5409",
+    "lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 100"
+      },
+      {
+        "line": 198,
+        "text": "Best objective 1.700000000000e+01, best bound 1.500000000000e+01, gap 11.7647%"
+      },
+      {
+        "line": 221,
+        "text": "Loaded user MIP start with objective 785.072"
+      },
+      {
+        "line": 458,
+        "text": "Best objective 7.388639999989e+02, best bound 4.597623465161e+02, gap 37.7744%"
+      }
+    ]
+  },
+  {
+    "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/operations/finalcheck_20260922/k15_artifacts/results/c1_k15/control_s20260921/704510_r0/mip_gurobi.log",
+    "sha256": "477d54128570428428265447403a904b15b572ebfe4d1f73f4d26a4092d6002d",
+    "lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 129"
+      },
+      {
+        "line": 140,
+        "text": "Best objective 1.900000000000e+01, best bound 1.500000000000e+01, gap 21.0526%"
+      },
+      {
+        "line": 163,
+        "text": "Loaded user MIP start with objective 1117.94"
+      },
+      {
+        "line": 367,
+        "text": "Best objective 8.759280000000e+02, best bound 6.663745796601e+02, gap 23.9236%"
+      }
+    ]
+  },
+  {
+    "path": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260921/operations/finalcheck_20260922/k15_artifacts/results/c5_k15/control_s20260921/704514_r0/mip_gurobi.log",
+    "sha256": "5c5aa268a5c3e0a2879a9897049c051f7c0d1ce6f18a769f0b863b6d680acbdd",
+    "lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 76"
+      },
+      {
+        "line": 220,
+        "text": "Best objective 1.600000000000e+01, best bound 1.500000000000e+01, gap 6.2500%"
+      },
+      {
+        "line": 243,
+        "text": "Loaded user MIP start with objective 1135.46"
+      },
+      {
+        "line": 469,
+        "text": "Best objective 9.940639999968e+02, best bound 6.419031809993e+02, gap 35.4264%"
+      }
+    ]
+  }
+]

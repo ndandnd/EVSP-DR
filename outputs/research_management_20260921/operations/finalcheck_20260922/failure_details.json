@@ -1,0 +1,62 @@
+{
+  "c1_k15": {
+    "files": [
+      "execution.json",
+      "dive_argv.json",
+      "dive_stdout.log",
+      "dive_stderr.log",
+      "dive_gurobi.log",
+      "dive/dive_journal.jsonl",
+      "dive/cg.json.columns.jsonl",
+      "dive/cg.json",
+      "dive/manifest.json"
+    ],
+    "dive_stdout.log": "  RHS range        [1e+00, 2e+01]\nLP warm-start: use basis\n\nIteration    Objective       Primal Inf.    Dual Inf.      Time\n       0   -4.2969652e+33   4.615269e+33   4.296965e+03      0s\n     219    1.5008318e+06   0.000000e+00   0.000000e+00      1s\n\nSolved in 219 iterations and 0.95 seconds (1.42 work units)\nOptimal objective  1.500831822e+06\nSet parameter TimeLimit to value 1.8315546512603760e+00\nGurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - \"Ubuntu 24.04.4 LTS\")\n\nCPU model: Intel(R) Xeon(R) Gold 6230 CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]\nThread count: 40 physical cores, 40 logical processors, using up to 1 threads\n\nNon-default parameters:\nTimeLimit  1.8315546512603760e+00\nMethod  1\nSeed  20260921\nThreads  1\n\nOptimize a model with 365 rows, 97834 columns and 2938341 nonzeros\nCoefficient statistics:\n  Matrix range     [1e+00, 1e+00]\n  Objective range  [1e+05, 5e+05]\n  Bounds range     [1e+00, 1e+00]\n  RHS range        [1e+00, 2e+01]\nLP warm-start: use basis\n\nIteration    Objective       Primal Inf.    Dual Inf.      Time\n       0   -4.2988918e+33   4.629730e+33   4.298892e+03      0s\n\nStopped in 480 iterations and 1.83 seconds (2.95 work units)\nTime limit reached\n[DIVE] stop=error nodes=30 new_columns=17859 integer=no wall=5346.5s",
+    "dive_stderr.log": "",
+    "execution.json": "{\n \"case\": \"c1_k15\",\n \"arm\": \"treatment\",\n \"seed\": 20260921,\n \"execution_commit\": \"c50e5f207869bac25507adfae90bb830a44039b7\",\n \"source_hashes\": [\n  \"4bd5821a72b96ac83b81f2474514aa3eceb8fcdd24106f80050e58bcfc91db7d\",\n  \"54a53afdab53c7f7dba73fd458d5c69c2025e19882776ba643e51478932f398c\"\n ],\n \"status\": \"running\",\n \"global_certificate\": null,\n \"external_witness_columns_used\": false,\n \"budget_scope\": \"7200s dive subprocess wall plus MIP solver time; MIP setup/replay overhead external\",\n \"original_graph_build_s\": 9362.104323148727,\n \"graph_policy\": \"verified reusable graph prerequisite; original build not repeated or hidden\",\n \"dive_wall_s\": 5347.861750387121,\n \"dive_returncode\": 1\n}",
+    "dive/manifest.json": {
+      "error": "DivePilotError('dive restricted master did not reach OPTIMAL: status=9')",
+      "wall_s": 5346.537989854813,
+      "dive": {
+        "stop_reason": "error",
+        "nodes": 30,
+        "columns_generated": 17859,
+        "distinct_new_incidences": 17859
+      },
+      "scope": "Every LP here is a restricted master over one dive node. No statement about global optimality or global infeasibility follows from any node outcome. Fleet proofs come only from the separate finite-pool MIP run through src/run_exact_pool_mip.py."
+    },
+    "slurm/704511_submission.txt": "JobId=704511 JobName=intcol_c1_k15_treatment_20260921\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=14318 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Priority Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=03:00:00 TimeMin=N/A\n   SubmitTime=2026-09-21T19:55:15 EligibleTime=2026-09-21T19:55:15\n   AccrueTime=2026-09-21T19:55:15\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-21T19:55:15 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1811344\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=32G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=32G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/integer_columns_k15_20260921/run.sub\n   WorkDir=/home/nc437\n   StdErr=/home/nc437/ladder-lite/integer_columns_k15_20260921/slurm/704511.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/integer_columns_k15_20260921/slurm/704511.out\n   TresPerTask=cpu=8\n   \n",
+    "slurm/704511.out": "",
+    "slurm/704511.err": "Traceback (most recent call last):\n  File \"/home/nc437/ladder-lite/integer_columns_k15_20260921/code/scripts/research/diving_pricing_20260919/run_replication.py\", line 124, in <module>\n    main()\n  File \"/home/nc437/ladder-lite/integer_columns_k15_20260921/code/scripts/research/diving_pricing_20260919/run_replication.py\", line 81, in main\n    run(argv, \"dive\")\n  File \"/home/nc437/ladder-lite/integer_columns_k15_20260921/code/scripts/research/diving_pricing_20260919/run_replication.py\", line 66, in run\n    raise RuntimeError(f\"{label} failed with {p.returncode}; see preserved logs\")\nRuntimeError: dive failed with 1; see preserved logs"
+  },
+  "c5_k15": {
+    "files": [
+      "execution.json",
+      "dive_argv.json",
+      "dive_stdout.log",
+      "dive_stderr.log",
+      "dive_gurobi.log",
+      "dive/dive_journal.jsonl",
+      "dive/cg.json.columns.jsonl",
+      "dive/cg.json",
+      "dive/manifest.json"
+    ],
+    "dive_stdout.log": "LP warm-start: use basis\n\nIteration    Objective       Primal Inf.    Dual Inf.      Time\n       0   -1.4560592e+37   2.774392e+33   1.456059e+07      0s\n     824    1.5007231e+06   0.000000e+00   0.000000e+00      2s\n\nSolved in 824 iterations and 2.20 seconds (3.70 work units)\nOptimal objective  1.500723090e+06\nSet parameter TimeLimit to value 1.4132160027027130e+03\nGurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - \"Ubuntu 24.04.4 LTS\")\n\nCPU model: Intel(R) Xeon(R) Gold 6230 CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]\nThread count: 40 physical cores, 40 logical processors, using up to 1 threads\n\nNon-default parameters:\nTimeLimit  1.4132160027027130e+03\nMethod  1\nSeed  20260921\nThreads  1\n\nOptimize a model with 326 rows, 88932 columns and 2474431 nonzeros\nCoefficient statistics:\n  Matrix range     [1e+00, 1e+00]\n  Objective range  [1e+05, 5e+05]\n  Bounds range     [1e+00, 1e+00]\n  RHS range        [1e+00, 2e+01]\nLP warm-start: use basis\n\nIteration    Objective       Primal Inf.    Dual Inf.      Time\n       0   -4.3910721e+33   4.694832e+33   4.391072e+03      0s\n      22    1.5007231e+06   0.000000e+00   0.000000e+00      0s\n\nSolved in 22 iterations and 0.17 seconds (0.09 work units)\nOptimal objective  1.500723090e+06\n[DIVE] stop=error nodes=23 new_columns=19943 integer=no wall=3932.5s",
+    "dive_stderr.log": "",
+    "execution.json": "{\n \"case\": \"c5_k15\",\n \"arm\": \"treatment\",\n \"seed\": 20260921,\n \"execution_commit\": \"c50e5f207869bac25507adfae90bb830a44039b7\",\n \"source_hashes\": [\n  \"c2cc709f60bdb18f5e5fd02ee66632550791b3f9cb0f7f512f2fede8e14c25ae\",\n  \"7e4ec71945b25afbc60489a67b2531c25403fc36e5ef56d38325c75cb678e3f7\"\n ],\n \"status\": \"running\",\n \"global_certificate\": null,\n \"external_witness_columns_used\": false,\n \"budget_scope\": \"7200s dive subprocess wall plus MIP solver time; MIP setup/replay overhead external\",\n \"original_graph_build_s\": 9669.475131034851,\n \"graph_policy\": \"verified reusable graph prerequisite; original build not repeated or hidden\",\n \"dive_wall_s\": 3933.699269213015,\n \"dive_returncode\": 1\n}",
+    "dive/manifest.json": {
+      "error": "DivePilotError('dive master returned a row-infeasible LP: violation=5.140335931130835e-06')",
+      "wall_s": 3932.5184111595154,
+      "dive": {
+        "stop_reason": "error",
+        "nodes": 23,
+        "columns_generated": 19943,
+        "distinct_new_incidences": 19937
+      },
+      "scope": "Every LP here is a restricted master over one dive node. No statement about global optimality or global infeasibility follows from any node outcome. Fleet proofs come only from the separate finite-pool MIP run through src/run_exact_pool_mip.py."
+    },
+    "slurm/704515_submission.txt": "JobId=704515 JobName=intcol_c5_k15_treatment_20260921\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=14318 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Priority Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=03:00:00 TimeMin=N/A\n   SubmitTime=2026-09-21T19:55:16 EligibleTime=2026-09-21T19:55:16\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-21T19:55:16 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1811344\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=32G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=32G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/integer_columns_k15_20260921/run.sub\n   WorkDir=/home/nc437\n   StdErr=/home/nc437/ladder-lite/integer_columns_k15_20260921/slurm/704515.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/integer_columns_k15_20260921/slurm/704515.out\n   TresPerTask=cpu=8\n   \n",
+    "slurm/704515.out": "",
+    "slurm/704515.err": "Traceback (most recent call last):\n  File \"/home/nc437/ladder-lite/integer_columns_k15_20260921/code/scripts/research/diving_pricing_20260919/run_replication.py\", line 124, in <module>\n    main()\n  File \"/home/nc437/ladder-lite/integer_columns_k15_20260921/code/scripts/research/diving_pricing_20260919/run_replication.py\", line 81, in main\n    run(argv, \"dive\")\n  File \"/home/nc437/ladder-lite/integer_columns_k15_20260921/code/scripts/research/diving_pricing_20260919/run_replication.py\", line 66, in run\n    raise RuntimeError(f\"{label} failed with {p.returncode}; see preserved logs\")\nRuntimeError: dive failed with 1; see preserved logs"
+  }
+}

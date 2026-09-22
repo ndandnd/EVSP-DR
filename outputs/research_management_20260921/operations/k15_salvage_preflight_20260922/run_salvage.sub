@@ -1,0 +1,8 @@
+#!/bin/bash
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONHASHSEED=0
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+SALVAGE_ROOT=/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922
+exec /home/nc437/evsp_env/bin/python "$SALVAGE_ROOT/run_salvage.py" --case "$1" --plan "$SALVAGE_ROOT/salvage_plan.json" --out-root "$SALVAGE_ROOT/results"

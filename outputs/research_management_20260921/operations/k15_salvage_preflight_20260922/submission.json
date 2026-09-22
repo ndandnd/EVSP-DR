@@ -1,0 +1,52 @@
+{
+  "submitted_utc": "2026-09-22T04:01:49.529679+00:00",
+  "files": {
+    "run_salvage.py": "b76ed0d6aa780bd1482607bc5c49829ad80e38a99cf10decc14a5c2aff0612db",
+    "run_salvage.sub": "0a831cc9dda0d1789cd1171a6829a7a54eac282477f94bc70f86c38de5a25e19",
+    "salvage_plan.json": "da510e6db47e205cdd7c29ef06122b7e5234a520f10edf099f88d92f8ba08c16"
+  },
+  "scope": "two authorized supplemental final-pool recoveries; no pricing restart",
+  "requeue_reason": "Disabled: interrupted solver work must be measured and debited before any new attempt; preserve original7200s total allowance.",
+  "jobs": [
+    {
+      "case": "c1_k15",
+      "job_id": "728184",
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--cpus-per-task=8",
+        "--mem=32G",
+        "--time=01:30:00",
+        "--exclude=scaglione-compute-01",
+        "--no-requeue",
+        "--job-name=intcol_salvage_c1_k15",
+        "--output=/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/logs/%j.out",
+        "--error=/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/logs/%j.err",
+        "/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/run_salvage.sub",
+        "c1_k15"
+      ],
+      "scontrol": "JobId=728184 JobName=intcol_salvage_c1_k15 UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14318 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=01:30:00 TimeMin=N/A SubmitTime=2026-09-22T00:01:50 EligibleTime=2026-09-22T00:01:50 AccrueTime=2026-09-22T00:01:50 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-22T00:01:50 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2688291 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=32G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=32G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/run_salvage.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/logs/728184.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/logs/728184.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case": "c5_k15",
+      "job_id": "728185",
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--cpus-per-task=8",
+        "--mem=32G",
+        "--time=01:30:00",
+        "--exclude=scaglione-compute-01",
+        "--no-requeue",
+        "--job-name=intcol_salvage_c5_k15",
+        "--output=/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/logs/%j.out",
+        "--error=/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/logs/%j.err",
+        "/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/run_salvage.sub",
+        "c5_k15"
+      ],
+      "scontrol": "JobId=728185 JobName=intcol_salvage_c5_k15 UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14318 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=01:30:00 TimeMin=N/A SubmitTime=2026-09-22T00:01:51 EligibleTime=2026-09-22T00:01:51 AccrueTime=2026-09-22T00:01:51 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-22T00:01:51 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2688291 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=32G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=32G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/run_salvage.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/logs/728185.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/logs/728185.out TresPerTask=cpu=8 \n"
+    }
+  ]
+}

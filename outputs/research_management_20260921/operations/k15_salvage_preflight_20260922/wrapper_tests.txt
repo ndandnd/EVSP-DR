@@ -1,0 +1,12 @@
+test_changed_dive_time_never_launches (__main__.Checks.test_changed_dive_time_never_launches) ... ok
+test_changed_source_never_launches (__main__.Checks.test_changed_source_never_launches) ... ok
+test_native_gate_systemexit_is_persisted (__main__.Checks.test_native_gate_systemexit_is_persisted) ... ok
+test_previous_attempt_never_launches (__main__.Checks.test_previous_attempt_never_launches) ... ok
+test_rejected_route_never_launches (__main__.Checks.test_rejected_route_never_launches) ... ok
+test_requeue_refused (__main__.Checks.test_requeue_refused) ... ok
+test_success_preserves_budget_and_records_gate (__main__.Checks.test_success_preserves_budget_and_records_gate) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.022s
+
+OK

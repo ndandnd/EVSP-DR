@@ -1,0 +1,433 @@
+{
+ "schema": "evsp-dr-integer-columns-replication-v1",
+ "track": "integer_columns_k15_20260921",
+ "work": "/home/nc437/ladder-lite/integer_columns_k15_20260921",
+ "code": "/home/nc437/ladder-lite/integer_columns_k15_20260921/code",
+ "python": "/home/nc437/evsp_env/bin/python",
+ "execution_commit": "c50e5f207869bac25507adfae90bb830a44039b7",
+ "mip_execution_commit": "c50e5f207869bac25507adfae90bb830a44039b7",
+ "mip_execution_commit_historical": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+ "mip_execution_commit_note": "Historical campaign MIP commit 871d057e predates --seed (added in 6830caa2). The pilot therefore runs the pool MIP from the pinned execution checkout itself, so a deterministic seed is available in both arms; the runner is otherwise the same trusted script.",
+ "cases_table": "/home/nc437/ladder-lite/integer_columns_k15_20260921/cases_k15.json",
+ "cases_table_sha256": "4f557477ceb98149d614aee7cf463f7b6df2862cc4e98f635b476d6b20ede248",
+ "physics": {
+  "master_sense": "cover",
+  "g_kwh": 240,
+  "charge_kw": 240,
+  "min_soc_frac": 0,
+  "tariff": "flat",
+  "charge_start_fee": 5,
+  "bus_coefficient": 100000,
+  "soc_step": 2.5,
+  "block_min": 5,
+  "time_model": "event",
+  "event_arc_mode": "lazy"
+ },
+ "preregistered": {
+  "fleet_cap": 15,
+  "seeds_per_case": 1,
+  "rc_eps": 0.0001,
+  "columns_per_iter": 30,
+  "max_pricing_iters": 400,
+  "node_time_s": 180,
+  "max_nodes": 80,
+  "max_alternatives": 3,
+  "max_restarts": 2,
+  "mip_threads": 8,
+  "mipgap": 0.0001,
+  "control": "run_exact_pool_mip.py on the UNMODIFIED frozen fresh pool",
+  "treatment": "cache load + diving-with-pricing + run_exact_pool_mip.py on the augmented pool (original columns preserved)",
+  "primary_outcome": "buses and fleet_proven from the final pool MIP of each arm",
+  "secondary_outcome": "native15-bus dive cover",
+  "no_target_import": "No GIRO, warm or witness routes",
+  "seeds": [
+   20260921
+  ]
+ },
+ "resources": {
+  "partition": "default_partition",
+  "cpus_per_task": 8,
+  "memory": "32G",
+  "allocation_wall": "03:00:00",
+  "requeue": true,
+  "exclude": "scaglione-compute-01",
+  "independent_allocations": 6,
+  "array_throttle": null,
+  "resource_reason": "3.38\u20134.86GB graph plus deserialization copies and larger pool/master;32G margin, review MaxRSS"
+ },
+ "cases": {
+  "c1_k15": {
+   "case_id": "c1_k15",
+   "chain": 1,
+   "target_k": 15,
+   "fresh_cg_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k15/base/135603_r0/cg.json",
+   "fresh_cg_result_sha256": "4bd5821a72b96ac83b81f2474514aa3eceb8fcdd24106f80050e58bcfc91db7d",
+   "fresh_journal_sha256": "54a53afdab53c7f7dba73fd458d5c69c2025e19882776ba643e51478932f398c",
+   "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p01_20260908.csv",
+   "instance_sha256": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+   "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k15/network.pkl",
+   "event_network_cache_manifest": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k15/network.pkl.manifest.json",
+   "event_network_cache_manifest_sha256": "2a7a3947af109d7e2a3bea7e869f7c2f6e2ac123979f7c6ca9ba4d01ab13ea8e",
+   "cache_identity": {
+    "schema": "evsp-dr-event-network-cache-v1",
+    "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+    "instance_sha256": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "soc_step": 2.5,
+    "block_min": 5,
+    "g_kwh": 240.0,
+    "charge_kw": 240.0,
+    "reserve_kwh": 0.0,
+    "strict_tariff_coverage": false,
+    "event_arc_mode": "lazy"
+   },
+   "target_external_graph_build_s": 9362.104323148727,
+   "fresh_cg_certified": true,
+   "cache_bytes_observed": 4857313336,
+   "fresh_cg_result_sha256_observed": "4bd5821a72b96ac83b81f2474514aa3eceb8fcdd24106f80050e58bcfc91db7d",
+   "fresh_journal": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k15/base/135603_r0/cg.json.columns.jsonl",
+   "fresh_journal_bytes": 337379896,
+   "event_network_cache_audit": {
+    "manifest_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k15/network.pkl.manifest.json",
+    "manifest_sha256_observed": "2a7a3947af109d7e2a3bea7e869f7c2f6e2ac123979f7c6ca9ba4d01ab13ea8e",
+    "recorded_identity": {
+     "schema": "evsp-dr-event-network-cache-v1",
+     "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+     "instance_sha256": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+     "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+     "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+     "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+     "soc_step": 2.5,
+     "block_min": 5,
+     "g_kwh": 240.0,
+     "charge_kw": 240.0,
+     "reserve_kwh": 0.0,
+     "strict_tariff_coverage": false,
+     "event_arc_mode": "lazy"
+    },
+    "pickle_bytes": 4857313336,
+    "original_build_s": 9362.104323148727,
+    "producer_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+    "consumer_commit": "c50e5f207869bac25507adfae90bb830a44039b7",
+    "bridge_required": true,
+    "method_audit": {
+     "graph_critical_methods": [
+      "_action_recipe",
+      "_add",
+      "_build_arcs",
+      "_build_nodes",
+      "_charge_arcs",
+      "_charge_candidates",
+      "_direct_arcs",
+      "_direct_candidates",
+      "_edge_action",
+      "_finalize_source",
+      "_iter_arcs",
+      "_min_reduced_cost_route_lazy",
+      "_record",
+      "_source_candidates",
+      "_split_arcs",
+      "_walk",
+      "metrics",
+      "min_reduced_cost_route",
+      "sink_predecessor_route_batch"
+     ],
+     "missing_methods": [],
+     "differing_methods": [],
+     "identical": true,
+     "producer_source_sha256": {
+      "src/event_pricer_network.py": "20533ba9654b94959e594b069c313a6320471264e4afc80f83ff31b250740403",
+      "src/audit_giro_known_columns.py": "f4f18439c303962f2e6276306e06481aef326d4da331eb9a289828dfdb0ba4fb",
+      "src/expanded_path_realization.py": "23eccbe226c7fd34ca202e10823a27e280e3c475030ebe8c0d4d5f2b466bbe1e"
+     },
+     "consumer_source_sha256": {
+      "src/event_pricer_network.py": "d939fe981cb5b3f40293996e8f3a2430da8a365b392a62d6c21959316cb03de6",
+      "src/audit_giro_known_columns.py": "690b66ff3047894d5a142caddf7604d8df153b86838aeadac40859f5f5b6762f",
+      "src/expanded_path_realization.py": "23eccbe226c7fd34ca202e10823a27e280e3c475030ebe8c0d4d5f2b466bbe1e"
+     }
+    }
+   },
+   "historical_pilot_budget": {
+    "arm_a_shared_prerequisite": {
+     "control_mip_timelimit_s": 3600,
+     "control_stage1_timelimit_s": 1800,
+     "treatment_total_s": 3600,
+     "treatment_dive_wall_limit_s": 2400,
+     "treatment_mip_floor_s": 1200,
+     "graph_build_s_charged": 0.0,
+     "graph_build_s_declared": 9362.104323148727,
+     "rationale": "The event graph is a shared prerequisite: the frozen fresh pool the control MIP consumes could not exist without it. Cache load time is measured and charged to the treatment."
+    },
+    "arm_b_graph_charged": {
+     "control_mip_timelimit_s": 12962,
+     "control_stage1_timelimit_s": 6481,
+     "treatment_total_s": 3600,
+     "treatment_graph_build_s_debited": 9362.104323148727,
+     "treatment_charged_total_s": 12962,
+     "rationale": "Matched adjusted budget. A 3,600 s treatment that includes a fresh graph build is impossible for this benchmark (build alone is 9362 s). Instead both arms are charged 3,600 s + the recorded build; the control spends that as real MIP time while the treatment is debited it, so the build is accounted, never excluded."
+    },
+    "graph_build_s": 9362.104323148727,
+    "graph_build_fraction_of_base_budget": 2.6005845342079796,
+    "sixty_minute_treatment_including_build_feasible": false,
+    "residual_after_build_s": -5762.104323148727
+   }
+  },
+  "c3_k15": {
+   "case_id": "c3_k15",
+   "chain": 3,
+   "target_k": 15,
+   "fresh_cg_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/base/135643_r0/cg.json",
+   "fresh_cg_result_sha256": "ee81a8b2d5215e8c00dcd88739426365d78ea6fd724f0b6f22ac132e2ce662eb",
+   "fresh_journal_sha256": "8fc224ddb3f0c9109f38549bc39d8f63749c8fa425a52a473c3d2d13319abb48",
+   "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p03_20260908.csv",
+   "instance_sha256": "44d91ad2cd6604441b3ea36dfb77cda9f89901d14755ec30d502887f0efb3490",
+   "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k15/network.pkl",
+   "event_network_cache_manifest": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k15/network.pkl.manifest.json",
+   "event_network_cache_manifest_sha256": "d36c357d83f6b3235bfae3e58e913f915b12b77914a7c93c967024049f235c4b",
+   "cache_identity": {
+    "schema": "evsp-dr-event-network-cache-v1",
+    "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+    "instance_sha256": "44d91ad2cd6604441b3ea36dfb77cda9f89901d14755ec30d502887f0efb3490",
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "soc_step": 2.5,
+    "block_min": 5,
+    "g_kwh": 240.0,
+    "charge_kw": 240.0,
+    "reserve_kwh": 0.0,
+    "strict_tariff_coverage": false,
+    "event_arc_mode": "lazy"
+   },
+   "target_external_graph_build_s": 9790.407982587814,
+   "fresh_cg_certified": true,
+   "cache_bytes_observed": 3384142913,
+   "fresh_cg_result_sha256_observed": "ee81a8b2d5215e8c00dcd88739426365d78ea6fd724f0b6f22ac132e2ce662eb",
+   "fresh_journal": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/base/135643_r0/cg.json.columns.jsonl",
+   "fresh_journal_bytes": 141086117,
+   "event_network_cache_audit": {
+    "manifest_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k15/network.pkl.manifest.json",
+    "manifest_sha256_observed": "d36c357d83f6b3235bfae3e58e913f915b12b77914a7c93c967024049f235c4b",
+    "recorded_identity": {
+     "schema": "evsp-dr-event-network-cache-v1",
+     "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+     "instance_sha256": "44d91ad2cd6604441b3ea36dfb77cda9f89901d14755ec30d502887f0efb3490",
+     "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+     "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+     "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+     "soc_step": 2.5,
+     "block_min": 5,
+     "g_kwh": 240.0,
+     "charge_kw": 240.0,
+     "reserve_kwh": 0.0,
+     "strict_tariff_coverage": false,
+     "event_arc_mode": "lazy"
+    },
+    "pickle_bytes": 3384142913,
+    "original_build_s": 9790.407982587814,
+    "producer_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+    "consumer_commit": "c50e5f207869bac25507adfae90bb830a44039b7",
+    "bridge_required": true,
+    "method_audit": {
+     "graph_critical_methods": [
+      "_action_recipe",
+      "_add",
+      "_build_arcs",
+      "_build_nodes",
+      "_charge_arcs",
+      "_charge_candidates",
+      "_direct_arcs",
+      "_direct_candidates",
+      "_edge_action",
+      "_finalize_source",
+      "_iter_arcs",
+      "_min_reduced_cost_route_lazy",
+      "_record",
+      "_source_candidates",
+      "_split_arcs",
+      "_walk",
+      "metrics",
+      "min_reduced_cost_route",
+      "sink_predecessor_route_batch"
+     ],
+     "missing_methods": [],
+     "differing_methods": [],
+     "identical": true,
+     "producer_source_sha256": {
+      "src/event_pricer_network.py": "20533ba9654b94959e594b069c313a6320471264e4afc80f83ff31b250740403",
+      "src/audit_giro_known_columns.py": "f4f18439c303962f2e6276306e06481aef326d4da331eb9a289828dfdb0ba4fb",
+      "src/expanded_path_realization.py": "23eccbe226c7fd34ca202e10823a27e280e3c475030ebe8c0d4d5f2b466bbe1e"
+     },
+     "consumer_source_sha256": {
+      "src/event_pricer_network.py": "d939fe981cb5b3f40293996e8f3a2430da8a365b392a62d6c21959316cb03de6",
+      "src/audit_giro_known_columns.py": "690b66ff3047894d5a142caddf7604d8df153b86838aeadac40859f5f5b6762f",
+      "src/expanded_path_realization.py": "23eccbe226c7fd34ca202e10823a27e280e3c475030ebe8c0d4d5f2b466bbe1e"
+     }
+    }
+   },
+   "historical_pilot_budget": {
+    "arm_a_shared_prerequisite": {
+     "control_mip_timelimit_s": 3600,
+     "control_stage1_timelimit_s": 1800,
+     "treatment_total_s": 3600,
+     "treatment_dive_wall_limit_s": 2400,
+     "treatment_mip_floor_s": 1200,
+     "graph_build_s_charged": 0.0,
+     "graph_build_s_declared": 9790.407982587814,
+     "rationale": "The event graph is a shared prerequisite: the frozen fresh pool the control MIP consumes could not exist without it. Cache load time is measured and charged to the treatment."
+    },
+    "arm_b_graph_charged": {
+     "control_mip_timelimit_s": 13390,
+     "control_stage1_timelimit_s": 6695,
+     "treatment_total_s": 3600,
+     "treatment_graph_build_s_debited": 9790.407982587814,
+     "treatment_charged_total_s": 13390,
+     "rationale": "Matched adjusted budget. A 3,600 s treatment that includes a fresh graph build is impossible for this benchmark (build alone is 9790 s). Instead both arms are charged 3,600 s + the recorded build; the control spends that as real MIP time while the treatment is debited it, so the build is accounted, never excluded."
+    },
+    "graph_build_s": 9790.407982587814,
+    "graph_build_fraction_of_base_budget": 2.7195577729410596,
+    "sixty_minute_treatment_including_build_feasible": false,
+    "residual_after_build_s": -6190.407982587814
+   }
+  },
+  "c5_k15": {
+   "case_id": "c5_k15",
+   "chain": 5,
+   "target_k": 15,
+   "fresh_cg_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c5_k15/base/135685_r0/cg.json",
+   "fresh_cg_result_sha256": "c2cc709f60bdb18f5e5fd02ee66632550791b3f9cb0f7f512f2fede8e14c25ae",
+   "fresh_journal_sha256": "7e4ec71945b25afbc60489a67b2531c25403fc36e5ef56d38325c75cb678e3f7",
+   "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p05_20260908.csv",
+   "instance_sha256": "985760e3065f3ba1d7d62960ae77ff6d61e7d331eb3ebb6582cc774c4835e240",
+   "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k15/network.pkl",
+   "event_network_cache_manifest": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k15/network.pkl.manifest.json",
+   "event_network_cache_manifest_sha256": "b23b647a9fbcf3063ed02595d893a400c18e1b55bfa6bc8ef40b109bfad5018b",
+   "cache_identity": {
+    "schema": "evsp-dr-event-network-cache-v1",
+    "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+    "instance_sha256": "985760e3065f3ba1d7d62960ae77ff6d61e7d331eb3ebb6582cc774c4835e240",
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "soc_step": 2.5,
+    "block_min": 5,
+    "g_kwh": 240.0,
+    "charge_kw": 240.0,
+    "reserve_kwh": 0.0,
+    "strict_tariff_coverage": false,
+    "event_arc_mode": "lazy"
+   },
+   "target_external_graph_build_s": 9669.475131034851,
+   "fresh_cg_certified": true,
+   "cache_bytes_observed": 3755912623,
+   "fresh_cg_result_sha256_observed": "c2cc709f60bdb18f5e5fd02ee66632550791b3f9cb0f7f512f2fede8e14c25ae",
+   "fresh_journal": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c5_k15/base/135685_r0/cg.json.columns.jsonl",
+   "fresh_journal_bytes": 290446936,
+   "event_network_cache_audit": {
+    "manifest_path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k15/network.pkl.manifest.json",
+    "manifest_sha256_observed": "b23b647a9fbcf3063ed02595d893a400c18e1b55bfa6bc8ef40b109bfad5018b",
+    "recorded_identity": {
+     "schema": "evsp-dr-event-network-cache-v1",
+     "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+     "instance_sha256": "985760e3065f3ba1d7d62960ae77ff6d61e7d331eb3ebb6582cc774c4835e240",
+     "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+     "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+     "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+     "soc_step": 2.5,
+     "block_min": 5,
+     "g_kwh": 240.0,
+     "charge_kw": 240.0,
+     "reserve_kwh": 0.0,
+     "strict_tariff_coverage": false,
+     "event_arc_mode": "lazy"
+    },
+    "pickle_bytes": 3755912623,
+    "original_build_s": 9669.475131034851,
+    "producer_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+    "consumer_commit": "c50e5f207869bac25507adfae90bb830a44039b7",
+    "bridge_required": true,
+    "method_audit": {
+     "graph_critical_methods": [
+      "_action_recipe",
+      "_add",
+      "_build_arcs",
+      "_build_nodes",
+      "_charge_arcs",
+      "_charge_candidates",
+      "_direct_arcs",
+      "_direct_candidates",
+      "_edge_action",
+      "_finalize_source",
+      "_iter_arcs",
+      "_min_reduced_cost_route_lazy",
+      "_record",
+      "_source_candidates",
+      "_split_arcs",
+      "_walk",
+      "metrics",
+      "min_reduced_cost_route",
+      "sink_predecessor_route_batch"
+     ],
+     "missing_methods": [],
+     "differing_methods": [],
+     "identical": true,
+     "producer_source_sha256": {
+      "src/event_pricer_network.py": "20533ba9654b94959e594b069c313a6320471264e4afc80f83ff31b250740403",
+      "src/audit_giro_known_columns.py": "f4f18439c303962f2e6276306e06481aef326d4da331eb9a289828dfdb0ba4fb",
+      "src/expanded_path_realization.py": "23eccbe226c7fd34ca202e10823a27e280e3c475030ebe8c0d4d5f2b466bbe1e"
+     },
+     "consumer_source_sha256": {
+      "src/event_pricer_network.py": "d939fe981cb5b3f40293996e8f3a2430da8a365b392a62d6c21959316cb03de6",
+      "src/audit_giro_known_columns.py": "690b66ff3047894d5a142caddf7604d8df153b86838aeadac40859f5f5b6762f",
+      "src/expanded_path_realization.py": "23eccbe226c7fd34ca202e10823a27e280e3c475030ebe8c0d4d5f2b466bbe1e"
+     }
+    }
+   },
+   "historical_pilot_budget": {
+    "arm_a_shared_prerequisite": {
+     "control_mip_timelimit_s": 3600,
+     "control_stage1_timelimit_s": 1800,
+     "treatment_total_s": 3600,
+     "treatment_dive_wall_limit_s": 2400,
+     "treatment_mip_floor_s": 1200,
+     "graph_build_s_charged": 0.0,
+     "graph_build_s_declared": 9669.475131034851,
+     "rationale": "The event graph is a shared prerequisite: the frozen fresh pool the control MIP consumes could not exist without it. Cache load time is measured and charged to the treatment."
+    },
+    "arm_b_graph_charged": {
+     "control_mip_timelimit_s": 13269,
+     "control_stage1_timelimit_s": 6634,
+     "treatment_total_s": 3600,
+     "treatment_graph_build_s_debited": 9669.475131034851,
+     "treatment_charged_total_s": 13269,
+     "rationale": "Matched adjusted budget. A 3,600 s treatment that includes a fresh graph build is impossible for this benchmark (build alone is 9669 s). Instead both arms are charged 3,600 s + the recorded build; the control spends that as real MIP time while the treatment is debited it, so the build is accounted, never excluded."
+    },
+    "graph_build_s": 9669.475131034851,
+    "graph_build_fraction_of_base_budget": 2.6859653141763475,
+    "sixty_minute_treatment_including_build_feasible": false,
+    "residual_after_build_s": -6069.475131034851
+   }
+  }
+ },
+ "validation": {
+  "problems": [],
+  "status": "passed"
+ },
+ "budget": {
+  "shared_dive_wall_plus_solver_s": 7200,
+  "dive_wall_limit_s": 5400,
+  "mip_floor_s": 0,
+  "strict_end_to_end_cap": false,
+  "mip_preparation_and_validation": "external measured overhead",
+  "graph": "verified cached prerequisite; original build recorded separately"
+ },
+ "launch_status": "conditional_on_native_k8_handoff_and_physical_gate",
+ "arms": [
+  "control",
+  "treatment"
+ ],
+ "preregistration_sha256": "c24483541a7a5e30fe7995136a3434ff0c4ff29a4f15a5451a7929510e1f94fb",
+ "wrapper_sha256": "c28472aa8fda6f9ac03b3f75335d770e1d2d17a7aeea8f12a0cf1db61ef085dc"
+}

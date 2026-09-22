@@ -1,0 +1,91 @@
+{
+  "case": "w5_k17_18E2",
+  "parent_global_prefix": 17,
+  "subgroup_reference_duties": 10,
+  "trip_count": 277,
+  "job_id": 668432,
+  "scheduler": "COMPLETED",
+  "fleet": 11,
+  "finite_pool_integer_bound": 10,
+  "fleet_proven": false,
+  "subgroup_target_attained": false,
+  "pool_columns": 8343,
+  "cg_pricing_certified": false,
+  "cg_stop_reason": "pricing_deadline",
+  "charging_related_cost": 774.8719999999885,
+  "charging_bound": 380.3389106430675,
+  "charging_gap_fraction": 0.5091590473741816,
+  "stage1_wall_s": 1800.1208007191308,
+  "stage2_wall_s": 1800.117828472983,
+  "nominal_total_mip_budget_s": 3600,
+  "wrapper_wall_s": 3620.9772968292236,
+  "extra_trip_assignments": 73,
+  "overcovered_trip_count": 61,
+  "all_trips_covered": true,
+  "shared_capacity_enforced": false,
+  "shared_capacity_diagnostic_pass": false,
+  "individual_replay_claim": "Selected routes carry valid_event_time_realized metadata; MIP relies on exact-event construction. No new independent SOC/time replay was performed in this bounded endpoint audit.",
+  "selected_route_realization_flags": {
+    "valid_event_time_realized": 11
+  },
+  "inherited_routes_replayed": true,
+  "inherited_columns": 3086,
+  "independent_capacity_sweep": {
+    "2190L": {
+      "peak": 0,
+      "peak_time_min": null,
+      "count": 1
+    },
+    "3127L": {
+      "peak": 2,
+      "peak_time_min": 520.0,
+      "count": 2
+    },
+    "4808": {
+      "peak": 0,
+      "peak_time_min": null,
+      "count": 1
+    },
+    "7880C": {
+      "peak": 3,
+      "peak_time_min": 1141.0,
+      "count": 1
+    },
+    "JON_A": {
+      "peak": 4,
+      "peak_time_min": 1084.0,
+      "count": 1
+    }
+  },
+  "physics": {
+    "battery_kwh": 239.01,
+    "capacity_enforced": false,
+    "charger_counts": {},
+    "event_block_min": 5,
+    "initial_soc_kwh": 239.01,
+    "max_station_wait_min": 1560.0,
+    "non_parx_kw": 240.0,
+    "parx_capacity": "unlimited",
+    "parx_kw": 60.0,
+    "reserve_kwh": 35.8515,
+    "soc_step_kwh": 2.5,
+    "terminal_soc_constraint": "reserve_only"
+  },
+  "master": "set covering",
+  "objective": "fleet then expanded-grid charging-related cost",
+  "proof_scope": "Finite saved pool only; fleet optimum unresolved. No full-model lower bound from uncertified RMP; no exact-once/shared-capacity/GIRO-dispatch claim.",
+  "stage1_validated_flag_scope": "Only covering validity is required when capacity=False; the station-capacity sweep is diagnostic, not a passing gate.",
+  "checks": {
+    "local_copies_match_remote_hashes": true,
+    "complete_result_and_manifest_hashes": true,
+    "pool_and_cg_status_hash_chain": true,
+    "input_hash": true,
+    "worker_hashes": true,
+    "clean_pinned_execution_source": true,
+    "277trip_coverage_and_duplicates": true,
+    "independent_shared_capacity_sweep": true,
+    "selected_cost_and_fleet": true,
+    "both_log_endpoints_match_json": true
+  },
+  "issues": []
+}

@@ -1,0 +1,196 @@
+{
+  "status": "prepared_only_not_submitted",
+  "execution_commit": "c50e5f207869bac25507adfae90bb830a44039b7",
+  "resource_policy_sha256": "f9c5982718da6ab758019ceb85e31b539aea5416adc51816bc4bae220728e40b",
+  "resources": {
+    "partition": "default_partition",
+    "cpus_per_task": 8,
+    "mem": "32G",
+    "exclude": "scaglione-compute-01",
+    "independent_cases": 2,
+    "arbitrary_concurrency_cap": null,
+    "memory_reason": "Preserve original32G request; failed runs used6.505748/5.228132million KiB, no OOM or increase justified.",
+    "requeue_note": "Explicit --no-requeue: wrapper refuses repeat attempts because prior solver work must be debited first.",
+    "requeue": false
+  },
+  "cases": {
+    "c1_k15": {
+      "failed_job_id": "704511",
+      "failed_dive_wall_s": 5347.861750387121,
+      "solver_limit_s": 1852,
+      "fleet_stage_limit_s": 926,
+      "source_hashes": {
+        "source_result": {
+          "expected": "4bd5821a72b96ac83b81f2474514aa3eceb8fcdd24106f80050e58bcfc91db7d",
+          "actual": "4bd5821a72b96ac83b81f2474514aa3eceb8fcdd24106f80050e58bcfc91db7d",
+          "path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c1_k15/base/135603_r0/cg.json"
+        },
+        "source_journal": {
+          "expected": "54a53afdab53c7f7dba73fd458d5c69c2025e19882776ba643e51478932f398c",
+          "actual": "54a53afdab53c7f7dba73fd458d5c69c2025e19882776ba643e51478932f398c",
+          "path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c1_k15/base/135603_r0/cg.json.columns.jsonl"
+        },
+        "augmented_result": {
+          "expected": "c3655623f03a9a3447b349745467ded1d4590af0bb3395842427e96a2e85e04c",
+          "actual": "c3655623f03a9a3447b349745467ded1d4590af0bb3395842427e96a2e85e04c",
+          "path": "/home/nc437/ladder-lite/integer_columns_k15_20260921/results/c1_k15/treatment_s20260921/704511_r0/dive/cg.json"
+        },
+        "augmented_journal": {
+          "expected": "b79ace842df5725e958ecc831b4d8749dbdd67337874ee95066239cc3b35bb19",
+          "actual": "b79ace842df5725e958ecc831b4d8749dbdd67337874ee95066239cc3b35bb19",
+          "path": "/home/nc437/ladder-lite/integer_columns_k15_20260921/results/c1_k15/treatment_s20260921/704511_r0/dive/cg.json.columns.jsonl"
+        }
+      },
+      "source_physics": {
+        "g_kwh": 240.0,
+        "charge_kw": 240.0,
+        "min_soc_frac": 0.0,
+        "master_sense": "cover",
+        "time_model": "event",
+        "soc_step": 2.5,
+        "block_min": 5,
+        "prices_csv": "hourly_prices_flat.csv"
+      },
+      "output_directory_template": "/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/c1_k15/job_${SLURM_JOB_ID}_r${SLURM_RESTART_COUNT:-0}",
+      "unset_environment": [
+        "PYTHONPATH",
+        "PYTHONHOME",
+        "LD_LIBRARY_PATH",
+        "LM_LICENSE_FILE",
+        "EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256"
+      ],
+      "environment": {
+        "EVSP_EXPECTED_COMMIT": "c50e5f207869bac25507adfae90bb830a44039b7",
+        "EVSP_REQUIRE_DETACHED": "1",
+        "EVSP_MIP_EXPECTED_RESULT_SHA256": "c3655623f03a9a3447b349745467ded1d4590af0bb3395842427e96a2e85e04c",
+        "EVSP_MIP_EXPECTED_JOURNAL_SHA256": "b79ace842df5725e958ecc831b4d8749dbdd67337874ee95066239cc3b35bb19",
+        "GRB_LICENSE_FILE": "/share/apps/software/gurobi/gurobi.lic",
+        "PYTHONNOUSERSITE": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONUNBUFFERED": "1",
+        "PYTHONHASHSEED": "0",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      },
+      "native_worker_argv_template": [
+        "/home/nc437/evsp_env/bin/python",
+        "/home/nc437/ladder-lite/integer_columns_k15_20260921/code/src/run_exact_pool_mip.py",
+        "--result",
+        "/home/nc437/ladder-lite/integer_columns_k15_20260921/results/c1_k15/treatment_s20260921/704511_r0/dive/cg.json",
+        "--data-dir",
+        "/home/nc437/ladder-lite/integer_columns_k15_20260921/code/data",
+        "--reference-data-dir",
+        "/home/nc437/ladder-lite/integer_columns_k15_20260921/code/data",
+        "--cover",
+        "--two-stage",
+        "--timelimit",
+        "1852",
+        "--stage1-timelimit",
+        "926",
+        "--threads",
+        "8",
+        "--seed",
+        "20260921",
+        "--mipgap",
+        "0.0001",
+        "--gurobi-log",
+        "/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/c1_k15/job_${SLURM_JOB_ID}_r${SLURM_RESTART_COUNT:-0}/mip_gurobi.log",
+        "--out",
+        "/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/c1_k15/job_${SLURM_JOB_ID}_r${SLURM_RESTART_COUNT:-0}/result.json"
+      ],
+      "no_initial_partition_route_argument": "No own-dive incumbent was exported; no GIRO/warm witness/start imported.",
+      "required_pre_solve_gate": "Recheck source hashes and same-case attempt inventory; load_pool(deduplicate=True), then prepare_strict_partition_pool with unchanged pinned data. Persist all acceptance/repair/rejection counts and ordered pool hashes; fail closed on rejected columns or unexplained repair. Budget cumulative prior salvage solver runtime if any."
+    },
+    "c5_k15": {
+      "failed_job_id": "704515",
+      "failed_dive_wall_s": 3933.699269213015,
+      "solver_limit_s": 3266,
+      "fleet_stage_limit_s": 1633,
+      "source_hashes": {
+        "source_result": {
+          "expected": "c2cc709f60bdb18f5e5fd02ee66632550791b3f9cb0f7f512f2fede8e14c25ae",
+          "actual": "c2cc709f60bdb18f5e5fd02ee66632550791b3f9cb0f7f512f2fede8e14c25ae",
+          "path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c5_k15/base/135685_r0/cg.json"
+        },
+        "source_journal": {
+          "expected": "7e4ec71945b25afbc60489a67b2531c25403fc36e5ef56d38325c75cb678e3f7",
+          "actual": "7e4ec71945b25afbc60489a67b2531c25403fc36e5ef56d38325c75cb678e3f7",
+          "path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c5_k15/base/135685_r0/cg.json.columns.jsonl"
+        },
+        "augmented_result": {
+          "expected": "74aea369b63cd7f3996096a2fb90d46c8ddeeefa00539d9da6105ea4c510b708",
+          "actual": "74aea369b63cd7f3996096a2fb90d46c8ddeeefa00539d9da6105ea4c510b708",
+          "path": "/home/nc437/ladder-lite/integer_columns_k15_20260921/results/c5_k15/treatment_s20260921/704515_r0/dive/cg.json"
+        },
+        "augmented_journal": {
+          "expected": "47ea74b761e8f03c16a1dfd4193698480ff6e831ed5b0416f8918833a72c1a34",
+          "actual": "47ea74b761e8f03c16a1dfd4193698480ff6e831ed5b0416f8918833a72c1a34",
+          "path": "/home/nc437/ladder-lite/integer_columns_k15_20260921/results/c5_k15/treatment_s20260921/704515_r0/dive/cg.json.columns.jsonl"
+        }
+      },
+      "source_physics": {
+        "g_kwh": 240.0,
+        "charge_kw": 240.0,
+        "min_soc_frac": 0.0,
+        "master_sense": "cover",
+        "time_model": "event",
+        "soc_step": 2.5,
+        "block_min": 5,
+        "prices_csv": "hourly_prices_flat.csv"
+      },
+      "output_directory_template": "/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/c5_k15/job_${SLURM_JOB_ID}_r${SLURM_RESTART_COUNT:-0}",
+      "unset_environment": [
+        "PYTHONPATH",
+        "PYTHONHOME",
+        "LD_LIBRARY_PATH",
+        "LM_LICENSE_FILE",
+        "EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256"
+      ],
+      "environment": {
+        "EVSP_EXPECTED_COMMIT": "c50e5f207869bac25507adfae90bb830a44039b7",
+        "EVSP_REQUIRE_DETACHED": "1",
+        "EVSP_MIP_EXPECTED_RESULT_SHA256": "74aea369b63cd7f3996096a2fb90d46c8ddeeefa00539d9da6105ea4c510b708",
+        "EVSP_MIP_EXPECTED_JOURNAL_SHA256": "47ea74b761e8f03c16a1dfd4193698480ff6e831ed5b0416f8918833a72c1a34",
+        "GRB_LICENSE_FILE": "/share/apps/software/gurobi/gurobi.lic",
+        "PYTHONNOUSERSITE": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONUNBUFFERED": "1",
+        "PYTHONHASHSEED": "0",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      },
+      "native_worker_argv_template": [
+        "/home/nc437/evsp_env/bin/python",
+        "/home/nc437/ladder-lite/integer_columns_k15_20260921/code/src/run_exact_pool_mip.py",
+        "--result",
+        "/home/nc437/ladder-lite/integer_columns_k15_20260921/results/c5_k15/treatment_s20260921/704515_r0/dive/cg.json",
+        "--data-dir",
+        "/home/nc437/ladder-lite/integer_columns_k15_20260921/code/data",
+        "--reference-data-dir",
+        "/home/nc437/ladder-lite/integer_columns_k15_20260921/code/data",
+        "--cover",
+        "--two-stage",
+        "--timelimit",
+        "3266",
+        "--stage1-timelimit",
+        "1633",
+        "--threads",
+        "8",
+        "--seed",
+        "20260921",
+        "--mipgap",
+        "0.0001",
+        "--gurobi-log",
+        "/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/c5_k15/job_${SLURM_JOB_ID}_r${SLURM_RESTART_COUNT:-0}/mip_gurobi.log",
+        "--out",
+        "/home/nc437/ladder-lite/integer_columns_k15_20260921/salvage_20260922/c5_k15/job_${SLURM_JOB_ID}_r${SLURM_RESTART_COUNT:-0}/result.json"
+      ],
+      "no_initial_partition_route_argument": "No own-dive incumbent was exported; no GIRO/warm witness/start imported.",
+      "required_pre_solve_gate": "Recheck source hashes and same-case attempt inventory; load_pool(deduplicate=True), then prepare_strict_partition_pool with unchanged pinned data. Persist all acceptance/repair/rejection counts and ordered pool hashes; fail closed on rejected columns or unexplained repair. Budget cumulative prior salvage solver runtime if any."
+    }
+  }
+}

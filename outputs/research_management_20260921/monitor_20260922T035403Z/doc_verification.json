@@ -1,0 +1,25 @@
+{
+  "checks": {
+    "before_matches_last_published": true,
+    "headings_preserved": true,
+    "tables_preserved": true,
+    "image_refs_preserved": true,
+    "k15_result_present": true,
+    "strict_result_present": true,
+    "recovery_pending_label": true,
+    "stale_running_sentence_removed": true,
+    "both_source_links_present": true,
+    "no_placeholders": true,
+    "pdf_original_images_preserved": true,
+    "pdf_both_results_present": true
+  },
+  "before_pages": 9,
+  "after_pages": 10,
+  "files_sha256": {
+    "doc_before.md": "d45e2931a1ebfa9d3f4b75d3935442b49fdbbde415ef370568f64996f286f65f",
+    "doc_after.md": "64f7b83b5b8ec13251baf652f4c63b494b5f14d003df2be4cd555613d739f630",
+    "doc_after.pdf": "f1ff4a1f1eb35e0e1621bd4aa27a0d687c09e240227127c8bd706a857b7bebc1"
+  },
+  "slides_edited": false,
+  "visual_review": "Final changed pages 4\u20135 rendered; see local QA. Native tables, all old images and headings preserved."
+}

@@ -1,0 +1,115 @@
+{
+  "observed_utc": "2026-09-22T03:55:25.166221+00:00",
+  "cases": {
+    "c1_k15": {
+      "failed_job": "704511",
+      "attempt_dirs": [
+        "704511_r0"
+      ],
+      "manifest_error": "DivePilotError('dive restricted master did not reach OPTIMAL: status=9')",
+      "hashes": {
+        "source_result": {
+          "expected": "4bd5821a72b96ac83b81f2474514aa3eceb8fcdd24106f80050e58bcfc91db7d",
+          "actual": "4bd5821a72b96ac83b81f2474514aa3eceb8fcdd24106f80050e58bcfc91db7d",
+          "path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c1_k15/base/135603_r0/cg.json"
+        },
+        "source_journal": {
+          "expected": "54a53afdab53c7f7dba73fd458d5c69c2025e19882776ba643e51478932f398c",
+          "actual": "54a53afdab53c7f7dba73fd458d5c69c2025e19882776ba643e51478932f398c",
+          "path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c1_k15/base/135603_r0/cg.json.columns.jsonl"
+        },
+        "augmented_result": {
+          "expected": "c3655623f03a9a3447b349745467ded1d4590af0bb3395842427e96a2e85e04c",
+          "actual": "c3655623f03a9a3447b349745467ded1d4590af0bb3395842427e96a2e85e04c",
+          "path": "/home/nc437/ladder-lite/integer_columns_k15_20260921/results/c1_k15/treatment_s20260921/704511_r0/dive/cg.json"
+        },
+        "augmented_journal": {
+          "expected": "b79ace842df5725e958ecc831b4d8749dbdd67337874ee95066239cc3b35bb19",
+          "actual": "b79ace842df5725e958ecc831b4d8749dbdd67337874ee95066239cc3b35bb19",
+          "path": "/home/nc437/ladder-lite/integer_columns_k15_20260921/results/c1_k15/treatment_s20260921/704511_r0/dive/cg.json.columns.jsonl"
+        }
+      },
+      "all_hashes_match": true,
+      "source_prefix_identical": true,
+      "appended_records": 17859,
+      "expected_appended_records": 17859,
+      "truncated_tail": false,
+      "origins": {
+        "diving_pricing": 17859
+      },
+      "finite_generated_reduced_costs": true,
+      "cg_metadata_unchanged_except_augmentation": true,
+      "incumbent_export": null,
+      "dive_subprocess_wall_s": 5347.861750387121,
+      "residual_solver_s": 1852,
+      "original_physics": {
+        "g_kwh": 240.0,
+        "charge_kw": 240.0,
+        "min_soc_frac": 0.0,
+        "master_sense": "cover",
+        "time_model": "event",
+        "soc_step": 2.5,
+        "block_min": 5,
+        "prices_csv": "hourly_prices_flat.csv"
+      }
+    },
+    "c5_k15": {
+      "failed_job": "704515",
+      "attempt_dirs": [
+        "704515_r0"
+      ],
+      "manifest_error": "DivePilotError('dive master returned a row-infeasible LP: violation=5.140335931130835e-06')",
+      "hashes": {
+        "source_result": {
+          "expected": "c2cc709f60bdb18f5e5fd02ee66632550791b3f9cb0f7f512f2fede8e14c25ae",
+          "actual": "c2cc709f60bdb18f5e5fd02ee66632550791b3f9cb0f7f512f2fede8e14c25ae",
+          "path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c5_k15/base/135685_r0/cg.json"
+        },
+        "source_journal": {
+          "expected": "7e4ec71945b25afbc60489a67b2531c25403fc36e5ef56d38325c75cb678e3f7",
+          "actual": "7e4ec71945b25afbc60489a67b2531c25403fc36e5ef56d38325c75cb678e3f7",
+          "path": "/share/scaglione/nc437/evsp-dr/cumulative_budget_20260913/cases/c5_k15/base/135685_r0/cg.json.columns.jsonl"
+        },
+        "augmented_result": {
+          "expected": "74aea369b63cd7f3996096a2fb90d46c8ddeeefa00539d9da6105ea4c510b708",
+          "actual": "74aea369b63cd7f3996096a2fb90d46c8ddeeefa00539d9da6105ea4c510b708",
+          "path": "/home/nc437/ladder-lite/integer_columns_k15_20260921/results/c5_k15/treatment_s20260921/704515_r0/dive/cg.json"
+        },
+        "augmented_journal": {
+          "expected": "47ea74b761e8f03c16a1dfd4193698480ff6e831ed5b0416f8918833a72c1a34",
+          "actual": "47ea74b761e8f03c16a1dfd4193698480ff6e831ed5b0416f8918833a72c1a34",
+          "path": "/home/nc437/ladder-lite/integer_columns_k15_20260921/results/c5_k15/treatment_s20260921/704515_r0/dive/cg.json.columns.jsonl"
+        }
+      },
+      "all_hashes_match": true,
+      "source_prefix_identical": true,
+      "appended_records": 19943,
+      "expected_appended_records": 19943,
+      "truncated_tail": false,
+      "origins": {
+        "diving_pricing": 19943
+      },
+      "finite_generated_reduced_costs": true,
+      "cg_metadata_unchanged_except_augmentation": true,
+      "incumbent_export": null,
+      "dive_subprocess_wall_s": 3933.699269213015,
+      "residual_solver_s": 3266,
+      "original_physics": {
+        "g_kwh": 240.0,
+        "charge_kw": 240.0,
+        "min_soc_frac": 0.0,
+        "master_sense": "cover",
+        "time_model": "event",
+        "soc_step": 2.5,
+        "block_min": 5,
+        "prices_csv": "hourly_prices_flat.csv"
+      }
+    }
+  },
+  "execution_commit": "c50e5f207869bac25507adfae90bb830a44039b7",
+  "code_dirty": false,
+  "salvage_paths_existing": [],
+  "policy_sha256": "f9c5982718da6ab758019ceb85e31b539aea5416adc51816bc4bae220728e40b",
+  "jobs_tsv_sha256": "e16c3cf29c74d6285e2860501cac8c2c6dd25ea1b0721fad16900adcad9b96b2",
+  "targeted_duplicate_name_scan": []
+}

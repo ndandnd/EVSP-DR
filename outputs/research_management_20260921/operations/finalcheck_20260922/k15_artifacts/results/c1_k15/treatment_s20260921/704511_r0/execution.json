@@ -1,0 +1,18 @@
+{
+ "case": "c1_k15",
+ "arm": "treatment",
+ "seed": 20260921,
+ "execution_commit": "c50e5f207869bac25507adfae90bb830a44039b7",
+ "source_hashes": [
+  "4bd5821a72b96ac83b81f2474514aa3eceb8fcdd24106f80050e58bcfc91db7d",
+  "54a53afdab53c7f7dba73fd458d5c69c2025e19882776ba643e51478932f398c"
+ ],
+ "status": "running",
+ "global_certificate": null,
+ "external_witness_columns_used": false,
+ "budget_scope": "7200s dive subprocess wall plus MIP solver time; MIP setup/replay overhead external",
+ "original_graph_build_s": 9362.104323148727,
+ "graph_policy": "verified reusable graph prerequisite; original build not repeated or hidden",
+ "dive_wall_s": 5347.861750387121,
+ "dive_returncode": 1
+}

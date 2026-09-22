@@ -1,3 +1,7 @@
+## Current operational pointer — 22 September 2026
+
+Use only the current sections of [manager continuation](../research_management_20260921/MONITOR_CONTINUATION.md) and [focused heartbeat](../research_management_20260921/monitor_20260922T035403Z/README.md). New recoveries728184/728185 use hash-audited saved k15 pools and residual budgets; no new pricing campaign. C3k15treatment15/bound15 is verified; strict ten-duty subgroup11/bound10 remains open and fails omitted-capacity diagnostics. Historical instructions below remain provenance; do not reread or regenerate their full reports on unchanged checks.
+
 ## Active management — 21 September 2026
 
 The user resumed monitoring and authorized useful new research/code work with Astra subagents. Follow [today’s manager plan](../research_management_20260921/MANAGER_PLAN.md), which supersedes older dated blanket submission holds for its registered workstreams. New heartbeat `unicorn-evsp-dr-research-progress` runs every four hours, with quiet unchanged checks and prompt access-loss alerts. Existing historical held537227 and separate EVSP–V2G work remain protected; Slides remain unchanged. Do not regenerate the historical collector on each heartbeat: use campaign-specific receipts and endpoints. Exact current campaign roots, collectors and gates are in [the continuation](../research_management_20260921/MONITOR_CONTINUATION.md).
