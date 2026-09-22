@@ -11,6 +11,10 @@
 #SBATCH --open-mode=append
 #SBATCH --output=capacity_repr_%j.out
 set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+test -r "${GRB_LICENSE_FILE}"
 pilot_root="${CAPACITY_PILOT_DIR:-${SLURM_SUBMIT_DIR:?Submit from the deployed pilot directory}}"
 python_bin="${CAPACITY_PILOT_PYTHON:-/home/nc437/evsp_env/bin/python}"
 attempt_parent="${CAPACITY_PILOT_ATTEMPTS:-${pilot_root}/attempts}"
