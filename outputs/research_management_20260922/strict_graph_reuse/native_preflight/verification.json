@@ -1,0 +1,76 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "check": "download hash attempts/741034_r0/COMPLETE.json",
+      "passed": true
+    },
+    {
+      "check": "download hash attempts/741034_r0/execution.json",
+      "passed": true
+    },
+    {
+      "check": "download hash attempts/741034_r0/result.json",
+      "passed": true
+    },
+    {
+      "check": "download hash attempts/741034_r0/tests.log",
+      "passed": true
+    },
+    {
+      "check": "manifest matches executed",
+      "passed": true
+    },
+    {
+      "check": "completed result bound by receipt",
+      "passed": true
+    },
+    {
+      "check": "log hash",
+      "passed": true
+    },
+    {
+      "check": "code pin",
+      "passed": true
+    },
+    {
+      "check": "all sources verified",
+      "passed": true
+    },
+    {
+      "check": "worker hash",
+      "passed": true
+    },
+    {
+      "check": "13 tests pass",
+      "passed": true
+    },
+    {
+      "check": "solver not started",
+      "passed": true
+    },
+    {
+      "check": "scratch on intended NFS root",
+      "passed": true
+    },
+    {
+      "check": "complete scheduler",
+      "passed": true
+    },
+    {
+      "check": "GPU excluded",
+      "passed": true
+    },
+    {
+      "check": "not executed on GPU node",
+      "passed": true
+    }
+  ],
+  "check_count": 16,
+  "source_count": 253,
+  "test_count": 13,
+  "code_commit": "fedf421461f94727e6b1292a0e7789ab76ed8587",
+  "collection": "outputs/research_management_20260922/strict_graph_reuse/native_preflight/collections/20260922T121421Z",
+  "scope": "tiny synthetic same-physics cache/replay/lineage tests; no full k19 graph or CG",
+  "full_graph_or_CG_run": false
+}

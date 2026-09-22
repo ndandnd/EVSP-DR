@@ -1,0 +1,32 @@
+{
+  "execution_commit": "fedf421461f94727e6b1292a0e7789ab76ed8587",
+  "manifest_sha256": "12556c2b0b021c9913121c938e154cbb63e5740aa61c6ba9671a953634c91744",
+  "host": "snavely-cpu-01.cs.cornell.edu",
+  "job": "741034",
+  "restart": "0",
+  "tmpdir": "/home/nc437/ladder-lite/strict_graph_reuse_preflight_20260922/attempts/741034_r0/nfs_tmp",
+  "source_files_verified": true,
+  "solver_started": false,
+  "started_epoch": 1790079208.2973611,
+  "disk_free_bytes_before": 96133708775424,
+  "command": [
+    "/home/nc437/evsp_env/bin/python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_strict_event_graph_cache.py",
+    "-v"
+  ],
+  "status": "passed",
+  "test_count": 13,
+  "unittest_elapsed_s": 3.282,
+  "returncode": 0,
+  "runtime_s": 17.372223143000156,
+  "child_maxrss_kib": 114192,
+  "log_sha256": "ddd3bf58d55d1fcd7332433a3525ede04ca0c95c83044dfc4256ebced6c3f3c2",
+  "disk_free_bytes_after": 96133708775424,
+  "scope": "tiny synthetic same-physics cache/replay/lineage tests; no full k19 graph or CG"
+}

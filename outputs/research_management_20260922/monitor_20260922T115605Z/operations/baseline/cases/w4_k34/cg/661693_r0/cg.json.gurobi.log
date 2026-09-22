@@ -1,0 +1,277 @@
+
+Gurobi 12.0.3 (linux64) logging started Tue Sep 22 07:51:35 2026
+
+Set parameter LogFile to value "/share/scaglione/nc437/evsp-dr/chain_extension_33_40_20260921/cases/w4_k34/cg/661693_r0/cg.json.gurobi.log"
+Set parameter TimeLimit to value 1.2266019942928571e+04
+Set parameter TimeLimit to value 1.2266019942928571e+04
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 5218R CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1.2266019942928571e+04
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 816 rows, 252495 columns and 7016255 nonzeros
+Model fingerprint: 0xb4aec96a
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 31 rows and 847 columns
+Presolve time: 3.34s
+Presolved: 785 rows, 251648 columns, 7015408 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    3.1000000e+06   7.850000e+02   0.000000e+00      4s
+
+Starting sifting (using dual simplex for sub-problems)...
+
+    Iter     Pivots    Primal Obj      Dual Obj        Time
+       0          0     infinity      3.1000000e+06      4s
+       1       1153   3.1870185e+07   3.8198486e+06      4s
+       2       5152   1.0773223e+07   4.1828983e+06      5s
+       3       8871   7.1403891e+06   4.7427004e+06      6s
+       4      13865   6.4871582e+06   5.2036779e+06      9s
+       5      20659   6.3159245e+06   5.7509601e+06     13s
+       6      31351   6.3017526e+06   6.2988618e+06     20s
+       7      39953   6.3015445e+06   6.3006692e+06     28s
+       8      48877   6.3014787e+06   6.3010670e+06     38s
+       9      56463   6.3014463e+06   6.3012575e+06     48s
+      10      63871   6.3014384e+06   6.3013389e+06     58s
+      11      71307   6.3014331e+06   6.3013716e+06     68s
+      12      78983   6.3014280e+06   6.3013908e+06     80s
+      13      85981   6.3014247e+06   6.3014017e+06     90s
+
+Sifting complete
+
+   94745    6.3014241e+06   0.000000e+00   5.327572e+03    103s
+   96681    6.3014241e+06   0.000000e+00   1.197895e+03    105s
+  102182    6.3014241e+06   0.000000e+00   2.114689e+02    110s
+  107697    6.3014241e+06   0.000000e+00   3.911484e+01    115s
+  112991    6.3014241e+06   3.556870e-03   0.000000e+00    121s
+  112998    6.3014241e+06   0.000000e+00   0.000000e+00    121s
+
+Solved in 112998 iterations and 121.28 seconds (190.19 work units)
+Optimal objective  6.301424123e+06
+Set parameter TimeLimit to value 1.2110785385724157e+04
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 5218R CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1.2110785385724157e+04
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 816 rows, 252525 columns and 7017615 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -8.9998548e+37   6.552512e+33   8.999855e+07      1s
+      30    3.3014719e+06   0.000000e+00   0.000000e+00      1s
+
+Solved in 30 iterations and 0.57 seconds (0.40 work units)
+Optimal objective  3.301471939e+06
+Set parameter TimeLimit to value 1.2086506943201646e+04
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 5218R CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1.2086506943201646e+04
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 816 rows, 252555 columns and 7018612 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -3.0013286e+36   3.857175e+34   3.001329e+06      1s
+      49    3.3014719e+06   0.000000e+00   0.000000e+00      1s
+
+Solved in 49 iterations and 1.33 seconds (1.40 work units)
+Optimal objective  3.301471939e+06
+Set parameter TimeLimit to value 1.2062431515688077e+04
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 5218R CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1.2062431515688077e+04
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 816 rows, 252585 columns and 7019587 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -3.0012655e+36   2.352149e+34   3.001265e+06      1s
+      53    3.3014719e+06   0.000000e+00   0.000000e+00      1s
+
+Solved in 53 iterations and 1.39 seconds (1.49 work units)
+Optimal objective  3.301471939e+06
+Set parameter TimeLimit to value 1.2039994437866379e+04
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 5218R CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1.2039994437866379e+04
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 816 rows, 252615 columns and 7020714 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -2.9999578e+36   1.237297e+34   2.999958e+06      1s
+     113    3.3014719e+06   0.000000e+00   0.000000e+00      2s
+
+Solved in 113 iterations and 2.38 seconds (2.87 work units)
+Optimal objective  3.301471939e+06
+Set parameter TimeLimit to value 1.2013823460619897e+04
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 5218R CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1.2013823460619897e+04
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 816 rows, 252645 columns and 7021723 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -2.8858785e+33   1.109532e+35   2.885879e+03      1s
+     124    3.3014719e+06   0.000000e+00   0.000000e+00      3s
+
+Solved in 124 iterations and 2.59 seconds (3.07 work units)
+Optimal objective  3.301471939e+06
+Set parameter TimeLimit to value 1.1988656723829452e+04
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 5218R CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1.1988656723829452e+04
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 816 rows, 252675 columns and 7022822 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -2.9498573e+33   1.345010e+35   2.949857e+03      0s
+      40    3.3014719e+06   0.000000e+00   0.000000e+00      1s
+
+Solved in 40 iterations and 1.11 seconds (1.16 work units)
+Optimal objective  3.301471939e+06
+Set parameter TimeLimit to value 1.1965228653585538e+04
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 5218R CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1.1965228653585538e+04
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 816 rows, 252705 columns and 7023882 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -2.8522091e+33   1.425581e+35   2.852209e+03      1s
+      92    3.3014719e+06   0.000000e+00   0.000000e+00      2s
+
+Solved in 92 iterations and 1.96 seconds (2.39 work units)
+Optimal objective  3.301471939e+06
+Set parameter TimeLimit to value 1.1940091254352126e+04
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 5218R CPU @ 2.10GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 40 physical cores, 40 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1.1940091254352126e+04
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 816 rows, 252735 columns and 7024847 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -2.8697674e+33   1.392663e+35   2.869767e+03      1s
+      68    3.3014719e+06   0.000000e+00   0.000000e+00      2s
+
+Solved in 68 iterations and 1.54 seconds (1.80 work units)
+Optimal objective  3.301471939e+06

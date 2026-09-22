@@ -1,0 +1,38 @@
+{
+ "schema": "evsp-dr-event-network-cache-v1",
+ "identity": {
+  "schema": "evsp-dr-event-network-cache-v1",
+  "git_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "instance_sha256": "16ba1c7571356dfda0396ffa9b27056699a47a6c441efbe433735f66a4fa18f1",
+  "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+  "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+  "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+  "soc_step": 2.5,
+  "block_min": 5,
+  "g_kwh": 240.0,
+  "charge_kw": 240.0,
+  "reserve_kwh": 0.0,
+  "strict_tariff_coverage": false,
+  "event_arc_mode": "lazy"
+ },
+ "pickle_sha256": "3751b450ff802f43db36be4c0cd0c6bfe94bf192c3290df063d984832c441ae3",
+ "pickle_bytes": 25033423773,
+ "network_metrics": {
+  "time_model": "event",
+  "dag_nodes": 72256,
+  "dag_arcs": 1564275420,
+  "arc_mode": "lazy",
+  "materialized_python_arc_objects": 0,
+  "packed_arc_bytes": 25028406720,
+  "station_event_times": {
+   "2190L_0": 484,
+   "4808_0": 534,
+   "PARX_1": 880,
+   "3127L_0": 761,
+   "7880C_0": 768,
+   "JON_A_0": 770
+  },
+  "event_lattice_sha256": "04bdb4dfdb32e4828972db744487a5f59b45e0741da56d7476383b66ce5c69c5"
+ },
+ "original_build_s": 45486.041882276535
+}

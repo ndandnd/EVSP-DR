@@ -1,0 +1,7 @@
+# k33 endpoints and native strict-graph reuse gate — 22 September 2026
+
+[Current evidence](../../research_management_20260922/monitor_20260922T115605Z/README.md): C1/C3/C4 k33 CGs stop on wall_limit, all uncertified. C3 MIP661669 has 34 buses / bound33, open, native baseline replay accepted, with118 duplicate assignments and shared capacity unvalidated. Inputs, source pins/hashes, physics/objectives, inherited initialization, separate graph/CG/MIP times and scheduler accounting are in the scoped operations manifest and CSVs. Runtime CG dirty-source flag is preserved.
+
+The only new submission is native cache-test741034: source fedf421461f94727e6b1292a0e7789ab76ed8587, 1CPU/4GiB/15min default_partition, GPU excluded, no predecessor, unique requeue attempts. It passed13 solver-free tests on NFS. [Manifest, input/source hashes, job receipt, log and checks](../../research_management_20260922/strict_graph_reuse/native_preflight/README.md). No production graph/CG/MIP was run by this validation.
+
+Next production gate is complete same-physics inherited-pool equality and full331-trip graph cold/reload validation. Keep original results/budgets and all preparation costs. No k20 automatic continuation. Existing25 fleet-setting trials and capacity-representation pilot are final; no duplicate polls or runs. Current Doc and weekly Slides updated and independently verified; source artifacts remain separate from publication exports.

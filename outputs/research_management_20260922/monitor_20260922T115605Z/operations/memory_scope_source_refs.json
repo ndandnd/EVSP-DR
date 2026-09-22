@@ -1,0 +1,16 @@
+[
+  {
+    "file": "src/exact_pricer_expanded.py",
+    "commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+    "sha256": "f4310ddc495c70bba6118b0ecd9c546f80a8ce6b7f1b027e2866de9595af8831",
+    "matches_registered_source": true,
+    "snippet": "598:         deadline = time.monotonic()+time_limit_s if time_limit_s else None\n599:         replay_started = time.monotonic()\n600:         _INHERITED_EVENT_REPLAY_CONTEXT = (child_network, child_problem, g_kwh, charge_kw, reserve_kwh)\n601:         if workers == 1 and deadline is None and cancel_requested is None:\n602:             replay_results = map(_replay_inherited_event_sequence, replay_items)\n603:         else:\n604:             if \"fork\" not in multiprocessing.get_all_start_methods():\n605:                 raise ValueError(\"parallel inherited event replay requires fork support\")\n606:             # Assign immediately so cancellation after creation still cleans up.\n607:             check(); emit(\"pool_start\", 0.0, \"started\")\n608:             began = time.monotonic()\n609:             pool_context = multiprocessing.get_context(\"fork\").Pool(workers, initializer=_init_inherited_replay_worker)\n610:             emit(\"pool_start\", time.monotonic()-began); check()\n611:             replay_results = (pool_context.imap_unordered(_replay_inherited_event_sequence, replay_items, chunksize=1)\n612:                               if deadline is not None else pool_context.imap(_replay_inherited_event_sequence, replay_items, chunksize=1 if cancel_requested is not None else 8))\n613:         emit(\"replay\", 0.0, \"started\")\n614:         while True:\n615:             check()\n616:             try:\n617:                 if pool_context is None or (deadline is None and cancel_requested is None):\n618:                     replayed, reason = next(replay_results)\n619:                 else:\n620:                     remaining = deadline-time.monotonic() if deadline is not None else float(\"inf\")\n621:                     if remaining <= 0:"
+  },
+  {
+    "file": "src/exact_cg_telemetry.py",
+    "commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+    "sha256": "645560d1f09cd7068307ea15cfcf4251e14483966cf6033cd58aaa580bf7bce5",
+    "matches_registered_source": true,
+    "snippet": "18: from pathlib import Path\n19: \n20: from durable_io import DurableFileError, flush_and_fsync, read_jsonl_records\n21: \n22: \n23: SCHEMA = \"evsp-dr-exact-cg-phase-telemetry-v1\"\n24: \n25: \n26: def peak_rss_bytes() -> int:\n27:     \"\"\"Return process peak RSS in bytes on Linux/macOS.\"\"\"\n28: \n29:     value = int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)\n30:     return value if sys.platform == \"darwin\" else value * 1024\n31: \n32: \n33: class PhaseTelemetry:\n34:     \"\"\"Append-only, identity-bound telemetry sidecar.\"\"\"\n35: \n36:     def __init__(self, path: Path, *, identity: dict):\n37:         initialization_started = time.perf_counter()\n38:         self.overhead_s = 0.0\n39:         self.path = Path(path).expanduser().resolve()\n40:         self.path.parent.mkdir(parents=True, exist_ok=True)"
+  }
+]

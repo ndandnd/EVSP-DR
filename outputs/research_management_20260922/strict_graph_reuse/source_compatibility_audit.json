@@ -1,0 +1,48 @@
+{
+  "base_commit": "35770aae2c08e7d5a356cc3b673e67608e5b1036",
+  "unchanged_physics_helpers": {
+    "event_pricer_network.py": {
+      "sha256": "08b2dfddb25a9e0e2d6b12a084223d307a3dd1f6c5456aa5ef89d177c9c0a7bc",
+      "byte_identical_to_base": true
+    },
+    "audit_giro_known_columns.py": {
+      "sha256": "690b66ff3047894d5a142caddf7604d8df153b86838aeadac40859f5f5b6762f",
+      "byte_identical_to_base": true
+    },
+    "pricing_dp_og.py": {
+      "sha256": "a7b4a5a5053543166aa5db9d948de28f1708f28e31c0b047f3f1e0ff8bda4871",
+      "byte_identical_to_base": true
+    },
+    "config.py": {
+      "sha256": "afda984ccfc503f51dfc042f68d28716947ff9f78bf835038f9c20b9c2e62b06",
+      "byte_identical_to_base": true
+    },
+    "expanded_path_realization.py": {
+      "sha256": "99e243534d49f61398a084699ced75ae2e0bc7584dc18c4f9b4a50234b2f287d",
+      "byte_identical_to_base": true
+    },
+    "fixed_duty_continuous_optimizer.py": {
+      "sha256": "79828f1fd51e132332b7298a17bc772fb6c1ee5af8855f71c8b288088144611f",
+      "byte_identical_to_base": true
+    },
+    "utils_v2.py": {
+      "sha256": "9bb5f7d29144c6c7436380c6cbb3cfe98f3b1ae4b7adf6d570008ff1685bfd90",
+      "byte_identical_to_base": true
+    },
+    "run_exact_pool_mip.py": {
+      "sha256": "d4a1c194f779ac6caae4b00cfb6f7cb7ec924da025a57086d424793c24f60a96",
+      "byte_identical_to_base": true
+    }
+  },
+  "runner_unchanged_ast": {
+    "checkpoint_id": true,
+    "route_key": true,
+    "route_capacity_rows": true,
+    "station_power": true,
+    "build_network": true,
+    "ExactCapacityMaster": true,
+    "solve_mip": true,
+    "run_mip": true,
+    "CG_pricing_loop": true
+  }
+}

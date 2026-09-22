@@ -1,0 +1,36 @@
+test_exact_k17_commit_gate_preserves_replay_hash_physics_and_remapping (test_strict_event_graph_cache.PinnedParentLineageTests.test_exact_k17_commit_gate_preserves_replay_hash_physics_and_remapping) ... ok
+test_cached_load_excluded_from_allowance_and_legacy_build_included (test_strict_event_graph_cache.StrictGraphCacheTests.test_cached_load_excluded_from_allowance_and_legacy_build_included) ... ok
+test_cg_missing_cache_and_old_pool_fail_before_graph_or_solver (test_strict_event_graph_cache.StrictGraphCacheTests.test_cg_missing_cache_and_old_pool_fail_before_graph_or_solver) ... ok
+test_corruption_and_truncation_rejected_before_deserialization (test_strict_event_graph_cache.StrictGraphCacheTests.test_corruption_and_truncation_rejected_before_deserialization) ... ok
+test_dataframe_backed_problem_roundtrips (test_strict_event_graph_cache.StrictGraphCacheTests.test_dataframe_backed_problem_roundtrips) ... ok
+test_derived_identity_changes_with_actual_problem_and_price_data (test_strict_event_graph_cache.StrictGraphCacheTests.test_derived_identity_changes_with_actual_problem_and_price_data) ... ok
+test_identity_changes_rejected_before_deserialization (test_strict_event_graph_cache.StrictGraphCacheTests.test_identity_changes_rejected_before_deserialization) ... ok
+test_interrupted_write_never_publishes_partial_and_cleans_temporary (test_strict_event_graph_cache.StrictGraphCacheTests.test_interrupted_write_never_publishes_partial_and_cleans_temporary) ... ok
+test_manifest_layout_and_metrics_mismatch_rejected (test_strict_event_graph_cache.StrictGraphCacheTests.test_manifest_layout_and_metrics_mismatch_rejected) ... ok
+test_preparation_reserves_before_build_and_rejects_output_alias (test_strict_event_graph_cache.StrictGraphCacheTests.test_preparation_reserves_before_build_and_rejects_output_alias) ... ok
+test_prepare_and_verify_never_create_master_or_pool (test_strict_event_graph_cache.StrictGraphCacheTests.test_prepare_and_verify_never_create_master_or_pool) ... ok
+test_reload_exact_fingerprints_fixed_duals_and_physical_routes (test_strict_event_graph_cache.StrictGraphCacheTests.test_reload_exact_fingerprints_fixed_duals_and_physical_routes) ... ok
+test_wrong_object_identity_and_existing_lock_reject_export (test_strict_event_graph_cache.StrictGraphCacheTests.test_wrong_object_identity_and_existing_lock_reject_export) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.444s
+
+OK
+        1.40 real         2.48 user         1.71 sys
+           109314048  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               19784  page reclaims
+                 853  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 529  voluntary context switches
+                8303  involuntary context switches
+         27100622246  instructions retired
+         13539996737  cycles elapsed
+            77415288  peak memory footprint

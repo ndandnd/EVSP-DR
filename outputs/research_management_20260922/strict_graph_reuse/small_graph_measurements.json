@@ -1,0 +1,33 @@
+{
+  "execution_commit": "fedf421461f94727e6b1292a0e7789ab76ed8587",
+  "fixture_trip_count": 2,
+  "network": {
+    "time_model": "event",
+    "dag_nodes": 60,
+    "dag_arcs": 756,
+    "arc_mode": "lazy",
+    "materialized_python_arc_objects": 0,
+    "packed_arc_bytes": 12096,
+    "station_event_times": {
+      "2190L_0": 312,
+      "4808_0": 27,
+      "PARX_1": 27,
+      "3127L_0": 27,
+      "7880C_0": 27,
+      "JON_A_0": 27
+    },
+    "station_charge_kw": {
+      "PARX": 60.0
+    },
+    "event_lattice_sha256": "60e86290ee13098927c9e4f75836b74075416285522c35b2fa437c6bcfdd0d01"
+  },
+  "artifact_bytes": 38396,
+  "payload_bytes": 22356,
+  "source_identity_sha256": "021c6476a875986a59ebd5d1d710e361abdb1833a274f005611dd9d259a88d03",
+  "payload_sha256": "73d41560dad4f3c09807a63a3556c6952fd851c18516f4b3a91488b72f61d98b",
+  "local_write_s": 0.001119833905249834,
+  "local_load_s": 0.00044691702350974083,
+  "temporary_filesystem_free_bytes": 369556742144,
+  "temporary_filesystem_path": "/var/folders/hk/6g28n39j5_s33j2kn2w4xmp40000gn/T/tmpqouxm4ch",
+  "scope": "two-trip synthetic strict physics only; no full-scale estimate or production solve"
+}

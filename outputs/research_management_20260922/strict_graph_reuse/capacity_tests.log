@@ -1,0 +1,48 @@
+test_atomic_pool_keeps_previous_checkpoint_if_replace_fails (test_capacity_speed_event_cg.CapacitySpeedPilotTests.test_atomic_pool_keeps_previous_checkpoint_if_replace_fails) ... ok
+test_capacity_rows_change_restricted_master_selection (test_capacity_speed_event_cg.CapacitySpeedPilotTests.test_capacity_rows_change_restricted_master_selection) ... Set parameter Username
+Set parameter LicenseID to value 2777767
+Academic license - for non-commercial use only - expires 2027-02-11
+ok
+test_continuous_half_open_capacity_audit (test_capacity_speed_event_cg.CapacitySpeedPilotTests.test_continuous_half_open_capacity_audit) ... ok
+test_covering_duplicate_service_is_reported_separately (test_capacity_speed_event_cg.CapacitySpeedPilotTests.test_covering_duplicate_service_is_reported_separately) ... ok
+test_exact_event_pricing_honors_expired_deadline (test_capacity_speed_event_cg.CapacitySpeedPilotTests.test_exact_event_pricing_honors_expired_deadline) ... ok
+test_infeasible_capacity_pool_is_strict_json_serializable (test_capacity_speed_event_cg.CapacitySpeedPilotTests.test_infeasible_capacity_pool_is_strict_json_serializable) ... Set parameter OutputFlag to value 1
+Set parameter LogFile to value "/var/folders/hk/6g28n39j5_s33j2kn2w4xmp40000gn/T/tmpuze0jiha/capacity_infeasible.log"
+Set parameter Threads to value 1
+Set parameter MIPGap to value 0.0001
+Set parameter TimeLimit to value 0.5
+Gurobi Optimizer version 12.0.1 build v12.0.1rc0 (mac64[arm] - Darwin 25.5.0 25F84)
+
+CPU model: Apple M3 Pro
+Thread count: 12 physical cores, 12 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  0.5
+Threads  1
+
+Optimize a model with 12 rows, 2 columns and 22 nonzeros
+Model fingerprint: 0x4e2522b3
+Variable types: 0 continuous, 2 integer (2 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve time: 0.00s
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds (0.00 work units)
+Thread count was 1 (of 12 available processors)
+
+Solution count 0
+
+Model is infeasible
+Best objective -, best bound -, gap -
+ok
+test_interrupted_pool_resumes_to_uninterrupted_equivalent (test_capacity_speed_event_cg.CapacitySpeedPilotTests.test_interrupted_pool_resumes_to_uninterrupted_equivalent) ... ok
+test_timed_cg_pool_is_usable_but_explicitly_uncertified (test_capacity_speed_event_cg.CapacitySpeedPilotTests.test_timed_cg_pool_is_usable_but_explicitly_uncertified) ... ok
+test_unproved_incumbent_is_valid_stage2_upper_cap (test_capacity_speed_event_cg.CapacitySpeedPilotTests.test_unproved_incumbent_is_valid_stage2_upper_cap) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.080s
+
+OK

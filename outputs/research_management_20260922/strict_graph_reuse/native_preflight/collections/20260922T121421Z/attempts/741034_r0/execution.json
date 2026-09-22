@@ -1,0 +1,23 @@
+{
+  "execution_commit": "fedf421461f94727e6b1292a0e7789ab76ed8587",
+  "manifest_sha256": "12556c2b0b021c9913121c938e154cbb63e5740aa61c6ba9671a953634c91744",
+  "host": "snavely-cpu-01.cs.cornell.edu",
+  "job": "741034",
+  "restart": "0",
+  "tmpdir": "/home/nc437/ladder-lite/strict_graph_reuse_preflight_20260922/attempts/741034_r0/nfs_tmp",
+  "source_files_verified": true,
+  "solver_started": false,
+  "started_epoch": 1790079208.2973611,
+  "disk_free_bytes_before": 96133708775424,
+  "command": [
+    "/home/nc437/evsp_env/bin/python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_strict_event_graph_cache.py",
+    "-v"
+  ]
+}
