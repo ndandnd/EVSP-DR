@@ -1,4 +1,4 @@
-# Research check — 21 September, 19:54–20:00 EDT
+# Research check — 21 September evening, from 19:54 EDT
 
 ## Integer-directed pricing: complete paired k8 replication
 
@@ -33,3 +33,5 @@ A bounded endpoint check at00:01:48UTC then verified strict k17 CG completion:27
 - Collect strict k17/k19 CG and MIP separately; retain subgroup duty count versus global prefix labels, capacity omission and duplicate checks.
 - Let all 44 large graphs continue; recover actual failed predecessors and preserve genuine chain dependencies. Graph checkpoint deployment still requires its bounded native storage/durability pilot; current pins remain unchanged.
 - No additional campaign is justified merely to inflate job count. Continue four-hour quiet monitoring, with immediate access-loss and actionable-failure reporting.
+
+[Current Google Doc before/after checks](doc_verification/README.md): only three status paragraphs changed; all tables, source links and images preserved; current tab remains nine pages.
