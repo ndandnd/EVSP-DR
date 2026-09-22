@@ -1,5 +1,10 @@
 # Scoped operations check — 21 September, 23:55 UTC
 
+**Authorized endpoint-only follow-up, 22 September00:01:48UTC:** strict k17CG668430 now has a hash-verified final result and worker COMPLETE receipt:277trips/10reference18E2duties,5,236iterations,8,343columns,zeroartificials,fractional route weight10,weighted RMP1,000,391.890434. **No pricing certificate** (four-hour deadline), no MIP/fleet proof or target match yet. Graph construction4,417.061709seconds (73.617695minutes) is included in CG runtime14,400.520037seconds. All3,086inherited parent routes were replayed; independent replay of every new route and shared-capacity/exact-once dispatch are not established. The actual saved-pool hash agrees with both completion records.
+
+The endpoint read crossed the scheduler completion transition: sacct still reported RUNNING at4:00:37, while the following squeue omitted thisCG and showed k17MIP/k19CG newly eligible. Final scheduler accounting and MaxRSS were therefore **not captured**, and no additional poll was made. [Qualified endpoint summary](k17_endpoint_summary.json) · [One follow-up observation](k17_endpoint_observation.json) · [Verified source result and receipts](artifacts/w5_k17_18E2/). The earlier23:55 observations below remain dated, preserved evidence.
+
+
 One scoped SSH collection succeeded. The previous successful operations snapshot was older than90minutes. No jobs, source pins, Docs, Slides or shared register entries were changed.
 
 **Meaningful new result:** both53-trip and90-trip strict representation benchmarks completed successfully. Each compares original explicit, new explicit and new packed construction/pricing sequentially on the same node, using identical input hashes, event lattices and five deterministic dual vectors. All15generated routes per case pass the recorded individual-route replay. Completion/result/manifest hashes were independently reconciled.

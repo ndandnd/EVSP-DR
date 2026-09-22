@@ -1,6 +1,6 @@
 ## Latest verified check — 21 September, 20:00 EDT
 
-The complete paired k8 replication has **7/8 treatment target matches versus 0/8 controls**, four selected cases at two seeds. Every hit has a finite-pool fleet proof and own-incumbent handoff; full dispatch/capacity feasibility remains separate. The failed automatic k15 gate was an accounting-query error; the unchanged login-node validation passed and all six approved follow-ups **704510–704515 are running**. Do not submit duplicates. Both larger strict fixed-dual benchmarks completed; all 44 baseline graphs continue. [Dated results, audit and recovery receipts](monitor_20260921T235438Z/README.md). Earlier status paragraphs below are historical.
+The complete paired k8 replication has **7/8 treatment target matches versus 0/8 controls**, four selected cases at two seeds. Every hit has a finite-pool fleet proof and own-incumbent handoff; full dispatch/capacity feasibility remains separate. The failed automatic k15 gate was an accounting-query error; the unchanged login-node validation passed and all six approved follow-ups **704510–704515 are running**. Do not submit duplicates. Both larger strict fixed-dual benchmarks completed; all 44 baseline graphs continue. At 20:01 EDT, strict k17 (ten subgroup duties) published its four-hour CG endpoint: fractional weight ten, 5,236 iterations, no pricing certificate; MIP pending verification. [Dated results, audit and recovery receipts](monitor_20260921T235438Z/README.md). Earlier status paragraphs below are historical.
 
 # Four-hour continuation
 

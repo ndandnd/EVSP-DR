@@ -25,6 +25,8 @@ The new 53-trip and 90-trip same-node comparisons preserve all five tested reduc
 
 At 23:55 UTC, all 44 baseline k33–40 graph builds and strict k17 CG were running, with 99 true successor dependencies. No new baseline preemption or unhandled failure occurred. Source-row progress is not a reliable wall-time ETA. Historical held jobs and the stochastic project were untouched.
 
+A bounded endpoint check at00:01:48UTC then verified strict k17 CG completion:277 trips from10 reference duties,5,236iterations,8,343columns and fractional route weight10. The four-hour deadline stopped CG without a pricing certificate; weighted RMP1,000,391.890434 is not a certified full-model lower bound. Graph building73.62minutes is included. Its MIP has no verified endpoint yet. [Source result and qualified completion](../operations/heartbeat_20260921T235509Z/k17_endpoint_summary.json).
+
 ## Next triggers
 
 - Collect the six k15 endpoints and retain control/treatment pair and seed labels; do not duplicate the jobs or relabel a miss as a pool impossibility proof.
