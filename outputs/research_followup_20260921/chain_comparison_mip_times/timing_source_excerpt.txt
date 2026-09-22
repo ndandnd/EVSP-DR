@@ -1,0 +1,113 @@
+2530:             if args.stage1_timelimit is not None
+2531:             else float(args.timelimit) / 2.0
+2532:         )
+2533:         stage1_time_limit_s = max(
+2534:             0.0,
+2535:             min(float(args.timelimit), requested_stage1_limit),
+2536:         )
+2537:         m.Params.TimeLimit = stage1_time_limit_s
+2538:         m.setObjective(
+2539:             gp.quicksum(a[i] for i in range(len(routes))), GRB.MINIMIZE
+2540:         )
+2541:         optimize_started = time.perf_counter()
+2542:         initial_partition_start["solver_acceptance"] = (
+2543:             optimize_with_start_audit(
+2544:                 m,
+2545:                 GRB,
+2546:                 start_supplied=bool(mip_start),
+2547:                 progress_observer=progress_observer("fleet"),
+2548:             )
+2549:         )
+2550:         gurobi_optimize_wall_s.append(
+2551:             time.perf_counter() - optimize_started
+2552:         )
+2553:         stage1_solver_has_solution = m.SolCount > 0
+2554:         raw_stage1_solution = (
+2555:             [i for i in range(len(routes) if m.SolCount > 0 else 0)
+2556:              if a[i].X > 0.5]
+2557:         )
+2558:         stage1_incumbent_validated, stage1_validation_reason = (
+2559:             validate_incumbent_assignment(
+2560:                 raw_stage1_solution,
+2605:             stage1_gap = (
+2606:                 max(0.0, stage1_buses - stage1_bound)
+2607:                 / max(1.0, stage1_buses)
+2608:             )
+2609:         stage1_runtime_s = (
+2610:             progress.elapsed_s() if progress is not None
+2611:             else time.time() - t0
+2612:         )
+2613:         remaining_s = max(0.0, float(args.timelimit) - stage1_runtime_s)
+2614:         stage1_variable_objective = (
+2615:             float(sum(routes[index]["cost"] - BUS_COST_KX
+2616:                       for index in stage1_solution))
+2617:             if stage1_solution else None
+2618:         )
+2619:         stage1_total_objective = (
+2620:             float(sum(routes[index]["cost"] for index in stage1_solution))
+2698:                 progress.transition_stage(
+2699:                     "cost", elapsed_s=progress.elapsed_s()
+2700:                 )
+2701:             optimize_started = time.perf_counter()
+2702:             stage2_start_acceptance = optimize_with_start_audit(
+2703:                 m,
+2704:                 GRB,
+2705:                 start_supplied=True,
+2706:                 progress_observer=progress_observer(
+2707:                     "cost", fixed_fleet=stage1_buses,
+2708:                     fleet_cap_proven=fleet_proven,
+2709:                 ),
+2710:             )
+2711:             gurobi_optimize_wall_s.append(
+2712:                 time.perf_counter() - optimize_started
+2713:             )
+2714:             cost_stage_executed = True
+2715:             stage2_solver_has_solution = m.SolCount > 0
+2716:             stage2_solution = (
+2717:                 [i for i in range(len(routes)) if a[i].X > 0.5]
+2718:                 if stage2_solver_has_solution else []
+2719:             )
+2720:             stage2_incumbent_validated, stage2_validation_reason = (
+3115:     ]
+3116:     code_identity["final_tracked_clean"] = final_code_identity[
+3117:         "tracked_clean"
+3118:     ]
+3119:     solver_runtime_s = (
+3120:         progress.elapsed_s() if progress is not None
+3121:         else time.time() - t0
+3122:     )
+3123:     summary = {
+3124:         "source_result": str(args.result),
+3125:         "instance": status["csv"],
+3126:         "partitioning": not args.cover,
+3127:         "experiment_arm": experiment_arm,
+3193:         ).encode()).hexdigest(),
+3194:         "variable_route_cost": (mip_obj - BUS_COST_KX * len(chosen))
+3195:                                if chosen and mip_obj is not None else None,
+3196:         "overcovered_trips": len(over),
+3197:         "runtime_s": solver_runtime_s,
+3198:         "node_count": (
+3199:             sum(
+3200:                 float(value) for value in (
+3201:                     (two_stage_detail or {}).get("stage1_node_count"),
+3202:                     (two_stage_detail or {}).get("stage2_node_count"),
+3203:                 ) if value is not None
+3204:             )
+3205:             if args.two_stage else finite_solver_value(
+3206:                 getattr(m, "NodeCount", None)
+3207:             )
+3208:         ),
+3209:         "solution_count": (
+3210:             sum(
+3211:                 int(value) for value in (
+3212:                     (two_stage_detail or {}).get("stage1_solution_count"),
+3213:                     (two_stage_detail or {}).get("stage2_solution_count"),
+3214:                 ) if value is not None
+3215:             )
+3216:             if args.two_stage else int(m.SolCount)
+3217:         ),
+3218:         "gurobi_optimize_wall_s": sum(gurobi_optimize_wall_s),
+3219:         "gurobi_optimize_stage_wall_s": gurobi_optimize_wall_s,
+3220:         "source_hashing_wall_s": source_hashing_wall_s,
+3221:         "end_to_end_before_publication_s": (
+3222:             time.perf_counter() - end_to_end_started

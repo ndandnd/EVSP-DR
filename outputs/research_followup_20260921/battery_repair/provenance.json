@@ -1,0 +1,286 @@
+{
+  "execution_commit": "d3aba8787e097e7da482c7fbcc5e22e83b395df4",
+  "source_hashes": {
+    "outputs/research_followup_20260921/battery_rounding/per_route.csv": "bb2b5dfc4e509f47f3b69771c48e1c9f2835e4fd78e2b3232a44eaa419fa5050",
+    "outputs/research_followup_20260921/battery_rounding/sources/c1_k05_base_result.json": "2414edcc46448bdd30d4669ca3fd7c33503e52479418676ec6bcb66df1648dfe",
+    "outputs/research_followup_20260921/battery_rounding/sources/c1_k05.csv": "eba01cda70407e36244a98c5b4e423dd463df071940d568c24358dfbced512f8",
+    "outputs/research_followup_20260921/battery_rounding/sources/c1_k05_warm_result.json": "fe7d0953015209ce2920f0aae307621b43672d2bcac06d246bd5d74f582b7e6d",
+    "outputs/research_followup_20260921/battery_rounding/sources/c1_k08_base_result.json": "c9dc2e96492adc127590ad89b0d2bfbb13394f358dc49f64438380093245a631",
+    "outputs/research_followup_20260921/battery_rounding/sources/c1_k08.csv": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+    "outputs/research_followup_20260921/battery_rounding/sources/c1_k08_warm_result.json": "92aa65873dc345fbd578f3066f78f4e31c92e19ce8710a5b7518930126456c2f",
+    "outputs/research_followup_20260921/battery_rounding/sources/c1_k10_base_result.json": "d952a8ac9cc4006ac5ecb0797ac13890509936f80406cb590a3eebc2b864f5cc",
+    "outputs/research_followup_20260921/battery_rounding/sources/c1_k10.csv": "c54f31750af49fb66f0bf21995d02d01a5520e37f13152bc95b4aff17ecef1f3",
+    "outputs/research_followup_20260921/battery_rounding/sources/c1_k10_warm_result.json": "9ec64eaa8b4837d7846b7c43ab44ce1996763689a3e959847b3d017cad22c4f9",
+    "outputs/research_followup_20260921/battery_rounding/sources/c1_k15_base_result.json": "0a553d6ae5b87fe448c13cc62ed7de7ab7682509f556bf9dc75168a2c6eda20b",
+    "outputs/research_followup_20260921/battery_rounding/sources/c1_k15.csv": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+    "outputs/research_followup_20260921/battery_rounding/sources/c1_k15_warm_result.json": "001928a91dc223802126891f401c767486da34db90b805fdccb7f1430df177ab",
+    "outputs/research_followup_20260921/battery_rounding/sources/c2_k05_base_result.json": "055f0044637a7b36d1c8b9b2e001ad5aeddb6fc9fcaaf1611eb0e695a3663432",
+    "outputs/research_followup_20260921/battery_rounding/sources/c2_k05.csv": "286ef14718748dbeb88980e11f835ed920cb9a01f72708aec4b43a436001ec86",
+    "outputs/research_followup_20260921/battery_rounding/sources/c2_k05_warm_result.json": "4cb42e5f74fec603f30e79c84be4bd933ca37c64741b6819fdd1bfcf163141f3",
+    "outputs/research_followup_20260921/battery_rounding/sources/c2_k08_base_result.json": "f82b4e049c973036cb00a53c5bd5a3925206c6d8333fc32b2b4a704dfe00c3e4",
+    "outputs/research_followup_20260921/battery_rounding/sources/c2_k08.csv": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+    "outputs/research_followup_20260921/battery_rounding/sources/c2_k08_warm_result.json": "3414ef6674b182fe5dc3b2dca75d46dafbf826c8e0ebe28d7fa76521bf8dcb8d",
+    "outputs/research_followup_20260921/battery_rounding/sources/c2_k10_base_result.json": "7b1b3844aaaade471ac6e7b731a9ee751ffb07569a1af953e7c34c1b3d25c69c",
+    "outputs/research_followup_20260921/battery_rounding/sources/c2_k10.csv": "969e49b79b454241e1f4116e405aebdf117dc6adac5497854cf4d7196166a6d6",
+    "outputs/research_followup_20260921/battery_rounding/sources/c2_k10_warm_result.json": "4baf5e6f2d3700a6aab53a7a670d51a9445943f46a7dee9ebfe1af17ad7e57d1",
+    "outputs/research_followup_20260921/battery_rounding/sources/c2_k15_base_result.json": "1087425363e02e1d2f5054c37131e176cf315bf2a3470ea834466bf4bec16d35",
+    "outputs/research_followup_20260921/battery_rounding/sources/c2_k15.csv": "79c73bc74bdba12d53a76b79c4a6408bda71d2e444a1a95508800da95f5d9188",
+    "outputs/research_followup_20260921/battery_rounding/sources/c2_k15_warm_result.json": "323b6bf9662d0cb61af20586adc322d167c796502dd8fe693984368f8b5d96d2",
+    "outputs/research_followup_20260921/battery_rounding/sources/c3_k05_base_result.json": "9d82a1e36bd2ab3ea24ae497025839ba7ecfd2bc70d3781d5a899ba5f68b2086",
+    "outputs/research_followup_20260921/battery_rounding/sources/c3_k05.csv": "161036b627aa969a9495ca5ff04d57c526d4f2aa6afd023d55524d5a9a809fb4",
+    "outputs/research_followup_20260921/battery_rounding/sources/c3_k05_warm_result.json": "ac12982dbcd933aa24401e5e6df1c862ad43ef88f2fcbb2da56eb5650d4d812a",
+    "outputs/research_followup_20260921/battery_rounding/sources/c3_k08_base_result.json": "1d4936bec7def830d91a25a20f8f460fdb8f66ffd383e6a68463bd8a6f584ffc",
+    "outputs/research_followup_20260921/battery_rounding/sources/c3_k08.csv": "9d1d4ed1ab86dfa3ae09541180d1a67e612d5473d9964db36b08e9ebce72cd2b",
+    "outputs/research_followup_20260921/battery_rounding/sources/c3_k08_warm_result.json": "cfe1b55635a997edbf7bd6eba3d651d4ec42e00c95798edb2c0074fbc0ce30f5",
+    "outputs/research_followup_20260921/battery_rounding/sources/c3_k10_base_result.json": "ee6121c87d6b4686a28961f383e6dd14ca5636c90c254c186e1ab9be4d40d235",
+    "outputs/research_followup_20260921/battery_rounding/sources/c3_k10.csv": "0a24efed4fe106a7a0e1d7038964c976e3a46ea62027e1ce879bc151f3a2b18d",
+    "outputs/research_followup_20260921/battery_rounding/sources/c3_k10_warm_result.json": "6970b728758a37b9ce1021e12ff8fc44bc730d3ba091c7596916f8cc16d04672",
+    "outputs/research_followup_20260921/battery_rounding/sources/c3_k15_base_result.json": "484d0a9dbf511eac2aa144de6271fbdf0ca0ab1e789a1385c0712dc2f04d38f1",
+    "outputs/research_followup_20260921/battery_rounding/sources/c3_k15.csv": "44d91ad2cd6604441b3ea36dfb77cda9f89901d14755ec30d502887f0efb3490",
+    "outputs/research_followup_20260921/battery_rounding/sources/c3_k15_warm_result.json": "34f298662e551cbc6c65e90a9f6a9aed66f37e6125f27f134134ac94874e8ad3",
+    "outputs/research_followup_20260921/battery_rounding/sources/c4_k05_base_result.json": "952df9e22d1387253ca0a352838a1d7a60d720613a4383b8aedc627c96260134",
+    "outputs/research_followup_20260921/battery_rounding/sources/c4_k05.csv": "d51b0dab0f1f20b7d9ce193b79f5ea1ac48a0d084b435ed7d0b4a26485fe3653",
+    "outputs/research_followup_20260921/battery_rounding/sources/c4_k05_warm_result.json": "480afcb2eb2e488c7eeb3e8b5199cabee1852aaf45ae7c9cbd2cab177b79726d",
+    "outputs/research_followup_20260921/battery_rounding/sources/c4_k08_base_result.json": "7d5fdb4e6a73f4b6dbb6df9aace22ea50f60d30e96c25cdc518547c7df7da0be",
+    "outputs/research_followup_20260921/battery_rounding/sources/c4_k08.csv": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+    "outputs/research_followup_20260921/battery_rounding/sources/c4_k08_warm_result.json": "97b19ca46cf80aa0a8b0fbd192505fbf6d132d35bb38cb8c4a8594c4a6973553",
+    "outputs/research_followup_20260921/battery_rounding/sources/c4_k10_base_result.json": "d79480c0e2c528400876c257d7001d5d7b9fbc5c321270c5f75b5bc125f0ae05",
+    "outputs/research_followup_20260921/battery_rounding/sources/c4_k10.csv": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+    "outputs/research_followup_20260921/battery_rounding/sources/c4_k10_warm_result.json": "61dde8d868c3386ff2be3254331a228ea99e9c44d674d8e00c3f8093368ba5e9",
+    "outputs/research_followup_20260921/battery_rounding/sources/c4_k15_base_result.json": "f77709fc8398f3376db753c3028fdef8f5dae6c7ca6aa71af89a3601de0c2ba7",
+    "outputs/research_followup_20260921/battery_rounding/sources/c4_k15.csv": "16cd175ed25d1872a191a750b6586ef2fd395c587ad6323ff5895f4094d15fb2",
+    "outputs/research_followup_20260921/battery_rounding/sources/c4_k15_warm_result.json": "f82868a317863b9700fce9260c90d7943b203c885fced175f6fddf8fe2efd083",
+    "outputs/research_followup_20260921/battery_rounding/sources/c5_k05_base_result.json": "ab66ed3b0f6e5a10951ae34a8a93f48c81e7c826dd64ebeac4b4cbb0aef61926",
+    "outputs/research_followup_20260921/battery_rounding/sources/c5_k05.csv": "9b7788a554cdacca084e0cb218796da5d5e0ae076c61073b667ed288dc157a1e",
+    "outputs/research_followup_20260921/battery_rounding/sources/c5_k05_warm_result.json": "03222826e0c4b3c60c30fae4ef93ac1d51f8e0b8c42af61b6196da6a8ace3d8c",
+    "outputs/research_followup_20260921/battery_rounding/sources/c5_k08_base_result.json": "7e0c12ec4fd898f5038f10ca06e6d320e32b3e5c109e465a252a158bd0e66910",
+    "outputs/research_followup_20260921/battery_rounding/sources/c5_k08.csv": "85aa4a37119b2604a41aa83f46c8b8987bb95c8165c4adfb0a58ce65dbeee05b",
+    "outputs/research_followup_20260921/battery_rounding/sources/c5_k08_warm_result.json": "390a77c4dff0bb3d29f90b62fd4290a5ed74fd7167acb460a86ba774a07b11f1",
+    "outputs/research_followup_20260921/battery_rounding/sources/c5_k10_base_result.json": "db16ef1735444a8c6cc8da16d5f8a2bd884b302a0fce13abd27e6a931547acdf",
+    "outputs/research_followup_20260921/battery_rounding/sources/c5_k10.csv": "b2fa6d6ca7c5deda4877c8f22d726dc49e6bddb72a921fee1da34ec1c3ef86f8",
+    "outputs/research_followup_20260921/battery_rounding/sources/c5_k10_warm_result.json": "5e76a30d4f27b3e22ecd5ea2acf8dc120e4306ccca932f03a02e493d42ae70af",
+    "outputs/research_followup_20260921/battery_rounding/sources/c5_k15_base_result.json": "5d205a87cbc701a70b282578f901adb299315a0d1fed0c9cb973755ec6474d20",
+    "outputs/research_followup_20260921/battery_rounding/sources/c5_k15.csv": "985760e3065f3ba1d7d62960ae77ff6d61e7d331eb3ebb6582cc774c4835e240",
+    "outputs/research_followup_20260921/battery_rounding/sources/c5_k15_warm_result.json": "37b52635969393aab3bb15faa8d90bc815e1f45da655732b9a1ba0f8b502080e",
+    "outputs/research_followup_20260921/battery_rounding/sources/c6_k05_base_result.json": "9221c110deb9d2ded687e4ff531afefb8a2f5e0a37f4cf60c326e177fc6c5a6e",
+    "outputs/research_followup_20260921/battery_rounding/sources/c6_k05.csv": "607cba23d981e3ed76448f035f89785b2d253c2f5242559ed65dee6b0dac9236",
+    "outputs/research_followup_20260921/battery_rounding/sources/c6_k05_warm_result.json": "e720b2458291a9be1ebcfc04ed12d3f428d9ce021154be26256a4304b8e1f5a5",
+    "outputs/research_followup_20260921/battery_rounding/sources/c6_k08_base_result.json": "d5b6260a07a8713ab875f72d821267bba76cfac9e8f84f84bf30d9b7bf4649f9",
+    "outputs/research_followup_20260921/battery_rounding/sources/c6_k08.csv": "749b356e355c6b7f08f45aa04764f193281215214e084460027fbe63176e400b",
+    "outputs/research_followup_20260921/battery_rounding/sources/c6_k08_warm_result.json": "cd9916534fe7fe551a78306675ce8fa9be871c551cfdd0305f6a9001c0737ac8",
+    "outputs/research_followup_20260921/battery_rounding/sources/c6_k10_base_result.json": "8a312f1c7c75342a84de16915c731e92496c9e796b7155779219cfb39cc9fe9d",
+    "outputs/research_followup_20260921/battery_rounding/sources/c6_k10.csv": "b6b8abf3c83ef5e8d3167d6a785b8403fb20c8927e25c409193e1c744174ffc0",
+    "outputs/research_followup_20260921/battery_rounding/sources/c6_k10_warm_result.json": "169b4505a8b5970586084726add6f3095c561beda92f0ce17fa12e37d0544127",
+    "outputs/research_followup_20260921/battery_rounding/sources/c6_k15_base_result.json": "86680de39a5ec353b7bb45b3b47fbfc71a375ff2aa7b51212e29f8786cf657cf",
+    "outputs/research_followup_20260921/battery_rounding/sources/c6_k15.csv": "7c28172dd2dc8b5fde8419b6600f8de3d0a587be7f538aa073cffe7696662c95",
+    "outputs/research_followup_20260921/battery_rounding/sources/c6_k15_warm_result.json": "4ff740dee52be86781cba7095797b2c0e955e41b75cecb684ae5095883be4759",
+    "outputs/research_followup_20260921/battery_rounding/replay.py": "72ec279a8ffea8ec7dd4daa4d9ebc30ea3bc1dbe26eb6c6b67637e1f215ea3d9"
+  },
+  "lookup_source_hashes": {
+    "outputs/research_followup_20260921/battery_rounding/sources/Ref_dict.csv": {
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "bytes": 512
+    },
+    "outputs/research_followup_20260921/battery_rounding/sources/par_ref_dhd.csv": {
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "bytes": 2573
+    },
+    "outputs/research_followup_20260921/battery_rounding/sources/giro40_duty_manifest.csv": {
+      "sha256": "0b7bff79de3868ca91adec732f87329ed9d54eb255e697ef57100ca1eeeb4e7b",
+      "bytes": 11948
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13301.csv": {
+      "sha256": "62d088450cf338b75be3c6e266b8f5fb2458906999f859b0bb9de519f235c9b6",
+      "bytes": 2030
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13302.csv": {
+      "sha256": "cd7d16163559278f773f3492a6b2a626b9493bb960321b154b4dca43fd8cefae",
+      "bytes": 2808
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13303.csv": {
+      "sha256": "d8d8c0bb275571bc8b96ce0ec2065fbac6d77098b2362b1bb51ff71201bcf2c3",
+      "bytes": 2994
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13304.csv": {
+      "sha256": "8791484eb7adbcc2cdbc8ad0e9c0787a293fff910b1f244d46c1c86c2846c442",
+      "bytes": 2084
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13305.csv": {
+      "sha256": "36d0abb32d64e04ada4b85bcc9fe37bf2fb63608bcd1967e48429852e46a5d24",
+      "bytes": 1695
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13306.csv": {
+      "sha256": "eca8a0024ff764531bab838167ed7203c8ce4d7111349d24d20ba48f864badb6",
+      "bytes": 1702
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13307.csv": {
+      "sha256": "7a9ee0c76bac2784cdfac2c71b7c78d448840caa00521be263dd8a96ea9a7742",
+      "bytes": 883
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13308.csv": {
+      "sha256": "6197e17a70567bb75b7a442dba4e9c23d3b11a11b62cc54cc10e7f40ed8d9e2e",
+      "bytes": 1760
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13309.csv": {
+      "sha256": "859a7f179936426d4891260f7f3068ee5af4565c9f5821d118cb619db3c53fd3",
+      "bytes": 1269
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13310.csv": {
+      "sha256": "09c1ebbfa2bc5a0d0c79965e15c3195403dc6353d46bda3ec4937dd28ba7e643",
+      "bytes": 1375
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13311.csv": {
+      "sha256": "1e60cf4df1e157c4fa6e10939547fdbd26435025e00c4b207d8f9c1d3db07baa",
+      "bytes": 827
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13312.csv": {
+      "sha256": "e0e2f78f4d39b347e0a995be1b71f7e6e3f065ff3554a75b35552285660e221f",
+      "bytes": 2584
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13313.csv": {
+      "sha256": "afb97f4a86185792d0dc6d21be93bd1932df7bd093893f7bad0af550dd9e3f5a",
+      "bytes": 2120
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13314.csv": {
+      "sha256": "a97d95826458839dbab9c11f30d5f82d53c5a517d805f7576b4b169947a6ef73",
+      "bytes": 938
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13315.csv": {
+      "sha256": "30c7f0d8d96deb4dce99fc57029ed41df25c035e53ba399d2aefa3bf3c37d315",
+      "bytes": 1741
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13316m.csv": {
+      "sha256": "fdc892a16332b9ad38811fd2f31641ad93b63b2645d0ae29308e0d761aa40b33",
+      "bytes": 1319
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13316uwt.csv": {
+      "sha256": "612bdcea559d126f5f418e084e11820574fff6a6d6ecfaacb0d3b5aaa1d51c73",
+      "bytes": 1214
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13317.csv": {
+      "sha256": "df8cc1b27900118f714e60c42cc6706e876ea88fe69b165634c402c25931c9f5",
+      "bytes": 2088
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13318.csv": {
+      "sha256": "ddaf1db8ef067a06db3ab54c049e82c80c20b202c3fa9d7dad308c5e88949b9c",
+      "bytes": 1881
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13319.csv": {
+      "sha256": "acbc6e1b6bbcd938748ab7f08b0be9adc20f00cf747ce4d2b71f3fd9ecc34ceb",
+      "bytes": 1555
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13320.csv": {
+      "sha256": "940960d6f0a74f56f584048110cc165eb45e022d46f481025a0e59f81866e875",
+      "bytes": 941
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13321.csv": {
+      "sha256": "38799a8926e79a869f49fe249b6758895bf0ebff20d0bddbb90052583c09fdb7",
+      "bytes": 1285
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13322.csv": {
+      "sha256": "146e565cd787850271bf61644d6b2e808d1596671016cb0ffdcdafb283463bb6",
+      "bytes": 1492
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13323.csv": {
+      "sha256": "0d935f730a582087cc1a4fdd58258acb817e089c07b860eb9745624e4b4be14f",
+      "bytes": 511
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13324muw.csv": {
+      "sha256": "9d8e00367c5149b5fa7df38c4516cda03a1200c7b3db1e60aacc456a926461c2",
+      "bytes": 1002
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13324t.csv": {
+      "sha256": "2272a0bce5e956ba30d77e55aaeb881a247a397e60ea81a431c136026a460cea",
+      "bytes": 1057
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13325.csv": {
+      "sha256": "8e5c72a1230c878d87eb279df986fa8d04da46d8d8f966f8fba4dead6f16fbd2",
+      "bytes": 2367
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13326.csv": {
+      "sha256": "eecd19c587cbb983711e8c9f660a8448a74936cbe99d329b828cb2a67e05c521",
+      "bytes": 1222
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13401.csv": {
+      "sha256": "ff34b8341ea0fea81696ec7cbe8ad393cd4735c86d61aa20823ad7fa9c2178ce",
+      "bytes": 672
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13402.csv": {
+      "sha256": "f4f60b201d030ed910cec22180da53a9a6f1a8e4d999ae50f70fe7182037cb12",
+      "bytes": 926
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13403.csv": {
+      "sha256": "545d348c9d905f115df448d626fe96b4af0f2c0bc2a9614323bcd7942a45fbab",
+      "bytes": 778
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13404.csv": {
+      "sha256": "364b0063aeff6d22a95a93d4ef95201e08e0b31100b8fafc4dd872e0f35b6702",
+      "bytes": 927
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13405.csv": {
+      "sha256": "2b37f26d202e6fc3ae37155720a5bed4eef9abd84dce4d09aa3d3a46ccd42454",
+      "bytes": 728
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13406.csv": {
+      "sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "bytes": 776
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13407.csv": {
+      "sha256": "f3c1fac0d6b94fc66de4e424118ab9d6af086dfbd82e447280d1b43fd5a28ae9",
+      "bytes": 936
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13408.csv": {
+      "sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+      "bytes": 620
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13409.csv": {
+      "sha256": "a59b4a623c53e03896fda166693fd2a117591fa77cf0652f2a186fcea47a5ede",
+      "bytes": 931
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13410.csv": {
+      "sha256": "b5fc8edbb3beb2836b2c0cbeeefda200524a411b6b1b385bb465f69a96bbacf8",
+      "bytes": 835
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13411.csv": {
+      "sha256": "f69accad27f7ed4b2a88b41ffcac688ffc787f5ac16649f8822d88cd3ed24d56",
+      "bytes": 780
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13412.csv": {
+      "sha256": "7556598977ecc6de476ba8449286b2b7e571e5a999b9e779294ef20928e0c0b0",
+      "bytes": 836
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13413.csv": {
+      "sha256": "2de040cf2769c1fe0ed2201dcd9605a6ce734097e551e8872c07fd11df5b0a99",
+      "bytes": 828
+    },
+    "outputs/meeting_20260910/giro_k1_recovery_review/inputs/k1/duty_13414.csv": {
+      "sha256": "ca682c883e1421c82bae50568bba7273be816ddb05f6134affc1c2bcc75f482a",
+      "bytes": 681
+    }
+  },
+  "script_sha256": "be91103f7f68390f43241d53339ce400b6ea5cb81e71f8f1d2bf95abfb5806be",
+  "resources": "Local serial SciPy HiGHS LP; no scheduler jobs, no CG, per-LP10second limit",
+  "physics": {
+    "capacity_kwh": 236.44,
+    "initial_kwh": 236.44,
+    "charge_kw": 240,
+    "reserve_kwh": 0,
+    "terminal_floor": null,
+    "shared_capacity": false,
+    "idle_kw": 0
+  },
+  "objective": "Minimize L1 change of charged energy at fixed existing blocks; fallback same existing stop visits with continuous time windows",
+  "master_sense": "No fleet/master solve; original cover selections retained",
+  "initialization": "Frozen saved MIP selected schedules",
+  "dependencies": "Original immutable result/instance/reference inputs; no new scheduler dependency",
+  "output_hashes": {
+    "repair.py": "be91103f7f68390f43241d53339ce400b6ea5cb81e71f8f1d2bf95abfb5806be",
+    "per_route.csv": "b2a0119d5c7ddfb6acfb8fa115d1426d0498377d16f53e95738a27710b25c64c",
+    "summary.json": "1aaa5381fbb94422e1cd061499c8b762a09be5e7b3d5555f067c012c500981e2",
+    "per_solution.csv": "cad50eeabd7659c1eaa4b619fe7a8c4bfcc24f0a0e50ae35a28045a7f3bd92bd",
+    "repaired_schedules.json": "cd7c20e20cd017323bb35ab9c2855f6613ed49e08ceea6af121f6aab53e394d9",
+    "verify_saved.py": "86171067aa9243d377e86bc9578b2b54a904602ef6413848b52d5e9f97b30a81",
+    "independent_validation.json": "236566068d6c5f82c68e3d226c68911640832e0ebc25a844ea12e809eb1dc420",
+    "README.md": "c7ff0749c41ae2c00addb1be3878dd7f509d12ffc9ef8fdfd027b9668dbca5c1"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "pairs": 24,
+  "endpoints": 48,
+  "per_arm": {
+    "fresh": {
+      "fleet_optimal": 10,
+      "fleet_time_limit": 14,
+      "charging_optimal": 7,
+      "charging_time_limit": 17,
+      "target_hits": 6,
+      "total_optimize_s_range": [
+        0.8599161147139966,
+        3602.709597510053
+      ],
+      "total_optimize_median_min": 59.985822430761374,
+      "fleet_optimize_median_min": 30.001314604623865,
+      "charging_optimize_median_min": 29.98729401489836,
+      "all_24_total_optimizer_hours": 17.106433506765622,
+      "actual_under_10min": 7
+    },
+    "sequential": {
+      "fleet_optimal": 24,
+      "fleet_time_limit": 0,
+      "charging_optimal": 10,
+      "charging_time_limit": 14,
+      "target_hits": 24,
+      "total_optimize_s_range": [
+        0.7723080711439252,
+        3599.400883378694
+      ],
+      "total_optimize_median_min": 59.951350612278716,
+      "fleet_optimize_median_min": 0.0885204928345047,
+      "charging_optimize_median_min": 54.719666824959376,
+      "all_24_total_optimizer_hours": 14.78129503727386,
+      "actual_under_10min": 7
+    }
+  },
+  "source_mip_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "first_target_times_identified": 0,
+  "timing_source": "gurobi_optimize_stage_wall_s (direct wall timer around each optimize_with_start_audit call); sum verified against gurobi_optimize_wall_s",
+  "solver_phase_runtime_semantics": "runtime_s includes inter-stage validation and postsolve work; physical preparation/source hashing outside the phase are separate",
+  "no_new_solver_runs": true
+}

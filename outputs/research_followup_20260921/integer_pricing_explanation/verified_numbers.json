@@ -1,0 +1,131 @@
+{
+  "verified_utc": "2026-09-22T03:19:58.656447+00:00",
+  "c1_witness": {
+    "trips": 194,
+    "pool_columns": 39940,
+    "route_weight": 7.999999999999991,
+    "lp_weighted_objective": 800383.6879776365,
+    "lp_positive_routes": 99,
+    "all_positive_routes_fractional": true,
+    "witness_routes": 8,
+    "witness_weighted_cost": 800479.96,
+    "witness_gap": 96.27202236349694,
+    "reduced_costs": [
+      4.384718451852677,
+      5.3395541615609545,
+      5.0144118266616715,
+      53.08578298476641,
+      1.7329435516148806,
+      0.103113661534735,
+      2.08139759147889,
+      0.40016938842018135
+    ],
+    "reduced_cost_sum": 72.1420916178904,
+    "coverage_surplus_dual_value": 24.129930744989927,
+    "duplicate_trip_ids": [
+      76,
+      88
+    ],
+    "identity_residual": 6.166160915199725e-10
+  },
+  "replication": {
+    "paired_case_seeds": 8,
+    "distinct_cases": 4,
+    "seeds_per_case": 2,
+    "treatment_target8": 7,
+    "control_target8": 0,
+    "proof_log_lines_checked": 64
+  },
+  "c1_dive_nodes": [
+    {
+      "node_id": 1,
+      "depth": 0,
+      "outcome": "node_fractional",
+      "node_stop": "certified_fractional",
+      "artificial_total": 0.0,
+      "columns_added": 186,
+      "penalized_pricing_closed": true
+    },
+    {
+      "node_id": 2,
+      "depth": 1,
+      "outcome": "node_uncertified",
+      "node_stop": "node_time_limit",
+      "artificial_total": 0.0,
+      "columns_added": 2370,
+      "penalized_pricing_closed": false
+    },
+    {
+      "node_id": 3,
+      "depth": 2,
+      "outcome": "node_uncertified",
+      "node_stop": "node_time_limit",
+      "artificial_total": 0.0,
+      "columns_added": 2670,
+      "penalized_pricing_closed": false
+    },
+    {
+      "node_id": 4,
+      "depth": 3,
+      "outcome": "node_uncertified",
+      "node_stop": "node_time_limit",
+      "artificial_total": 0.0,
+      "columns_added": 2730,
+      "penalized_pricing_closed": false
+    },
+    {
+      "node_id": 5,
+      "depth": 4,
+      "outcome": "node_uncertified",
+      "node_stop": "node_time_limit",
+      "artificial_total": 0.2509943181818176,
+      "columns_added": 1320,
+      "penalized_pricing_closed": false
+    },
+    {
+      "node_id": 6,
+      "depth": 4,
+      "outcome": "node_uncertified",
+      "node_stop": "node_time_limit",
+      "artificial_total": 0.0,
+      "columns_added": 1320,
+      "penalized_pricing_closed": false
+    },
+    {
+      "node_id": 7,
+      "depth": 5,
+      "outcome": "node_uncertified",
+      "node_stop": "node_time_limit",
+      "artificial_total": 0.9087333100032303,
+      "columns_added": 1320,
+      "penalized_pricing_closed": false
+    },
+    {
+      "node_id": 8,
+      "depth": 5,
+      "outcome": "node_uncertified",
+      "node_stop": "node_time_limit",
+      "artificial_total": 0.0,
+      "columns_added": 1380,
+      "penalized_pricing_closed": false
+    },
+    {
+      "node_id": 9,
+      "depth": 6,
+      "outcome": "node_uncertified",
+      "node_stop": "node_time_limit",
+      "artificial_total": 0.0,
+      "columns_added": 2520,
+      "penalized_pricing_closed": false
+    },
+    {
+      "node_id": 10,
+      "depth": 7,
+      "outcome": "node_integral",
+      "node_stop": "certified_integral",
+      "artificial_total": 0.0,
+      "columns_added": 150,
+      "penalized_pricing_closed": true
+    }
+  ]
+}

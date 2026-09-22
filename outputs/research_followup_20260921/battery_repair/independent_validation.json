@@ -1,0 +1,31 @@
+{
+  "valid": true,
+  "route_occurrences_checked": 487,
+  "original_trip_order_and_nodes_preserved": true,
+  "trip_occurrences_preserved": 11400,
+  "charging_starts_before_and_after": 1420,
+  "occurrences_with_original_intervals_preserved": 486,
+  "occurrences_with_retiming": 1,
+  "max_power_kw": 240.00000000000023,
+  "min_soc_kwh": -3.517186542012496e-13,
+  "max_soc_kwh": 236.44000000000008,
+  "baseline_total_unused_interval_energy_capacity_kwh": 8471.560326960038,
+  "zero_net_energy_change_repairs": 6,
+  "modified_route_net_energy_kwh": {
+    "min": 0.0,
+    "median": 2.0199989999999275,
+    "max": 3.560000000000059
+  },
+  "modified_route_gross_addition_kwh": {
+    "min": 0.01999899999992749,
+    "median": 2.019998999999956,
+    "max": 3.5600000000001017
+  },
+  "fleet_cost_increment": {
+    "min": 0.0,
+    "median": 0.6616636528000068,
+    "max": 1.8503766873600327
+  },
+  "witness_sha256": "cd7c20e20cd017323bb35ab9c2855f6613ed49e08ceea6af121f6aab53e394d9",
+  "validation_scope": "Fixed route chronology, arcs/deadheads, energy endpoints and power; no charger capacity or operational/full-model proof"
+}

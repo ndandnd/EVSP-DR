@@ -1,0 +1,23 @@
+{
+  "route_occurrences": 487,
+  "distinct_schedules": 463,
+  "initial_failures": 195,
+  "stages": {
+    "existing_intervals": 194,
+    "unchanged": 292,
+    "retimed_same_visits": 1
+  },
+  "distinct_stages": {
+    "existing_intervals": 179,
+    "unchanged": 283,
+    "retimed_same_visits": 1
+  },
+  "whole_solutions_valid": 48,
+  "solutions": 48,
+  "net_added_energy_kwh": 339.0048371400009,
+  "gross_added_energy_kwh": 352.1448301400009,
+  "electricity_cost_change": 33.62927984428812,
+  "charging_objective_change": 33.62927984428812,
+  "added_outside_original_windows_min": 0.0024993749999566717,
+  "wall_seconds": 0.4678379590623081
+}
