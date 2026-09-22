@@ -114,3 +114,17 @@ def dual_certificate(columns,costs,y,mu,cap,incumbent,scale=10**8):
             'removable_fraction':len(zero)/len(columns),'incumbent_indices':incumbent,
             'certificate_formula':'L=sum(y)+K*mu+sum(min(0,c_floor-A^T*y-mu)); LB(xj=1)=L+max(0,qj); LB(xj=0)=L+max(0,-qj)',
             'scope':'Exact integer arithmetic for rounded-down objective and signed rational multipliers; 0<=x<=1 bound terms included; screening diagnostic only'}
+
+
+def unpack_incidence(archive):
+    """Fetch each compressed NPZ member once, then slice in memory."""
+    indptr=archive['indptr'];indices=archive['indices'];costs=archive['costs']
+    columns=[list(map(int,indices[int(a):int(b)])) for a,b in zip(indptr[:-1],indptr[1:])]
+    return columns,list(map(float,costs))
+
+
+def witness_cost_audit(costs,selected,reported_integer_cost,solver_objective):
+    """Solver ObjVal may use tolerance-fractional x; UB uses integral witness."""
+    actual=sum(costs[j] for j in selected)
+    if abs(actual-reported_integer_cost)>=1e-7:raise ValueError('Selected integral route cost differs from saved exact route-cost total')
+    return {'source_integer_witness_cost':actual,'source_stage2_solver_objective':solver_objective,'source_integer_witness_minus_solver_objective':actual-solver_objective}

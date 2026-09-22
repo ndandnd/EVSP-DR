@@ -1,7 +1,7 @@
 """Frozen same-pool diagnostics and fleet-only parameter trials; no CG."""
 from pathlib import Path
 import argparse,hashlib,json,os,sys,time,math,re,gzip,socket,subprocess
-from core import digest,structure,dual_certificate,validate_start
+from core import digest,structure,dual_certificate,validate_start,unpack_incidence,witness_cost_audit
 
 
 def sha(path):
@@ -77,8 +77,7 @@ def prepare(root,manifest,case,out):
     except (AssertionError,ValueError,IndexError) as exc:
         strong_reason='Saved stage-one incumbent failed exact frozen-pool identity/coverage/objective check: '+str(exc);strong=None
     by_hash={h:j for j,h in enumerate(hashes)};charging=[by_hash[h] for h in endpoint['selected_route_hashes']];validate_start(columns,len(trips),charging,endpoint['two_stage']['stage1_buses'])
-    charging_witness_cost=sum(costs[j] for j in charging)
-    assert abs(charging_witness_cost-endpoint['variable_route_cost'])<1e-7
+    witness_audit=witness_cost_audit(costs,charging,endpoint['variable_route_cost'],endpoint['two_stage']['stage2_variable_obj']);charging_witness_cost=witness_audit['source_integer_witness_cost']
     identity={'trips':trips,'columns':columns,'costs':costs,'route_hashes':hashes};matrix_hash=digest(identity)
     offsets=[0]
     for col in columns:offsets.append(offsets[-1]+len(col))
@@ -107,11 +106,11 @@ def trial(root,manifest,case,arm,out):
     from gurobipy import GRB
     import gurobipy as gp
     loaded=time.monotonic();assert '.'.join(map(str,gp.gurobi.version()))==manifest['gurobi_version']
-    gate=json.loads((root/'prepared'/f"{case['id']}.json").read_text());assert sha(gate['complete'])==gate['sha256'];complete=json.loads(Path(gate['complete']).read_text());assert sha(complete['matrix_file'])==complete['matrix_file_sha256'];assert sha(complete['matrix_metadata'])==complete['matrix_metadata_sha256'];meta=json.loads(Path(complete['matrix_metadata']).read_text());z=np.load(complete['matrix_file'],allow_pickle=False);columns=[z['indices'][int(a):int(b)].tolist() for a,b in zip(z['indptr'][:-1],z['indptr'][1:])];costs=z['costs'].tolist();assert digest({'trips':meta['trips'],'columns':columns,'costs':costs,'route_hashes':meta['route_hashes']})==meta['matrix_identity_sha256']
+    gate=json.loads((root/'prepared'/f"{case['id']}.json").read_text());assert sha(gate['complete'])==gate['sha256'];complete=json.loads(Path(gate['complete']).read_text());assert sha(complete['matrix_file'])==complete['matrix_file_sha256'];assert sha(complete['matrix_metadata'])==complete['matrix_metadata_sha256'];meta=json.loads(Path(complete['matrix_metadata']).read_text());write(out/'phase_loading.json',{'started_unix':time.time(),'matrix_file':complete['matrix_file']});z=np.load(complete['matrix_file'],allow_pickle=False);columns,costs=unpack_incidence(z);z.close();assert digest({'trips':meta['trips'],'columns':columns,'costs':costs,'route_hashes':meta['route_hashes']})==meta['matrix_identity_sha256']
     if arm=='strong_start' and not meta['strong_start_available']:
         write(out/'result.json',{'case':case['id'],'arm':arm,'status':'BLOCKED','reason':meta['strong_start_blocked_reason'],'optimizer_run':False});return
     start=meta['strong_start'] if arm=='strong_start' else meta['greedy_start'];validate_start(columns,meta['rows'],start)
-    artifact_loading_s=time.monotonic()-loaded;build_started=time.monotonic()
+    artifact_loading_s=time.monotonic()-loaded;write(out/'phase_loaded.json',{'wall_s':artifact_loading_s,'finished_unix':time.time(),'matrix_identity_sha256':meta['matrix_identity_sha256']});build_started=time.monotonic()
     mdl,x,cover,cap=model(columns,meta['rows'],[1.0]*len(columns),None,out/'gurobi.log')
     start_set=set(start)
     for j in range(len(columns)):x[j].VType=GRB.BINARY;x[j].Start=1 if j in start_set else 0
@@ -121,6 +120,7 @@ def trial(root,manifest,case,arm,out):
     elif arm not in ['default','strong_start']:raise ValueError(arm)
     mdl.Params.TimeLimit=1800;mdl.update();assert (mdl.NumConstrs,mdl.NumVars,mdl.NumNZs)==(case['rows'],case['columns'],case['nonzeros'])
     build_wall_s=time.monotonic()-build_started;dimensions={'rows':mdl.NumConstrs,'variables':mdl.NumVars,'nonzeros':mdl.NumNZs};parameters={k:getattr(mdl.Params,k) for k in ['Threads','Seed','TimeLimit','MIPGap','MIPFocus','PreSparsify','Presolve','Method']}
+    write(out/'phase_model_ready.json',{'build_wall_s':build_wall_s,'dimensions':dimensions,'parameters':parameters,'ready_unix':time.time()})
     events=[]
     def callback(model,where):
         if where==GRB.Callback.MIPSOL:

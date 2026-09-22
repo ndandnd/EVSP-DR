@@ -109,3 +109,22 @@ class IdempotenceTests(unittest.TestCase):
             with patch('sys.argv',['launch',str(root)]),patch('launch.subprocess.run') as submit:
                 with self.assertRaises(RuntimeError):launch.main()
                 submit.assert_not_called()
+
+class LoadingAndWitnessTests(unittest.TestCase):
+    def test_npz_fetches_each_member_once(self):
+        from core import unpack_incidence
+        from collections import Counter
+        class Archive:
+            def __init__(self):self.calls=Counter();self.data={'indptr':[0,1,2,4],'indices':[0,1,0,1],'costs':[0.0,-1e-11,2.0]}
+            def __getitem__(self,key):self.calls[key]+=1;return self.data[key]
+        a=Archive();columns,costs=unpack_incidence(a)
+        self.assertEqual(columns,[[0],[1],[0,1]])
+        self.assertEqual(costs,[0.0,-1e-11,2.0])
+        self.assertEqual(dict(a.calls),{'indptr':1,'indices':1,'costs':1})
+
+    def test_integral_witness_not_tolerance_fractional_solver_objective(self):
+        from core import witness_cost_audit
+        r=witness_cost_audit([300.0,376.216],[0,1],676.2160000000149,676.2159718853597)
+        self.assertAlmostEqual(r['source_integer_witness_cost'],676.216)
+        self.assertGreater(r['source_integer_witness_minus_solver_objective'],1e-5)
+        with self.assertRaises(ValueError):witness_cost_audit([300.0,376.216],[0,1],675.0,676.2159718853597)
