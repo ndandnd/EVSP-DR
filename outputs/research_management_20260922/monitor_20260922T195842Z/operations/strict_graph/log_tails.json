@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/attempts/772820_r0/cold.log",
+    "bytes": 616,
+    "tail": "{\"phase\": \"cold\", \"event\": \"graph_operation_started\", \"model_commit\": \"fedf421461f94727e6b1292a0e7789ab76ed8587\"}\n{\"phase\": \"cold\", \"event\": \"graph_operation_complete\", \"runtime_s\": 11298.54421973601, \"network\": {\"time_model\": \"event\", \"dag_nodes\": 24796, \"dag_arcs\": 202705695, \"arc_mode\": \"lazy\", \"materialized_python_arc_objects\": 0, \"packed_arc_bytes\": 3243291120, \"station_event_times\": {\"2190L_0\": 28, \"4808_0\": 28, \"PARX_1\": 591, \"3127L_0\": 579, \"7880C_0\": 570, \"JON_A_0\": 611}, \"station_charge_kw\": {\"PARX\": 60.0}, \"event_lattice_sha256\": \"3ce991f4b848c05807a25509ebef735f39763015f0df33411d237f5d2c9c66e7\"}}\n"
+  },
+  {
+    "path": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/attempts/772820_r0/reload.log",
+    "bytes": 621,
+    "tail": "{\"phase\": \"reload\", \"event\": \"graph_operation_started\", \"model_commit\": \"fedf421461f94727e6b1292a0e7789ab76ed8587\"}\n{\"phase\": \"reload\", \"event\": \"graph_operation_complete\", \"runtime_s\": 15.955081375781447, \"network\": {\"time_model\": \"event\", \"dag_nodes\": 24796, \"dag_arcs\": 202705695, \"arc_mode\": \"lazy\", \"materialized_python_arc_objects\": 0, \"packed_arc_bytes\": 3243291120, \"station_event_times\": {\"2190L_0\": 28, \"4808_0\": 28, \"PARX_1\": 591, \"3127L_0\": 579, \"7880C_0\": 570, \"JON_A_0\": 611}, \"station_charge_kw\": {\"PARX\": 60.0}, \"event_lattice_sha256\": \"3ce991f4b848c05807a25509ebef735f39763015f0df33411d237f5d2c9c66e7\"}}\n"
+  },
+  {
+    "path": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/logs/772820.err",
+    "bytes": 0,
+    "tail": ""
+  },
+  {
+    "path": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/logs/772820.out",
+    "bytes": 0,
+    "tail": ""
+  }
+]

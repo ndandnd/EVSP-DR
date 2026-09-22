@@ -1,0 +1,5835 @@
+{
+  "cache_bytes": 3244992792,
+  "cache_path": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/artifacts/k19_fedf4214.graph.cache",
+  "cg_pricing_certificate": null,
+  "cg_started": false,
+  "cold_reload_parity": true,
+  "fingerprint_s": 11.577099773101509,
+  "fresh_initial_pool_equality_proved": true,
+  "graph_fingerprint": {
+    "_arc_costs": "98e4a6a6f3220f1e4908509addeb0df4c76dfb3a1734b9c1bd397837db119642",
+    "_arc_recipes": "8c418d552cf5cb5272c8bd713c1c90eae1f5146a06d7cf73faed05bbe9635b39",
+    "_arc_targets": "0e3952cad2dae1336b8f116cc187304d6d26a27f587fdcc81491d42e43619d76",
+    "metadata": "35d4a17e4306f7a7dc5f1fcf39f06f781e08058bccd9c7b7959f02327b5ae7d9"
+  },
+  "graph_operation_s": 15.955081375781447,
+  "identity_sha256": "5174e331cb74d9198db410cd1465a295e6cf0726ad65a065d5eee3b0ea069291",
+  "initial_pool": {
+    "feasible_singleton_records": 331,
+    "full_record_equality_to_saved_initial_pool": true,
+    "inheritance": {
+      "audited_compatible_parent_commit": "35770aae2c08e7d5a356cc3b673e67608e5b1036",
+      "child_execution_commit": "fedf421461f94727e6b1292a0e7789ab76ed8587",
+      "every_inherited_route_replayed": true,
+      "inherited_columns": 8343,
+      "parent_execution_commit": "35770aae2c08e7d5a356cc3b673e67608e5b1036",
+      "parent_instance_sha256": "95a79cdcb9a84d135fb086626f511cd377dbc31427d98ac696ea4801c7e51c88",
+      "parent_pool": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/input_artifacts/k17_pool.jsonl",
+      "parent_pool_sha256": "7355363be623e1a154484fda4767e35bd2ef28a04c2f9efbe4f48c1618a8e3af",
+      "parent_status": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/input_artifacts/k17_status.json",
+      "parent_status_sha256": "0da1c9472f94a32b587aa63a1e2e16ee4267553be6eb897234358a660f115844",
+      "trip_mapping_sha256": "0088290e694f9615cf93e3c599923b767325ea5c9596133610200bf4d7bc21fe"
+    },
+    "inherited_columns": 8343,
+    "initial_pool_columns": 8397,
+    "new_checkpoint_id": "187a86ffe83fda3cc7c9eab806690e31ac690b7b744914af3207ff79aa61c4c8",
+    "new_singleton_columns": 54,
+    "normalized_fields": [
+      "cg_checkpoint_id"
+    ],
+    "ordered_record_sha256": "5f1dc416ac55263de1bb52503858445e5f660883fba038c6f4ef193873f48d81",
+    "runtime_s": 9.259055843111128,
+    "singleton_checks": [
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "19f1efc1b817b180efb08f2a633c6a52af24347d8e21c47c5a21aa47f96dd929",
+        "runtime_s": 0.011254834942519665,
+        "trip": 0
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "3f615d7e7e45401eae20e2afd635ea53e5a967f7e08fd7fc3f90185264ddc854",
+        "runtime_s": 0.009783117100596428,
+        "trip": 1
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "9e5e94b08c4c5e5558084cd98e2776bfd4da3dc8de93fceef5b2082da50e3aff",
+        "runtime_s": 0.010658981278538704,
+        "trip": 2
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "6d29e17e43d8e8299198f73ef809e3e071088ee4d1a04595a1c3e23a33a5caab",
+        "runtime_s": 0.009468595031648874,
+        "trip": 3
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "0fa8bef5cf1b7d02a035db00e35a13daa3450dbdf3fd082d7b34b717cbadf9be",
+        "runtime_s": 0.010305308271199465,
+        "trip": 4
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "10198ce486905cc5cb73bddc6c29cd2807938b1664ae40663626935150f59451",
+        "runtime_s": 0.009602976031601429,
+        "trip": 5
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "dfa1ce08cba996537d9bef833b029de04b7704b99a6d3983ddf3960faea560d6",
+        "runtime_s": 0.009931853041052818,
+        "trip": 6
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "613d2193478d9d3d732adeb70ba6d209a3066daa50d70284bcd2a5ac573ee901",
+        "runtime_s": 0.010130001232028008,
+        "trip": 7
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "c30ec989b50f52e6cf2b933a16dc18d7f2843c4d312fccc955c11f650f06cd10",
+        "runtime_s": 0.0092393490485847,
+        "trip": 8
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "6d76a4a299eb314ff38253379d60ec437bd296b7264a1dbfa05c35f65fd22af1",
+        "runtime_s": 0.009793123695999384,
+        "trip": 9
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "1c7746aeb91ff915bfac8621de4b9f73611d7d3d1689d48bb63703fe3a111052",
+        "runtime_s": 0.009170108940452337,
+        "trip": 10
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "0766a1b04f2f27138c1bbf881e6f9fb25762f3378dffc22d81089baf9ba4cd1d",
+        "runtime_s": 0.010127204935997725,
+        "trip": 11
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ad99b043e2ee5278f70b00b9e0dda59830ca5a64a72f0132d55c5f3d5452f46a",
+        "runtime_s": 0.009827696718275547,
+        "trip": 12
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "2c7cfc5fb2291578f8cca71fe55138284638de19a90b9f24b0a2d7c9cdd8e677",
+        "runtime_s": 0.011055420152842999,
+        "trip": 13
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "e05d22e572c5a9fd5d1cb10dced39bb36ad25ff787ddf6f9bf93ad308844e6b6",
+        "runtime_s": 0.009712114930152893,
+        "trip": 14
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "b2d02d8db24b3daedf1072e52020b23816ed153126715fc16e70ae8a899fd221",
+        "runtime_s": 0.009693287778645754,
+        "trip": 15
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "8c3e7ee4bd7b8ddf612281103b194bca9875707329b5b451e2aa4f213e8fbefa",
+        "runtime_s": 0.010165227111428976,
+        "trip": 16
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "810170ddc7d5bdd8e4e9ca586684a965522fdf6857d4736514e34eb1f70004d3",
+        "runtime_s": 0.009580578655004501,
+        "trip": 17
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "dcdacd363223a8094d524799216941d3778ca43b23222f59175ee15f823aca88",
+        "runtime_s": 0.009703373070806265,
+        "trip": 18
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "7efcc492e725f2f5dd0bbd34c4eca29b13f532a9769d18c17c933bcdba370ca3",
+        "runtime_s": 0.01089802198112011,
+        "trip": 19
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "8c1866d265191537d8f35343c4a2055741179aa34000bb9571788441db923402",
+        "runtime_s": 0.010733494069427252,
+        "trip": 20
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "2b0ade7b6bf8fe6fca280cc115f180febbee87f1ba6bb0bf6e4f0e9fb89ef218",
+        "runtime_s": 0.009941034950315952,
+        "trip": 21
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "979e72f74e0d1a6afcb40f8254298f259ccaf30f8f6c00a2c45131220b1b855d",
+        "runtime_s": 0.00979900499805808,
+        "trip": 22
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "dbb2e1e11dc6213e9ff35525867ff8de4a4b14b08b780882cce44a6b0236e717",
+        "runtime_s": 0.009993803221732378,
+        "trip": 23
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "9c05eb83d4a41e4981c9708b2af7dcf52f2369014c673dc85154678df2f452c4",
+        "runtime_s": 0.009271346963942051,
+        "trip": 24
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "dfc272618d4f44be06f0daba2c57515cdc670f5594b31b73994b6d7153c27250",
+        "runtime_s": 0.00921059399843216,
+        "trip": 25
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "0ea4a31ed2605ce84a3098b10855fb60eae1bfe123bc81dae284f1b03d1acd4c",
+        "runtime_s": 0.010157719720155,
+        "trip": 26
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "c1a415ae2fe7f5f4b47eb795305354147f0535a59c9a3b8b22c05d4f69e5c64f",
+        "runtime_s": 0.009518151637166739,
+        "trip": 27
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "6f18671c81e976fd5874ab4665de515c52c202fed93c5a00fc1c93abf44dbe6f",
+        "runtime_s": 0.009749529883265495,
+        "trip": 28
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "8b938515e69f606ef66d5887db4ad872630a4796bad82d257a645220fc750f19",
+        "runtime_s": 0.009568378794938326,
+        "trip": 29
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "fdecb23f0d20e279f0f93a45cc2312687bc43d9e95e02be4839dd742554ea66e",
+        "runtime_s": 0.009260797407478094,
+        "trip": 30
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ae46e076ee546c8e83bf460ad759cf432bba4cba14f7d18fb7dbb5a52fd7878c",
+        "runtime_s": 0.009439184330403805,
+        "trip": 31
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a6657999506c47d5849511614a97e908d1c7b46cf83ddff13384e2db4514696b",
+        "runtime_s": 0.009865374770015478,
+        "trip": 32
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "88c31ce0ba6f0f478498be5eeef83090f38aac6386690555be96062aa180a025",
+        "runtime_s": 0.009323624894022942,
+        "trip": 33
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "fd24ef060a462a2212a86456f9ff55c72a24bd84d702cde0bd27a7337ccc83c8",
+        "runtime_s": 0.008556487038731575,
+        "trip": 34
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "7ffbc999be1bd66638971792d44efafcd8459f3cb23a0b547ed9935cde7de09d",
+        "runtime_s": 0.008092485833913088,
+        "trip": 35
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "c47cc628e19e368c1ff2d518eec8fc3673e95c76ada876ffe078c9845e8c59f8",
+        "runtime_s": 0.010181895922869444,
+        "trip": 36
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "506c531364a41a4ef88abbd816bf9c66c3eb41c1ddd704ff1c8d5ea58ae7040d",
+        "runtime_s": 0.008931050077080727,
+        "trip": 37
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "f1b3660c3ac6ea92a27decc7e777e6e874bca76f4763b1cf65c301d8c3b7688a",
+        "runtime_s": 0.008674281649291515,
+        "trip": 38
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "cd2a664057651a9efe0d0eed66e9b3041080a88c26b755b9169f94742793ea3c",
+        "runtime_s": 0.009969877079129219,
+        "trip": 39
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "34a1f424d3ecaa4bdc13e116fbc99e28be083515acf971ac0119f361a2d3f515",
+        "runtime_s": 0.009091429878026247,
+        "trip": 40
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "13849f595cbf5a12bd686574b5a153b298d628407e8bd521479e788f7883d148",
+        "runtime_s": 0.0066590760834515095,
+        "trip": 41
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "6e62eaed30215c9dd5c54116d4bae700fa5f3a542827b8cfef68a289ab8fef0f",
+        "runtime_s": 0.007947254925966263,
+        "trip": 42
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "7dcb29c01b90748b20127f27f577442ff8f5456d79c8c7d75f2630c529cc1285",
+        "runtime_s": 0.009116803761571646,
+        "trip": 43
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "701966e1f845278694e1171f9d4ee5b7cae5789424d09215092dd946a963045f",
+        "runtime_s": 0.010098542086780071,
+        "trip": 44
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "b086bf644c9f26c5f4ba0d6930a9b516fe3b1f18b8c2169407a8c92bc9398201",
+        "runtime_s": 0.008987678214907646,
+        "trip": 45
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a72c91f8bafa2c960f2e30ed25a408c51b06f14dc8c895ab6f3596a542c93a82",
+        "runtime_s": 0.008208594750612974,
+        "trip": 46
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "76bdcbfb372d3840f37c6580a50f33bf0c4e06cfb56453ba53414eccaad9ec08",
+        "runtime_s": 0.008869480341672897,
+        "trip": 47
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "08f807a1841c6292a0eb0d7e451895366398e77599edab4f216cfc142804a4a6",
+        "runtime_s": 0.008551679085940123,
+        "trip": 48
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "51c10a084025e15a4977516cb0f5fae6ca87c6c7047c95b07eaf45b2805db773",
+        "runtime_s": 0.01014913385733962,
+        "trip": 49
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "3482da510435ed0aa33c1d91383b445dc8227fd21364f3410712531d3923df84",
+        "runtime_s": 0.009921030607074499,
+        "trip": 50
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "b9f7b2ed3701399334f8030c2cb3fb1f9a811ead87f7a6eb0a3b73ce59d8c583",
+        "runtime_s": 0.009732685983181,
+        "trip": 51
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ce37957d9f5a4b101cc55c3eb27ae1a23686727bd64c2c073afb3e9b210b7d15",
+        "runtime_s": 0.008928023744374514,
+        "trip": 52
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "e89ab87b33823c556afc10276659f416337e619097389d325ded08bf1f546b8e",
+        "runtime_s": 0.008559065405279398,
+        "trip": 53
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "6c7d9f23eb860a6908ebf92b25cc0abae763cd7c1520c59ce1b748d4867a49b8",
+        "runtime_s": 0.008553420193493366,
+        "trip": 54
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "82c833e67e8b21effa8f298159829882ba122ea36dcf2cc303c4c0e69d017297",
+        "runtime_s": 0.008616441860795021,
+        "trip": 55
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "f67c915e5a8050c2c65b2ce2c00df35f36b7c1a3765e18396f25c5ea0b69e1ec",
+        "runtime_s": 0.00856180302798748,
+        "trip": 56
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "3551ba7bdfb36211ff62e4fc32fa4f3a2e7f6dcc2c26014b4385df0ffff18e5e",
+        "runtime_s": 0.009336247108876705,
+        "trip": 57
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "74954d14924094d2435334b25afb5153d6495a598f5b359c7786df047c05ebe0",
+        "runtime_s": 0.009017258882522583,
+        "trip": 58
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "621e2919fd5f21b7e96f89b46a162097ae457513ccf1ffa130a3200416d1b00b",
+        "runtime_s": 0.008338388986885548,
+        "trip": 59
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "7e8bc2d3de492d0f2759277651b12fcb54b13112e7ec1308451ed89ecec30dd1",
+        "runtime_s": 0.009288254659622908,
+        "trip": 60
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "e7b504ad05a4f2ebdbd214b5ea1a01165e1600323014b184b91dc1483e431fed",
+        "runtime_s": 0.008842990268021822,
+        "trip": 61
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "0ac6ff881c5edc296795f081e4ddeebac354c13eb1181f592752abb9d3a8924c",
+        "runtime_s": 0.00902388570830226,
+        "trip": 62
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "07819f8db482b4cd390c01b65b1c657975e5006e2617d144037add5af0695445",
+        "runtime_s": 0.008254881016910076,
+        "trip": 63
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "50bef24c2d8260e2c05c1a6c98d79f32d64ab93adf344d13ba6ed6b66809ec6b",
+        "runtime_s": 0.009866402950137854,
+        "trip": 64
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "e333e0a8d42cbf55b81d0ae4f0688a5e16bb4922f716cb16642264f4ecb7908f",
+        "runtime_s": 0.009231823962181807,
+        "trip": 65
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ea2fd712d42961f5d78add6e7f5e89602266ee37bdf0ca8ce2ea336e9dc9bb44",
+        "runtime_s": 0.008458881638944149,
+        "trip": 66
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "d7f8316ad6af6e6495f06b978afa98d41728d56492a3f5883b8315e27ad39c36",
+        "runtime_s": 0.00896853068843484,
+        "trip": 67
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "2410716c05718c5c0dc01ca73cf22b918909769ffbb1bbbf63a3f4341c043acd",
+        "runtime_s": 0.008862899150699377,
+        "trip": 68
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "6d70ec0ed70a6f25b007c0259a2396fd734e65f88811207d829851fae6d8f17f",
+        "runtime_s": 0.008467077743262053,
+        "trip": 69
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "f39fca5ddfdae7963a3e4838c0b9ee96276da304ddaee28cb24cf31e4dbdceb0",
+        "runtime_s": 0.008478229865431786,
+        "trip": 70
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "f986486b2fc6284d0c7117a0cda4278b8249c4d323da9fa78eb15ad3d377e61d",
+        "runtime_s": 0.009042533114552498,
+        "trip": 71
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "940a550876febadb2d2dc7fd40c2cae5556e974f6232d6ca13442f6e8d38b973",
+        "runtime_s": 0.009403135161846876,
+        "trip": 72
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "34e1f8aafc34e6634d642b221e2467ff9dbd43bfa87f07fc190c29d7ff35dfda",
+        "runtime_s": 0.009062983095645905,
+        "trip": 73
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ae3eda42770fb4f9a58844f6a32b746671ee081cce6576e40fb08dabdc6820cc",
+        "runtime_s": 0.00908020930364728,
+        "trip": 74
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "ff1ec6998f235558623d4720035232734c90d62b7f4da30542cde87af842133a",
+        "runtime_s": 0.008656830992549658,
+        "trip": 75
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "99889e2f270d7b2bc44596bf9105654df9385fa5da0ead161a78a02cb7b2d776",
+        "runtime_s": 0.008904351852834225,
+        "trip": 76
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "5b98cd2d2acfa6e97b707446d6a43afa2013f4fcbd688a5d961a9e1da62e2a04",
+        "runtime_s": 0.00880552502349019,
+        "trip": 77
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "fe1242338cd9cbc9287caa2fc354c44a6cd8dc373f0c4290d9d984e954e4263d",
+        "runtime_s": 0.009720341768115759,
+        "trip": 78
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "667b7900266f285f8ee19d907c24e85b3b32202576908a6a315e548fbc45b4f8",
+        "runtime_s": 0.009583009406924248,
+        "trip": 79
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "1ea1ca74abbdb1cfe49cd50139428800a904aea0012fdc11b48b3bb43bd6308b",
+        "runtime_s": 0.008592731785029173,
+        "trip": 80
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "b382ceb90c065ddc86a41bc47c76a49739a9afdcfaca75bbce4716eecfe0c234",
+        "runtime_s": 0.008399512153118849,
+        "trip": 81
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "da7e7d4c8c3460bb1be04e10c9ca5a2a5f5eea77c8257ddf2daaf6f37ae6accf",
+        "runtime_s": 0.009066774975508451,
+        "trip": 82
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "ed2167ca6059dadae0c19a0a14e2c8df76576fa954ab6623ccbedba5e1ef02fa",
+        "runtime_s": 0.008324961178004742,
+        "trip": 83
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "dbe70cb0e9f18760efa8fc8307c69d81788ff41f384dea890836f8f30f9ce929",
+        "runtime_s": 0.009161621797829866,
+        "trip": 84
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "2d6ebf2c038911eddecb62a075bae1dce0aedecd4525aefde860312d37567052",
+        "runtime_s": 0.009346761275082827,
+        "trip": 85
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "50908e48e4870c188849616a5f71b41338d11bf2a79785e3ec31695b17415d47",
+        "runtime_s": 0.010476512834429741,
+        "trip": 86
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "7ccf3f1abf48887830f8a2d17c371da49230327fd31aa1233e62cde39d90865d",
+        "runtime_s": 0.00894615100696683,
+        "trip": 87
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "42496f8f0d59d655390c504db642a5991d15236c0bb2097881b2cbc1efecb4c0",
+        "runtime_s": 0.009170798119157553,
+        "trip": 88
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "f095dc31e2060a4c4262959426e64a4fdaa454abe74e8983109d3328a1d2a4af",
+        "runtime_s": 0.008734141942113638,
+        "trip": 89
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "46afe557f7ad44c53605f044a788b1a9fcf2afc6ce0d72db9dfc1fea0dd27e16",
+        "runtime_s": 0.008351062890142202,
+        "trip": 90
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "013a1850f635924523e1a29a8613faaae2ef0a31b1b0480cce56525336ae632d",
+        "runtime_s": 0.008339004125446081,
+        "trip": 91
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "f242904e76498f87bb117ed9bfda1e68795e728a2114b87090e88f35bc788d67",
+        "runtime_s": 0.008508221246302128,
+        "trip": 92
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "07ca4faeebda40d5acb7c282ef821b21165ecc75875ebb5888db8f56e86c588f",
+        "runtime_s": 0.009939896408468485,
+        "trip": 93
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "2ccbb184c63c29e0e92bbaa1e9d9ea49ff711834d926930fc4db2b1611295b31",
+        "runtime_s": 0.00940236495807767,
+        "trip": 94
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "0d9df6d4ba8bd9254d78702b94662db81edcad95ed464171fa38d9195c2cf9c3",
+        "runtime_s": 0.008949263952672482,
+        "trip": 95
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "34c2253765980f8c07e4fd9a0045e702c04ae29c5600173a25a9aca24892cd08",
+        "runtime_s": 0.008979735895991325,
+        "trip": 96
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "3e49866aa1c550542fc7f981c1fdafdbea829e7f56dfe873dbca4eebe876cdbf",
+        "runtime_s": 0.00865079089999199,
+        "trip": 97
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "43e9a4128891c5d40cfc7b3ae715cb2de11aa894c01bf872745cb9946d609f71",
+        "runtime_s": 0.009177031926810741,
+        "trip": 98
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "c544976b1c636262c1697d3fd685f3209238aa3d94d1428dd7d493eb3b13eda6",
+        "runtime_s": 0.008626251947134733,
+        "trip": 99
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "1b6ce740d9533307f8e8ac1cb0140b105d24a1c57a85ac90f4221cdb6a164cdc",
+        "runtime_s": 0.008666893001645803,
+        "trip": 100
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "6490ab8f5ff29e50066203ba5aa95c5b38a8f357b6b2a984b015c6be71af5bfa",
+        "runtime_s": 0.009323431178927422,
+        "trip": 101
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "289d5d9dfbba0f6dd3412b017c5a546b9787eb210c838cf0bcccedd8e715327a",
+        "runtime_s": 0.008833386935293674,
+        "trip": 102
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "264248d3e1f38aada971362cf09535481e5570e3312206bb36c06ac87ebed2b6",
+        "runtime_s": 0.009453330654650927,
+        "trip": 103
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "4da7f172f5ed2cf0f92a52e5026dd5956599a7181ea2974aa13e004383e03d10",
+        "runtime_s": 0.00885635381564498,
+        "trip": 104
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a4dd21a5ec7f1a43cf917b1ecf3d5b0e0037fc208ede219bd5eb760a7dffce7b",
+        "runtime_s": 0.009131785947829485,
+        "trip": 105
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a9d0cb67187d0847a7c3426f2b13b5e2f97074d1ad24b876e28e79de7bf14d81",
+        "runtime_s": 0.008287786040455103,
+        "trip": 106
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "b4c44baec1a165823cff85ac4cda4b58d1e95ad167368937a991a5c50e07cbf1",
+        "runtime_s": 0.008957574144005775,
+        "trip": 107
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "137a5f06ab79ffa654faaddeaab639c5fa87f625bb0b8875ebb7d8c6051e8314",
+        "runtime_s": 0.007940595969557762,
+        "trip": 108
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "2181f027edad163f2d35f00a0d7d4c281eca3a211d60cf11e2e6402b7c9da665",
+        "runtime_s": 0.008595103863626719,
+        "trip": 109
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "3b5b5d81a0135c2f8394aba826a6f83275d73c4a2c47a014f9b586ce252a39b4",
+        "runtime_s": 0.008958850055932999,
+        "trip": 110
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "20bece54df89619ac2e341d2fc0b089a2f25fc84a564bf788919e0dca22ca445",
+        "runtime_s": 0.007902536075562239,
+        "trip": 111
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "5b23127907126feeac968dbb360115d84211df9774434ff97b47f219a4f8f3f6",
+        "runtime_s": 0.008771853987127542,
+        "trip": 112
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "9e5255dc374db914035206660fa18d62e5ac2913a9b516d9a2ccd5e087683036",
+        "runtime_s": 0.008064249996095896,
+        "trip": 113
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "3f67a880e4c546132c34c98827cc94040a1a1a87ad9f6273b7434c293bd4902c",
+        "runtime_s": 0.008426519110798836,
+        "trip": 114
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "eae7672ee138a1e99a73f1787dff23c59fe71c427ac335ec61e48855d67a9b91",
+        "runtime_s": 0.008775079622864723,
+        "trip": 115
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "86e044fd9fcdd7c43711932e76dccd17088e665674c6960649d9b5c0bc94d81d",
+        "runtime_s": 0.007921000942587852,
+        "trip": 116
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "7dc6742bb037076ebcd03b39f6fcae492a709ea721c7fe91bee1b38df3c6f228",
+        "runtime_s": 0.00922471797093749,
+        "trip": 117
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "e024f61cd8c0b88719406902ac5fd3d9e4fe81d11ee353dd6995986a9be80842",
+        "runtime_s": 0.00800410471856594,
+        "trip": 118
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "6539e792d04fa3fb938c0600020f6ee5919a47e6b6376ee35554e8b3b67f372b",
+        "runtime_s": 0.008322887122631073,
+        "trip": 119
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "9a5445bc6d5235ec4674b4299ae22a9c9e20e910d8d3754f50a4864aad635f75",
+        "runtime_s": 0.008242122828960419,
+        "trip": 120
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "6f61c996f39847ea33055053508d3b509fe5d0251adc7cc33fc6339e2f1ba834",
+        "runtime_s": 0.008749899920076132,
+        "trip": 121
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "edb77f240279fb7efdc13e2833fb840b2fa40de6c59111de455af66a07ed1ca7",
+        "runtime_s": 0.007783278822898865,
+        "trip": 122
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "2635908012f3d0f59f41ff7bb942b690f2724540cd778e9916b319d81fae345f",
+        "runtime_s": 0.007797678932547569,
+        "trip": 123
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "588e7d38a5dd4fcadb9d30038359eab57120c4f23c106757ad401cbdcba210d3",
+        "runtime_s": 0.008247711230069399,
+        "trip": 124
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "4da0bf9327f8cf4f009480d14b4f76118f802db9e6269f7a40a84518f83c4011",
+        "runtime_s": 0.008612170815467834,
+        "trip": 125
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "0a69080219eb2ece2adf2e56d82304b7a07ad48294210759485c31390df25884",
+        "runtime_s": 0.008170658722519875,
+        "trip": 126
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "d4c7d2369e9de07ce7083cbccd7bc548210d6d3521b15e2a257b78bf5fd0d5d3",
+        "runtime_s": 0.008127594366669655,
+        "trip": 127
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "206ff479d66cf59d72bfc299c38523af590c2f9ae234208b73aa540f86acee5a",
+        "runtime_s": 0.007992868311703205,
+        "trip": 128
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "3e1abb46f5a8e68d63bb6936f09264471e2b1e12cad387a514c1b0e135eed49e",
+        "runtime_s": 0.008350959047675133,
+        "trip": 129
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "0214a81a21db9e9b64254713d805ae7a86e3b7ba8df6aa73683aeb47aa51fd38",
+        "runtime_s": 0.007535372860729694,
+        "trip": 130
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "2900d37433e3b0ac73a92435a7830fe302fb09134b2de0ca096e035a5e531b75",
+        "runtime_s": 0.007889684289693832,
+        "trip": 131
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "34e1c479d4a884c259e0246fb9f436ea68bd742663f8c214d5721c240d3aa40e",
+        "runtime_s": 0.007702738977968693,
+        "trip": 132
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ed20957ba3fab63130d41f3708acc8d2a6738428b01c5cdab3968af3a3eeb908",
+        "runtime_s": 0.008124940097332,
+        "trip": 133
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "260e2a62e6cadab9dae46932aad6c5e2ba0b4ac8366263b1d0c8cad444674ac9",
+        "runtime_s": 0.007858519442379475,
+        "trip": 134
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "5b601927e0f68089e28ba6463825f57045023d26962664c79ea371cb95d2926b",
+        "runtime_s": 0.00802659522742033,
+        "trip": 135
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ccc4a3114d507cd5c48afa6ab61cf50770e43288d656eb7d880ade2f360969b9",
+        "runtime_s": 0.007832815870642662,
+        "trip": 136
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "d318e8362d93e443a29f3d22b36a316f55e54950949c26401e9acf0c2c2dfa73",
+        "runtime_s": 0.007778920233249664,
+        "trip": 137
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "80d16027e930b5cf942d62e8bd5bc0314934e8359f65b1bee72848561741c421",
+        "runtime_s": 0.008333726320415735,
+        "trip": 138
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "24d998906477efb1f41d787c966e614ecf35bd02dcf72f5c44856ae5e06f171b",
+        "runtime_s": 0.008809566032141447,
+        "trip": 139
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "85ecabaa93b414db2161ac98d7c05bc5cceca785b1ffcf83a2b8824a1d145f03",
+        "runtime_s": 0.007793488912284374,
+        "trip": 140
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "4d6b409b4e0ace762fdf0a17ce2bb09696417820c5bfda2cb3a3cbf095e1631a",
+        "runtime_s": 0.007899382151663303,
+        "trip": 141
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "cc87cf79065c567bd01a8543d69e8ba41d69f6af6bd0fd0c3623da4862a40de6",
+        "runtime_s": 0.008668598718941212,
+        "trip": 142
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "9e8d6376604e6f871ee05b71e1f4706753a9540bfda4d5df6bf3eb6f891e9189",
+        "runtime_s": 0.007869002874940634,
+        "trip": 143
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "09b1ada0fb875b7c6e36812d12d6011cc0d444ac13039df457c8072bbed6b3ad",
+        "runtime_s": 0.007536697201430798,
+        "trip": 144
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "97d9a606f588986b33ba0a8915d9aa3337b9f4ca10b749d3e3d24007db0288cc",
+        "runtime_s": 0.007421507034450769,
+        "trip": 145
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "462de9fa8be1cf076cd926ed00d096c3de887bca30dc10f1962f6d4cd906ade1",
+        "runtime_s": 0.00783751904964447,
+        "trip": 146
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "07263adb46c5b2258d6a106e7ee5b917e1d60395947b4ff44cdebf70a993b6e4",
+        "runtime_s": 0.0076501998119056225,
+        "trip": 147
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "fc90488d1d2242c1917371371057c819ecc008de1768053382abee287dfa0c81",
+        "runtime_s": 0.007993133272975683,
+        "trip": 148
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "b6494c298080091071d903debed4985d005c5283193c956a577f495e77722e2a",
+        "runtime_s": 0.007689593825489283,
+        "trip": 149
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "936c6b8f481014106148cb48438d130b7b7ad5d02f2f06fc6c74bd46ce7eb625",
+        "runtime_s": 0.00842650979757309,
+        "trip": 150
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "e0af47d368da6fb584a0a23344fe69b07d074effa8034185db156375da493dc8",
+        "runtime_s": 0.007656502071768045,
+        "trip": 151
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "c805c9c853675ef478e42da602e0e403aeefe148150454342dcf0b7ad5cbe034",
+        "runtime_s": 0.007882294710725546,
+        "trip": 152
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "aef907f641c7c3990c7aeb855b72fd981f9523c731970d7271df8970bb564bbb",
+        "runtime_s": 0.008361489046365023,
+        "trip": 153
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "14a684c87b46bb574317ad015b8faebfdb9eb672e33ed102c69d90597763fb2a",
+        "runtime_s": 0.007360789924860001,
+        "trip": 154
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "32fdbee3244f5e8ff0dbb068a69a364cc87a0db52653305370a73fedce77dc76",
+        "runtime_s": 0.007579586002975702,
+        "trip": 155
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "0573e3c79daaa38848cca95c0ca2d704759d4f17b756663a017769553fad402d",
+        "runtime_s": 0.007324243430048227,
+        "trip": 156
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "15903a5241bcd2bd21f0750d5feddbc3da414227c6537ccf74c13d976cf4d976",
+        "runtime_s": 0.007356900256127119,
+        "trip": 157
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "5fea5aa6f59c13cf590271831027a751e8ec94071e9d6d696b7a0c10d6da9b62",
+        "runtime_s": 0.008458145894110203,
+        "trip": 158
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "0b3ce83c0341927d32d65fc9afd38b3151b3d6132f67dc81fe8e19dac1ff4cbc",
+        "runtime_s": 0.007800539955496788,
+        "trip": 159
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a160c63c948d70f4a5da618bfd5999ec9f5ddbc34a402bc0fc591041eebcbde0",
+        "runtime_s": 0.007884130347520113,
+        "trip": 160
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "89db5ffa8b1b4fed0dea3e5a5a87d447e79fb8b938dfa653f8bfbd0727fcbd04",
+        "runtime_s": 0.0076815057545900345,
+        "trip": 161
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "22ebdbceaf8917903b7107668458b4e5e812a7bdd561eb22b01b8bd9e3b36614",
+        "runtime_s": 0.008624990936368704,
+        "trip": 162
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "86403b578abd37fbf6395be9c8b83a037f0e1e78439e7e4742f05b4f26cd3bb1",
+        "runtime_s": 0.008101209998130798,
+        "trip": 163
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "5a677c71fde0db95a74b0d92f5a74ff7c3ae2675ffe5a92da3e4f873a028ac65",
+        "runtime_s": 0.007560552563518286,
+        "trip": 164
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a6dae74539d02eee3be133f40ecc7bbe7ee56140b94eaf2c59df57559054146f",
+        "runtime_s": 0.007262542378157377,
+        "trip": 165
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "fdc698f6330820dea1836acc203ee7c13df7538fcfe1e629a08b3dd34de7cc8b",
+        "runtime_s": 0.0075534069910645485,
+        "trip": 166
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "1780c62ccc2219cabab45bec0c178a57a62253e82a6c1c2ccd8debefb229f3ff",
+        "runtime_s": 0.008093340322375298,
+        "trip": 167
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "90411abebf5e2513d523bbcd769b332deed9e80e252b892442061f2bcdaadcb4",
+        "runtime_s": 0.0076873451471328735,
+        "trip": 168
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "54f7f8fffb1fdab085e7744f9e9340a29af3c8012b541ed709ae53213857a7b1",
+        "runtime_s": 0.0072480980306863785,
+        "trip": 169
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "83edd50798e0e57f87002802f28385948e6098377b8c50c6b7f960c2f35c8072",
+        "runtime_s": 0.007270702160894871,
+        "trip": 170
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "f0616fc52b8e9b475effbad7153133d9e95a3faa456af862e9dd4b589427cf16",
+        "runtime_s": 0.007765979040414095,
+        "trip": 171
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "e8a9720bad12e34ce9fb75a0d9b811c3642a73285add440539b3dfb8f94f6169",
+        "runtime_s": 0.007536940276622772,
+        "trip": 172
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ecb7be3ee077e1be49e10182abebc53398473257baa374476a1c3d0995974633",
+        "runtime_s": 0.007507416419684887,
+        "trip": 173
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "7414d9c97d8f820862b7b9fa1b3eae58848aa065093a1dc48c1afaeff5feb829",
+        "runtime_s": 0.007154707796871662,
+        "trip": 174
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "3e675bd95f205e69e2d4874235a86d0b0bc23c94b98c129a777749ee6b085629",
+        "runtime_s": 0.007898249663412571,
+        "trip": 175
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a560048f3a8aa0811ded5ccf959eddff60871112ce3a908a44db4b681e22bc25",
+        "runtime_s": 0.007886564824730158,
+        "trip": 176
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "17134c70f182510f0031e551b594bc5452890a20e08c77fac20611ccb69983c5",
+        "runtime_s": 0.007568910717964172,
+        "trip": 177
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a612ca75b7ffc2e3bcc224834c534def2fec9f7b9292c648950f3c1865938d99",
+        "runtime_s": 0.007787921000272036,
+        "trip": 178
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "c8bf2d472b3d6da4800fbd262838e624d629445b519b6492774053c87af7a54f",
+        "runtime_s": 0.00793851027265191,
+        "trip": 179
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "7d286fa1b66e0c6934f24554f1c016f83aae06e39c8be8be7acdc3c6965c6f26",
+        "runtime_s": 0.007604071870446205,
+        "trip": 180
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "b160242aa2a04fcf73d7ccf0ef33434b12620a67222d0885af949041757232da",
+        "runtime_s": 0.007756116334348917,
+        "trip": 181
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "bd47d2afdb15cc3c89cea0f81da81118fd4dc6c03493d9fd52b86e33f665d08d",
+        "runtime_s": 0.007896930910646915,
+        "trip": 182
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "7641fb49fb10302ea13794f1d1d1a0517f61f49531a32aa5f9085c3b7c529881",
+        "runtime_s": 0.007652128580957651,
+        "trip": 183
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "3821881e9844db08364974a002a948a01f0a0aee513e69120353726eae8cb437",
+        "runtime_s": 0.00836622342467308,
+        "trip": 184
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "9e4896f1ac1fcacf4ff135c38d4731b722e1692a77503f51d813b1d1b383ed5c",
+        "runtime_s": 0.007379347924143076,
+        "trip": 185
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ab9689aeb0ead7d648c5818d14dfa7c74dc07a3cbd6f31bdfb7fbced67e17ab4",
+        "runtime_s": 0.007871157955378294,
+        "trip": 186
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ce3dc07357de6fc8c1494dd679e7acc22f466e503a3cd67ae802ca5fc0487511",
+        "runtime_s": 0.007943013217300177,
+        "trip": 187
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "e99b4179c172d233c16b5e1175976fc3e7d82d41793ec15062aacbed05aa0c5f",
+        "runtime_s": 0.007400898728519678,
+        "trip": 188
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "25d4d3d534304cd0d4162a917c868d1946c1f45a57883ceefc70bbeab3e93c8e",
+        "runtime_s": 0.007173574063926935,
+        "trip": 189
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "309c464a1cdd86490bae1eea146decf458f46e4e859cb1b2d7580e6349d7f46b",
+        "runtime_s": 0.006915007717907429,
+        "trip": 190
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "6cdbf9c58bb42a48aef8eb41f6de42a8105a6a26a3105983b5f32ae0634b96eb",
+        "runtime_s": 0.007213612087070942,
+        "trip": 191
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "5b08fa8842fca60b693abebf8950da275e7120fd6eeaaf66a71f4deb80c5d950",
+        "runtime_s": 0.008037838153541088,
+        "trip": 192
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "5a907ba790c52c0ea4a9e9e390112b3fcc42a23482adaecb15422b1576d33616",
+        "runtime_s": 0.00864147488027811,
+        "trip": 193
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "00f465f7f20364ce819aaf0695ea8271d0e971ecdc5c23484d08071c99ee93b8",
+        "runtime_s": 0.007837773766368628,
+        "trip": 194
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "55fdf5425be9f396c6c736f161f76add44fe46ce2ff9ddb6111bc4f146978c80",
+        "runtime_s": 0.007665975950658321,
+        "trip": 195
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "9a54bbd24393f2616066ba9c372d1a5015074259d6d40ef996f1e09090d62bd5",
+        "runtime_s": 0.007814670912921429,
+        "trip": 196
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "cd25143abaf6025c5ff7a8085df9f353c4eaf8eb71933bdf4c4f0887db058104",
+        "runtime_s": 0.008006479125469923,
+        "trip": 197
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "f250d898a94cda6b91bdc239fef84732f176189ef8c1676685206d67880a9ecb",
+        "runtime_s": 0.007171204313635826,
+        "trip": 198
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "8bf0b38882433fd58cfc23d4268a8af882a4758b758586b6b9d474dbd6b4eaf5",
+        "runtime_s": 0.007292152848094702,
+        "trip": 199
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "46ac80dcba6c3b3141a11029b5e7ba4219f7123a662fd4cd492ac01c209d27e0",
+        "runtime_s": 0.0072102537378668785,
+        "trip": 200
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "9221d6301839fb044b8077eda773734d1ec0f04eed472647f60aca9592bc3007",
+        "runtime_s": 0.007163739297538996,
+        "trip": 201
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "0d4ad67181eb3a23eca53fd5affe6c127e7a26abe7e288006471e89cfb91f3a2",
+        "runtime_s": 0.0072711450047791,
+        "trip": 202
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "858fa1efef66eba209f77edacbd36694c8a8a4d1669c2ce8dfafc54fea49ef19",
+        "runtime_s": 0.0068124448880553246,
+        "trip": 203
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "5083d757a2aa2168bbf76a1a5b3f94abb5e2b8d4d41bacab400353c627086b04",
+        "runtime_s": 0.006882735062390566,
+        "trip": 204
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "75e1e21a93466b4aa77d4409ac5c1f7cf6e4abfb42dd1450bad1a88f52cd7282",
+        "runtime_s": 0.007176531944423914,
+        "trip": 205
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "575dfcc986b70f8d5efd29925bbeac6067b35e022a3307280944cfc471321d51",
+        "runtime_s": 0.00731313182041049,
+        "trip": 206
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "08685e45b3b80a41ff996f28cefdf466682b1097495d79c3ecb26c627ceb96c6",
+        "runtime_s": 0.00649766530841589,
+        "trip": 207
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "8c4f1a404dffa320d5dd5b18d5483fb8b8cf26906b937c883d5ef5f13364ec17",
+        "runtime_s": 0.0064501636661589146,
+        "trip": 208
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "7257825785ece69b47b883b322a9428e3b6892318d7bab9895fdaa26ae9d0f10",
+        "runtime_s": 0.006738970056176186,
+        "trip": 209
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "2f6a912dee4d317dc53d3b41fcdd4b5ae73268699fc6a448d849e88dce42f012",
+        "runtime_s": 0.007156264968216419,
+        "trip": 210
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a2e2294dffbe6f9b3def97b8afb967ceba7837d5d2651ac983a7a014675a9109",
+        "runtime_s": 0.007457701954990625,
+        "trip": 211
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "bda108f50b88f68b59298bd51d50123685c34aaa12e580e94c83fd65c4a9c5c9",
+        "runtime_s": 0.007239205297082663,
+        "trip": 212
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "f8915548dbdd1c1f45e0e39f95095ca2c16378bf5c98f2d575edad4596d01139",
+        "runtime_s": 0.0068944478407502174,
+        "trip": 213
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "376f6017017c647ef83c1c6945d664ad75436ea8f8aa4ac58428dc7fdc9546d6",
+        "runtime_s": 0.007035691291093826,
+        "trip": 214
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "2569b863d387ccdcd8e8541c18a51f3b302dbc250bd7603952b772823ae1e5c1",
+        "runtime_s": 0.0066116792149841785,
+        "trip": 215
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a776c8554f50e866d6be144f954d31657b52c5c0d63bc8087b8d877bd5308e65",
+        "runtime_s": 0.006752642337232828,
+        "trip": 216
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "8cd4b19ba5438846abd951da882d5662b5423517a3b791d332250ca0b98fb595",
+        "runtime_s": 0.006559787318110466,
+        "trip": 217
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "39ef61ce83e09addb1c665d1d8b6ace6f06238abd8e1e9d747c200d89936e3dc",
+        "runtime_s": 0.007342688273638487,
+        "trip": 218
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "9aa9d0b3af2a842fa0c95cf3b9af33f3e8bca0137098dea671eba47810cd34a2",
+        "runtime_s": 0.007098709233105183,
+        "trip": 219
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "20bae0709356145b5bad6fd9647e841f334a5fd60230daf64446d9467eb6d791",
+        "runtime_s": 0.00718616833910346,
+        "trip": 220
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "62a7a73714a77ebaad7d3beaf07af39da5b834e87a18f384a26d6b33b0f1c907",
+        "runtime_s": 0.006930252071470022,
+        "trip": 221
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "524bea2d2aff3032c0a6a51e29f7a975a9188927f598c7eff61b213240719bc2",
+        "runtime_s": 0.006626083981245756,
+        "trip": 222
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "7ca74b707a258249a3d833500f7750c41f4505c9e7edbe6ba7304f56e0e78b64",
+        "runtime_s": 0.006798200309276581,
+        "trip": 223
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "8f1ca9f69c935656d03eb41ac008c2cb05fa5d48138976c96e19cf84a09f3366",
+        "runtime_s": 0.007007149048149586,
+        "trip": 224
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "811bc873c31fe8880ed57f664c6a8a9a42fa35113cd4fdf870d7bcfd4130f0bd",
+        "runtime_s": 0.0070726689882576466,
+        "trip": 225
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "8964944614429342e857d91dddbbc4c621a4564960c7a4260475c3e7f0fed2be",
+        "runtime_s": 0.006819728761911392,
+        "trip": 226
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "9d98517a046538a972d3e5119c64fd0ab9a8a44bde57361569cf5ccc9fffccf5",
+        "runtime_s": 0.00652206689119339,
+        "trip": 227
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "8bf8fadb64d325edc1cbbe69c46e420a92030e8f2f98003980f1af9286aea033",
+        "runtime_s": 0.006494908127933741,
+        "trip": 228
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ec3cf5250c7f951369e7c6d67acbfe80156c1369336b34fb1e9cd92b9e8b6285",
+        "runtime_s": 0.006745863240212202,
+        "trip": 229
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "bd0f899e932000e2f8ee41e5e03da650cb05590a9c2b64eb49c1859d3e288ce2",
+        "runtime_s": 0.006504296790808439,
+        "trip": 230
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "b59a547a6cf5f6d6cdd5733a1235185be9b4766ba1344159f76208c502213135",
+        "runtime_s": 0.006778983864933252,
+        "trip": 231
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "2bf2254d33e2e67688b9818f4570ec9b659ee73587b67ae465d04e03d14be1bc",
+        "runtime_s": 0.006729308981448412,
+        "trip": 232
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "372b1854a1ca80abe94368f63b4348e05c8d1f0a3a8789b7212b7e5c2eb17028",
+        "runtime_s": 0.006571339908987284,
+        "trip": 233
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "773812be011ae71a0d5f609e9146e6f1532285869d59d752327ac60a0d7ab77a",
+        "runtime_s": 0.006455650087445974,
+        "trip": 234
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "722c89a78019d945824ee764a821034141f5e34cfab7e255f7708c4d951afec1",
+        "runtime_s": 0.0062404959462583065,
+        "trip": 235
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a94c66b6b1255d5b4ca1aa86712ea5cd7023c618c707341611fd00e729ccbe33",
+        "runtime_s": 0.006627156399190426,
+        "trip": 236
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a7e0ad47380cd3af9a065fafcba00829d5deb35ce3a47c732b5f367d907ea198",
+        "runtime_s": 0.00647377222776413,
+        "trip": 237
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "5705abdf169bf5a9240806527818f0b679ea3e72a5578c3113f811648a6bbd62",
+        "runtime_s": 0.006410459987819195,
+        "trip": 238
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "8bbf5b024d7b18bace27abdb8b9f246dfc0d0b5d83d0089b65832329a8286141",
+        "runtime_s": 0.006303083151578903,
+        "trip": 239
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "166f0dd7a6bd1123fa87a7c090267baa92f4fca9496b99616790d96670839517",
+        "runtime_s": 0.006392324343323708,
+        "trip": 240
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "716770b8ed82fa88d3a4165034954c350811dcbcd781355924e4af52b7876661",
+        "runtime_s": 0.006749768275767565,
+        "trip": 241
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "019aa6b0daaf552b7224ddeb18461ab541c303b68918b2d31d1c0ec99208809f",
+        "runtime_s": 0.0066134450025856495,
+        "trip": 242
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "da67c77d2fa079d568c594ab71263e5147b16afa27d3d29b111d00931efaec09",
+        "runtime_s": 0.006326298229396343,
+        "trip": 243
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "aa02899e07da19a79b694e5135a0f809805e26bfd494b8a40a0ecb78944cc833",
+        "runtime_s": 0.00615053903311491,
+        "trip": 244
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "3ebe873f33edb1ea1e49961443d610499360ba18989cb54a8dd49527dacb12f0",
+        "runtime_s": 0.0062731471844017506,
+        "trip": 245
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "2ef9e341ff2e96022b096148e856d220f87f3f967ec47decd2537320eb6f8650",
+        "runtime_s": 0.006158524192869663,
+        "trip": 246
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "4d885ffa98999d266695f8b9a6900d60a664edba96bb15631ca3eafebed61b79",
+        "runtime_s": 0.006448280997574329,
+        "trip": 247
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "4baddc4203dea0b67102d8e2994c4ed308358d33e9306246644cae8b23a25aa1",
+        "runtime_s": 0.006986245978623629,
+        "trip": 248
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "dfd224f9bea9294fc9bb2187b583b7b837a33729b6744d8ebbd93a5888c9fc47",
+        "runtime_s": 0.006645220797508955,
+        "trip": 249
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "7422e99d68cac8f8ca42e41df0d307f04d4093bfb4e2961a86323093f482504b",
+        "runtime_s": 0.0065517667680978775,
+        "trip": 250
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "6c229199bfdbedec712df3255a12c1aa54c53068e9cd234fd289a8a369f101bf",
+        "runtime_s": 0.006747688166797161,
+        "trip": 251
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "30f285350be5b02e2bccbf2f24c23b15e0a535383dd7fc67cbf8d3adb4e96e94",
+        "runtime_s": 0.006449929438531399,
+        "trip": 252
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "c81ca81646d263ba18c78624667dc52cf6b087c7d64bd2061437037f88c46f0b",
+        "runtime_s": 0.006197930779308081,
+        "trip": 253
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "47808dc3f775a4c204839d2fb66c75fbf0c5a8e07ac6bc46bea43348147fc4b7",
+        "runtime_s": 0.00619004899635911,
+        "trip": 254
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "8b9b9c5a6f365a34363a9423087f8c1c43f6a86b95bc727928cc37fa76ab5490",
+        "runtime_s": 0.00645088916644454,
+        "trip": 255
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ee874c529219ce9a780bf1fd060ba5e2d8e4123fb2adc0ec19f5c5fe640cefd6",
+        "runtime_s": 0.00632881186902523,
+        "trip": 256
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "cdca23373cfa56a4dd1b82ca833745655587ebd32718f7d1d86cf4e843a38acf",
+        "runtime_s": 0.0060868579894304276,
+        "trip": 257
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "52f6258a32ba0202ba06db1ab1130a17cfdbf081475e6bcad62da60cba1acaa7",
+        "runtime_s": 0.006044857203960419,
+        "trip": 258
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "5b04a1422bc1b2b5d27adc53185e588cf17101673a8c617e1c70bd4b65482e4c",
+        "runtime_s": 0.005960916168987751,
+        "trip": 259
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "5fc978147f782256e80b7d4ebf0485842ae761dd4f6123c7967dc7cf1f54028d",
+        "runtime_s": 0.006089097820222378,
+        "trip": 260
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "1f9229a4d5a09b668a9a34dc2dbba285f2f44423245714b712d01b5cbf52a849",
+        "runtime_s": 0.006634395103901625,
+        "trip": 261
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "253b1be3bff7526a95c83f5f364b4adfd2ac2211f70cabc0f59f0d5565df99fb",
+        "runtime_s": 0.0064419470727443695,
+        "trip": 262
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ae5a0d51bb5c92d9ea8f785d9ef7a2fa12f19def343c1d39cc676f856611d730",
+        "runtime_s": 0.006262229289859533,
+        "trip": 263
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "b0e30b9706c541582e1aed7a7fac79ce2e2692f577f6d76bd5744ccc38586d0f",
+        "runtime_s": 0.006066317204385996,
+        "trip": 264
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "7757116e614513bdd5cac22c81f93872de658586d0dc485e8e8c69323b59d891",
+        "runtime_s": 0.006053477991372347,
+        "trip": 265
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "05d069c283cfb96b1a8899c357dfe1a395daf2dea2eec674cae8a007451c37d7",
+        "runtime_s": 0.0065536899492144585,
+        "trip": 266
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "63a6c43031eb9221a236a17094f6466e3b8cc0e23d3f9b39e576ecad98d547ed",
+        "runtime_s": 0.006741453427821398,
+        "trip": 267
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "21beddbb064f571a5fa0d49f3e48459446ca9e35d15b8772b672806b0c4405e1",
+        "runtime_s": 0.006143659353256226,
+        "trip": 268
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "802e19e8dfab741923fc83596926a9ec51199830ccf3eeeba4ca7b41e94cb606",
+        "runtime_s": 0.0060381172224879265,
+        "trip": 269
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ba94e8b611a09eefb62786a93eb4317748f6fb536d97ab85c1c13be1bbb8ee8b",
+        "runtime_s": 0.005912259221076965,
+        "trip": 270
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "4ea5e5bef878264e2eb6e10cee42f31a597df60dccf0d3fe4b19abfa6c48e122",
+        "runtime_s": 0.005958474241197109,
+        "trip": 271
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "62ffbd8bd3734fc7c4dcecb563da39313769289d47e89954dfd289c7b59656a6",
+        "runtime_s": 0.006206432823091745,
+        "trip": 272
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "e30b248a7afa0d369c73a452c723533c32138fbea8f5b143e5890162098e7d0e",
+        "runtime_s": 0.006419700104743242,
+        "trip": 273
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "34743490fc021487f53ae63f2da43ff6b2860221a6e47093f598c0219b46f269",
+        "runtime_s": 0.006195496767759323,
+        "trip": 274
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "082c970acf9bb1baf245047ff5923b908e2a09aac23c970fded2fc39eb7a8660",
+        "runtime_s": 0.0059904069639742374,
+        "trip": 275
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "fd590dc03620e3d030c54552c57685ec776688752a15afdac653849ac6fb4940",
+        "runtime_s": 0.006083551328629255,
+        "trip": 276
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "fc5e7ac8afd414433f74b307aeebfa6a4d069e4e640580b9f14bf68fce2afae2",
+        "runtime_s": 0.005925655830651522,
+        "trip": 277
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "1a78fc93a829661a2c55e5cac93d22a6f7202b9040e2e602696ac412bb8fdf97",
+        "runtime_s": 0.005843979772180319,
+        "trip": 278
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "e568606f1186ae38c9ee37bf35006229751482a7820d5dfe13a7cd8f270ba8c5",
+        "runtime_s": 0.0059756068512797356,
+        "trip": 279
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "f7b8c3e7123430963d05dc69066aff0d2ec42b9c90528e95e246f9f46aef4e92",
+        "runtime_s": 0.006046346854418516,
+        "trip": 280
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "6d488751ab7f59013b2c9a6491eebbb64ba4e26563f42c2e5bfa8e4fa1d3e0b9",
+        "runtime_s": 0.0063907611183822155,
+        "trip": 281
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "eff8ca0abcec6e14b1ebb1dc6a7c8c83c2425a18dc63d6edd34aa1a605b5e52f",
+        "runtime_s": 0.006425030063837767,
+        "trip": 282
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "617c2b98a645eb3a0225957dae5328222c789ec01600289857bfe0e55ff92b36",
+        "runtime_s": 0.0062374151311814785,
+        "trip": 283
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "c2d3ab0082125fef5ea7c848a8cbb3f5b3ff71414a271bac4d875baa101f9b71",
+        "runtime_s": 0.006001134868711233,
+        "trip": 284
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "59efdad9a37d22f88c9dfe4ac07fbce56a7bc153aef260e2eea6ef353546c7ac",
+        "runtime_s": 0.00575740821659565,
+        "trip": 285
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "46e8289f4c537c530b128796c2e54c8467660e0317f4230b8ec7d5d4c1615ebc",
+        "runtime_s": 0.005727766081690788,
+        "trip": 286
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "7d394d710aed53b07daf081cb9b78c92e4bd855de5f4bb13882325bdd122472a",
+        "runtime_s": 0.005925794132053852,
+        "trip": 287
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "9dab3b9139b3c8592e33c405fcfbd85eed242a774076812c96c2300e780d9b99",
+        "runtime_s": 0.0057927947491407394,
+        "trip": 288
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "f94eb32231bb205372d55fbad7b2d6b864ef6dae00506350a6dc5d4b0c77c2e0",
+        "runtime_s": 0.005711695179343224,
+        "trip": 289
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "f16418b26e8de7514de28454bec082f807f3c4f637ff73deb8548bc0a13e5335",
+        "runtime_s": 0.005694617051631212,
+        "trip": 290
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "1e898ca2c73e0496569728e392663f9ae3bf66fef22cd9dc9912f390ed876dcc",
+        "runtime_s": 0.005829497240483761,
+        "trip": 291
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a2d6c98357937dfb8a21b84c10c80b7eef816b94f30c530d83e7fe17da39dee2",
+        "runtime_s": 0.005828895140439272,
+        "trip": 292
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "73daae7597d2c2246d14abf33127c4336e646ce4797f4a7ae357bf6482fe0c19",
+        "runtime_s": 0.005835331976413727,
+        "trip": 293
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "950c6033b6c9bf21a6b8777458d7f2c61c0e715ece450b551c0c205de7711617",
+        "runtime_s": 0.006199725903570652,
+        "trip": 294
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "f13c27be3dbfece6ed2ab60c45492ab9e87d7527cada69bb47a6a8ddb4ce5135",
+        "runtime_s": 0.0066240583546459675,
+        "trip": 295
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "dbf4ebdfe3cffa7f0f1a0ad7648e31810eff8a425eb1e9d33a0aa70dbe797ec7",
+        "runtime_s": 0.006787777878344059,
+        "trip": 296
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "da6a841af319d6ecd7adc38b360775f355ced1a9f77be59954f69cc0c05d7c0e",
+        "runtime_s": 0.00672769732773304,
+        "trip": 297
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "4564c335c42cdfc5a05ce689db4ba7a9d35fdcf35e931f07e4fdaf1c40ce9757",
+        "runtime_s": 0.005905529949814081,
+        "trip": 298
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "8b3c2cd8f27153badf426e1be4cf2adc015e38899beb42f7abeb4bd149cae84c",
+        "runtime_s": 0.006098764017224312,
+        "trip": 299
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "9fe383cb439b7c5fbf045ca3556f82891522d493d78e32b6581dac15bdcadc1a",
+        "runtime_s": 0.006158438976854086,
+        "trip": 300
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "217f92d0533ea82608bdf40ce3b2e8af571fd52667b1a419688935718f166c1f",
+        "runtime_s": 0.005742605309933424,
+        "trip": 301
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "21a73e73fa52d244644c81da153add4d0ead104eb7974cb67eab0757f74261eb",
+        "runtime_s": 0.005587868858128786,
+        "trip": 302
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "2446d1aee16a53624b6f2328353bd52535ad3e077c182a89de2b0011f2c4fe28",
+        "runtime_s": 0.005537638906389475,
+        "trip": 303
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "3d4370cce34bb7174fbca1bd460989258fd198d2f7a8f63d31be22924167c09a",
+        "runtime_s": 0.0054917107336223125,
+        "trip": 304
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "47afcd519dbc996f8fe737a109a3a318b47babfd92739e5d0e2c9ab6ef5cfc40",
+        "runtime_s": 0.005653322208672762,
+        "trip": 305
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "f935cd25e1b6011a4d51f6bdfa8f3c5c3460075d20d1a0620c2f910516f843a0",
+        "runtime_s": 0.005921289324760437,
+        "trip": 306
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "c87ccfa35a69ba228c65daad31dfe8bf21d5056c2a76df83bad3620a938c4b24",
+        "runtime_s": 0.005606092978268862,
+        "trip": 307
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "bbb106918b7fb52fd4b068cded333d86523668da02bd0e2b633c34d01ca0f8fa",
+        "runtime_s": 0.005524161271750927,
+        "trip": 308
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a96ef8e9a51657fbf5084624ab314a1e2361c1bffa0c3bcbf88aef6963c7fd95",
+        "runtime_s": 0.005742390174418688,
+        "trip": 309
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "d4a0eb2edaf00225761bdd9636fccdd81e74b892ee378f823bf3fa7b850699ad",
+        "runtime_s": 0.005861257202923298,
+        "trip": 310
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "a7abaad22f0b6e011cb633c4f23c752d549175dd875cfeaccf8b5180505a7a38",
+        "runtime_s": 0.0061407508328557014,
+        "trip": 311
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "702f19f98ec767ebc67993724787ac0c1866d8f9889d39bf25cb011678c158a5",
+        "runtime_s": 0.005661912728101015,
+        "trip": 312
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "842204fd81c7520b9328207a3f722a036fb999202070b8e5207090baf84af67e",
+        "runtime_s": 0.0055684903636574745,
+        "trip": 313
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "70f7433197d42aafbc979203b7e067629586d9d857ada144dffbfde27585cd02",
+        "runtime_s": 0.005532233044505119,
+        "trip": 314
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "badedc7e87b4e7690b309623570ac2df4488b8e57435e5a081d228d638bca25c",
+        "runtime_s": 0.00543632498010993,
+        "trip": 315
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "100fa43ba6afd5a59af0e1dd42510466d60e5d1f38c6fe1fc5f9c58a0a50f276",
+        "runtime_s": 0.005481021944433451,
+        "trip": 316
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "0ace931d8a557e0f681dce537f10e66585612ae1bee90630d7bffce5bfd867c7",
+        "runtime_s": 0.006034502759575844,
+        "trip": 317
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "1d951436f57c29061abb4b491505f23de780dadddb8d00f7a75ebe0f2816a408",
+        "runtime_s": 0.005851984955370426,
+        "trip": 318
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "fff7fe0a6ae235c31102fd96cc9a2682a4efd63be5c23ceaa9a3ceed1c94216d",
+        "runtime_s": 0.005650210194289684,
+        "trip": 319
+      },
+      {
+        "feasible": true,
+        "novel": true,
+        "record_sha256": "d835abf36980b93faa9514331b1a3aff849053682c9317f0372c83c20e650668",
+        "runtime_s": 0.005565282888710499,
+        "trip": 320
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "af672555decdcff64dccd8331a22276fabf76e911b9ea304c73da1f36c47c3d2",
+        "runtime_s": 0.005544671788811684,
+        "trip": 321
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "1fc1614071a6ca2925e45ec538fc118023febdc2bd0febf73ea7dc210209b9a4",
+        "runtime_s": 0.0055486843921244144,
+        "trip": 322
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "3e59df0e4beea34cfcf5918c1d08788daa0fa7821b75d9ff77c56999342cd6c2",
+        "runtime_s": 0.0054888068698346615,
+        "trip": 323
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "bddc9757dacf9cdb2087f75af392ecf0d7c0bae40474234be2bd988fc43cf35a",
+        "runtime_s": 0.005381090100854635,
+        "trip": 324
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "016423319b84cb69e74759aee24d1c571f9b916b95b945bc968f7d648a8d0afe",
+        "runtime_s": 0.005374744068831205,
+        "trip": 325
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ac1b80934d0b1768b84d5d03c4fd3fe3f5df8cacdd41f0d42ae2b75f7a73bb7d",
+        "runtime_s": 0.005438363645225763,
+        "trip": 326
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "de6af49e3b8928b703f873f866d942ff21573c8e98673daf91f58f69da0f072c",
+        "runtime_s": 0.005929453764110804,
+        "trip": 327
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "b51aeedf24c89dca717e943c3ce6aab1ac7774e9165fe97d9a8310728a0f0e9d",
+        "runtime_s": 0.006318746134638786,
+        "trip": 328
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "ac8390bca96a56f4ced73bdf83863868356dc9c91ea55b7299afcd6638a7c2fc",
+        "runtime_s": 0.006486047990620136,
+        "trip": 329
+      },
+      {
+        "feasible": true,
+        "novel": false,
+        "record_sha256": "9fdd084f8cb99090fb373f3cfd69e19581aeb99467ddd4028feeded4a2cb241f",
+        "runtime_s": 0.005680952221155167,
+        "trip": 330
+      }
+    ],
+    "singleton_queries": 331
+  },
+  "manifest_sha256": "37c8419ad5da09d968efa5ea2471c5a282412f4f44b139d23a6517823d5e6e3a",
+  "maxrss_kib": 3576248,
+  "mip_started": false,
+  "model_provenance": {
+    "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "git_commit": "fedf421461f94727e6b1292a0e7789ab76ed8587",
+    "git_tracked_dirty": false,
+    "gurobi_version": "12.0.3",
+    "host": "joachims-cpu-02.cs.cornell.edu",
+    "instance": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/input_artifacts/k19_instance.csv",
+    "instance_sha256": "81ff2322b0241227ce4871767b7e6e68fa6a5ea4b53af1064743342e30612bd7",
+    "prices": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/input_artifacts/hourly_prices_flat.csv",
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference_data_dir": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/input_artifacts",
+    "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "slurm_array_task_id": null,
+    "slurm_job_id": "772820"
+  },
+  "network": {
+    "arc_mode": "lazy",
+    "dag_arcs": 202705695,
+    "dag_nodes": 24796,
+    "event_lattice_sha256": "3ce991f4b848c05807a25509ebef735f39763015f0df33411d237f5d2c9c66e7",
+    "materialized_python_arc_objects": 0,
+    "packed_arc_bytes": 3243291120,
+    "station_charge_kw": {
+      "PARX": 60.0
+    },
+    "station_event_times": {
+      "2190L_0": 28,
+      "3127L_0": 579,
+      "4808_0": 28,
+      "7880C_0": 570,
+      "JON_A_0": 611,
+      "PARX_1": 591
+    },
+    "time_model": "event"
+  },
+  "payload_sha256": "9f9a666656439ef25ea90c2592cbc9b62acab3a448745a59cb07f5a6ea9fb28c",
+  "phase": "reload",
+  "queries": [
+    {
+      "duals": [
+        [
+          0,
+          0.0
+        ],
+        [
+          1,
+          0.0
+        ],
+        [
+          2,
+          0.0
+        ],
+        [
+          3,
+          0.0
+        ],
+        [
+          4,
+          0.0
+        ],
+        [
+          5,
+          0.0
+        ],
+        [
+          6,
+          0.0
+        ],
+        [
+          7,
+          0.0
+        ],
+        [
+          8,
+          0.0
+        ],
+        [
+          9,
+          0.0
+        ],
+        [
+          10,
+          0.0
+        ],
+        [
+          11,
+          0.0
+        ],
+        [
+          12,
+          0.0
+        ],
+        [
+          13,
+          0.0
+        ],
+        [
+          14,
+          0.0
+        ],
+        [
+          15,
+          0.0
+        ],
+        [
+          16,
+          0.0
+        ],
+        [
+          17,
+          0.0
+        ],
+        [
+          18,
+          0.0
+        ],
+        [
+          19,
+          0.0
+        ],
+        [
+          20,
+          0.0
+        ],
+        [
+          21,
+          0.0
+        ],
+        [
+          22,
+          0.0
+        ],
+        [
+          23,
+          0.0
+        ],
+        [
+          24,
+          0.0
+        ],
+        [
+          25,
+          0.0
+        ],
+        [
+          26,
+          0.0
+        ],
+        [
+          27,
+          0.0
+        ],
+        [
+          28,
+          0.0
+        ],
+        [
+          29,
+          0.0
+        ],
+        [
+          30,
+          0.0
+        ],
+        [
+          31,
+          0.0
+        ],
+        [
+          32,
+          0.0
+        ],
+        [
+          33,
+          0.0
+        ],
+        [
+          34,
+          0.0
+        ],
+        [
+          35,
+          0.0
+        ],
+        [
+          36,
+          0.0
+        ],
+        [
+          37,
+          0.0
+        ],
+        [
+          38,
+          0.0
+        ],
+        [
+          39,
+          0.0
+        ],
+        [
+          40,
+          0.0
+        ],
+        [
+          41,
+          0.0
+        ],
+        [
+          42,
+          0.0
+        ],
+        [
+          43,
+          0.0
+        ],
+        [
+          44,
+          0.0
+        ],
+        [
+          45,
+          0.0
+        ],
+        [
+          46,
+          0.0
+        ],
+        [
+          47,
+          0.0
+        ],
+        [
+          48,
+          0.0
+        ],
+        [
+          49,
+          0.0
+        ],
+        [
+          50,
+          0.0
+        ],
+        [
+          51,
+          0.0
+        ],
+        [
+          52,
+          0.0
+        ],
+        [
+          53,
+          0.0
+        ],
+        [
+          54,
+          0.0
+        ],
+        [
+          55,
+          0.0
+        ],
+        [
+          56,
+          0.0
+        ],
+        [
+          57,
+          0.0
+        ],
+        [
+          58,
+          0.0
+        ],
+        [
+          59,
+          0.0
+        ],
+        [
+          60,
+          0.0
+        ],
+        [
+          61,
+          0.0
+        ],
+        [
+          62,
+          0.0
+        ],
+        [
+          63,
+          0.0
+        ],
+        [
+          64,
+          0.0
+        ],
+        [
+          65,
+          0.0
+        ],
+        [
+          66,
+          0.0
+        ],
+        [
+          67,
+          0.0
+        ],
+        [
+          68,
+          0.0
+        ],
+        [
+          69,
+          0.0
+        ],
+        [
+          70,
+          0.0
+        ],
+        [
+          71,
+          0.0
+        ],
+        [
+          72,
+          0.0
+        ],
+        [
+          73,
+          0.0
+        ],
+        [
+          74,
+          0.0
+        ],
+        [
+          75,
+          0.0
+        ],
+        [
+          76,
+          0.0
+        ],
+        [
+          77,
+          0.0
+        ],
+        [
+          78,
+          0.0
+        ],
+        [
+          79,
+          0.0
+        ],
+        [
+          80,
+          0.0
+        ],
+        [
+          81,
+          0.0
+        ],
+        [
+          82,
+          0.0
+        ],
+        [
+          83,
+          0.0
+        ],
+        [
+          84,
+          0.0
+        ],
+        [
+          85,
+          0.0
+        ],
+        [
+          86,
+          0.0
+        ],
+        [
+          87,
+          0.0
+        ],
+        [
+          88,
+          0.0
+        ],
+        [
+          89,
+          0.0
+        ],
+        [
+          90,
+          0.0
+        ],
+        [
+          91,
+          0.0
+        ],
+        [
+          92,
+          0.0
+        ],
+        [
+          93,
+          0.0
+        ],
+        [
+          94,
+          0.0
+        ],
+        [
+          95,
+          0.0
+        ],
+        [
+          96,
+          0.0
+        ],
+        [
+          97,
+          0.0
+        ],
+        [
+          98,
+          0.0
+        ],
+        [
+          99,
+          0.0
+        ],
+        [
+          100,
+          0.0
+        ],
+        [
+          101,
+          0.0
+        ],
+        [
+          102,
+          0.0
+        ],
+        [
+          103,
+          0.0
+        ],
+        [
+          104,
+          0.0
+        ],
+        [
+          105,
+          0.0
+        ],
+        [
+          106,
+          0.0
+        ],
+        [
+          107,
+          0.0
+        ],
+        [
+          108,
+          0.0
+        ],
+        [
+          109,
+          0.0
+        ],
+        [
+          110,
+          0.0
+        ],
+        [
+          111,
+          0.0
+        ],
+        [
+          112,
+          0.0
+        ],
+        [
+          113,
+          0.0
+        ],
+        [
+          114,
+          0.0
+        ],
+        [
+          115,
+          0.0
+        ],
+        [
+          116,
+          0.0
+        ],
+        [
+          117,
+          0.0
+        ],
+        [
+          118,
+          0.0
+        ],
+        [
+          119,
+          0.0
+        ],
+        [
+          120,
+          0.0
+        ],
+        [
+          121,
+          0.0
+        ],
+        [
+          122,
+          0.0
+        ],
+        [
+          123,
+          0.0
+        ],
+        [
+          124,
+          0.0
+        ],
+        [
+          125,
+          0.0
+        ],
+        [
+          126,
+          0.0
+        ],
+        [
+          127,
+          0.0
+        ],
+        [
+          128,
+          0.0
+        ],
+        [
+          129,
+          0.0
+        ],
+        [
+          130,
+          0.0
+        ],
+        [
+          131,
+          0.0
+        ],
+        [
+          132,
+          0.0
+        ],
+        [
+          133,
+          0.0
+        ],
+        [
+          134,
+          0.0
+        ],
+        [
+          135,
+          0.0
+        ],
+        [
+          136,
+          0.0
+        ],
+        [
+          137,
+          0.0
+        ],
+        [
+          138,
+          0.0
+        ],
+        [
+          139,
+          0.0
+        ],
+        [
+          140,
+          0.0
+        ],
+        [
+          141,
+          0.0
+        ],
+        [
+          142,
+          0.0
+        ],
+        [
+          143,
+          0.0
+        ],
+        [
+          144,
+          0.0
+        ],
+        [
+          145,
+          0.0
+        ],
+        [
+          146,
+          0.0
+        ],
+        [
+          147,
+          0.0
+        ],
+        [
+          148,
+          0.0
+        ],
+        [
+          149,
+          0.0
+        ],
+        [
+          150,
+          0.0
+        ],
+        [
+          151,
+          0.0
+        ],
+        [
+          152,
+          0.0
+        ],
+        [
+          153,
+          0.0
+        ],
+        [
+          154,
+          0.0
+        ],
+        [
+          155,
+          0.0
+        ],
+        [
+          156,
+          0.0
+        ],
+        [
+          157,
+          0.0
+        ],
+        [
+          158,
+          0.0
+        ],
+        [
+          159,
+          0.0
+        ],
+        [
+          160,
+          0.0
+        ],
+        [
+          161,
+          0.0
+        ],
+        [
+          162,
+          0.0
+        ],
+        [
+          163,
+          0.0
+        ],
+        [
+          164,
+          0.0
+        ],
+        [
+          165,
+          0.0
+        ],
+        [
+          166,
+          0.0
+        ],
+        [
+          167,
+          0.0
+        ],
+        [
+          168,
+          0.0
+        ],
+        [
+          169,
+          0.0
+        ],
+        [
+          170,
+          0.0
+        ],
+        [
+          171,
+          0.0
+        ],
+        [
+          172,
+          0.0
+        ],
+        [
+          173,
+          0.0
+        ],
+        [
+          174,
+          0.0
+        ],
+        [
+          175,
+          0.0
+        ],
+        [
+          176,
+          0.0
+        ],
+        [
+          177,
+          0.0
+        ],
+        [
+          178,
+          0.0
+        ],
+        [
+          179,
+          0.0
+        ],
+        [
+          180,
+          0.0
+        ],
+        [
+          181,
+          0.0
+        ],
+        [
+          182,
+          0.0
+        ],
+        [
+          183,
+          0.0
+        ],
+        [
+          184,
+          0.0
+        ],
+        [
+          185,
+          0.0
+        ],
+        [
+          186,
+          0.0
+        ],
+        [
+          187,
+          0.0
+        ],
+        [
+          188,
+          0.0
+        ],
+        [
+          189,
+          0.0
+        ],
+        [
+          190,
+          0.0
+        ],
+        [
+          191,
+          0.0
+        ],
+        [
+          192,
+          0.0
+        ],
+        [
+          193,
+          0.0
+        ],
+        [
+          194,
+          0.0
+        ],
+        [
+          195,
+          0.0
+        ],
+        [
+          196,
+          0.0
+        ],
+        [
+          197,
+          0.0
+        ],
+        [
+          198,
+          0.0
+        ],
+        [
+          199,
+          0.0
+        ],
+        [
+          200,
+          0.0
+        ],
+        [
+          201,
+          0.0
+        ],
+        [
+          202,
+          0.0
+        ],
+        [
+          203,
+          0.0
+        ],
+        [
+          204,
+          0.0
+        ],
+        [
+          205,
+          0.0
+        ],
+        [
+          206,
+          0.0
+        ],
+        [
+          207,
+          0.0
+        ],
+        [
+          208,
+          0.0
+        ],
+        [
+          209,
+          0.0
+        ],
+        [
+          210,
+          0.0
+        ],
+        [
+          211,
+          0.0
+        ],
+        [
+          212,
+          0.0
+        ],
+        [
+          213,
+          0.0
+        ],
+        [
+          214,
+          0.0
+        ],
+        [
+          215,
+          0.0
+        ],
+        [
+          216,
+          0.0
+        ],
+        [
+          217,
+          0.0
+        ],
+        [
+          218,
+          0.0
+        ],
+        [
+          219,
+          0.0
+        ],
+        [
+          220,
+          0.0
+        ],
+        [
+          221,
+          0.0
+        ],
+        [
+          222,
+          0.0
+        ],
+        [
+          223,
+          0.0
+        ],
+        [
+          224,
+          0.0
+        ],
+        [
+          225,
+          0.0
+        ],
+        [
+          226,
+          0.0
+        ],
+        [
+          227,
+          0.0
+        ],
+        [
+          228,
+          0.0
+        ],
+        [
+          229,
+          0.0
+        ],
+        [
+          230,
+          0.0
+        ],
+        [
+          231,
+          0.0
+        ],
+        [
+          232,
+          0.0
+        ],
+        [
+          233,
+          0.0
+        ],
+        [
+          234,
+          0.0
+        ],
+        [
+          235,
+          0.0
+        ],
+        [
+          236,
+          0.0
+        ],
+        [
+          237,
+          0.0
+        ],
+        [
+          238,
+          0.0
+        ],
+        [
+          239,
+          0.0
+        ],
+        [
+          240,
+          0.0
+        ],
+        [
+          241,
+          0.0
+        ],
+        [
+          242,
+          0.0
+        ],
+        [
+          243,
+          0.0
+        ],
+        [
+          244,
+          0.0
+        ],
+        [
+          245,
+          0.0
+        ],
+        [
+          246,
+          0.0
+        ],
+        [
+          247,
+          0.0
+        ],
+        [
+          248,
+          0.0
+        ],
+        [
+          249,
+          0.0
+        ],
+        [
+          250,
+          0.0
+        ],
+        [
+          251,
+          0.0
+        ],
+        [
+          252,
+          0.0
+        ],
+        [
+          253,
+          0.0
+        ],
+        [
+          254,
+          0.0
+        ],
+        [
+          255,
+          0.0
+        ],
+        [
+          256,
+          0.0
+        ],
+        [
+          257,
+          0.0
+        ],
+        [
+          258,
+          0.0
+        ],
+        [
+          259,
+          0.0
+        ],
+        [
+          260,
+          0.0
+        ],
+        [
+          261,
+          0.0
+        ],
+        [
+          262,
+          0.0
+        ],
+        [
+          263,
+          0.0
+        ],
+        [
+          264,
+          0.0
+        ],
+        [
+          265,
+          0.0
+        ],
+        [
+          266,
+          0.0
+        ],
+        [
+          267,
+          0.0
+        ],
+        [
+          268,
+          0.0
+        ],
+        [
+          269,
+          0.0
+        ],
+        [
+          270,
+          0.0
+        ],
+        [
+          271,
+          0.0
+        ],
+        [
+          272,
+          0.0
+        ],
+        [
+          273,
+          0.0
+        ],
+        [
+          274,
+          0.0
+        ],
+        [
+          275,
+          0.0
+        ],
+        [
+          276,
+          0.0
+        ],
+        [
+          277,
+          0.0
+        ],
+        [
+          278,
+          0.0
+        ],
+        [
+          279,
+          0.0
+        ],
+        [
+          280,
+          0.0
+        ],
+        [
+          281,
+          0.0
+        ],
+        [
+          282,
+          0.0
+        ],
+        [
+          283,
+          0.0
+        ],
+        [
+          284,
+          0.0
+        ],
+        [
+          285,
+          0.0
+        ],
+        [
+          286,
+          0.0
+        ],
+        [
+          287,
+          0.0
+        ],
+        [
+          288,
+          0.0
+        ],
+        [
+          289,
+          0.0
+        ],
+        [
+          290,
+          0.0
+        ],
+        [
+          291,
+          0.0
+        ],
+        [
+          292,
+          0.0
+        ],
+        [
+          293,
+          0.0
+        ],
+        [
+          294,
+          0.0
+        ],
+        [
+          295,
+          0.0
+        ],
+        [
+          296,
+          0.0
+        ],
+        [
+          297,
+          0.0
+        ],
+        [
+          298,
+          0.0
+        ],
+        [
+          299,
+          0.0
+        ],
+        [
+          300,
+          0.0
+        ],
+        [
+          301,
+          0.0
+        ],
+        [
+          302,
+          0.0
+        ],
+        [
+          303,
+          0.0
+        ],
+        [
+          304,
+          0.0
+        ],
+        [
+          305,
+          0.0
+        ],
+        [
+          306,
+          0.0
+        ],
+        [
+          307,
+          0.0
+        ],
+        [
+          308,
+          0.0
+        ],
+        [
+          309,
+          0.0
+        ],
+        [
+          310,
+          0.0
+        ],
+        [
+          311,
+          0.0
+        ],
+        [
+          312,
+          0.0
+        ],
+        [
+          313,
+          0.0
+        ],
+        [
+          314,
+          0.0
+        ],
+        [
+          315,
+          0.0
+        ],
+        [
+          316,
+          0.0
+        ],
+        [
+          317,
+          0.0
+        ],
+        [
+          318,
+          0.0
+        ],
+        [
+          319,
+          0.0
+        ],
+        [
+          320,
+          0.0
+        ],
+        [
+          321,
+          0.0
+        ],
+        [
+          322,
+          0.0
+        ],
+        [
+          323,
+          0.0
+        ],
+        [
+          324,
+          0.0
+        ],
+        [
+          325,
+          0.0
+        ],
+        [
+          326,
+          0.0
+        ],
+        [
+          327,
+          0.0
+        ],
+        [
+          328,
+          0.0
+        ],
+        [
+          329,
+          0.0
+        ],
+        [
+          330,
+          0.0
+        ]
+      ],
+      "duals_sha256": "3ab9c6aef95eac4f8acd2082fc94e38586bea12bffd25142efe68692e70a992a",
+      "independent_reduced_cost": 100000.0,
+      "name": "zero",
+      "physical_replay": "passed",
+      "reduced_cost": 100000.0,
+      "route": {
+        "charging_stops": {
+          "cet": [],
+          "cst": [],
+          "kwh": [],
+          "stations": []
+        },
+        "continuous_cost_pricing_certified": false,
+        "continuous_realization": {
+          "block_min": 5,
+          "changed": false,
+          "charge_kw": 240.0,
+          "charging_windows_preserved": true,
+          "continuous_cost_pricing_certified": false,
+          "continuous_terminal_soc_kwh": 202.17199949999997,
+          "discarded_grid_residual_kwh": 1.2099999999999795,
+          "expanded_grid_terminal_soc_kwh": 200.9619995,
+          "irregular_charging_windows_accepted": true,
+          "mapping_sha256": "1ea8c1bfefd9aa1e4479173f0e771534dad424d7a9bbd5f4a07cea931c2d86da",
+          "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+          "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+          "realized_charging_sha256": "1788f7a4c424e2973332608311de4fd9b1d294656bfb091f8d75334d8a182b97",
+          "realized_total_kwh": 0,
+          "recorded_charging_sha256": "1788f7a4c424e2973332608311de4fd9b1d294656bfb091f8d75334d8a182b97",
+          "recorded_total_kwh": 0,
+          "route_nodes_sha256": "73fc8d70466f2aa2d4aeeeebaed57e0d782b660556639095cc3678ecfe0557a1",
+          "schema": "evsp-dr-event-path-continuous-realization-v1",
+          "station_charge_kw": {
+            "PARX": 60.0
+          },
+          "station_choice_preserved": true,
+          "time_model": "event",
+          "trip_sequence_preserved": true,
+          "trip_sequence_sha256": "d0bca111f8628137adc4c16f123496dcdd1d590d06cb5d9acd68b39fe656fb97"
+        },
+        "continuous_realized_charging_blocks": [],
+        "continuous_realized_charging_blocks_json_bytes": 2,
+        "continuous_realized_cost": 100000.0,
+        "cost": 100000.0,
+        "cost_semantics": "expanded_grid_cost",
+        "expanded_grid_charging_stops": {
+          "cet": [],
+          "cst": [],
+          "kwh": [],
+          "stations": []
+        },
+        "expanded_grid_cost": 100000.0,
+        "master_cost_semantics": "expanded_grid_cost",
+        "physical_realization": {
+          "continuous_cost_pricing_certified": false,
+          "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+          "continuous_realized_charging_blocks_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "realization_mapping_sha256": "1ea8c1bfefd9aa1e4479173f0e771534dad424d7a9bbd5f4a07cea931c2d86da",
+          "realization_schema": "evsp-dr-event-path-continuous-realization-v1",
+          "status": "valid_event_time_realized",
+          "time_model": "event"
+        },
+        "route_nodes": [
+          "PARX_0",
+          0,
+          "PARX_0"
+        ],
+        "trips": [
+          0
+        ]
+      },
+      "route_sha256": "0d3f707e4a284e1b2931974e0c251f42918a2fd786045ed5466af77533e70235",
+      "runtime_s": 3.492010631132871
+    },
+    {
+      "duals": [
+        [
+          0,
+          51000.0
+        ],
+        [
+          1,
+          104000.0
+        ],
+        [
+          2,
+          108999.99999999999
+        ],
+        [
+          3,
+          66000.0
+        ],
+        [
+          4,
+          51000.0
+        ],
+        [
+          5,
+          116000.00000000001
+        ],
+        [
+          6,
+          108999.99999999999
+        ],
+        [
+          7,
+          102000.0
+        ],
+        [
+          8,
+          138000.0
+        ],
+        [
+          9,
+          51000.0
+        ],
+        [
+          10,
+          52000.0
+        ],
+        [
+          11,
+          94000.0
+        ],
+        [
+          12,
+          89000.0
+        ],
+        [
+          13,
+          133000.0
+        ],
+        [
+          14,
+          126000.0
+        ],
+        [
+          15,
+          51000.0
+        ],
+        [
+          16,
+          62000.0
+        ],
+        [
+          17,
+          117000.0
+        ],
+        [
+          18,
+          117000.0
+        ],
+        [
+          19,
+          121000.0
+        ],
+        [
+          20,
+          149000.0
+        ],
+        [
+          21,
+          93000.0
+        ],
+        [
+          22,
+          117000.0
+        ],
+        [
+          23,
+          126000.0
+        ],
+        [
+          24,
+          112999.99999999999
+        ],
+        [
+          25,
+          134000.0
+        ],
+        [
+          26,
+          51000.0
+        ],
+        [
+          27,
+          59000.0
+        ],
+        [
+          28,
+          73000.0
+        ],
+        [
+          29,
+          98000.0
+        ],
+        [
+          30,
+          98000.0
+        ],
+        [
+          31,
+          144000.0
+        ],
+        [
+          32,
+          102000.0
+        ],
+        [
+          33,
+          51000.0
+        ],
+        [
+          34,
+          55000.00000000001
+        ],
+        [
+          35,
+          130000.0
+        ],
+        [
+          36,
+          137000.0
+        ],
+        [
+          37,
+          150000.0
+        ],
+        [
+          38,
+          79000.0
+        ],
+        [
+          39,
+          110000.00000000001
+        ],
+        [
+          40,
+          57000.00000000001
+        ],
+        [
+          41,
+          125000.0
+        ],
+        [
+          42,
+          135000.0
+        ],
+        [
+          43,
+          84000.00000000001
+        ],
+        [
+          44,
+          95000.0
+        ],
+        [
+          45,
+          57999.99999999999
+        ],
+        [
+          46,
+          150000.0
+        ],
+        [
+          47,
+          133000.0
+        ],
+        [
+          48,
+          52000.0
+        ],
+        [
+          49,
+          51000.0
+        ],
+        [
+          50,
+          54000.0
+        ],
+        [
+          51,
+          106000.0
+        ],
+        [
+          52,
+          100000.0
+        ],
+        [
+          53,
+          125000.0
+        ],
+        [
+          54,
+          65000.0
+        ],
+        [
+          55,
+          144000.0
+        ],
+        [
+          56,
+          51000.0
+        ],
+        [
+          57,
+          60000.0
+        ],
+        [
+          58,
+          88000.0
+        ],
+        [
+          59,
+          99000.0
+        ],
+        [
+          60,
+          95000.0
+        ],
+        [
+          61,
+          103000.0
+        ],
+        [
+          62,
+          64000.0
+        ],
+        [
+          63,
+          86000.0
+        ],
+        [
+          64,
+          138000.0
+        ],
+        [
+          65,
+          51000.0
+        ],
+        [
+          66,
+          54000.0
+        ],
+        [
+          67,
+          51000.0
+        ],
+        [
+          68,
+          131000.0
+        ],
+        [
+          69,
+          56000.00000000001
+        ],
+        [
+          70,
+          51000.0
+        ],
+        [
+          71,
+          130000.0
+        ],
+        [
+          72,
+          60000.0
+        ],
+        [
+          73,
+          94000.0
+        ],
+        [
+          74,
+          131000.0
+        ],
+        [
+          75,
+          51000.0
+        ],
+        [
+          76,
+          146000.0
+        ],
+        [
+          77,
+          54000.0
+        ],
+        [
+          78,
+          108000.0
+        ],
+        [
+          79,
+          140000.0
+        ],
+        [
+          80,
+          51000.0
+        ],
+        [
+          81,
+          72000.0
+        ],
+        [
+          82,
+          103000.0
+        ],
+        [
+          83,
+          51000.0
+        ],
+        [
+          84,
+          128000.0
+        ],
+        [
+          85,
+          78000.0
+        ],
+        [
+          86,
+          130000.0
+        ],
+        [
+          87,
+          51000.0
+        ],
+        [
+          88,
+          112000.00000000001
+        ],
+        [
+          89,
+          80000.0
+        ],
+        [
+          90,
+          99000.0
+        ],
+        [
+          91,
+          124000.0
+        ],
+        [
+          92,
+          106999.99999999999
+        ],
+        [
+          93,
+          65000.0
+        ],
+        [
+          94,
+          59000.0
+        ],
+        [
+          95,
+          108000.0
+        ],
+        [
+          96,
+          51000.0
+        ],
+        [
+          97,
+          74000.0
+        ],
+        [
+          98,
+          67000.0
+        ],
+        [
+          99,
+          66000.0
+        ],
+        [
+          100,
+          102000.0
+        ],
+        [
+          101,
+          121000.0
+        ],
+        [
+          102,
+          106000.0
+        ],
+        [
+          103,
+          143000.00000000003
+        ],
+        [
+          104,
+          51000.0
+        ],
+        [
+          105,
+          83000.0
+        ],
+        [
+          106,
+          69000.0
+        ],
+        [
+          107,
+          57999.99999999999
+        ],
+        [
+          108,
+          51000.0
+        ],
+        [
+          109,
+          105000.0
+        ],
+        [
+          110,
+          112999.99999999999
+        ],
+        [
+          111,
+          51000.0
+        ],
+        [
+          112,
+          93000.0
+        ],
+        [
+          113,
+          127000.0
+        ],
+        [
+          114,
+          95000.0
+        ],
+        [
+          115,
+          133000.0
+        ],
+        [
+          116,
+          88000.0
+        ],
+        [
+          117,
+          62000.0
+        ],
+        [
+          118,
+          63000.0
+        ],
+        [
+          119,
+          51000.0
+        ],
+        [
+          120,
+          110999.99999999999
+        ],
+        [
+          121,
+          129000.0
+        ],
+        [
+          122,
+          146000.0
+        ],
+        [
+          123,
+          110000.00000000001
+        ],
+        [
+          124,
+          108999.99999999999
+        ],
+        [
+          125,
+          59000.0
+        ],
+        [
+          126,
+          51000.0
+        ],
+        [
+          127,
+          110000.00000000001
+        ],
+        [
+          128,
+          130000.0
+        ],
+        [
+          129,
+          59000.0
+        ],
+        [
+          130,
+          51000.0
+        ],
+        [
+          131,
+          110000.00000000001
+        ],
+        [
+          132,
+          126000.0
+        ],
+        [
+          133,
+          93000.0
+        ],
+        [
+          134,
+          51000.0
+        ],
+        [
+          135,
+          104000.0
+        ],
+        [
+          136,
+          112000.00000000001
+        ],
+        [
+          137,
+          52000.0
+        ],
+        [
+          138,
+          81000.0
+        ],
+        [
+          139,
+          126000.0
+        ],
+        [
+          140,
+          90000.0
+        ],
+        [
+          141,
+          92000.0
+        ],
+        [
+          142,
+          88000.0
+        ],
+        [
+          143,
+          51000.0
+        ],
+        [
+          144,
+          81000.0
+        ],
+        [
+          145,
+          68000.0
+        ],
+        [
+          146,
+          57000.00000000001
+        ],
+        [
+          147,
+          54000.0
+        ],
+        [
+          148,
+          93000.0
+        ],
+        [
+          149,
+          96000.0
+        ],
+        [
+          150,
+          51000.0
+        ],
+        [
+          151,
+          96000.0
+        ],
+        [
+          152,
+          81000.0
+        ],
+        [
+          153,
+          80000.0
+        ],
+        [
+          154,
+          67000.0
+        ],
+        [
+          155,
+          62000.0
+        ],
+        [
+          156,
+          119000.0
+        ],
+        [
+          157,
+          74000.0
+        ],
+        [
+          158,
+          75000.0
+        ],
+        [
+          159,
+          51000.0
+        ],
+        [
+          160,
+          143000.00000000003
+        ],
+        [
+          161,
+          127000.0
+        ],
+        [
+          162,
+          92000.0
+        ],
+        [
+          163,
+          95000.0
+        ],
+        [
+          164,
+          97000.0
+        ],
+        [
+          165,
+          134000.0
+        ],
+        [
+          166,
+          51000.0
+        ],
+        [
+          167,
+          131999.99999999997
+        ],
+        [
+          168,
+          144000.0
+        ],
+        [
+          169,
+          129000.0
+        ],
+        [
+          170,
+          57000.00000000001
+        ],
+        [
+          171,
+          59000.0
+        ],
+        [
+          172,
+          51000.0
+        ],
+        [
+          173,
+          140000.0
+        ],
+        [
+          174,
+          135000.0
+        ],
+        [
+          175,
+          51000.0
+        ],
+        [
+          176,
+          131999.99999999997
+        ],
+        [
+          177,
+          140000.0
+        ],
+        [
+          178,
+          112000.00000000001
+        ],
+        [
+          179,
+          98000.0
+        ],
+        [
+          180,
+          119000.0
+        ],
+        [
+          181,
+          87000.0
+        ],
+        [
+          182,
+          120000.0
+        ],
+        [
+          183,
+          51000.0
+        ],
+        [
+          184,
+          112999.99999999999
+        ],
+        [
+          185,
+          142000.0
+        ],
+        [
+          186,
+          147000.0
+        ],
+        [
+          187,
+          134000.0
+        ],
+        [
+          188,
+          51000.0
+        ],
+        [
+          189,
+          123000.0
+        ],
+        [
+          190,
+          100000.0
+        ],
+        [
+          191,
+          120000.0
+        ],
+        [
+          192,
+          112999.99999999999
+        ],
+        [
+          193,
+          51000.0
+        ],
+        [
+          194,
+          62000.0
+        ],
+        [
+          195,
+          133000.0
+        ],
+        [
+          196,
+          133000.0
+        ],
+        [
+          197,
+          110000.00000000001
+        ],
+        [
+          198,
+          108999.99999999999
+        ],
+        [
+          199,
+          108999.99999999999
+        ],
+        [
+          200,
+          139000.0
+        ],
+        [
+          201,
+          76000.0
+        ],
+        [
+          202,
+          126000.0
+        ],
+        [
+          203,
+          122000.0
+        ],
+        [
+          204,
+          146000.0
+        ],
+        [
+          205,
+          68000.0
+        ],
+        [
+          206,
+          128000.0
+        ],
+        [
+          207,
+          51000.0
+        ],
+        [
+          208,
+          83000.0
+        ],
+        [
+          209,
+          59000.0
+        ],
+        [
+          210,
+          142000.0
+        ],
+        [
+          211,
+          57000.00000000001
+        ],
+        [
+          212,
+          144000.0
+        ],
+        [
+          213,
+          148000.0
+        ],
+        [
+          214,
+          145000.0
+        ],
+        [
+          215,
+          129000.0
+        ],
+        [
+          216,
+          139000.0
+        ],
+        [
+          217,
+          72000.0
+        ],
+        [
+          218,
+          89000.0
+        ],
+        [
+          219,
+          106999.99999999999
+        ],
+        [
+          220,
+          74000.0
+        ],
+        [
+          221,
+          90000.0
+        ],
+        [
+          222,
+          78000.0
+        ],
+        [
+          223,
+          67000.0
+        ],
+        [
+          224,
+          51000.0
+        ],
+        [
+          225,
+          90999.99999999999
+        ],
+        [
+          226,
+          108000.0
+        ],
+        [
+          227,
+          129000.0
+        ],
+        [
+          228,
+          130000.0
+        ],
+        [
+          229,
+          66000.0
+        ],
+        [
+          230,
+          51000.0
+        ],
+        [
+          231,
+          92000.0
+        ],
+        [
+          232,
+          92000.0
+        ],
+        [
+          233,
+          118000.00000000001
+        ],
+        [
+          234,
+          86000.0
+        ],
+        [
+          235,
+          50000.0
+        ],
+        [
+          236,
+          102000.0
+        ],
+        [
+          237,
+          90000.0
+        ],
+        [
+          238,
+          131000.0
+        ],
+        [
+          239,
+          87000.0
+        ],
+        [
+          240,
+          77000.0
+        ],
+        [
+          241,
+          93000.0
+        ],
+        [
+          242,
+          51000.0
+        ],
+        [
+          243,
+          60000.0
+        ],
+        [
+          244,
+          118000.00000000001
+        ],
+        [
+          245,
+          50000.0
+        ],
+        [
+          246,
+          63000.0
+        ],
+        [
+          247,
+          141000.0
+        ],
+        [
+          248,
+          51000.0
+        ],
+        [
+          249,
+          126000.0
+        ],
+        [
+          250,
+          126000.0
+        ],
+        [
+          251,
+          51000.0
+        ],
+        [
+          252,
+          122000.0
+        ],
+        [
+          253,
+          133000.0
+        ],
+        [
+          254,
+          51000.0
+        ],
+        [
+          255,
+          54000.0
+        ],
+        [
+          256,
+          145000.0
+        ],
+        [
+          257,
+          51000.0
+        ],
+        [
+          258,
+          70000.0
+        ],
+        [
+          259,
+          51000.0
+        ],
+        [
+          260,
+          75000.0
+        ],
+        [
+          261,
+          96000.0
+        ],
+        [
+          262,
+          79000.0
+        ],
+        [
+          263,
+          73000.0
+        ],
+        [
+          264,
+          116000.00000000001
+        ],
+        [
+          265,
+          131999.99999999997
+        ],
+        [
+          266,
+          139000.0
+        ],
+        [
+          267,
+          112000.00000000001
+        ],
+        [
+          268,
+          51000.0
+        ],
+        [
+          269,
+          135000.0
+        ],
+        [
+          270,
+          125000.0
+        ],
+        [
+          271,
+          51000.0
+        ],
+        [
+          272,
+          61000.0
+        ],
+        [
+          273,
+          125000.0
+        ],
+        [
+          274,
+          97000.0
+        ],
+        [
+          275,
+          80000.0
+        ],
+        [
+          276,
+          51000.0
+        ],
+        [
+          277,
+          79000.0
+        ],
+        [
+          278,
+          51000.0
+        ],
+        [
+          279,
+          123000.0
+        ],
+        [
+          280,
+          65000.0
+        ],
+        [
+          281,
+          112999.99999999999
+        ],
+        [
+          282,
+          83000.0
+        ],
+        [
+          283,
+          118000.00000000001
+        ],
+        [
+          284,
+          110999.99999999999
+        ],
+        [
+          285,
+          128000.0
+        ],
+        [
+          286,
+          83000.0
+        ],
+        [
+          287,
+          55000.00000000001
+        ],
+        [
+          288,
+          51000.0
+        ],
+        [
+          289,
+          96000.0
+        ],
+        [
+          290,
+          114999.99999999999
+        ],
+        [
+          291,
+          146000.0
+        ],
+        [
+          292,
+          61000.0
+        ],
+        [
+          293,
+          51000.0
+        ],
+        [
+          294,
+          72000.0
+        ],
+        [
+          295,
+          81000.0
+        ],
+        [
+          296,
+          140000.0
+        ],
+        [
+          297,
+          51000.0
+        ],
+        [
+          298,
+          125000.0
+        ],
+        [
+          299,
+          51000.0
+        ],
+        [
+          300,
+          134000.0
+        ],
+        [
+          301,
+          95000.0
+        ],
+        [
+          302,
+          118000.00000000001
+        ],
+        [
+          303,
+          123000.0
+        ],
+        [
+          304,
+          51000.0
+        ],
+        [
+          305,
+          75000.0
+        ],
+        [
+          306,
+          57000.00000000001
+        ],
+        [
+          307,
+          78000.0
+        ],
+        [
+          308,
+          51000.0
+        ],
+        [
+          309,
+          112000.00000000001
+        ],
+        [
+          310,
+          51000.0
+        ],
+        [
+          311,
+          124000.0
+        ],
+        [
+          312,
+          135000.0
+        ],
+        [
+          313,
+          144000.0
+        ],
+        [
+          314,
+          51000.0
+        ],
+        [
+          315,
+          77000.0
+        ],
+        [
+          316,
+          98000.0
+        ],
+        [
+          317,
+          51000.0
+        ],
+        [
+          318,
+          104000.0
+        ],
+        [
+          319,
+          138000.0
+        ],
+        [
+          320,
+          51000.0
+        ],
+        [
+          321,
+          117000.0
+        ],
+        [
+          322,
+          62000.0
+        ],
+        [
+          323,
+          105000.0
+        ],
+        [
+          324,
+          133000.0
+        ],
+        [
+          325,
+          142000.0
+        ],
+        [
+          326,
+          143000.00000000003
+        ],
+        [
+          327,
+          64000.0
+        ],
+        [
+          328,
+          119000.0
+        ],
+        [
+          329,
+          79000.0
+        ],
+        [
+          330,
+          68000.0
+        ]
+      ],
+      "duals_sha256": "c4477c81906e5465f321ae5d4905d712844b3795b15a502be350a6557f99f553",
+      "independent_reduced_cost": -7143823.04,
+      "name": "saved_pool_frequency",
+      "physical_replay": "passed",
+      "reduced_cost": -7143823.04,
+      "route": {
+        "charging_stops": {
+          "cet": [
+            329.375,
+            384.5,
+            441.5,
+            504.625,
+            542.625,
+            578.75,
+            604.5,
+            664.5,
+            784.5,
+            824.625,
+            904.625,
+            932.875,
+            972.75,
+            1012.75,
+            1052.75,
+            1092.75,
+            1175.5,
+            1274.625,
+            1364.625,
+            1394.625,
+            1484.625,
+            1547.75
+          ],
+          "cst": [
+            320.0,
+            382.0,
+            429.0,
+            494.0,
+            542.0,
+            565.0,
+            602.0,
+            662.0,
+            782.0,
+            814.0,
+            894.0,
+            926.0,
+            964.0,
+            1004.0,
+            1044.0,
+            1084.0,
+            1163.0,
+            1244.0,
+            1364.0,
+            1394.0,
+            1484.0,
+            1544.0
+          ],
+          "kwh": [
+            34.432,
+            8.7969999,
+            45.4469996,
+            34.9649992,
+            0.1529999,
+            53.142,
+            8.1870001,
+            5.2740002,
+            1.7829991,
+            38.0450001,
+            36.90600016,
+            26.8659998,
+            34.7290001,
+            34.7290001,
+            34.7290001,
+            34.7290001,
+            48.36999986,
+            118.05000016,
+            0.0,
+            0.0,
+            0.0,
+            1.0610009
+          ],
+          "stations": [
+            "7880C_0",
+            "JON_A_0",
+            "3127L_0",
+            "JON_A_0",
+            "JON_A_0",
+            "7880C_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "7880C_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0"
+          ]
+        },
+        "continuous_cost_pricing_certified": false,
+        "continuous_realization": {
+          "block_min": 5,
+          "changed": true,
+          "charge_kw": 240.0,
+          "charging_windows_preserved": true,
+          "continuous_cost_pricing_certified": false,
+          "continuous_terminal_soc_kwh": 37.2,
+          "discarded_grid_residual_kwh": 74.60600061999992,
+          "expanded_grid_terminal_soc_kwh": 37.2,
+          "irregular_charging_windows_accepted": true,
+          "mapping_sha256": "f4485f503e8e54d3686e99293e6238b1baaccdc18fe0b8ed532d690cb02d28e6",
+          "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+          "pricing_cost_semantics": "expanded_grid_cost_unchanged",
+          "realized_charging_sha256": "6232c9780a32b1be99bf2137666fa445eadc48a9d413c5a5b51363755ff20492",
+          "realized_total_kwh": 600.39399938,
+          "recorded_charging_sha256": "170227a0beda15ed77ddcbd7ec2622a42de7fdf80defa20a8e54851caf0964a6",
+          "recorded_total_kwh": 675.0,
+          "route_nodes_sha256": "438da2b2298a3bd8f15448736fcb556d51927c82dd2e08b461ca58cf527c618b",
+          "schema": "evsp-dr-event-path-continuous-realization-v1",
+          "station_charge_kw": {
+            "PARX": 60.0
+          },
+          "station_choice_preserved": true,
+          "time_model": "event",
+          "trip_sequence_preserved": true,
+          "trip_sequence_sha256": "4f43f4ce89f14b4ca4033256a6dd84a6b194b2d431868fda9b4ffd5ce020507b"
+        },
+        "continuous_realized_charging_blocks": [
+          {
+            "block_index": 0,
+            "end_min": 329.375,
+            "expanded_grid_kwh": 37.5,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 34.432,
+            "start_min": 320.0,
+            "station": "7880C_0",
+            "stop_index": 0,
+            "tariff_hour": 5,
+            "tariff_key": "7880C:5"
+          },
+          {
+            "block_index": 0,
+            "end_min": 384.5,
+            "expanded_grid_kwh": 10.0,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 8.7969999,
+            "start_min": 382.0,
+            "station": "JON_A_0",
+            "stop_index": 1,
+            "tariff_hour": 6,
+            "tariff_key": "JON_A:6"
+          },
+          {
+            "block_index": 0,
+            "end_min": 441.5,
+            "expanded_grid_kwh": 50.0,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 45.4469996,
+            "start_min": 429.0,
+            "station": "3127L_0",
+            "stop_index": 2,
+            "tariff_hour": 7,
+            "tariff_key": "3127L:7"
+          },
+          {
+            "block_index": 0,
+            "end_min": 504.625,
+            "expanded_grid_kwh": 42.5,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 34.9649992,
+            "start_min": 494.0,
+            "station": "JON_A_0",
+            "stop_index": 3,
+            "tariff_hour": 8,
+            "tariff_key": "JON_A:8"
+          },
+          {
+            "block_index": 0,
+            "end_min": 542.625,
+            "expanded_grid_kwh": 2.5,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 0.1529999,
+            "start_min": 542.0,
+            "station": "JON_A_0",
+            "stop_index": 4,
+            "tariff_hour": 9,
+            "tariff_key": "JON_A:9"
+          },
+          {
+            "block_index": 0,
+            "end_min": 578.75,
+            "expanded_grid_kwh": 55.0,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 53.142,
+            "start_min": 565.0,
+            "station": "7880C_0",
+            "stop_index": 5,
+            "tariff_hour": 9,
+            "tariff_key": "7880C:9"
+          },
+          {
+            "block_index": 0,
+            "end_min": 604.5,
+            "expanded_grid_kwh": 10.0,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 8.1870001,
+            "start_min": 602.0,
+            "station": "JON_A_0",
+            "stop_index": 6,
+            "tariff_hour": 10,
+            "tariff_key": "JON_A:10"
+          },
+          {
+            "block_index": 0,
+            "end_min": 664.5,
+            "expanded_grid_kwh": 10.0,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 5.2740002,
+            "start_min": 662.0,
+            "station": "JON_A_0",
+            "stop_index": 7,
+            "tariff_hour": 11,
+            "tariff_key": "JON_A:11"
+          },
+          {
+            "block_index": 0,
+            "end_min": 784.5,
+            "expanded_grid_kwh": 10.0,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 1.7829991,
+            "start_min": 782.0,
+            "station": "JON_A_0",
+            "stop_index": 8,
+            "tariff_hour": 13,
+            "tariff_key": "JON_A:13"
+          },
+          {
+            "block_index": 0,
+            "end_min": 824.625,
+            "expanded_grid_kwh": 42.5,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 38.0450001,
+            "start_min": 814.0,
+            "station": "JON_A_0",
+            "stop_index": 9,
+            "tariff_hour": 13,
+            "tariff_key": "JON_A:13"
+          },
+          {
+            "block_index": 0,
+            "end_min": 900.0,
+            "expanded_grid_kwh": 24.0,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 24.0,
+            "start_min": 894.0,
+            "station": "JON_A_0",
+            "stop_index": 10,
+            "tariff_hour": 14,
+            "tariff_key": "JON_A:14"
+          },
+          {
+            "block_index": 1,
+            "end_min": 904.625,
+            "expanded_grid_kwh": 18.5,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 12.906000159999998,
+            "start_min": 900.0,
+            "station": "JON_A_0",
+            "stop_index": 10,
+            "tariff_hour": 15,
+            "tariff_key": "JON_A:15"
+          },
+          {
+            "block_index": 0,
+            "end_min": 932.875,
+            "expanded_grid_kwh": 27.5,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 26.8659998,
+            "start_min": 926.0,
+            "station": "JON_A_0",
+            "stop_index": 11,
+            "tariff_hour": 15,
+            "tariff_key": "JON_A:15"
+          },
+          {
+            "block_index": 0,
+            "end_min": 972.75,
+            "expanded_grid_kwh": 35.0,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 34.7290001,
+            "start_min": 964.0,
+            "station": "JON_A_0",
+            "stop_index": 12,
+            "tariff_hour": 16,
+            "tariff_key": "JON_A:16"
+          },
+          {
+            "block_index": 0,
+            "end_min": 1012.75,
+            "expanded_grid_kwh": 35.0,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 34.7290001,
+            "start_min": 1004.0,
+            "station": "JON_A_0",
+            "stop_index": 13,
+            "tariff_hour": 16,
+            "tariff_key": "JON_A:16"
+          },
+          {
+            "block_index": 0,
+            "end_min": 1052.75,
+            "expanded_grid_kwh": 35.0,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 34.7290001,
+            "start_min": 1044.0,
+            "station": "JON_A_0",
+            "stop_index": 14,
+            "tariff_hour": 17,
+            "tariff_key": "JON_A:17"
+          },
+          {
+            "block_index": 0,
+            "end_min": 1092.75,
+            "expanded_grid_kwh": 35.0,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 34.7290001,
+            "start_min": 1084.0,
+            "station": "JON_A_0",
+            "stop_index": 15,
+            "tariff_hour": 18,
+            "tariff_key": "JON_A:18"
+          },
+          {
+            "block_index": 0,
+            "end_min": 1175.5,
+            "expanded_grid_kwh": 50.0,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 48.36999986,
+            "start_min": 1163.0,
+            "station": "7880C_0",
+            "stop_index": 16,
+            "tariff_hour": 19,
+            "tariff_key": "7880C:19"
+          },
+          {
+            "block_index": 0,
+            "end_min": 1260.0,
+            "expanded_grid_kwh": 64.0,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 64.0,
+            "start_min": 1244.0,
+            "station": "JON_A_0",
+            "stop_index": 17,
+            "tariff_hour": 20,
+            "tariff_key": "JON_A:20"
+          },
+          {
+            "block_index": 1,
+            "end_min": 1274.625,
+            "expanded_grid_kwh": 58.5,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 54.050000159999996,
+            "start_min": 1260.0,
+            "station": "JON_A_0",
+            "stop_index": 17,
+            "tariff_hour": 21,
+            "tariff_key": "JON_A:21"
+          },
+          {
+            "block_index": 0,
+            "end_min": 1364.625,
+            "expanded_grid_kwh": 2.5,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 0.0,
+            "start_min": 1364.0,
+            "station": "JON_A_0",
+            "stop_index": 18,
+            "tariff_hour": 22,
+            "tariff_key": "JON_A:22"
+          },
+          {
+            "block_index": 0,
+            "end_min": 1394.625,
+            "expanded_grid_kwh": 2.5,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 0.0,
+            "start_min": 1394.0,
+            "station": "JON_A_0",
+            "stop_index": 19,
+            "tariff_hour": 23,
+            "tariff_key": "JON_A:23"
+          },
+          {
+            "block_index": 0,
+            "end_min": 1484.625,
+            "expanded_grid_kwh": 2.5,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 0.0,
+            "start_min": 1484.0,
+            "station": "JON_A_0",
+            "stop_index": 20,
+            "tariff_hour": 24,
+            "tariff_key": "JON_A:24"
+          },
+          {
+            "block_index": 0,
+            "end_min": 1547.75,
+            "expanded_grid_kwh": 15.0,
+            "price_per_kwh": 0.0992,
+            "realized_kwh": 1.0610009,
+            "start_min": 1544.0,
+            "station": "JON_A_0",
+            "stop_index": 21,
+            "tariff_hour": 25,
+            "tariff_key": "JON_A:25"
+          }
+        ],
+        "continuous_realized_charging_blocks_json_bytes": 4863,
+        "continuous_realized_cost": 100169.5590847385,
+        "cost": 100176.96,
+        "cost_semantics": "expanded_grid_cost",
+        "expanded_grid_charging_stops": {
+          "cet": [
+            329.375,
+            384.5,
+            441.5,
+            504.625,
+            542.625,
+            578.75,
+            604.5,
+            664.5,
+            784.5,
+            824.625,
+            904.625,
+            932.875,
+            972.75,
+            1012.75,
+            1052.75,
+            1092.75,
+            1175.5,
+            1274.625,
+            1364.625,
+            1394.625,
+            1484.625,
+            1547.75
+          ],
+          "cst": [
+            320.0,
+            382.0,
+            429.0,
+            494.0,
+            542.0,
+            565.0,
+            602.0,
+            662.0,
+            782.0,
+            814.0,
+            894.0,
+            926.0,
+            964.0,
+            1004.0,
+            1044.0,
+            1084.0,
+            1163.0,
+            1244.0,
+            1364.0,
+            1394.0,
+            1484.0,
+            1544.0
+          ],
+          "kwh": [
+            37.5,
+            10.0,
+            50.0,
+            42.5,
+            2.5,
+            55.0,
+            10.0,
+            10.0,
+            10.0,
+            42.5,
+            42.5,
+            27.5,
+            35.0,
+            35.0,
+            35.0,
+            35.0,
+            50.0,
+            122.5,
+            2.5,
+            2.5,
+            2.5,
+            15.0
+          ],
+          "stations": [
+            "7880C_0",
+            "JON_A_0",
+            "3127L_0",
+            "JON_A_0",
+            "JON_A_0",
+            "7880C_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "7880C_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0",
+            "JON_A_0"
+          ]
+        },
+        "expanded_grid_cost": 100176.96,
+        "master_cost_semantics": "expanded_grid_cost",
+        "physical_realization": {
+          "continuous_cost_pricing_certified": false,
+          "continuous_realized_charging_blocks_schema": "evsp-dr-continuous-realized-charging-blocks-v1",
+          "continuous_realized_charging_blocks_sha256": "1fb4de9ae4845f9baf230c02afbc54ff25863c13402d30f04efb4456ef93b2f0",
+          "realization_mapping_sha256": "f4485f503e8e54d3686e99293e6238b1baaccdc18fe0b8ed532d690cb02d28e6",
+          "realization_schema": "evsp-dr-event-path-continuous-realization-v1",
+          "status": "valid_event_time_realized",
+          "time_model": "event"
+        },
+        "route_nodes": [
+          "PARX_0",
+          1,
+          "7880C_0",
+          6,
+          11,
+          "JON_A_0",
+          17,
+          20,
+          "3127L_0",
+          36,
+          41,
+          46,
+          54,
+          "JON_A_0",
+          61,
+          68,
+          "JON_A_0",
+          71,
+          "7880C_0",
+          84,
+          "JON_A_0",
+          89,
+          91,
+          95,
+          101,
+          "JON_A_0",
+          105,
+          109,
+          115,
+          122,
+          127,
+          132,
+          "JON_A_0",
+          136,
+          140,
+          "JON_A_0",
+          146,
+          151,
+          154,
+          161,
+          "JON_A_0",
+          168,
+          "JON_A_0",
+          176,
+          181,
+          "JON_A_0",
+          191,
+          196,
+          "JON_A_0",
+          206,
+          213,
+          "JON_A_0",
+          223,
+          228,
+          "JON_A_0",
+          234,
+          240,
+          244,
+          247,
+          "7880C_0",
+          256,
+          260,
+          263,
+          266,
+          "JON_A_0",
+          275,
+          279,
+          283,
+          285,
+          290,
+          294,
+          "JON_A_0",
+          296,
+          300,
+          "JON_A_0",
+          303,
+          307,
+          311,
+          313,
+          318,
+          321,
+          "JON_A_0",
+          324,
+          326,
+          328,
+          329,
+          "JON_A_0",
+          "PARX_0"
+        ],
+        "trips": [
+          1,
+          6,
+          11,
+          17,
+          20,
+          36,
+          41,
+          46,
+          54,
+          61,
+          68,
+          71,
+          84,
+          89,
+          91,
+          95,
+          101,
+          105,
+          109,
+          115,
+          122,
+          127,
+          132,
+          136,
+          140,
+          146,
+          151,
+          154,
+          161,
+          168,
+          176,
+          181,
+          191,
+          196,
+          206,
+          213,
+          223,
+          228,
+          234,
+          240,
+          244,
+          247,
+          256,
+          260,
+          263,
+          266,
+          275,
+          279,
+          283,
+          285,
+          290,
+          294,
+          296,
+          300,
+          303,
+          307,
+          311,
+          313,
+          318,
+          321,
+          324,
+          326,
+          328,
+          329
+        ]
+      },
+      "route_sha256": "3dd7f66443334d17e547e4aed9a6b2ab582505809eceb0e8ed32f5a77d24a7de",
+      "runtime_s": 3.5898819928988814
+    }
+  ],
+  "runtime_s": 49.16404543071985,
+  "schema": "evsp-dr-strict-k19-full-graph-parity-v1",
+  "solver_started": false,
+  "source_graph_build_s": 11255.558756875806,
+  "source_serialization_and_hash_s": 18.051203964743763,
+  "status": "passed",
+  "wrapper_commit": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+}

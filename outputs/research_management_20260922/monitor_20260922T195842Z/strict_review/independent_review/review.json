@@ -1,0 +1,51 @@
+{
+  "schema": "evsp-strict-k19-cached-cg-independent-review-v1",
+  "review_date": "2026-09-22",
+  "status": "passed_final_worker_manifest_sbatch_and_six_focused_tests",
+  "reviewed_sha256": {
+    "cached_cg_worker.py": "d5a54f1a5829976ac11e53b27b3126a6f58f272ab49e7c8a6962fadab5496f4a",
+    "manifest.json": "206fafab7e514ef9e8f1bee94db5a3cde5767bc9edf7a01a027419fcb96b3c37",
+    "test_cached_cg_worker.py": "62bb5f7d70be4333237ae65cfb7e0fc398a0f290adf5d9d255d086c5a4b1e703",
+    "cg_argv_template.json": "b52d5f71bdbbe12862506e26b954551bcdb0b508dc62e77832740e959cd3bb2f",
+    "sbatch_argv.json": "cd0a6bc8712c0cc9519a5b72b2895881576c9df5fa59d8b30045fb9869b27aeb",
+    "deployment_plan.json": "a20f496a1cb83f48bb5083588e286a086c04fe454ee01c4cd089ae9b08850bf6",
+    "README.md": "8a8ca5c8a0da7a629a2a71180fe269f72d064cc98d624c4313b65107b91118ad",
+    "graph_gate_audit.json": "b0e7ab4a27467756f74cf3b0cc2c40ad6d55db4a131f1c65c0e9ccb98455bd29"
+  },
+  "checks": [
+    "Completed native graph receipts, manifest, seals, cold/reload parity, complete 8397-column initializer and full cache hash are required before CG.",
+    "Genuine clean fedf4214 model_code working directory and original scientific command are preserved; authentic parent357 inheritance is explicit and old k19 resume is forbidden.",
+    "Native license preflight has a 120-second timeout and precedes CG graph loading; failure records evidence without starting CG.",
+    "Exclusive root STARTED.json at worker line 112 prevents a second fresh job ID from starting; requeue attempts fail closed before that seal.",
+    "Unique attempt directories, process failure evidence and atomic native pool checkpoints are preserved; no MIP, successor, source-pin mutation or automatic resubmission is present.",
+    "Manifest and exact sbatch argv agree on 8 CPUs, 16 GiB, five hours, default partition, Scaglione account, requeue and exclusion of scaglione-compute-01; native CG allowance is 14400 seconds with a 17400-second subprocess cap.",
+    "The sbatch wrap command invokes the exact deployment-root worker with the reviewed manifest SHA256; deployment_plan binds both deployed file hashes and the reviewed sbatch argv hash. Logs use the new deployment root."
+  ],
+  "tests": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 -B outputs/research_management_20260922/monitor_20260922T195842Z/strict_review/test_cached_cg_worker.py",
+    "exit_code": 0,
+    "passed": 6,
+    "test_runtime_s": 0.022,
+    "coverage": [
+      "authentic completed native gate",
+      "corrupt or missing proof rejection",
+      "resealed route and initializer parity drift rejection",
+      "scientific flags and genuine parent preservation",
+      "requeue and duplicate fresh job rejection",
+      "native license failure prevents CG"
+    ],
+    "real_solver_or_cluster_execution": false
+  },
+  "blockers_in_reviewed_scope": [],
+  "limitations": [
+    "Review is local and does not establish current cluster access, resource policy, deployment hashes or effective scheduler allocation; the deployment plan requires those checks before or at submission.",
+    "The native CG allowance remains soft because LP solves and initialization have no internal deadline; the outer process cap bounds the solver subprocess.",
+    "The 16 GiB allocation preserves headroom above the measured graph-reload peak but does not prove the memory ceiling of a growing CG master and route pool.",
+    "A failed first attempt retains STARTED.json and therefore requires explicit reviewed recovery, even when failure occurs before CG starts."
+  ],
+  "actions": {
+    "ssh_or_scheduler_actions": false,
+    "production_or_model_files_changed": false,
+    "only_persistent_write": "strict_review/independent_review/review.json"
+  }
+}

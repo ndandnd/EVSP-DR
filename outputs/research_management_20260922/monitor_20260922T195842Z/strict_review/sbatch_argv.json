@@ -1,0 +1,16 @@
+[
+  "sbatch",
+  "--parsable",
+  "--partition=default_partition",
+  "--account=scaglione",
+  "--cpus-per-task=8",
+  "--mem=16G",
+  "--time=05:00:00",
+  "--exclude=scaglione-compute-01",
+  "--requeue",
+  "--job-name=strict_k19_cached_cg",
+  "--chdir=/home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214",
+  "--output=/home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214/logs/%j.out",
+  "--error=/home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214/logs/%j.err",
+  "--wrap=/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214/cached_cg_worker.py /home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214 --manifest-sha256 206fafab7e514ef9e8f1bee94db5a3cde5767bc9edf7a01a027419fcb96b3c37"
+]

@@ -1,0 +1,21 @@
+{
+  "observed_utc": "2026-09-22T21:43:33.821050+00:00",
+  "current_doc_saved_to_drive": true,
+  "weekly_slides_saved_to_drive": true,
+  "doc_tab_labels": [
+    "START HERE \u2014 Current results",
+    "Research log \u2014 through 15 Sep",
+    "Figures with explanations",
+    "CG curves and bus schedules",
+    "21 Sep \u2014 chains and pricing",
+    "Fleet times & matrix",
+    "Route columns & tests"
+  ],
+  "scope": "Native UI confirms tabs still present and save status; unedited tabs were not re-exported or byte-compared. Only current Doc body and weekly slides10/42 edited.",
+  "visual_checks": [
+    "Doc six-chain k33table legible; original heading restored and C6result corrected before export",
+    "Slide42 table/C5row/updatedC6 legible; caption movedbelowtable without overlap",
+    "Slide10 graphresult and next-step body fitinsidecanvas"
+  ],
+  "historical_decks_edited": false
+}

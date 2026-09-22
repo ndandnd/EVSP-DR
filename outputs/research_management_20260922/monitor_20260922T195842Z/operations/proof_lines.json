@@ -1,0 +1,382 @@
+[
+  {
+    "case": "w1_k34",
+    "log": "baseline/cases/w1_k34/mip/661621_r0/gurobi.log",
+    "lines": [
+      {
+        "line": 19,
+        "text": "Optimize a model with 821 rows, 286834 columns and 8146638 nonzeros"
+      },
+      {
+        "line": 96,
+        "text": "Explored 2 nodes (159063 simplex iterations) in 1800.17 seconds (2718.37 work units)"
+      },
+      {
+        "line": 101,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 102,
+        "text": "Best objective 4.000000000000e+01, best bound 3.300000000000e+01, gap 17.5000%"
+      },
+      {
+        "line": 115,
+        "text": "Optimize a model with 822 rows, 286834 columns and 8433472 nonzeros"
+      },
+      {
+        "line": 208,
+        "text": "Explored 105 nodes (112532 simplex iterations) in 1788.79 seconds (3221.05 work units)"
+      },
+      {
+        "line": 213,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 214,
+        "text": "Best objective 2.316159981081e+03, best bound 1.289095172749e+03, gap 44.3434%"
+      }
+    ]
+  },
+  {
+    "case": "w1_k35",
+    "log": "baseline/cases/w1_k35/mip/661623_r0/gurobi.log",
+    "lines": [
+      {
+        "line": 19,
+        "text": "Optimize a model with 834 rows, 288377 columns and 8191191 nonzeros"
+      },
+      {
+        "line": 97,
+        "text": "Explored 1 nodes (347541 simplex iterations) in 1800.12 seconds (2138.08 work units)"
+      },
+      {
+        "line": 102,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 103,
+        "text": "Best objective 4.200000000000e+01, best bound 3.400000000000e+01, gap 19.0476%"
+      },
+      {
+        "line": 116,
+        "text": "Optimize a model with 835 rows, 288377 columns and 8479568 nonzeros"
+      },
+      {
+        "line": 208,
+        "text": "Explored 1 nodes (69321 simplex iterations) in 1787.93 seconds (2224.17 work units)"
+      },
+      {
+        "line": 213,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 214,
+        "text": "Best objective 2.380344000000e+03, best bound 1.349862561253e+03, gap 43.2913%"
+      }
+    ]
+  },
+  {
+    "case": "w2_k34",
+    "log": "baseline/cases/w2_k34/mip/661639_r0/gurobi.log",
+    "lines": [
+      {
+        "line": 19,
+        "text": "Optimize a model with 824 rows, 232279 columns and 6237985 nonzeros"
+      },
+      {
+        "line": 89,
+        "text": "Explored 2 nodes (141749 simplex iterations) in 1800.52 seconds (1442.00 work units)"
+      },
+      {
+        "line": 94,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 95,
+        "text": "Best objective 3.600000000000e+01, best bound 3.300000000000e+01, gap 8.3333%"
+      },
+      {
+        "line": 108,
+        "text": "Optimize a model with 825 rows, 232279 columns and 6470264 nonzeros"
+      },
+      {
+        "line": 185,
+        "text": "Explored 1 nodes (76807 simplex iterations) in 1783.87 seconds (1407.25 work units)"
+      },
+      {
+        "line": 190,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 191,
+        "text": "Best objective 2.404535999999e+03, best bound 1.301479273812e+03, gap 45.8740%"
+      }
+    ]
+  },
+  {
+    "case": "w3_k34",
+    "log": "baseline/cases/w3_k34/mip/661671_r0/gurobi.log",
+    "lines": [
+      {
+        "line": 19,
+        "text": "Optimize a model with 797 rows, 208301 columns and 5201390 nonzeros"
+      },
+      {
+        "line": 101,
+        "text": "Explored 70 nodes (1183199 simplex iterations) in 1800.31 seconds (2402.89 work units)"
+      },
+      {
+        "line": 106,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 107,
+        "text": "Best objective 3.500000000000e+01, best bound 3.400000000000e+01, gap 2.8571%"
+      },
+      {
+        "line": 120,
+        "text": "Optimize a model with 798 rows, 208301 columns and 5409691 nonzeros"
+      },
+      {
+        "line": 214,
+        "text": "Explored 50 nodes (176950 simplex iterations) in 1791.91 seconds (2683.59 work units)"
+      },
+      {
+        "line": 219,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 220,
+        "text": "Best objective 2.383800000000e+03, best bound 1.397619549785e+03, gap 41.3701%"
+      }
+    ]
+  },
+  {
+    "case": "w3_k35",
+    "log": "baseline/cases/w3_k35/mip/661677_r1/gurobi.log",
+    "lines": [
+      {
+        "line": 19,
+        "text": "Optimize a model with 827 rows, 213731 columns and 5369266 nonzeros"
+      },
+      {
+        "line": 98,
+        "text": "Explored 71 nodes (1177665 simplex iterations) in 1800.47 seconds (2328.22 work units)"
+      },
+      {
+        "line": 103,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 104,
+        "text": "Best objective 3.600000000000e+01, best bound 3.500000000000e+01, gap 2.7778%"
+      },
+      {
+        "line": 117,
+        "text": "Optimize a model with 828 rows, 213731 columns and 5582997 nonzeros"
+      },
+      {
+        "line": 210,
+        "text": "Explored 47 nodes (213976 simplex iterations) in 1791.08 seconds (3118.19 work units)"
+      },
+      {
+        "line": 215,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 216,
+        "text": "Best objective 2.426967999999e+03, best bound 1.430401264856e+03, gap 41.0622%"
+      }
+    ]
+  },
+  {
+    "case": "w4_k34",
+    "log": "baseline/cases/w4_k34/mip/661694_r0/gurobi.log",
+    "lines": [
+      {
+        "line": 19,
+        "text": "Optimize a model with 816 rows, 257589 columns and 7215659 nonzeros"
+      },
+      {
+        "line": 87,
+        "text": "Explored 1 nodes (136222 simplex iterations) in 1801.54 seconds (1631.28 work units)"
+      },
+      {
+        "line": 92,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 93,
+        "text": "Best objective 4.200000000000e+01, best bound 3.300000000000e+01, gap 21.4286%"
+      },
+      {
+        "line": 106,
+        "text": "Optimize a model with 817 rows, 257589 columns and 7473248 nonzeros"
+      },
+      {
+        "line": 179,
+        "text": "Explored 1 nodes (56190 simplex iterations) in 1782.64 seconds (1909.23 work units)"
+      },
+      {
+        "line": 184,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 185,
+        "text": "Best objective 2.693280000000e+03, best bound 1.258275967882e+03, gap 53.2809%"
+      }
+    ]
+  },
+  {
+    "case": "w4_k35",
+    "log": "baseline/cases/w4_k35/mip/661696_r0/gurobi.log",
+    "lines": [
+      {
+        "line": 19,
+        "text": "Optimize a model with 830 rows, 260783 columns and 7290467 nonzeros"
+      },
+      {
+        "line": 88,
+        "text": "Explored 15 nodes (202429 simplex iterations) in 1800.51 seconds (2448.30 work units)"
+      },
+      {
+        "line": 93,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 94,
+        "text": "Best objective 4.200000000000e+01, best bound 3.400000000000e+01, gap 19.0476%"
+      },
+      {
+        "line": 107,
+        "text": "Optimize a model with 831 rows, 260783 columns and 7551250 nonzeros"
+      },
+      {
+        "line": 187,
+        "text": "Explored 9 nodes (63987 simplex iterations) in 1786.98 seconds (2188.39 work units)"
+      },
+      {
+        "line": 192,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 193,
+        "text": "Best objective 2.704144000000e+03, best bound 1.317085835961e+03, gap 51.2938%"
+      }
+    ]
+  },
+  {
+    "case": "w5_k33",
+    "log": "baseline/cases/w5_k33/mip/661708_r0/gurobi.log",
+    "lines": [
+      {
+        "line": 19,
+        "text": "Optimize a model with 768 rows, 268700 columns and 7448129 nonzeros"
+      },
+      {
+        "line": 94,
+        "text": "Explored 170 nodes (3212896 simplex iterations) in 1800.18 seconds (3073.02 work units)"
+      },
+      {
+        "line": 99,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 100,
+        "text": "Best objective 3.900000000000e+01, best bound 3.200000000000e+01, gap 17.9487%"
+      },
+      {
+        "line": 113,
+        "text": "Optimize a model with 769 rows, 268700 columns and 7716829 nonzeros"
+      },
+      {
+        "line": 198,
+        "text": "Explored 49 nodes (69429 simplex iterations) in 1790.20 seconds (2939.42 work units)"
+      },
+      {
+        "line": 203,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 204,
+        "text": "Best objective 2.439984000000e+03, best bound 1.232637885997e+03, gap 49.4817%"
+      }
+    ]
+  },
+  {
+    "case": "w6_k33",
+    "log": "baseline/cases/w6_k33/mip/661726_r0/gurobi.log",
+    "lines": [
+      {
+        "line": 19,
+        "text": "Optimize a model with 796 rows, 251615 columns and 6693965 nonzeros"
+      },
+      {
+        "line": 95,
+        "text": "Explored 1 nodes (377562 simplex iterations) in 1800.12 seconds (2586.48 work units)"
+      },
+      {
+        "line": 100,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 101,
+        "text": "Best objective 3.800000000000e+01, best bound 3.200000000000e+01, gap 15.7895%"
+      },
+      {
+        "line": 114,
+        "text": "Optimize a model with 797 rows, 251615 columns and 6945580 nonzeros"
+      },
+      {
+        "line": 213,
+        "text": "Explored 58 nodes (112846 simplex iterations) in 1790.66 seconds (2977.26 work units)"
+      },
+      {
+        "line": 218,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 219,
+        "text": "Best objective 2.278368000000e+03, best bound 1.283052547500e+03, gap 43.6855%"
+      }
+    ]
+  },
+  {
+    "case": "w6_k34",
+    "log": "baseline/cases/w6_k34/mip/661728_r0/gurobi.log",
+    "lines": [
+      {
+        "line": 19,
+        "text": "Optimize a model with 804 rows, 258283 columns and 6884855 nonzeros"
+      },
+      {
+        "line": 92,
+        "text": "Explored 1 nodes (339653 simplex iterations) in 1800.13 seconds (2089.67 work units)"
+      },
+      {
+        "line": 97,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 98,
+        "text": "Best objective 4.000000000000e+01, best bound 3.300000000000e+01, gap 17.5000%"
+      },
+      {
+        "line": 111,
+        "text": "Optimize a model with 805 rows, 258283 columns and 7143138 nonzeros"
+      },
+      {
+        "line": 194,
+        "text": "Explored 67 nodes (96815 simplex iterations) in 1789.29 seconds (2497.39 work units)"
+      },
+      {
+        "line": 199,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 200,
+        "text": "Best objective 2.442504000000e+03, best bound 1.259128562643e+03, gap 48.4493%"
+      }
+    ]
+  }
+]

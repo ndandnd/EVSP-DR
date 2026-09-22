@@ -1,0 +1,4 @@
+  File "<stdin>", line 15
+    with (root/'submission_receipt.json').open('x') as f:json.dump(receipt,f,indent=2);f.write('
+                                                                                               ^
+SyntaxError: unterminated string literal (detected at line 15)

@@ -1,0 +1,24 @@
+{
+  "before_submission": [
+    "Read current /home/nc437/ladder-lite/SCAGLIONE_RESOURCE_POLICY.md and record hash; retain CPU exclusion",
+    "Verify new remote root absent, deploy two files, byte-verify exactSHA",
+    "Verify cachedCG manifest/fullgate receipt/input/source/cache bindings and existing fedf HEAD clean; source bytes remain unchanged",
+    "Submit exactlyonce reviewed sbatchargv; record effective resource/exclusion/requeue state"
+  ],
+  "create_exclusive": true,
+  "directories": [
+    "logs",
+    "attempts"
+  ],
+  "files": {
+    "cached_cg_worker.py": "d5a54f1a5829976ac11e53b27b3126a6f58f272ab49e7c8a6962fadab5496f4a",
+    "manifest.json": "206fafab7e514ef9e8f1bee94db5a3cde5767bc9edf7a01a027419fcb96b3c37"
+  },
+  "graph_artifact_read_only": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/artifacts/k19_fedf4214.graph.cache",
+  "graph_prerequisite": "772820 COMPLETED0:0 and hash-bound fullcold/reload query/initializer equality",
+  "model_code_read_only": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/model_code",
+  "remote_root": "/home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214",
+  "resume_policy": "Start from authentic8343-column k17 parent and54 verified new singletons; old k19 checkpoint never migrated. Uniqueattempt; requeue>0 fails closed, preserving any partial same-fedf pool for explicit reviewed recovery.",
+  "status": "prepared_not_submitted",
+  "submit_argv_sha256": "cd0a6bc8712c0cc9519a5b72b2895881576c9df5fa59d8b30045fb9869b27aeb"
+}

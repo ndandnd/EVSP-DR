@@ -1,3 +1,7 @@
+# Full k19 graph validation passed
+
+**Update, 22 September 2026, 21:31 UTC:** job772820 completed0:0. Full graph, two diagnostic pricing queries and all8,397 initial columns agree after reload. Native graph reload took15.955s; total validation11407.799s, Slurm peak6.080GiB. [Audited receipts and cached-CG recovery](../../../monitor_20260922T195842Z/strict_review/README.md). This is graph/initializer parity, not a CG certificate or fleet result. The following records the original preparation and running snapshot, now superseded by those receipts.
+
 # One full k19 graph validation — job 772820 running
 
 **Job 772820 is RUNNING on joachims-cpu-02.** It was submitted at 16:32:51 UTC and started at 16:32:55 UTC on 22 September 2026. The single scoped snapshot at 16:35:58 UTC confirms the cold graph operation started, restart 0, with no completed cache or parity result yet. See [phase-start receipt](phase_start/772820_r0/snapshot.json) and the captured, hash-verified execution/command/start files. Completion is pending. Effective 2 CPU / 16 GiB / 8 hour / default_partition / requeue / GPU exclusion settings are verified in `submission_receipt.json`. The new clean model checkout and all source/input/lineage hashes passed deployment checks; post-staging filesystem free space was 95,965,829,660,672 bytes. Copied Git objects use 450,560 allocated bytes, the model checkout 13,152,256 bytes, input snapshots 66,453,888 bytes, and the full deployment 79,798,272 allocated bytes. See `deployment_receipt.json` and `source_push_receipt.json`.

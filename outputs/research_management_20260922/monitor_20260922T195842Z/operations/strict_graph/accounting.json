@@ -1,0 +1,101 @@
+{
+  "observed_utc": "2026-09-22T21:31:53.881803+00:00",
+  "rows": [
+    [
+      "772820",
+      "strict_k19_graph_gate",
+      "COMPLETED",
+      "03:10:10",
+      "",
+      "16G",
+      "0:0",
+      "joachims-cpu-02",
+      "2026-09-22T12:32:55",
+      "2026-09-22T15:43:05",
+      "2"
+    ],
+    [
+      "772820.batch",
+      "batch",
+      "COMPLETED",
+      "03:10:10",
+      "6375228K",
+      "",
+      "0:0",
+      "joachims-cpu-02",
+      "2026-09-22T12:32:55",
+      "2026-09-22T15:43:05",
+      "2"
+    ],
+    [
+      "772820.extern",
+      "extern",
+      "COMPLETED",
+      "03:10:10",
+      "",
+      "",
+      "0:0",
+      "joachims-cpu-02",
+      "2026-09-22T12:32:55",
+      "2026-09-22T15:43:05",
+      "2"
+    ]
+  ],
+  "artifact_metadata": [
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/attempts/772820_r0/COMPLETE.json",
+      "bytes": 391,
+      "modified_unix": 1790106185.212033
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/attempts/772820_r0/cold.log",
+      "bytes": 616,
+      "modified_unix": 1790106111.7118316
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/attempts/772820_r0/commands.json",
+      "bytes": 951,
+      "modified_unix": 1790094777.589192
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/attempts/772820_r0/execution.json",
+      "bytes": 376,
+      "modified_unix": 1790094777.4051864
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/attempts/772820_r0/reload.json",
+      "bytes": 134262,
+      "modified_unix": 1790106172.2996457
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/attempts/772820_r0/reload.log",
+      "bytes": 621,
+      "modified_unix": 1790106147.5529034
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/attempts/772820_r0/result.json",
+      "bytes": 1094,
+      "modified_unix": 1790106185.206033
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/artifacts/BUILD_STARTED.json",
+      "bytes": 376,
+      "modified_unix": 1790094777.5161898
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/artifacts/COLD_COMPLETE.json",
+      "bytes": 241,
+      "modified_unix": 1790106122.7251592
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/artifacts/cold.json",
+      "bytes": 134201,
+      "modified_unix": 1790106118.7800417
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/artifacts/k19_fedf4214.graph.cache",
+      "bytes": 3244992792,
+      "modified_unix": 1790106082.4779618
+    }
+  ]
+}

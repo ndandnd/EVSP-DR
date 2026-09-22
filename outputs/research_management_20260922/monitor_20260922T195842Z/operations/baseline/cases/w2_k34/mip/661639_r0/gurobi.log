@@ -1,0 +1,193 @@
+
+Gurobi 12.0.3 (linux64) logging started Tue Sep 22 12:32:31 2026
+
+Set parameter LogFile to value "/share/scaglione/nc437/evsp-dr/chain_extension_33_40_20260921/cases/w2_k34/mip/661639_r0/gurobi.log"
+Set parameter OutputFlag to value 1
+Set parameter TimeLimit to value 3600
+Set parameter MIPGap to value 0.0001
+Set parameter Threads to value 8
+Set parameter TimeLimit to value 1800
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           X7560  @ 2.27GHz, instruction set [SSE2]
+Thread count: 32 physical cores, 64 logical processors, using up to 8 threads
+
+Non-default parameters:
+TimeLimit  1800
+Threads  8
+
+Optimize a model with 824 rows, 232279 columns and 6237985 nonzeros
+Model fingerprint: 0x7c6b1ed9
+Variable types: 0 continuous, 232279 integer (232279 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+
+Loaded user MIP start with objective 335
+
+Presolve removed 0 rows and 0 columns (presolve time = 5s)...
+Presolve removed 0 rows and 1739 columns (presolve time = 10s)...
+Presolve removed 0 rows and 1739 columns (presolve time = 15s)...
+Presolve removed 0 rows and 1739 columns (presolve time = 20s)...
+Presolve removed 0 rows and 1739 columns (presolve time = 25s)...
+Presolve removed 0 rows and 1739 columns (presolve time = 30s)...
+Presolve removed 0 rows and 1739 columns (presolve time = 37s)...
+Presolve removed 0 rows and 1739 columns
+Presolve time: 37.73s
+Presolved: 824 rows, 230540 columns, 6206248 nonzeros
+Found heuristic solution: objective 317.0000000
+Variable types: 0 continuous, 230540 integer (230540 binary)
+Found heuristic solution: objective 311.0000000
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    0.0000000e+00   8.240000e+02   0.000000e+00     40s
+
+Starting sifting (using dual simplex for sub-problems)...
+
+    Iter     Pivots    Primal Obj      Dual Obj        Time
+       0          0     infinity      0.0000000e+00     40s
+       1       1070   5.5200000e+02   1.0615385e+01     40s
+       2       6738   6.9428984e+01   1.3127380e+01     44s
+       3      13604   3.4000000e+01   1.6879435e+01     48s
+       4      17086   3.4000000e+01   1.9672261e+01     49s
+       5      24590   3.3819563e+01   2.3684492e+01     54s
+       6      31672   3.3380221e+01   2.7136553e+01     59s
+       7      37940   3.3000000e+01   3.3000000e+01     64s
+
+Sifting complete
+
+   37940    3.3000000e+01   0.000000e+00   0.000000e+00     65s
+
+Root relaxation: objective 3.300000e+01, 37940 iterations, 25.73 seconds (23.52 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   33.00000    0  438  311.00000   33.00000  89.4%     -  217s
+H    0     0                      51.0000000   33.00000  35.3%     -  219s
+H    0     0                      46.0000000   33.00000  28.3%     -  219s
+H    0     0                      44.0000000   33.00000  25.0%     -  219s
+H    0     0                      43.0000000   33.00000  23.3%     -  221s
+H    0     0                      41.0000000   33.00000  19.5%     -  223s
+H    0     0                      39.0000000   33.00000  15.4%     -  224s
+H    0     0                      38.0000000   33.00000  13.2%     -  246s
+     0     0   33.00000    0  469   38.00000   33.00000  13.2%     -  335s
+H    0     0                      36.0000000   33.00000  8.33%     -  464s
+     0     0   33.00000    0  477   36.00000   33.00000  8.33%     -  828s
+     0     0   33.00000    0  443   36.00000   33.00000  8.33%     -  866s
+     0     0   33.00000    0  443   36.00000   33.00000  8.33%     - 1124s
+     0     2   33.00000    0  443   36.00000   33.00000  8.33%     - 1756s
+     1     3   33.00000    1  464   36.00000   33.00000  8.33% 15473 1800s
+
+Cutting planes:
+  MIR: 7
+
+Explored 2 nodes (141749 simplex iterations) in 1800.52 seconds (1442.00 work units)
+Thread count was 8 (of 64 available processors)
+
+Solution count 10: 36 38 39 ... 317
+
+Time limit reached
+Best objective 3.600000000000e+01, best bound 3.300000000000e+01, gap 8.3333%
+
+User-callback calls 62902, time in user-callback 0.67 sec
+Set parameter TimeLimit to value 1.7836649062633514e+03
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           X7560  @ 2.27GHz, instruction set [SSE2]
+Thread count: 32 physical cores, 64 logical processors, using up to 8 threads
+
+Non-default parameters:
+TimeLimit  1.7836649062633514e+03
+Threads  8
+
+Optimize a model with 825 rows, 232279 columns and 6470264 nonzeros
+Model fingerprint: 0x2076a260
+Variable types: 0 continuous, 232279 integer (232279 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [5e+00, 1e+02]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 4e+01]
+
+Loaded user MIP start with objective 2551.01
+MIP start from previous solve did not produce a new incumbent solution
+
+Presolve removed 0 rows and 0 columns (presolve time = 5s)...
+Presolve removed 0 rows and 96 columns (presolve time = 10s)...
+Presolve removed 0 rows and 96 columns (presolve time = 15s)...
+Presolve removed 0 rows and 96 columns (presolve time = 21s)...
+Presolve removed 0 rows and 96 columns (presolve time = 25s)...
+Presolve removed 0 rows and 96 columns (presolve time = 31s)...
+Presolve removed 0 rows and 96 columns
+Presolve time: 32.51s
+Presolved: 825 rows, 232183 columns, 6466595 nonzeros
+Variable types: 0 continuous, 232183 integer (232183 binary)
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    0.0000000e+00   8.240000e+02   0.000000e+00     35s
+
+Starting sifting (using dual simplex for sub-problems)...
+
+    Iter     Pivots    Primal Obj      Dual Obj        Time
+       0          0     infinity      0.0000000e+00     35s
+       1        936   4.7600020e+08   5.2286791e+02     35s
+       2       5196   1.0119267e+08   6.9716923e+02     37s
+       3      11725   8.0920494e+06   7.2879440e+02     41s
+       4      18695   2.7326009e+05   7.3146157e+02     46s
+       5      25280   1.5579212e+03   8.5472271e+02     55s
+       6      32119   1.4067399e+03   9.5396729e+02     67s
+       7      38226   1.3497265e+03   1.0817476e+03     80s
+       8      45281   1.3207143e+03   1.1725679e+03     98s
+       9      52602   1.3096910e+03   1.2415799e+03    116s
+      10      59032   1.3038694e+03   1.2747324e+03    131s
+      11      65291   1.3014964e+03   1.2938417e+03    146s
+      12      69668   1.3011871e+03   1.2954430e+03    157s
+      13      73793   1.3011847e+03   1.3011847e+03    168s
+
+Sifting complete
+
+   73793    1.3011847e+03   0.000000e+00   0.000000e+00    169s
+
+Root relaxation: objective 1.301185e+03, 73793 iterations, 134.87 seconds (126.22 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 1301.18472    0  812 2551.00800 1301.18472  49.0%     -  170s
+H    0     0                    2512.9440000 1301.18472  48.2%     -  199s
+H    0     0                    2504.5120000 1301.18472  48.0%     -  199s
+H    0     0                    2453.0160000 1301.18472  47.0%     -  205s
+H    0     0                    2407.5120000 1301.18472  46.0%     -  218s
+H    0     0                    2406.0240000 1301.18472  45.9%     -  221s
+H    0     0                    2404.7840000 1301.18472  45.9%     -  221s
+     0     0 1301.35844    0  822 2404.78400 1301.35844  45.9%     -  326s
+H    0     0                    2404.5360000 1301.35844  45.9%     -  652s
+     0     0 1301.40343    0  827 2404.53600 1301.40343  45.9%     -  679s
+     0     0 1301.45386    0  836 2404.53600 1301.45386  45.9%     -  749s
+     0     0 1301.46550    0  837 2404.53600 1301.46550  45.9%     -  895s
+     0     0 1301.47037    0  838 2404.53600 1301.47037  45.9%     -  904s
+     0     0 1301.47463    0  840 2404.53600 1301.47463  45.9%     -  956s
+     0     0 1301.47689    0  841 2404.53600 1301.47689  45.9%     -  993s
+     0     0 1301.47689    0  842 2404.53600 1301.47689  45.9%     -  999s
+     0     0 1301.47863    0  842 2404.53600 1301.47863  45.9%     - 1053s
+
+Cutting planes:
+  MIR: 32
+  Zero half: 1
+
+Explored 1 nodes (76807 simplex iterations) in 1783.87 seconds (1407.25 work units)
+Thread count was 8 (of 64 available processors)
+
+Solution count 8: 2404.54 2404.78 2406.02 ... 2551.01
+
+Time limit reached
+Best objective 2.404535999999e+03, best bound 1.301479273812e+03, gap 45.8740%
+
+User-callback calls 161647, time in user-callback 1.53 sec

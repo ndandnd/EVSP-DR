@@ -1,0 +1,22 @@
+{
+  "adapted_from": "outputs/research_management_20260922/monitor_20260922T155736Z/operations/collect_scoped.py",
+  "previous_sha256": "3ec54230d56ea5e8afe8e1f6b76de312744d67a509e5a55e24f6b05edb4e3de3",
+  "current_sha256": "a570d52133140cab95ae1a8bfe69f37d3fa94978d7a5f610719cd4357f95f8b1",
+  "excluded_previously_audited_solver_jobs": [
+    "661618",
+    "661619",
+    "661620",
+    "661636",
+    "661637",
+    "661668",
+    "661669",
+    "661670",
+    "661691",
+    "661692",
+    "661693",
+    "661724"
+  ],
+  "changes": "Exclude previously finalized solver endpoint attempts; include small strict graph772820 receipts and log tails, no graph/cache payload.",
+  "audit_source_sha256": "9fb2ecc67df6734f51ce6ade4039ffb9967d244372f763de500a0458ab8ed4f5",
+  "audit_adaptation": "Six new CGs/ten new MIPs; reuse15:58/11:57 source CG files. Compare Gurobi charge log to recorded stage2_variable_obj, separately reconstruct selected-route charge and retain their delta."
+}

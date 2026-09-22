@@ -1,0 +1,161 @@
+{
+  "status": "passed",
+  "checks_passed": 32,
+  "checks_total": 32,
+  "checks": [
+    {
+      "check": "source operations423/423",
+      "passed": true
+    },
+    {
+      "check": "source strict graph gate passed",
+      "passed": true
+    },
+    {
+      "check": "Doc outside approved two regions identical",
+      "passed": true
+    },
+    {
+      "check": "all prior Doc source/history/figure links retained",
+      "passed": true
+    },
+    {
+      "check": "Doc current scheduler values",
+      "passed": true
+    },
+    {
+      "check": "Doc C5 exact row",
+      "passed": true
+    },
+    {
+      "check": "Doc C6 exact row",
+      "passed": true
+    },
+    {
+      "check": "Doc six uncertified CGs",
+      "passed": true
+    },
+    {
+      "check": "Doc MIP limitations retained",
+      "passed": true
+    },
+    {
+      "check": "Doc new duplicate counts",
+      "passed": true
+    },
+    {
+      "check": "Doc larger fleet/bound tuples",
+      "passed": true
+    },
+    {
+      "check": "Doc historical C2 discrepancy retained",
+      "passed": true
+    },
+    {
+      "check": "Doc strict graph measured reload/RSS",
+      "passed": true
+    },
+    {
+      "check": "Doc graph proof scope correct",
+      "passed": true
+    },
+    {
+      "check": "42 slides preserved",
+      "passed": true
+    },
+    {
+      "check": "only slides10/42 change after export GUID normalization",
+      "passed": true
+    },
+    {
+      "check": "table style definitions unchanged after GUID normalization",
+      "passed": true
+    },
+    {
+      "check": "only notes10/42 change",
+      "passed": true
+    },
+    {
+      "check": "all embedded historical figure bytes preserved despite export filename reassignment",
+      "passed": true
+    },
+    {
+      "check": "every slide image reference resolves identical bytes",
+      "passed": true
+    },
+    {
+      "check": "slide10 exact graph scope",
+      "passed": true
+    },
+    {
+      "check": "slide10 omitted shared capacity clear",
+      "passed": true
+    },
+    {
+      "check": "slide42 editable native7x6 table exact values",
+      "passed": true
+    },
+    {
+      "check": "slide42 certificate and physical qualifiers",
+      "passed": true
+    },
+    {
+      "check": "slide42 separate graph and ancestor cost",
+      "passed": true
+    },
+    {
+      "check": "slide10 source notes have evidence links",
+      "passed": true
+    },
+    {
+      "check": "slide42 source notes have evidence links",
+      "passed": true
+    },
+    {
+      "check": "slide42 notes latest audit reference",
+      "passed": true
+    },
+    {
+      "check": "slide10 notes graph audit reference",
+      "passed": true
+    },
+    {
+      "check": "submittedCG note preserves pending scope",
+      "passed": true
+    },
+    {
+      "check": "PDF page counts11Doc42Slides",
+      "passed": true
+    },
+    {
+      "check": "visible slide10 and42 PDF content matches exports",
+      "passed": true
+    }
+  ],
+  "source_operations_sha256": "b8c961ee1eaf0fb08f7174b3855b545ac82b64b0a7d656ebd0b868f2dd2b3a28",
+  "source_strict_audit_sha256": "b0e7ab4a27467756f74cf3b0cc2c40ad6d55db4a131f1c65c0e9ccb98455bd29",
+  "export_sha256": {
+    "current_before.md": "a2655964cc59442c21b556c5c4fa397f36086008e02cdf5988127a9907fc82e1",
+    "current_after.md": "adcaff4fc256f0f2b8790d6249adb35ae625e2f05d9334acdc3f019d75c33335",
+    "slides_before.pptx": "7da54348c2bc3d752e80a157fe8814ebd48c93f74698b3d4d74bd519c1c0c362",
+    "slides_after.pptx": "d0c9d678c93fa39bf3bfc08f90838902fd96f2068dd6e869dbda22f1bac2ceee",
+    "current_after.pdf": "37e07625f6d3e3c9292d28fc067533d98238c57f7bbe18aa46591d94495af747",
+    "slides_after.pdf": "7e4d38194582f592fe9bf88c2e1abaf438b4dbe13102e2e771f22a3a066f74a5"
+  },
+  "normalized_export_variation": "Table-style GUIDs and media filenames reassigned by export; actual style definitions and every resolved image reference compared separately",
+  "visual_review": {
+    "status": "passed",
+    "rendered_slides": [
+      10,
+      42
+    ],
+    "rendered_doc_pages": [
+      2,
+      3,
+      6,
+      7
+    ],
+    "findings": "Readable, no clipping or overlap; complete six-chain native table fits, caption below table. Updated submission text and source link spacing also render cleanly."
+  },
+  "scope": "Local export verification; no live edits, SSH or solver activity"
+}

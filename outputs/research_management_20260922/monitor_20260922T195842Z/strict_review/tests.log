@@ -1,0 +1,11 @@
+test_authentic_completed_native_gate (__main__.RecoveryGateTests.test_authentic_completed_native_gate) ... ok
+test_command_preserves_science_and_true_parent (__main__.RecoveryGateTests.test_command_preserves_science_and_true_parent) ... ok
+test_corrupt_or_missing_proof_rejects (__main__.RecoveryGateTests.test_corrupt_or_missing_proof_rejects) ... ok
+test_native_license_failure_does_not_start_cg (__main__.RecoveryGateTests.test_native_license_failure_does_not_start_cg) ... ok
+test_requeue_and_duplicate_fresh_job_fail_before_gate (__main__.RecoveryGateTests.test_requeue_and_duplicate_fresh_job_fail_before_gate) ... ok
+test_resealed_route_or_initializer_drift_rejects (__main__.RecoveryGateTests.test_resealed_route_or_initializer_drift_rejects) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.033s
+
+OK
