@@ -1,0 +1,10 @@
+test_cold_baseline_identity_checked_before_reload (test_strict_graph_artifact_gate.FullGraphGateTests.test_cold_baseline_identity_checked_before_reload) ... ok
+test_exactly_two_distinct_deterministic_diagnostic_duals (test_strict_graph_artifact_gate.FullGraphGateTests.test_exactly_two_distinct_deterministic_diagnostic_duals) ... ok
+test_partial_preparation_never_triggers_second_build (test_strict_graph_artifact_gate.FullGraphGateTests.test_partial_preparation_never_triggers_second_build) ... ok
+test_phase_comparison_rejects_pricing_graph_and_initializer_drift (test_strict_graph_artifact_gate.FullGraphGateTests.test_phase_comparison_rejects_pricing_graph_and_initializer_drift) ... ok
+test_query_gate_rejects_independent_rc_and_physical_errors (test_strict_graph_artifact_gate.FullGraphGateTests.test_query_gate_rejects_independent_rc_and_physical_errors) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+OK

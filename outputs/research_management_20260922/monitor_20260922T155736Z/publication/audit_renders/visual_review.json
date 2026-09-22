@@ -1,0 +1,35 @@
+{
+  "status": "pass",
+  "method": "PDF pages rendered by bundled pdftoppm at 120 dpi and individually opened with view_image; no montage-only review.",
+  "doc_pages": [
+    2,
+    3,
+    6,
+    7,
+    8
+  ],
+  "slides": [
+    10,
+    42
+  ],
+  "observations": [
+    "The entire updated k33 table is on Doc page 2, with legible headers, five complete rows and its scope footnote; no clipping or overlap.",
+    "Doc page 3 contains the four MIP scope paragraph, k34 status, C2 numerical disclosure and unchanged baseline/full40 physics and geography links.",
+    "Doc pages 6 and 7 retain the historical strict endpoint before the new native gate paragraph, which is legible across the existing paragraph page break.",
+    "The unchanged historical k5 charging table continues at the same row boundary on pages 7 and 8 as in the previous PDF.",
+    "Slides 10 and 42 are legible and fit their canvases; the native table is readable, with clear spacing before the scope caption."
+  ],
+  "export_sha256": {
+    "current_after.pdf": "2da22680acb5c17c41059a7dd8dda8df51e2b6b51f7d10a87e7f950b872fa92b",
+    "slides_after.pdf": "f214824042ef3f6f748bf574176845759b8fa38c5c9ce47c98df6e4d587b825b"
+  },
+  "render_sha256": {
+    "current_after_2.png": "8e6849a5854f2a2dd17206ac21c1c4e18f9ba64d95742becb6375b2c11f809c2",
+    "current_after_3.png": "ec0d52a8262661168b68885cf208d4a0ec0619ef83b12dba9d0cd4e33f128bbe",
+    "current_after_6.png": "bffc548d02ebc74928d4d29ffa2b96447946b826c7237834f8748ed9d3bfb4dd",
+    "current_after_7.png": "cf8a84a1b2b376c487bfb75c809e37d37e5ba6fbffb88714b3d6fda19616b2dd",
+    "current_after_8.png": "5ff90428882e1140cff0453db1001f90e14a7fc44d4b044a216d9abac9aad234",
+    "slides_after_10.png": "e40157871183c80599765c3ca5375d05ca65dbabb6bda618dd4009e1d2b3081e",
+    "slides_after_42.png": "35c6df6a44b3523d1aa0f12f984d0b754056ec8c53ca2cf223d6fb2fa465eea0"
+  }
+}

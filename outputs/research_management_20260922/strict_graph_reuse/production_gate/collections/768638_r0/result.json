@@ -1,0 +1,19 @@
+{
+  "audit_code_commit": "34d39caff534c089fbffed397f5a42b223b590ad",
+  "child_maxrss_kib": 499560,
+  "fresh_singleton_optimum_equality_proved": false,
+  "gate_result_sha256": "1c8f135adecc62dfc19df4b5ed1b8fcc3b1abb9e7bbc716bd770747c95f0cfdd",
+  "graph_built": false,
+  "host": "snavely-cpu-14.cs.cornell.edu",
+  "inputs_replayed": 8397,
+  "job_id": "768638",
+  "log_sha256": "de44a4b3d5080bd4eba6323a192bba898eb194f87ed92513533519ec4b0bf7a8",
+  "manifest_sha256": "9eb6585cf4e452cd8bad301eab6b92916ad5a3c9140f6d602fb33aa1459fa560",
+  "model_execution_commit": "fedf421461f94727e6b1292a0e7789ab76ed8587",
+  "restart": "0",
+  "runtime_s": 32.44006330985576,
+  "scope": "authentic complete inherited-column equality and saved singleton replay only",
+  "solver_started": false,
+  "started_epoch": 1790093653.869158,
+  "status": "passed"
+}

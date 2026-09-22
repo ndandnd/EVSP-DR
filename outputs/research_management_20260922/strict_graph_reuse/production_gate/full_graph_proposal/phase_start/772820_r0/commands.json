@@ -1,0 +1,28 @@
+[
+  {
+    "command": [
+      "/home/nc437/evsp_env/bin/python",
+      "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/code/scripts/validate_strict_graph_artifact.py",
+      "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a",
+      "--phase",
+      "cold",
+      "--out",
+      "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/artifacts/cold.json"
+    ],
+    "phase": "cold",
+    "timeout_s": 22500
+  },
+  {
+    "command": [
+      "/home/nc437/evsp_env/bin/python",
+      "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/code/scripts/validate_strict_graph_artifact.py",
+      "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a",
+      "--phase",
+      "reload",
+      "--out",
+      "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/attempts/772820_r0/reload.json"
+    ],
+    "phase": "reload",
+    "timeout_s": 4800
+  }
+]

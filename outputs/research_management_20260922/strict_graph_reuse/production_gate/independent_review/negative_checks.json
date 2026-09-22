@@ -1,0 +1,17 @@
+[
+  {
+    "case": "wrong_input_size",
+    "rejected": true,
+    "result_not_written": true
+  },
+  {
+    "case": "wrong_model_pin",
+    "rejected": true,
+    "result_not_written": true
+  },
+  {
+    "case": "output_overwrite",
+    "rejected": true,
+    "old_output_unchanged": true
+  }
+]

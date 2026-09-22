@@ -1,0 +1,74 @@
+{
+  "k17_status": {
+    "path": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k17_18E2/cg/668430_r0/result.json",
+    "bytes": 2347996,
+    "sha256": "0da1c9472f94a32b587aa63a1e2e16ee4267553be6eb897234358a660f115844",
+    "local_name": "k17_status.json"
+  },
+  "k17_pool": {
+    "path": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k17_18E2/cg/668430_r0/pool.jsonl",
+    "bytes": 31257345,
+    "sha256": "7355363be623e1a154484fda4767e35bd2ef28a04c2f9efbe4f48c1618a8e3af",
+    "local_name": "k17_pool.jsonl"
+  },
+  "k17_command": {
+    "path": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k17_18E2/cg/668430_r0/command.json",
+    "bytes": 1351,
+    "sha256": "50ff92b1afc4e719a195cb5b551f27eab7a2e33d1c647ff5f3ab405aea664eab",
+    "local_name": "k17_command.json"
+  },
+  "k17_instance": {
+    "path": "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k17_18E2.csv",
+    "bytes": 43549,
+    "sha256": "95a79cdcb9a84d135fb086626f511cd377dbc31427d98ac696ea4801c7e51c88",
+    "local_name": "k17_instance.csv"
+  },
+  "k19_status": {
+    "path": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k19_18E2/cg/668433_r0/result.json",
+    "bytes": 3901,
+    "sha256": "febde0587cea7940e34632f477fe32821674a2cc6fbfbc7e0054ce58b432ef03",
+    "local_name": "k19_status.json"
+  },
+  "k19_pool": {
+    "path": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k19_18E2/cg/668433_r0/pool.jsonl",
+    "bytes": 32738629,
+    "sha256": "6fc53b568d1035adf211cbe4b0f9a0dd3eabed20bed51c291274a2fbecca5b92",
+    "local_name": "k19_pool.jsonl"
+  },
+  "k19_command": {
+    "path": "/home/nc437/ladder-lite/strict_packed_successors_20260921/w5_k19_18E2/cg/668433_r0/command.json",
+    "bytes": 1397,
+    "sha256": "4e20f68937205f4d5d7b938a5df871af5c545878ef1eb849397c096c86706314",
+    "local_name": "k19_command.json"
+  },
+  "k19_instance": {
+    "path": "/home/nc437/ladder-lite/review_strict_c5_20260916/inputs/w5_k19_18E2.csv",
+    "bytes": 51842,
+    "sha256": "81ff2322b0241227ce4871767b7e6e68fa6a5ea4b53af1064743342e30612bd7",
+    "local_name": "k19_instance.csv"
+  },
+  "prices": {
+    "path": "/home/nc437/ladder-lite/strict_packed_20260921/code/data/hourly_prices_flat.csv",
+    "bytes": 581,
+    "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "local_name": "hourly_prices_flat.csv"
+  },
+  "reference": {
+    "path": "/home/nc437/ladder-lite/strict_packed_20260921/code/data/Ref_dict.csv",
+    "bytes": 512,
+    "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "local_name": "Ref_dict.csv"
+  },
+  "deadhead": {
+    "path": "/home/nc437/ladder-lite/strict_packed_20260921/code/data/par_ref_dhd.csv",
+    "bytes": 2573,
+    "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "local_name": "par_ref_dhd.csv"
+  },
+  "resource_policy": {
+    "path": "/home/nc437/ladder-lite/SCAGLIONE_RESOURCE_POLICY.md",
+    "bytes": 4212,
+    "sha256": "f9c5982718da6ab758019ceb85e31b539aea5416adc51816bc4bae220728e40b",
+    "local_name": "SCAGLIONE_RESOURCE_POLICY.md"
+  }
+}

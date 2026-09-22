@@ -1,0 +1,75 @@
+{
+  "status": "prepared_not_deployed_or_submitted",
+  "remote_root": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a",
+  "wrapper_commit": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9",
+  "model_commit": "fedf421461f94727e6b1292a0e7789ab76ed8587",
+  "manifest_sha256": "37c8419ad5da09d968efa5ea2471c5a282412f4f44b139d23a6517823d5e6e3a",
+  "model_setup_argv": [
+    [
+      "git",
+      "clone",
+      "--no-hardlinks",
+      "--no-checkout",
+      "/home/nc437/ladder-lite/strict_packed_20260921/code",
+      "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/model_code"
+    ],
+    [
+      "git",
+      "-C",
+      "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/model_code",
+      "sparse-checkout",
+      "init",
+      "--cone"
+    ],
+    [
+      "git",
+      "-C",
+      "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/model_code",
+      "sparse-checkout",
+      "set",
+      "src",
+      "tests",
+      "data"
+    ],
+    [
+      "git",
+      "-C",
+      "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/model_code",
+      "fetch",
+      "--no-tags",
+      "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/fedf_since_357.bundle",
+      "refs/heads/codex/strict-graph-reuse-20260922"
+    ],
+    [
+      "git",
+      "-C",
+      "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/model_code",
+      "checkout",
+      "--detach",
+      "fedf421461f94727e6b1292a0e7789ab76ed8587"
+    ]
+  ],
+  "create_new_directories": [
+    "code",
+    "logs",
+    "attempts",
+    "artifacts",
+    "input_artifacts"
+  ],
+  "stage_files": [
+    "manifest.json",
+    "wrapper_source.tar",
+    "fedf_since_357.bundle"
+  ],
+  "checks": [
+    "Refuse an existing deployment root; stage and verify exact manifest/archive/bundle hashes.",
+    "Extract wrapper archive under code; verify all wrapper-source hashes.",
+    "Run model_setup_argv only in the new checkout; verify exact fedf HEAD, clean tracked state and all 253 model hashes.",
+    "Copy only the twelve manifest-named original files into input_artifacts; verify all file hashes and native 768638 COMPLETE/result/gate hashes.",
+    "Measure free NFS space >=16 GiB after staging; record filesystem and quota evidence if applicable.",
+    "After root approval, submit exact sbatch_argv once and verify effective 2 CPU / 16 GiB / 8 hour / default partition / GPU exclusion settings."
+  ],
+  "immutable_graph_output": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/artifacts/k19_fedf4214.graph.cache",
+  "sealed_cold_baseline": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/artifacts/COLD_COMPLETE.json",
+  "automatic_solver_submission": false
+}

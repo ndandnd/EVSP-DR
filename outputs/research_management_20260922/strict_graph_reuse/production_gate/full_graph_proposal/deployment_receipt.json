@@ -1,0 +1,19 @@
+{
+  "status": "deployed_verified_not_submitted",
+  "manifest_sha256": "37c8419ad5da09d968efa5ea2471c5a282412f4f44b139d23a6517823d5e6e3a",
+  "wrapper_commit": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9",
+  "model_commit": "fedf421461f94727e6b1292a0e7789ab76ed8587",
+  "model_tracked_clean": true,
+  "model_source_files_verified": 253,
+  "input_files_verified": 12,
+  "native_lineage_hashes_verified": true,
+  "wrapper_source_files_verified": 3,
+  "post_staging_disk_free_bytes": 95965829660672,
+  "required_free_bytes": 17179869184,
+  "copied_git_allocated_bytes": 450560,
+  "model_checkout_allocated_bytes": 13152256,
+  "input_snapshot_bytes": 66453888,
+  "deployment_allocated_bytes": 79798272,
+  "runtime_s": 8.894099030643702,
+  "remote_root": "/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a"
+}

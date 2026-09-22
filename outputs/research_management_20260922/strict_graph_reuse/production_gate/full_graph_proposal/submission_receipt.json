@@ -1,0 +1,30 @@
+{
+  "submitted_utc": "2026-09-22T16:32:51.898978+00:00",
+  "argv": [
+    "sbatch",
+    "--parsable",
+    "--partition=default_partition",
+    "--account=scaglione",
+    "--cpus-per-task=2",
+    "--mem=16G",
+    "--time=08:00:00",
+    "--exclude=scaglione-compute-01",
+    "--requeue",
+    "--job-name=strict_k19_graph_gate",
+    "--chdir=/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a",
+    "--output=/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/logs/%j.out",
+    "--error=/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/logs/%j.err",
+    "--wrap=/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/code/scripts/validate_strict_graph_artifact.py /home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a"
+  ],
+  "returncode": 0,
+  "stdout": "772820\n",
+  "stderr": "",
+  "job": "772820",
+  "effective_settings": "JobId=772820 JobName=strict_k19_graph_gate UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14314 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=08:00:00 TimeMin=N/A SubmitTime=2026-09-22T12:32:51 EligibleTime=2026-09-22T12:32:51 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-22T12:32:51 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:795762 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=16G,node=1,billing=2 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=(null) WorkDir=/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a StdErr=/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/logs/772820.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/strict_k19_graph_validation_20260922_3bb32c1a/logs/772820.out TresPerTask=cpu=2 \n",
+  "excluded_gpu_node_verified": true,
+  "cpus_verified": true,
+  "memory_verified": true,
+  "time_verified": true,
+  "partition_verified": true,
+  "requeue_verified": true
+}

@@ -1,0 +1,15 @@
+{
+  "state": "prepared_not_submitted",
+  "remote_root": "/home/nc437/ladder-lite/strict_lineage_gate_20260922_34d39caf",
+  "audit_code_commit": "34d39caff534c089fbffed397f5a42b223b590ad",
+  "manifest_sha256": "9eb6585cf4e452cd8bad301eab6b92916ad5a3c9140f6d602fb33aa1459fa560",
+  "archive_sha256": "bc4407ec218a4d43ebe15f72dae523ad228ec3eadfb6298b0dc1da91e88f7105",
+  "steps": [
+    "Create a new remote deployment root only; do not reuse/overwrite existing root.",
+    "Stage gate_source.tar, manifest.json and worker.py; verify local/remote hashes.",
+    "Extract gate_source.tar under code; make logs and attempts directories.",
+    "Check pinned model_source_root file hashes using manifest and original input paths still match.",
+    "After review, submit exactly sbatch_argv.json; immediately verify effective exclusion/resources using scontrol."
+  ],
+  "originals_read_only": true
+}

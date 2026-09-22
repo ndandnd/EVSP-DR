@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "job": "768638",
+  "checks": {
+    "complete_result_hash": true,
+    "complete_gate_hash": true,
+    "gate_log_hash": true,
+    "manifest_hash": true,
+    "inherited_count": true,
+    "all_routes_count": true,
+    "singletons_count": true,
+    "no_solver_or_graph": true,
+    "checkpoint_only_normalization": true
+  },
+  "native_gate_runtime_s": 29.074883663095534,
+  "native_worker_runtime_s": 32.44006330985576,
+  "child_maxrss_kib": 499560,
+  "file_sha256": {
+    "execution.json": "028182e5826983baa0652cd7d94c233f03c6e4e3966a78420e995a6ac177e9a4",
+    "staged_inputs.json": "656d20212a2b6acced368e1bd820a9ee3d9585605658fe1ecba0bf6d3ed2d767",
+    "command.json": "6d10d9ae06e2c102da2b9c3f412da45b98f948eb11265e567c5f17f3ead52fe3",
+    "gate.log": "de44a4b3d5080bd4eba6323a192bba898eb194f87ed92513533519ec4b0bf7a8",
+    "gate_result.json": "1c8f135adecc62dfc19df4b5ed1b8fcc3b1abb9e7bbc716bd770747c95f0cfdd",
+    "result.json": "8004a2fab6ddb0a8f7380d4f78f4881ef9e7b28d63ca6482a4886adf600af8e1",
+    "COMPLETE.json": "e34599ff20319ed825a1acbf49cb4a6d186e05fb44b145af18c320ec35fda7b2"
+  }
+}

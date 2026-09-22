@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "checks": [
+    "commands before sequential cold/reload",
+    "sealed resume reload-only",
+    "corrupt baseline fails before subprocess"
+  ],
+  "scope": "mock worker orchestration; no production graph validation"
+}

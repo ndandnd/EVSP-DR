@@ -1,0 +1,1789 @@
+{
+  "observed_utc": "2026-09-22T15:58:38.721271+00:00",
+  "checks_passed": 286,
+  "checks_total": 287,
+  "nonfatal_discrepancies": [
+    {
+      "check": "w2_k33 LP objective reconstructed",
+      "passed": false,
+      "required": false
+    }
+  ],
+  "checks": [
+    {
+      "check": "copied hash baseline/jobs.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k33/cache/661665_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k33/cache/661665_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k33/mip/661619_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k33/mip/661619_r0/gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k33/mip/661619_r0/result.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k34/cache/661666_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k34/cache/661666_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k34/cg/661620_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k34/cg/661620_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k34/cg/661620_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k34/mip/661621_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k35/cache/661667_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k35/cache/661667_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k35/cg/661622_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k35/cg/661622_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k36/cache/661746_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k36/cache/661746_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k37/cache/661747_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k37/cache/661747_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k38/cache/661761_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k38/cache/661761_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k39/cache/661762_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k39/cache/661762_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k39/cache/661762_r1/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k40/cache/661791_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k33/cache/661813_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k33/cache/661813_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k33/cg/661636_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k33/cg/661636_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k33/cg/661636_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k33/mip/661637_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k33/mip/661637_r0/gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k33/mip/661637_r0/result.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k34/cache/661814_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k34/cache/661814_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k34/cg/661638_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k34/cg/661638_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k34/cg/661638_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k35/cache/661833_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k36/cache/661834_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k36/cache/661834_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k37/cache/661835_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k37/cache/661835_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k38/cache/661836_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k38/cache/661836_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k39/cache/661837_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k39/cache/661837_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k40/cache/661858_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k33/cache/661859_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k33/cache/661859_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k34/cache/661882_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k34/cache/661882_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k34/cg/661670_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k34/cg/661670_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k34/cg/661670_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k34/mip/661671_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k35/cache/661883_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k35/cache/661883_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k35/cg/661676_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k35/cg/661676_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k35/cg/661676_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k36/cache/661898_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k36/cache/661898_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k37/cache/661899_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k37/cache/661899_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k38/cache/661900_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k38/cache/661900_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k33/cache/661934_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k33/cache/661934_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k33/mip/661692_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k33/mip/661692_r0/gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k33/mip/661692_r0/result.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k34/cache/661935_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k34/cache/661935_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k34/cg/661693_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k34/cg/661693_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k34/cg/661693_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k34/mip/661694_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k35/cache/661936_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k35/cache/661936_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k35/cg/661695_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k35/cg/661695_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k36/cache/661937_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k36/cache/661937_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k37/cache/661938_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k37/cache/661938_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k37/cache/661938_r1/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k38/cache/661939_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k38/cache/661939_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k38/cache/661939_r1/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k39/cache/661940_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k33/cache/661941_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k33/cache/661941_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k34/cache/661942_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k35/cache/661943_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k35/cache/661943_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k36/cache/661944_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k36/cache/661944_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k37/cache/661945_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k37/cache/661945_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k38/cache/661946_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k38/cache/661946_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k39/cache/661947_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k39/cache/661947_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k40/cache/661948_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k40/cache/661948_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k33/cache/661949_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k33/cache/661949_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k33/cache/661949_r1/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k33/cg/661724_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k33/cg/661724_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k33/cg/661724_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k33/mip/661726_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k34/cache/661950_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k34/cache/661950_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k34/cg/661727_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k34/cg/661727_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k34/cg/661727_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k35/cache/661951_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k35/cache/661951_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k36/cache/661952_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k36/cache/661952_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k37/cache/661953_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k37/cache/661953_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k38/cache/661954_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k38/cache/661954_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k39/cache/661616_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k39/cache/661616_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "44 graph allocations",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "33complete11running",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "75 genuine dependencies",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661741",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661739",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661736",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661733",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661731",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661729",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661721",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661719",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661717",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661715",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661713",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661711",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661709",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661707",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661705",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661703",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661701",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661699",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661697",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661686",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661684",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661682",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661680",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661678",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661650",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661648",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661646",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661644",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661642",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661640",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661633",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661631",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661629",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661627",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661625",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661742",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661740",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661738",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661735",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661732",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661730",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661728",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661722",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661720",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661718",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661716",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661714",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661712",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661710",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661708",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661706",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661704",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661702",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661700",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661698",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661696",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661687",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661685",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661683",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661681",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661679",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661677",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661651",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661649",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661647",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661645",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661643",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661641",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661639",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661634",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661632",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661630",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661628",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661626",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661623",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "preemptions already recovered",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "no allocation failures",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "no reserved compute01",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k34 LP coverage",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k34 LP objective reconstructed",
+      "passed": true,
+      "required": false
+    },
+    {
+      "check": "w1_k34 route weight reconstructed",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k34 uncertified walllimit",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k34 pin/input identity",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k34 execution gate",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k34 graph reused",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 LP coverage",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 LP objective reconstructed",
+      "passed": false,
+      "required": false
+    },
+    {
+      "check": "w2_k33 route weight reconstructed",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 uncertified walllimit",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 pin/input identity",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 execution gate",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 graph reused",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w3_k34 LP coverage",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w3_k34 LP objective reconstructed",
+      "passed": true,
+      "required": false
+    },
+    {
+      "check": "w3_k34 route weight reconstructed",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w3_k34 uncertified walllimit",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w3_k34 pin/input identity",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w3_k34 execution gate",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w3_k34 graph reused",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k34 LP coverage",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k34 LP objective reconstructed",
+      "passed": true,
+      "required": false
+    },
+    {
+      "check": "w4_k34 route weight reconstructed",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k34 uncertified walllimit",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k34 pin/input identity",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k34 execution gate",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k34 graph reused",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w6_k33 LP coverage",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w6_k33 LP objective reconstructed",
+      "passed": true,
+      "required": false
+    },
+    {
+      "check": "w6_k33 route weight reconstructed",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w6_k33 uncertified walllimit",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w6_k33 pin/input identity",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w6_k33 execution gate",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w6_k33 graph reused",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "five new terminal CGs",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k33 source CG hash",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k33 source journal recorded",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k33 MIP finished",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k33 MIP clean pin",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k33 native physical gate",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k33 pool unaugmented",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k33 selected coverage",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k33 fleet count",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k33 open proof scope",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k33 recorded physical scope",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k33 two log stages",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k33 fleet log agrees",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k33 charge log agrees",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 source CG hash",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 source journal recorded",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 MIP finished",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 MIP clean pin",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 native physical gate",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 pool unaugmented",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 selected coverage",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 fleet count",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 open proof scope",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 recorded physical scope",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 two log stages",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 fleet log agrees",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k33 charge log agrees",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k33 source CG hash",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k33 source journal recorded",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k33 MIP finished",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k33 MIP clean pin",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k33 native physical gate",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k33 pool unaugmented",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k33 selected coverage",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k33 fleet count",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k33 open proof scope",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k33 recorded physical scope",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k33 two log stages",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k33 fleet log agrees",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k33 charge log agrees",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "three new terminal MIPs",
+      "passed": true,
+      "required": true
+    }
+  ],
+  "queue_states": {
+    "PENDING": 129,
+    "RUNNING": 20
+  },
+  "baseline_running": 20,
+  "graphs_running": 11,
+  "graphs_completed": 33,
+  "CG_running": 5,
+  "MIP_running": 4,
+  "solver_dependency_waits": 75,
+  "broken_active_dependencies": 0,
+  "new_actionable_allocation_failures": [],
+  "cumulative_preemptions": 10,
+  "cg_endpoints": [
+    {
+      "case": "w1_k34",
+      "job": "661620",
+      "target_duties": 34,
+      "trips": 821,
+      "iterations": 68,
+      "pricing_certified": false,
+      "stop_reason": "wall_limit",
+      "route_weight": 33.00000000000009,
+      "weighted_RMP": 3301488.163687474,
+      "last_pricing_min_rc": -64.37106180587394,
+      "artificials": 0.0,
+      "graph_original_build_s": 60440.02366399765,
+      "cache_io_s": 127.62369799613953,
+      "reported_cg_wall_s": 14399.086551973596,
+      "wrapper_wall_s": 14653.01294207573,
+      "scheduler_elapsed": "04:04:30",
+      "app_RUSAGE_SELF_peak_mb": 48189.66015625,
+      "slurm_batch_MaxRSS": "272141328K",
+      "git_dirty_reported": true,
+      "saved_positive_objective_delta": 5.397014319896698e-07,
+      "saved_positive_weight_delta": 5.3930193644191604e-12,
+      "reported_max_bound_violation": 8.362584416424272e-13,
+      "reported_feasibility_tolerance": 1e-06,
+      "result_sha256": "f1f701298ae454c0bb498b70abd41a9963217d86acaa87636cb0eaab71ba0e85"
+    },
+    {
+      "case": "w2_k33",
+      "job": "661636",
+      "target_duties": 33,
+      "trips": 787,
+      "iterations": 138,
+      "pricing_certified": false,
+      "stop_reason": "wall_limit",
+      "route_weight": 31.9999999999998,
+      "weighted_RMP": 3201358.3634775938,
+      "last_pricing_min_rc": -2.0078755777917685,
+      "artificials": 0.0,
+      "graph_original_build_s": 48761.8790435791,
+      "cache_io_s": 103.45683646202087,
+      "reported_cg_wall_s": 14394.130497627426,
+      "wrapper_wall_s": 14500.459961652756,
+      "scheduler_elapsed": "04:01:47",
+      "app_RUSAGE_SELF_peak_mb": 44528.6484375,
+      "slurm_batch_MaxRSS": "241963544K",
+      "git_dirty_reported": true,
+      "saved_positive_objective_delta": 0.03753763297572732,
+      "saved_positive_weight_delta": 3.751601767021384e-07,
+      "reported_max_bound_violation": 3.751559720223936e-07,
+      "reported_feasibility_tolerance": 1e-06,
+      "result_sha256": "e8f1a121dc06f999d89830b98c6d86ef3909b481b4c46f94ec33dc05b3db1c7d"
+    },
+    {
+      "case": "w3_k34",
+      "job": "661670",
+      "target_duties": 34,
+      "trips": 797,
+      "iterations": 198,
+      "pricing_certified": false,
+      "stop_reason": "wall_limit",
+      "route_weight": 33.99999999999996,
+      "weighted_RMP": 3401433.1389859784,
+      "last_pricing_min_rc": -0.012311815516451663,
+      "artificials": 0.0,
+      "graph_original_build_s": 57497.855086803436,
+      "cache_io_s": 142.83067965507507,
+      "reported_cg_wall_s": 14393.84739229735,
+      "wrapper_wall_s": 14628.859277248383,
+      "scheduler_elapsed": "04:04:04",
+      "app_RUSAGE_SELF_peak_mb": 45005.53125,
+      "slurm_batch_MaxRSS": "240367976K",
+      "git_dirty_reported": true,
+      "saved_positive_objective_delta": 6.901100277900696e-07,
+      "saved_positive_weight_delta": 6.899369964230573e-12,
+      "reported_max_bound_violation": 3.713313997620493e-13,
+      "reported_feasibility_tolerance": 1e-06,
+      "result_sha256": "6f11e5aca5d342b72c624a3ab5107552a47563157790ab0f1a9235dc752c25a4"
+    },
+    {
+      "case": "w4_k34",
+      "job": "661693",
+      "target_duties": 34,
+      "trips": 816,
+      "iterations": 197,
+      "pricing_certified": false,
+      "stop_reason": "wall_limit",
+      "route_weight": 33.00000000000023,
+      "weighted_RMP": 3301451.696199127,
+      "last_pricing_min_rc": -0.2040937174261428,
+      "artificials": 0.0,
+      "graph_original_build_s": 35256.32660651207,
+      "cache_io_s": 109.43217158317566,
+      "reported_cg_wall_s": 14394.984122990165,
+      "wrapper_wall_s": 14517.27136874199,
+      "scheduler_elapsed": "04:02:06",
+      "app_RUSAGE_SELF_peak_mb": 47671.2578125,
+      "slurm_batch_MaxRSS": "262891036K",
+      "git_dirty_reported": true,
+      "saved_positive_objective_delta": 3.7439167499542236e-07,
+      "saved_positive_weight_delta": 3.737454790098127e-12,
+      "reported_max_bound_violation": 2.4752422334017865e-13,
+      "reported_feasibility_tolerance": 1e-06,
+      "result_sha256": "71da7e9670a6d489055cc05769120a87a0dcc5f325754093e5ead4150ebf8f23"
+    },
+    {
+      "case": "w6_k33",
+      "job": "661724",
+      "target_duties": 33,
+      "trips": 796,
+      "iterations": 149,
+      "pricing_certified": false,
+      "stop_reason": "wall_limit",
+      "route_weight": 31.999999999999794,
+      "weighted_RMP": 3201471.514998098,
+      "last_pricing_min_rc": -1.5525381160176188,
+      "artificials": 0.0,
+      "graph_original_build_s": 54351.12718462944,
+      "cache_io_s": 101.08437943458557,
+      "reported_cg_wall_s": 14394.553510105237,
+      "wrapper_wall_s": 14485.512506008148,
+      "scheduler_elapsed": "04:01:35",
+      "app_RUSAGE_SELF_peak_mb": 44950.82421875,
+      "slurm_batch_MaxRSS": "247936588K",
+      "git_dirty_reported": true,
+      "saved_positive_objective_delta": 7.492490112781525e-07,
+      "saved_positive_weight_delta": 7.489120434911456e-12,
+      "reported_max_bound_violation": 6.076320002712521e-13,
+      "reported_feasibility_tolerance": 1e-06,
+      "result_sha256": "0b43b3848f562384afd149cead16d48e5035d60659dd72f990ff342dbfd25d20"
+    }
+  ],
+  "mip_endpoints": [
+    {
+      "case": "w1_k33",
+      "job": "661619",
+      "target_duties": 33,
+      "trips": 785,
+      "fleet": 36,
+      "finite_pool_fleet_bound": 33.00000000000007,
+      "fleet_proven": false,
+      "target_attained": false,
+      "stage1_status": "TIME_LIMIT",
+      "stage2_status": "TIME_LIMIT",
+      "pool_columns": 284758,
+      "charging_cost": 2442.5439999997616,
+      "charging_bound": 1261.8061685401021,
+      "gurobi_stage1_wall_s": 1802.4941914947703,
+      "gurobi_stage2_wall_s": 1776.637484523002,
+      "gurobi_total_wall_s": 3579.1316760177724,
+      "native_stage1_runtime_s": 1823.997539281845,
+      "reported_runtime_s": 3617.6054861545563,
+      "physical_pool_preparation_wall_s": 614.2251434721984,
+      "prepublication_wall_s": 4238.940706814639,
+      "wrapper_wall_s": 4274.813857555389,
+      "scheduler_elapsed": "01:11:30",
+      "slurm_batch_MaxRSS": "12588660K",
+      "overcovered_trips": 199,
+      "extra_trip_assignments": 315,
+      "native_selected_route_replay": true,
+      "new_independent_physical_simulation": false,
+      "duplicate_cleanup_validated": false,
+      "shared_capacity_validated": false,
+      "result_sha256": "5b8c81db24fe6b4264c5393e3c50e611fa77fbb29cbfb5ffc9ac7beb71369bbc"
+    },
+    {
+      "case": "w2_k33",
+      "job": "661637",
+      "target_duties": 33,
+      "trips": 787,
+      "fleet": 36,
+      "finite_pool_fleet_bound": 32.00000000000006,
+      "fleet_proven": false,
+      "target_attained": false,
+      "stage1_status": "TIME_LIMIT",
+      "stage2_status": "TIME_LIMIT",
+      "pool_columns": 226722,
+      "charging_cost": 2273.6399999996647,
+      "charging_bound": 1228.1723326475772,
+      "gurobi_stage1_wall_s": 1801.9291948750615,
+      "gurobi_stage2_wall_s": 1784.594749844633,
+      "gurobi_total_wall_s": 3586.5239447196946,
+      "native_stage1_runtime_s": 1816.0576033592224,
+      "reported_runtime_s": 3618.987654685974,
+      "physical_pool_preparation_wall_s": 431.90860442910343,
+      "prepublication_wall_s": 4056.0029671760276,
+      "wrapper_wall_s": 4082.1836252212524,
+      "scheduler_elapsed": "01:08:10",
+      "slurm_batch_MaxRSS": "10102404K",
+      "overcovered_trips": 159,
+      "extra_trip_assignments": 225,
+      "native_selected_route_replay": true,
+      "new_independent_physical_simulation": false,
+      "duplicate_cleanup_validated": false,
+      "shared_capacity_validated": false,
+      "result_sha256": "ec07e5793218a853c95cc6f55494963fd413ed1f1f35f082e15d7100908990d9"
+    },
+    {
+      "case": "w4_k33",
+      "job": "661692",
+      "target_duties": 33,
+      "trips": 785,
+      "fleet": 38,
+      "finite_pool_fleet_bound": 32.0000000000002,
+      "fleet_proven": false,
+      "target_attained": false,
+      "stage1_status": "TIME_LIMIT",
+      "stage2_status": "TIME_LIMIT",
+      "pool_columns": 251648,
+      "charging_cost": 2529.591999999713,
+      "charging_bound": 1265.9663288705215,
+      "gurobi_stage1_wall_s": 1803.349304864183,
+      "gurobi_stage2_wall_s": 1787.7541924789548,
+      "gurobi_total_wall_s": 3591.103497343138,
+      "native_stage1_runtime_s": 1813.3703594207764,
+      "reported_runtime_s": 3611.6643698215485,
+      "physical_pool_preparation_wall_s": 337.5906403400004,
+      "prepublication_wall_s": 3953.268952045124,
+      "wrapper_wall_s": 3978.4070115089417,
+      "scheduler_elapsed": "01:06:26",
+      "slurm_batch_MaxRSS": "12969592K",
+      "overcovered_trips": 236,
+      "extra_trip_assignments": 285,
+      "native_selected_route_replay": true,
+      "new_independent_physical_simulation": false,
+      "duplicate_cleanup_validated": false,
+      "shared_capacity_validated": false,
+      "result_sha256": "19291b10d103a6a2409d9c72e1166213b2ac99d86bf9f4d3c30d5b73e515c5f5"
+    }
+  ],
+  "interim_CG": [
+    {
+      "case": "w1_k35",
+      "job": "661622",
+      "iterations": 0,
+      "stop_reason": "initializing",
+      "certified": false,
+      "final": null
+    },
+    {
+      "case": "w2_k34",
+      "job": "661638",
+      "iterations": 149,
+      "stop_reason": "running",
+      "certified": false,
+      "final": {
+        "iter": 149,
+        "attempt_iter": 149,
+        "lp_obj": 3301405.4543528487,
+        "route_weight": 32.999999999999794,
+        "artificials": 0.0,
+        "min_rc": -0.8639811525896723,
+        "max_row_violation": 5.253575352526241e-13,
+        "max_bound_violation": 2.1896113394648253e-13
+      }
+    },
+    {
+      "case": "w3_k35",
+      "job": "661676",
+      "iterations": 24,
+      "stop_reason": "running",
+      "certified": false,
+      "final": {
+        "iter": 24,
+        "attempt_iter": 24,
+        "lp_obj": 3501486.984842709,
+        "route_weight": 34.99999999999959,
+        "artificials": 0.0,
+        "min_rc": -59.551743035608936,
+        "max_row_violation": 2.267186438587032e-12,
+        "max_bound_violation": 2.1903381886012596e-12
+      }
+    },
+    {
+      "case": "w4_k35",
+      "job": "661695",
+      "iterations": 0,
+      "stop_reason": "initializing",
+      "certified": false,
+      "final": null
+    },
+    {
+      "case": "w6_k34",
+      "job": "661727",
+      "iterations": 0,
+      "stop_reason": "initializing",
+      "certified": false,
+      "final": null
+    }
+  ],
+  "registered_resources": {
+    "cache": {
+      "cpus": 2,
+      "mem": "96G",
+      "wall": "37:00:00"
+    },
+    "cg": {
+      "cpus": 8,
+      "mem": "96G",
+      "wall": "05:00:00"
+    },
+    "mip": {
+      "cpus": 8,
+      "mem": "24G",
+      "wall": "02:00:00"
+    }
+  },
+  "prior_source_references": [
+    {
+      "case": "w1_k33",
+      "source_CG_audit_file": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T115605Z/operations/baseline/cases/w1_k33/cg/661618_r0/cg.json",
+      "source_CG_sha256": "26ecf8407d9ae68d7493028be0a4a4c1c2a7d0ea096ec59cfc8bcd791973bc17",
+      "reused_previous_collection": true
+    },
+    {
+      "case": "w2_k33",
+      "source_CG_audit_file": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/operations/baseline/cases/w2_k33/cg/661636_r0/cg.json",
+      "source_CG_sha256": "e8f1a121dc06f999d89830b98c6d86ef3909b481b4c46f94ec33dc05b3db1c7d",
+      "reused_previous_collection": false
+    },
+    {
+      "case": "w4_k33",
+      "source_CG_audit_file": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T115605Z/operations/baseline/cases/w4_k33/cg/661691_r0/cg.json",
+      "source_CG_sha256": "c849921dc68dbc3ea359cb03cc4ac60e92d023033ee1f3d3656645f5ebc9d793",
+      "reused_previous_collection": true
+    }
+  ]
+}

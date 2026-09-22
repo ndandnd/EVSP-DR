@@ -1,0 +1,46 @@
+{
+  "artifact_existence": {
+    "BUILD_STARTED.json": true,
+    "COLD_COMPLETE.json": false,
+    "cold.json": false,
+    "k19_fedf4214.graph.cache": false
+  },
+  "captured_file_sha256": {
+    "BUILD_STARTED.json": "505e675b795f3b2381d60ad10661a38a48198cd166005a789386cc9729e01ef0",
+    "cold.log": "029dbaaed5f44f2014fab6e99110a2fedc6e854e6f1132462e1bafc0de3c5aa0",
+    "commands.json": "4d2c42723c07a1e9a36034f6070ad570c0263a7f67485cbcf3aee6c1758b848f",
+    "execution.json": "505e675b795f3b2381d60ad10661a38a48198cd166005a789386cc9729e01ef0"
+  },
+  "cg_started": false,
+  "collected_utc": "2026-09-22T16:35:58.932647+00:00",
+  "cpus": 2,
+  "dependency": null,
+  "excluded_node": "scaglione-compute-01",
+  "graph_operation_started": true,
+  "graph_phase": "cold",
+  "graph_validation_complete": false,
+  "job_id": "772820",
+  "job_state": "RUNNING",
+  "memory": "16G",
+  "mip_started": false,
+  "node": "joachims-cpu-02",
+  "note": "One scoped scheduler and exact-attempt read; no global queue poll. Captured file bytes match remote SHA256.",
+  "partition": "default_partition",
+  "reason": "None",
+  "requeue": 1,
+  "restarts": 0,
+  "run_time": "00:03:04",
+  "scheduler_returncode": 0,
+  "scheduler_start_time_local": "2026-09-22T12:32:55",
+  "scoped_scheduler_command": [
+    "/usr/local/slurm/current/bin/scontrol",
+    "show",
+    "job",
+    "-o",
+    "772820"
+  ],
+  "start_time_utc": "2026-09-22T16:32:55+00:00",
+  "stderr_bytes": 0,
+  "stdout_bytes": 0,
+  "time_limit": "08:00:00"
+}

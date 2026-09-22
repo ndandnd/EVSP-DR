@@ -1,0 +1,941 @@
+{
+  "status": "pass",
+  "check_count": 70,
+  "checks": [
+    {
+      "name": "w1_k34 cg cited CSV hash matches saved endpoint",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "w2_k33 cg cited CSV hash matches saved endpoint",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "w3_k34 cg cited CSV hash matches saved endpoint",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "w4_k34 cg cited CSV hash matches saved endpoint",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "w6_k33 cg cited CSV hash matches saved endpoint",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "w1_k33 cg cited CSV hash matches saved endpoint",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "w3_k33 cg cited CSV hash matches saved endpoint",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "w4_k33 cg cited CSV hash matches saved endpoint",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "w1_k33 mip cited CSV hash matches saved endpoint",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "w2_k33 mip cited CSV hash matches saved endpoint",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "w4_k33 mip cited CSV hash matches saved endpoint",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "w3_k33 mip cited CSV hash matches saved endpoint",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all eight cited CG sources have wall limits and no pricing certificate",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all three new MIPs time out twice with no fleet proof or target attainment",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "previous C3 MIP retains 34 buses, pool bound 33 and unresolved proof",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "exactly one existing k33 Doc table retained",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Doc table count unchanged",
+      "pass": true,
+      "detail": {
+        "before": 4,
+        "after": 4
+      }
+    },
+    {
+      "name": "all other Doc table bytes unchanged",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Doc figure references unchanged",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Doc content outside extension and strict gate region unchanged",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "extension historical setup preserved",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "extension baseline physics, full40 scope and geography links preserved",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Doc existing column headings retained",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Doc has exactly five k33 data rows in chain order",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Doc C1 k33 trips, time and restricted route weight match source",
+      "pass": true,
+      "detail": {
+        "actual": [
+          "785",
+          "239.3",
+          "33",
+          "36 / 33 \u2014 open"
+        ],
+        "expected": [
+          "785",
+          "239.3",
+          "33",
+          "36",
+          "33"
+        ]
+      }
+    },
+    {
+      "name": "Doc C1 k33 integer endpoint matches source",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Doc C2 k33 trips, time and restricted route weight match source",
+      "pass": true,
+      "detail": {
+        "actual": [
+          "787",
+          "239.9",
+          "32",
+          "36 / 32 \u2014 open"
+        ],
+        "expected": [
+          "787",
+          "239.9",
+          "32",
+          "36",
+          "32"
+        ]
+      }
+    },
+    {
+      "name": "Doc C2 k33 integer endpoint matches source",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Doc C3 k33 trips, time and restricted route weight match source",
+      "pass": true,
+      "detail": {
+        "actual": [
+          "770",
+          "239.3",
+          "33",
+          "34 / 33 \u2014 open"
+        ],
+        "expected": [
+          "770",
+          "239.3",
+          "33",
+          "34",
+          "33"
+        ]
+      }
+    },
+    {
+      "name": "Doc C3 k33 integer endpoint matches source",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Doc C4 k33 trips, time and restricted route weight match source",
+      "pass": true,
+      "detail": {
+        "actual": [
+          "785",
+          "239.1",
+          "32",
+          "38 / 32 \u2014 open"
+        ],
+        "expected": [
+          "785",
+          "239.1",
+          "32",
+          "38",
+          "32"
+        ]
+      }
+    },
+    {
+      "name": "Doc C4 k33 integer endpoint matches source",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Doc C6 k33 trips, time and restricted route weight match source",
+      "pass": true,
+      "detail": {
+        "actual": [
+          "796",
+          "239.9",
+          "32",
+          "MIP running"
+        ],
+        "expected": [
+          "796",
+          "239.9",
+          "32",
+          "MIP running",
+          "\u2014"
+        ]
+      }
+    },
+    {
+      "name": "Doc C6 k33 integer endpoint matches source",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide count remains 42",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "only authorized slides 10 and 42 change semantically",
+      "pass": true,
+      "detail": {
+        "raw": [
+          3,
+          7,
+          8,
+          10,
+          14,
+          27,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          40,
+          41,
+          42
+        ],
+        "semantic": [
+          10,
+          42
+        ]
+      }
+    },
+    {
+      "name": "only authorized slide notes change",
+      "pass": true,
+      "detail": [
+        10,
+        42
+      ]
+    },
+    {
+      "name": "all slide media bytes preserved",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all original slide image bindings preserved",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "masters and layouts preserve existing headers and footers",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "theme bytes preserved despite export filename permutation",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all effective theme bindings preserved",
+      "pass": true,
+      "detail": {
+        "ppt/notesMasters/_rels/notesMaster1.xml.rels#rId1": "b39f0976c9654dec98415a7c744a075ad0ceae88eee6f13d9ca624f3815b75e3",
+        "ppt/slideMasters/_rels/slideMaster1.xml.rels#rId12": "528b7c8f48252376fcb7f100455962d47d5d8bc8bc4a0b60f9152b5bbd0221c9",
+        "ppt/_rels/presentation.xml.rels#rId1": "528b7c8f48252376fcb7f100455962d47d5d8bc8bc4a0b60f9152b5bbd0221c9"
+      }
+    },
+    {
+      "name": "original table style definitions preserved",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 42 remains one native editable table",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 42 existing column headings retained",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 42 has exactly five k33 data rows in chain order",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 42 C1 all data cells match exact endpoint sources",
+      "pass": true,
+      "detail": {
+        "actual": [
+          "785",
+          "239.3",
+          "33",
+          "36",
+          "33"
+        ],
+        "expected": [
+          "785",
+          "239.3",
+          "33",
+          "36",
+          "33"
+        ]
+      }
+    },
+    {
+      "name": "slide 42 C2 all data cells match exact endpoint sources",
+      "pass": true,
+      "detail": {
+        "actual": [
+          "787",
+          "239.9",
+          "32",
+          "36",
+          "32"
+        ],
+        "expected": [
+          "787",
+          "239.9",
+          "32",
+          "36",
+          "32"
+        ]
+      }
+    },
+    {
+      "name": "slide 42 C3 all data cells match exact endpoint sources",
+      "pass": true,
+      "detail": {
+        "actual": [
+          "770",
+          "239.3",
+          "33",
+          "34",
+          "33"
+        ],
+        "expected": [
+          "770",
+          "239.3",
+          "33",
+          "34",
+          "33"
+        ]
+      }
+    },
+    {
+      "name": "slide 42 C4 all data cells match exact endpoint sources",
+      "pass": true,
+      "detail": {
+        "actual": [
+          "785",
+          "239.1",
+          "32",
+          "38",
+          "32"
+        ],
+        "expected": [
+          "785",
+          "239.1",
+          "32",
+          "38",
+          "32"
+        ]
+      }
+    },
+    {
+      "name": "slide 42 C6 all data cells match exact endpoint sources",
+      "pass": true,
+      "detail": {
+        "actual": [
+          "796",
+          "239.9",
+          "32",
+          "MIP running",
+          "\u2014"
+        ],
+        "expected": [
+          "796",
+          "239.9",
+          "32",
+          "MIP running",
+          "\u2014"
+        ]
+      }
+    },
+    {
+      "name": "slide 42 native table grid fits slide",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "slide 10 prior scientific endpoint facts preserved",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "both publications retain uncertified RMP scope",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all four MIPs remain open with physical limitations",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "extra trip assignments agree with new and prior MIP sources",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "current queue snapshot is scoped and numerically consistent",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "unfinished C5 graph and C6 MIP remain pending and running respectively",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "graph timing range and prior-CG exclusion match k33 sources",
+      "pass": true,
+      "detail": "9.56\u201315.10"
+    },
+    {
+      "name": "k34 endpoints retain separate target and uncertified scope",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "new precise weighted objectives preserved in slide notes",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "C2 positive-only numerical discrepancy disclosed",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "unchanged baseline and source dirty-flag scope retained",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "native gate receipt has nine passing checks, separate from old 13 cache tests",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "native gate receipts match actual collected file hashes",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "native gate validates exactly inherited and saved singleton records without graph or solver",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "native gate 35-second completion is scheduler time",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "published native gate counts and limitations match receipts",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "root live UI receipt records saved state and seven visible Doc tabs",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "final exports visually inspected",
+      "pass": true,
+      "detail": {
+        "status": "pass",
+        "method": "PDF pages rendered by bundled pdftoppm at 120 dpi and individually opened with view_image; no montage-only review.",
+        "doc_pages": [
+          2,
+          3,
+          6,
+          7,
+          8
+        ],
+        "slides": [
+          10,
+          42
+        ],
+        "observations": [
+          "The entire updated k33 table is on Doc page 2, with legible headers, five complete rows and its scope footnote; no clipping or overlap.",
+          "Doc page 3 contains the four MIP scope paragraph, k34 status, C2 numerical disclosure and unchanged baseline/full40 physics and geography links.",
+          "Doc pages 6 and 7 retain the historical strict endpoint before the new native gate paragraph, which is legible across the existing paragraph page break.",
+          "The unchanged historical k5 charging table continues at the same row boundary on pages 7 and 8 as in the previous PDF.",
+          "Slides 10 and 42 are legible and fit their canvases; the native table is readable, with clear spacing before the scope caption."
+        ],
+        "export_sha256": {
+          "current_after.pdf": "2da22680acb5c17c41059a7dd8dda8df51e2b6b51f7d10a87e7f950b872fa92b",
+          "slides_after.pdf": "f214824042ef3f6f748bf574176845759b8fa38c5c9ce47c98df6e4d587b825b"
+        },
+        "render_sha256": {
+          "current_after_2.png": "8e6849a5854f2a2dd17206ac21c1c4e18f9ba64d95742becb6375b2c11f809c2",
+          "current_after_3.png": "ec0d52a8262661168b68885cf208d4a0ec0619ef83b12dba9d0cd4e33f128bbe",
+          "current_after_6.png": "bffc548d02ebc74928d4d29ffa2b96447946b826c7237834f8748ed9d3bfb4dd",
+          "current_after_7.png": "cf8a84a1b2b376c487bfb75c809e37d37e5ba6fbffb88714b3d6fda19616b2dd",
+          "current_after_8.png": "5ff90428882e1140cff0453db1001f90e14a7fc44d4b044a216d9abac9aad234",
+          "slides_after_10.png": "e40157871183c80599765c3ca5375d05ca65dbabb6bda618dd4009e1d2b3081e",
+          "slides_after_42.png": "35c6df6a44b3523d1aa0f12f984d0b754056ec8c53ca2cf223d6fb2fa465eea0"
+        }
+      }
+    }
+  ],
+  "failed": [],
+  "source_expected_k33": {
+    "C1": [
+      "785",
+      "239.3",
+      "33",
+      "36",
+      "33"
+    ],
+    "C3": [
+      "770",
+      "239.3",
+      "33",
+      "34",
+      "33"
+    ],
+    "C4": [
+      "785",
+      "239.1",
+      "32",
+      "38",
+      "32"
+    ],
+    "C2": [
+      "787",
+      "239.9",
+      "32",
+      "36",
+      "32"
+    ],
+    "C6": [
+      "796",
+      "239.9",
+      "32",
+      "MIP running",
+      "\u2014"
+    ]
+  },
+  "slide42_table": [
+    [
+      "Chain",
+      "Trips",
+      "CG minutes",
+      "Fractional buses*",
+      "Integer buses",
+      "Pool bound"
+    ],
+    [
+      "C1",
+      "785",
+      "239.3",
+      "33",
+      "36",
+      "33"
+    ],
+    [
+      "C2",
+      "787",
+      "239.9",
+      "32",
+      "36",
+      "32"
+    ],
+    [
+      "C3",
+      "770",
+      "239.3",
+      "33",
+      "34",
+      "33"
+    ],
+    [
+      "C4",
+      "785",
+      "239.1",
+      "32",
+      "38",
+      "32"
+    ],
+    [
+      "C6",
+      "796",
+      "239.9",
+      "32",
+      "MIP running",
+      "\u2014"
+    ]
+  ],
+  "doc_k33_table": [
+    [
+      "Chain, k=33",
+      "Trips",
+      "CG minutes",
+      "Fractional buses\\*",
+      "Integer buses / pool bound"
+    ],
+    [
+      "C1",
+      "785",
+      "239.3",
+      "33",
+      "36 / 33 \u2014 open"
+    ],
+    [
+      "C2",
+      "787",
+      "239.9",
+      "32",
+      "36 / 32 \u2014 open"
+    ],
+    [
+      "C3",
+      "770",
+      "239.3",
+      "33",
+      "34 / 33 \u2014 open"
+    ],
+    [
+      "C4",
+      "785",
+      "239.1",
+      "32",
+      "38 / 32 \u2014 open"
+    ],
+    [
+      "C6",
+      "796",
+      "239.9",
+      "32",
+      "MIP running"
+    ]
+  ],
+  "front_diff": [
+    {
+      "tag": "replace",
+      "before_range": [
+        31,
+        31
+      ],
+      "after_range": [
+        31,
+        31
+      ],
+      "before": [
+        "**22 September, 07:57 EDT:** 26/44 graphs are ready and 25 jobs run: 18 graphs, five CGs and two MIPs. All 85 pending solver dependencies are genuine. Ten cumulative graph preemptions remain recorded; no failed predecessor needs recovery."
+      ],
+      "after": [
+        "**22 September, 11:58 EDT:** 33/44 graphs are ready; 20 jobs run (11 graphs, five CGs, four MIPs). All 75 pending solver dependencies are genuine. No new failure or preemption needs recovery. C5 k33 still awaits its graph."
+      ]
+    },
+    {
+      "tag": "replace",
+      "before_range": [
+        35,
+        35
+      ],
+      "after_range": [
+        35,
+        36
+      ],
+      "before": [
+        "| C1 | 785 | 239.3 | 33 | MIP running |"
+      ],
+      "after": [
+        "| C1 | 785 | 239.3 | 33 | 36 / 33 \u2014 open |",
+        "| C2 | 787 | 239.9 | 32 | 36 / 32 \u2014 open |"
+      ]
+    },
+    {
+      "tag": "replace",
+      "before_range": [
+        37,
+        37
+      ],
+      "after_range": [
+        38,
+        39
+      ],
+      "before": [
+        "| C4 | 785 | 239.1 | 32 | MIP running |"
+      ],
+      "after": [
+        "| C4 | 785 | 239.1 | 32 | 38 / 32 \u2014 open |",
+        "| C6 | 796 | 239.9 | 32 | MIP running |"
+      ]
+    },
+    {
+      "tag": "replace",
+      "before_range": [
+        39,
+        39
+      ],
+      "after_range": [
+        41,
+        41
+      ],
+      "before": [
+        "\\* Fractional buses is the final restricted-master route weight. All three CGs stopped at the four-hour limit without a pricing certificate; these values are not certified LP lower bounds. The separate graph builds took 9.56\u201312.31 h. CG minutes exclude earlier smaller instances."
+      ],
+      "after": [
+        "\\* Fractional buses is the final restricted-master route weight. All five CGs hit the four-hour limit without a pricing certificate; these are not certified LP lower bounds. Separate graph builds took 9.56\u201315.10 h. CG minutes exclude earlier smaller instances."
+      ]
+    },
+    {
+      "tag": "replace",
+      "before_range": [
+        41,
+        41
+      ],
+      "after_range": [
+        43,
+        43
+      ],
+      "before": [
+        "C3 has not matched 33 buses: both MIP stages timed out, leaving 34 buses with pool bound 33\\. Native route replay passes the baseline physics; all 770 trips are covered, with 118 extra assignments across 95 trips. Shared capacity and duplicate removal remain unvalidated."
+      ],
+      "after": [
+        "All four completed MIPs missed 33 and reached both time limits. Native route replay passes baseline physics, but duplicate removal and shared capacity remain unvalidated. Extra trip assignments: C1 315, C2 225, C3 118, C4 285\\."
+      ]
+    },
+    {
+      "tag": "replace",
+      "before_range": [
+        43,
+        43
+      ],
+      "after_range": [
+        45,
+        47
+      ],
+      "before": [
+        "[Exact LP values, timing definitions, Gurobi logs, source hashes and audit](https://github.com/ndandnd/EVSP-DR/tree/codex/week-evidence-20260921/outputs/research_management_20260922/monitor_20260922T115605Z/operations)."
+      ],
+      "after": [
+        "At k34, C1/C3/C4 also reached four hours without certificates; fractional weights are 33/34/33. Their MIPs were running. C2 k33\u2019s saved positive-only LP support differs from its scalar objective by 0.038 cost units; the audit retains this numerical discrepancy.",
+        "",
+        "[Exact LP values, time definitions, Gurobi logs, source hashes and audit](https://github.com/ndandnd/EVSP-DR/tree/codex/week-evidence-20260921/outputs/research_management_20260922/monitor_20260922T155736Z/operations); [earlier C3 result](https://github.com/ndandnd/EVSP-DR/tree/codex/week-evidence-20260921/outputs/research_management_20260922/monitor_20260922T115605Z/operations)."
+      ]
+    },
+    {
+      "tag": "replace",
+      "before_range": [
+        92,
+        92
+      ],
+      "after_range": [
+        96,
+        96
+      ],
+      "before": [
+        "The packed recovery is complete. Its label k16 is the parent prefix: this subgroup contains 256 trips from nine GIRO duties. Graph construction took 115.4 minutes within the four-hour budget; CG then completed 2,453 iterations at 3.93 GiB peak memory. Fractional route weight is 9, but pricing did not certify convergence. The saved pool provably needs 10 integer buses. Its selected routes cover every trip, with 57 extra assignments, and exceed shared charger limits at two stations. Capacity was omitted from this arm, so this is an important remaining model constraint, not a solver violation. The next strict CG has now published its endpoint: 277 trips from ten subgroup duties, 5,236 iterations and 8,343 columns. Its fractional route weight is ten; weighted RMP objective is 1,000,391.890434. The four-hour deadline stopped CG without a pricing certificate, so this is not a certified full-model lower bound. Graph construction took 73.62 minutes within that budget. Its one-hour MIP is now complete: 11 buses with bound 10, so the ten-duty target remains unmatched and the fleet optimum is unresolved. Both MIP stages hit their time limits. The selected cover has 73 extra trip assignments and exceeds the omitted capacity limits at 7880C (three simultaneous buses versus one charger) and JON\\_A (four versus one). The eleven-duty continuation (parent prefix k19, 331 trips) spent 271.55 minutes building its graph, exhausting the included four-hour CG allowance before any pricing iteration. Its inherited-plus-singleton RMP has route weight 64 and no pricing certificate; its MIP finished with 65 buses and finite-pool bound 64, both stages at their time limits. It selects all 54 new singletons plus 11 inherited routes. The cover has 73 extra assignments and fails the omitted charger-capacity checks. This is an unpriced initial-pool result, not a lower bound or infeasibility claim for the full model. The graph-save/reload fix passes 13 local tests and all 13 tests on Unicorn\u2019s filesystem (job 741034). No full 331-trip graph or new CG has run. Next: validate the complete inherited k17 pool and the full-size graph before restarting k19, with preparation and CG time reported separately. [Code, native tests and next gates](https://github.com/ndandnd/EVSP-DR/tree/codex/week-evidence-20260921/outputs/research_management_20260922/strict_graph_reuse/native_preflight). [Audited MIP endpoint and full logs](https://github.com/ndandnd/EVSP-DR/blob/codex/week-evidence-20260921/outputs/research_management_20260921/monitor_20260922T035403Z/strict_k17/README.md).  [Verified endpoint, pool hash and stopping reason](https://github.com/ndandnd/EVSP-DR/blob/4132ba69db4ca8f058df0d9db8094363a90734bb/outputs/research_management_20260921/operations/heartbeat_20260921T235509Z/k17_endpoint_summary.json). [Final results, physical checks and full logs](https://github.com/ndandnd/EVSP-DR/blob/b7efdd948a8d0f20ca730fbb4da4a8e40e9d83a5/outputs/research_management_20260921/operations/README.md)."
+      ],
+      "after": [
+        "The packed recovery is complete. Its label k16 is the parent prefix: this subgroup contains 256 trips from nine GIRO duties. Graph construction took 115.4 minutes within the four-hour budget; CG then completed 2,453 iterations at 3.93 GiB peak memory. Fractional route weight is 9, but pricing did not certify convergence. The saved pool provably needs 10 integer buses. Its selected routes cover every trip, with 57 extra assignments, and exceed shared charger limits at two stations. Capacity was omitted from this arm, so this is an important remaining model constraint, not a solver violation. The next strict CG has now published its endpoint: 277 trips from ten subgroup duties, 5,236 iterations and 8,343 columns. Its fractional route weight is ten; weighted RMP objective is 1,000,391.890434. The four-hour deadline stopped CG without a pricing certificate, so this is not a certified full-model lower bound. Graph construction took 73.62 minutes within that budget. Its one-hour MIP is now complete: 11 buses with bound 10, so the ten-duty target remains unmatched and the fleet optimum is unresolved. Both MIP stages hit their time limits. The selected cover has 73 extra trip assignments and exceeds the omitted capacity limits at 7880C (three simultaneous buses versus one charger) and JON\\_A (four versus one). The eleven-duty continuation (parent prefix k19, 331 trips) spent 271.55 minutes building its graph, exhausting the included four-hour CG allowance before any pricing iteration. Its inherited-plus-singleton RMP has route weight 64 and no pricing certificate; its MIP finished with 65 buses and finite-pool bound 64, both stages at their time limits. It selects all 54 new singletons plus 11 inherited routes. The cover has 73 extra assignments and fails the omitted charger-capacity checks. This is an unpriced initial-pool result, not a lower bound or infeasibility claim for the full model. The graph-save/reload fix passes 13 local and 13 Unicorn tests. A separate native check now reproduces all 8,343 inherited records and validates all 54 new singleton routes: job 768638 completed in 35 seconds. This validates the saved initial pool, not a new CG result. Full 331-trip graph preparation and reload comparison must pass before new CG; graph time will be reported separately. [Complete pool check and native logs](https://github.com/ndandnd/EVSP-DR/tree/codex/week-evidence-20260921/outputs/research_management_20260922/strict_graph_reuse/production_gate). [Code, native tests and next gates](https://github.com/ndandnd/EVSP-DR/tree/codex/week-evidence-20260921/outputs/research_management_20260922/strict_graph_reuse/native_preflight). [Audited MIP endpoint and full logs](https://github.com/ndandnd/EVSP-DR/blob/codex/week-evidence-20260921/outputs/research_management_20260921/monitor_20260922T035403Z/strict_k17/README.md).  [Verified endpoint, pool hash and stopping reason](https://github.com/ndandnd/EVSP-DR/blob/4132ba69db4ca8f058df0d9db8094363a90734bb/outputs/research_management_20260921/operations/heartbeat_20260921T235509Z/k17_endpoint_summary.json). [Final results, physical checks and full logs](https://github.com/ndandnd/EVSP-DR/blob/b7efdd948a8d0f20ca730fbb4da4a8e40e9d83a5/outputs/research_management_20260921/operations/README.md)."
+      ]
+    }
+  ],
+  "slide10_before": "Reserve and depot-power pilot: graph cost remains\nPacked arcs: 26-trip build 121 \u2192 42 s; memory 2.06 \u2192 0.147 GiB.\nLatest prefix k19 has 331 trips from 11 reference duties.\n15% reserve, PARX 60 kW; shared capacity is not enforced.\nGraph build 4.53 h exhausted the 4 h CG allowance: zero pricing, no certificate.\nInitial-pool MIP: 65 buses, bound 64; 54 selected routes are singletons.\nDuplicates and charger conflicts remain. Cache reload passes 13 Unicorn tests; full-size graph and pool checks are next.\n",
+  "slide10_after": "Reserve and depot-power pilot: graph cost remains\nPacked arcs: 26-trip build 121 \u2192 42 s; memory 2.06 \u2192 0.147 GiB.\nLatest prefix k19 has 331 trips from 11 reference duties.\n15% reserve, PARX 60 kW; shared capacity is not enforced.\nGraph build 4.53 h exhausted the 4 h CG allowance: zero pricing, no certificate.\nInitial-pool MIP: 65 buses, bound 64; 54 selected routes are singletons.\nDuplicates and charger conflicts remain. All 8,397 initial routes pass native replay; full-size graph validation remains required.\n",
+  "slide42_text": "Target 33: four integer results, all gaps open\n* All completed CGs hit 4 h: fractional weights are not certified LP lower bounds.\nFour MIPs hit both time limits; duplicate cleanup and shared capacity remain unvalidated.\nC5 awaits its graph. Graph builds: 9.56\u201315.10 h separately; prior CG stages excluded.\nBaseline 240/240; snapshot 22 Sep, 11:58 EDT. Full logs and exact values in notes.\n\nChain\nTrips\nCG minutes\nFractional buses*\nInteger buses\nPool bound\nC1\n785\n239.3\n33\n36\n33\nC2\n787\n239.9\n32\n36\n32\nC3\n770\n239.3\n33\n34\n33\nC4\n785\n239.1\n32\n38\n32\nC6\n796\n239.9\n32\nMIP running\n\u2014",
+  "table_bounds_emu": [
+    [
+      311700,
+      1229975,
+      6457950,
+      2000250
+    ]
+  ],
+  "visual_review": {
+    "status": "pass",
+    "method": "PDF pages rendered by bundled pdftoppm at 120 dpi and individually opened with view_image; no montage-only review.",
+    "doc_pages": [
+      2,
+      3,
+      6,
+      7,
+      8
+    ],
+    "slides": [
+      10,
+      42
+    ],
+    "observations": [
+      "The entire updated k33 table is on Doc page 2, with legible headers, five complete rows and its scope footnote; no clipping or overlap.",
+      "Doc page 3 contains the four MIP scope paragraph, k34 status, C2 numerical disclosure and unchanged baseline/full40 physics and geography links.",
+      "Doc pages 6 and 7 retain the historical strict endpoint before the new native gate paragraph, which is legible across the existing paragraph page break.",
+      "The unchanged historical k5 charging table continues at the same row boundary on pages 7 and 8 as in the previous PDF.",
+      "Slides 10 and 42 are legible and fit their canvases; the native table is readable, with clear spacing before the scope caption."
+    ],
+    "export_sha256": {
+      "current_after.pdf": "2da22680acb5c17c41059a7dd8dda8df51e2b6b51f7d10a87e7f950b872fa92b",
+      "slides_after.pdf": "f214824042ef3f6f748bf574176845759b8fa38c5c9ce47c98df6e4d587b825b"
+    },
+    "render_sha256": {
+      "current_after_2.png": "8e6849a5854f2a2dd17206ac21c1c4e18f9ba64d95742becb6375b2c11f809c2",
+      "current_after_3.png": "ec0d52a8262661168b68885cf208d4a0ec0619ef83b12dba9d0cd4e33f128bbe",
+      "current_after_6.png": "bffc548d02ebc74928d4d29ffa2b96447946b826c7237834f8748ed9d3bfb4dd",
+      "current_after_7.png": "cf8a84a1b2b376c487bfb75c809e37d37e5ba6fbffb88714b3d6fda19616b2dd",
+      "current_after_8.png": "5ff90428882e1140cff0453db1001f90e14a7fc44d4b044a216d9abac9aad234",
+      "slides_after_10.png": "e40157871183c80599765c3ca5375d05ca65dbabb6bda618dd4009e1d2b3081e",
+      "slides_after_42.png": "35c6df6a44b3523d1aa0f12f984d0b754056ec8c53ca2cf223d6fb2fa465eea0"
+    }
+  },
+  "slide42_notes": "Snapshot: 22 September 2026, 15:58:38 UTC (11:58 EDT). Target 33 in every table row. C5 has no CG endpoint yet: its preempted graph has a running replacement. C6 MIP is running.\n\nSources and full Gurobi logs:\nhttps://github.com/ndandnd/EVSP-DR/tree/codex/week-evidence-20260921/outputs/research_management_20260922/monitor_20260922T155736Z/operations\nEarlier C1/C3/C4 CGs and C3 MIP:\nhttps://github.com/ndandnd/EVSP-DR/tree/codex/week-evidence-20260921/outputs/research_management_20260922/monitor_20260922T115605Z/operations\n\nFractional buses is the sum of final restricted-master route weights, rounded in this table. It is neither the weighted objective nor a certified full-model LP lower bound. All five completed k33 CGs stopped at the four-hour allowance with negative last pricing reduced cost. CG times exclude earlier prefixes and separate graph construction; cache I/O is not added again. These graph builds took 9.56\u201315.10 hours.\n\nC1/C2/C3/C4 MIP fleets and finite-pool bounds: 36/33, 36/32, 34/33, 38/32. Both stages TIME_LIMIT in every case; none is a target hit or a fleet proof. Their extra trip assignments are 315/225/118/285. Native selected-route replay passes baseline physics, but duplicate removal and shared capacity remain unvalidated. New C1/C2/C4 pools contain 284758/226722/251648 accepted columns, with zero repairs/rejections and no added GIRO routes.\n\nNew C2/C6 k33 weighted RMP values are 3201358.363477594 / 3201471.514998098; fractional weights approximately 32 / 32; last pricing reduced costs \u22122.007875578 / \u22121.552538116. C2 positive-only saved support reconstructs objective 0.037537633 higher than its recorded scalar, with weight difference 3.75160e\u22127 and recorded bound violation 3.75156e\u22127 under 1e\u22126 tolerance. This discrepancy is retained in the audit; no tolerance or certificate was changed.\n\nNew k34 CGs C1/C3/C4 also stopped at four hours, uncertified: fractional weights 33/34/33, weighted RMP 3301488.163687 / 3401433.138986 / 3301451.696199. Last pricing reduced costs \u221264.371061806 / \u22120.012311816 / \u22120.204093717. Their MIPs were running at the snapshot.\n\nBaseline physics: 240 kWh battery/initial SOC, constant 240 kW charging, zero reserve, no terminal floor/shared capacity, flat tariff, start fee 5, covering. MIP source 871d057 is clean; CG pin a0e0bb7 records git_dirty=true. Source/input hashes remain in the audit. Native route admission is not an independent full-dispatch validation.\n\nQueue: 33/44 graphs ready; 20 running jobs (11 graph, 5 CG, 4 MIP); 75 genuine pending dependencies. No new failed allocation or broken dependency. The ten recorded graph preemptions are cumulative.\n",
+  "slide10_notes": "Latest audited source, full two-stage Gurobi logs and290 checks: https://github.com/ndandnd/EVSP-DR/tree/codex/week-evidence-20260921/outputs/research_management_20260922/monitor_20260922T075504Z/operations . Source commit35770aae; battery239.01kWh, reserve35.8515kWh, PARX60kW/others240kW,2.5kWh SOC grid,5-minute events, reserve-only terminal, covering, shared capacity unlimited. Prefix19 includes only11 subgroup duties, not a19-bus target. Zero pricing after16292.771283s graph construction. MIP fleet65/bound64, both stages TIME_LIMIT;73extra service assignments across61trips; omitted charger audits7880C3/1 andJON_A4/1. No full-model lower bound or strict dispatch claim. That historical runner rebuilt the graph when loading a route pool. The isolated graph-save/reload implementation is now validated on small cases; full-size parity remains required before new CG. Historical before-packing failures: k15 graph4h17m, k16six-hour timeout/211.9GiB. Small packed representation audit44tests and fixed-dual/physical checks remains in outputs/week_20260921/capacity_strict/README.md.\n\n\n22 September native pool gate: job 768638 COMPLETED 0:0 in 35 scheduler seconds. All 8,343 inherited records are identical in order after normalizing only cg_checkpoint_id. All 8,397 initial routes pass physical replay; all 54 new singletons also pass independent expanded-grid schedule, cost and metadata checks. Gate runtime 29.074884 s; worker 32.440063 s; child peak 499,560 KiB. No graph or solver was run in this gate. It does not prove that freshly optimized singleton routes reproduce the saved optimum.\n\nGate audit source 34d39caff534c089fbffed397f5a42b223b590ad; model source fedf421461f94727e6b1292a0e7789ab76ed8587; explicitly compatible parent 35770aae2c08e7d5a356cc3b673e67608e5b1036. Local and independent full-pool checks passed before the native job.\nhttps://github.com/ndandnd/EVSP-DR/tree/codex/week-evidence-20260921/outputs/research_management_20260922/strict_graph_reuse/production_gate\n\nFull 331-trip graph cold/save/load equivalence is the remaining validation gate. No new strict CG/MIP or k20 result is claimed. Graph preparation and subsequent CG time must be recorded separately.\n",
+  "root_live_ui_receipt": {
+    "observed_utc": "2026-09-22T16:21:25.210601+00:00",
+    "method": "native CUA accessibility state and rendered screenshots",
+    "doc_save_status": "Saved to Drive",
+    "doc_edited_tab": "t.79m3d3x4h45m",
+    "observed_tabs": [
+      "START HERE \u2014 Current results",
+      "Research log \u2014 through 15 Sep",
+      "Figures with explanations",
+      "CG curves and bus schedules",
+      "21 Sep \u2014 chains and pricing",
+      "Fleet times & matrix",
+      "Route columns & tests"
+    ],
+    "other_doc_tabs_edited": false,
+    "slides_edited": [
+      10,
+      42
+    ],
+    "historical_decks_edited": false,
+    "scope": "Tab labels were observed after editing; unchanged-tab contents were not separately re-exported. Current-tab before/after exports and full deck exports are audited separately.",
+    "deliverable_tabs_marked": true
+  },
+  "source_hashes": {
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/publication/current_before.md": "dda50d6abc2a54fa7dc2c5e9ab613e06b3bda5b4f439662fc165df2a04bef423",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/publication/current_after.md": "a2655964cc59442c21b556c5c4fa397f36086008e02cdf5988127a9907fc82e1",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/publication/slides_before.pptx": "a26cd9be37ea682f6af1414ce5bff7f3f25665fddd5fef246889182b5c43c6a8",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/publication/slides_after.pptx": "6c522d69ce7ee0d285dc41ae49f82153c9ecc3989dd334d0bf9e9cfab879a6c9",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/publication/current_after.pdf": "2da22680acb5c17c41059a7dd8dda8df51e2b6b51f7d10a87e7f950b872fa92b",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/publication/slides_after.pdf": "f214824042ef3f6f748bf574176845759b8fa38c5c9ce47c98df6e4d587b825b",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/operations/README.md": "1bb1d36cf65ddbff5ce8c0ea9c11692ac8c3fcb9b165b977f32c6b29aba4a811",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/operations/cg_endpoints.csv": "2e8802050a5f11d9abf89904b5321475b99c5893b7648e2adb2a7ec3e8f9cf28",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/operations/mip_endpoints.csv": "8c27d1a1ecdc82ba63db4cb7186f999999b19422094cab7e6a92686c65d1a95e",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/operations/verified_summary.json": "b1cac8bf73cd328561a61f755730b45b572f0e20823e04fe644133e18e8a1229",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/operations/queue.txt": "103a1fceb11c72f8e6032676bebb9b2aafed2959253fe46e17bffb4f43e03513",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T115605Z/operations/cg_endpoints.csv": "ca630241ba07e912818d1818d84245e8db3be9eecfe1920267c98c230dd7016e",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T115605Z/operations/mip_endpoint.csv": "d6b62a74df8b0d00c2494e5db42322c1eaeadccadd15b9f563c4babc5e065440",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/operations/baseline/cases/w1_k34/cg/661620_r0/cg.json": "f1f701298ae454c0bb498b70abd41a9963217d86acaa87636cb0eaab71ba0e85",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/operations/baseline/cases/w2_k33/cg/661636_r0/cg.json": "e8f1a121dc06f999d89830b98c6d86ef3909b481b4c46f94ec33dc05b3db1c7d",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/operations/baseline/cases/w3_k34/cg/661670_r0/cg.json": "6f11e5aca5d342b72c624a3ab5107552a47563157790ab0f1a9235dc752c25a4",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/operations/baseline/cases/w4_k34/cg/661693_r0/cg.json": "71da7e9670a6d489055cc05769120a87a0dcc5f325754093e5ead4150ebf8f23",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/operations/baseline/cases/w6_k33/cg/661724_r0/cg.json": "0b43b3848f562384afd149cead16d48e5035d60659dd72f990ff342dbfd25d20",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T115605Z/operations/baseline/cases/w1_k33/cg/661618_r0/cg.json": "26ecf8407d9ae68d7493028be0a4a4c1c2a7d0ea096ec59cfc8bcd791973bc17",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T115605Z/operations/baseline/cases/w3_k33/cg/661668_r0/cg.json": "033e933a43a80e24d441e852a28af7db3af1756177df6f7714f353e3270b8d4c",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T115605Z/operations/baseline/cases/w4_k33/cg/661691_r0/cg.json": "c849921dc68dbc3ea359cb03cc4ac60e92d023033ee1f3d3656645f5ebc9d793",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/operations/baseline/cases/w1_k33/mip/661619_r0/result.json": "5b8c81db24fe6b4264c5393e3c50e611fa77fbb29cbfb5ffc9ac7beb71369bbc",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/operations/baseline/cases/w2_k33/mip/661637_r0/result.json": "ec07e5793218a853c95cc6f55494963fd413ed1f1f35f082e15d7100908990d9",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/operations/baseline/cases/w4_k33/mip/661692_r0/result.json": "19291b10d103a6a2409d9c72e1166213b2ac99d86bf9f4d3c30d5b73e515c5f5",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T115605Z/operations/baseline/cases/w3_k33/mip/661669_r0/result.json": "04e0f25aa06e64b2d756ce6bd130ecd959a31319107d28ed160758eb54e1ea59",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/strict_graph_reuse/production_gate/verification.json": "2345045c6f6100b8b08dec6c264b8c2815a1463070e290dcc2c254b56607a25b",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/strict_graph_reuse/production_gate/native_snapshot.json": "ec007cf5da676385a64789fda6644ec9fd39d8d745a1397104a98f6727cd962f",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T155736Z/publication/live_ui_verification.json": "476bdeb8bd11975130e190facdc52c8b52f24b4ff86b81773ded878b0c9978ea",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/strict_graph_reuse/production_gate/collections/768638_r0/execution.json": "028182e5826983baa0652cd7d94c233f03c6e4e3966a78420e995a6ac177e9a4",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/strict_graph_reuse/production_gate/collections/768638_r0/staged_inputs.json": "656d20212a2b6acced368e1bd820a9ee3d9585605658fe1ecba0bf6d3ed2d767",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/strict_graph_reuse/production_gate/collections/768638_r0/command.json": "6d10d9ae06e2c102da2b9c3f412da45b98f948eb11265e567c5f17f3ead52fe3",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/strict_graph_reuse/production_gate/collections/768638_r0/gate.log": "de44a4b3d5080bd4eba6323a192bba898eb194f87ed92513533519ec4b0bf7a8",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/strict_graph_reuse/production_gate/collections/768638_r0/gate_result.json": "1c8f135adecc62dfc19df4b5ed1b8fcc3b1abb9e7bbc716bd770747c95f0cfdd",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/strict_graph_reuse/production_gate/collections/768638_r0/result.json": "8004a2fab6ddb0a8f7380d4f78f4881ef9e7b28d63ca6482a4886adf600af8e1",
+    "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/strict_graph_reuse/production_gate/collections/768638_r0/COMPLETE.json": "e34599ff20319ed825a1acbf49cb4a6d186e05fb44b145af18c320ec35fda7b2"
+  },
+  "limitations": [
+    "Markdown verifies front-tab content, not native live Doc schema or other tabs.",
+    "Only table-style identifiers are normalized; style definitions are separately checked. Theme filenames were permuted, so every resolved relationship and complete theme byte hash is checked.",
+    "Figures and historical text in the front-tab exports and every slide are compared. Historical Doc tabs require separate publication UI evidence.",
+    "A source CSV audit is not a new pricing certificate or independent whole-journal physical replay."
+  ]
+}

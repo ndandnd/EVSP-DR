@@ -1,0 +1,33 @@
+{
+  "reviewed_utc": "2026-09-22T16:11:33.426232+00:00",
+  "audit_commit": "34d39caff534c089fbffed397f5a42b223b590ad",
+  "manifest_sha256": "9eb6585cf4e452cd8bad301eab6b92916ad5a3c9140f6d602fb33aa1459fa560",
+  "archive_sha256": "bc4407ec218a4d43ebe15f72dae523ad228ec3eadfb6298b0dc1da91e88f7105",
+  "checks_passed": 23,
+  "checks": [
+    "final audit commit clean",
+    "archive hash",
+    "safe archive member scripts",
+    "safe archive member scripts/audit_strict_pool_lineage.py",
+    "archive/commit/source scripts/audit_strict_pool_lineage.py",
+    "safe archive member scripts/strict_pool_lineage_worker.py",
+    "archive/commit/source scripts/strict_pool_lineage_worker.py",
+    "safe archive member tests",
+    "safe archive member tests/test_strict_pool_lineage_gate.py",
+    "archive/commit/source tests/test_strict_pool_lineage_gate.py",
+    "worker copy matches committed worker",
+    "submission --partition=default_partition",
+    "submission --cpus-per-task=1",
+    "submission --mem=8G",
+    "submission --time=00:30:00",
+    "submission --exclude=scaglione-compute-01",
+    "submission --requeue",
+    "fixed native Python",
+    "unique deployment pin",
+    "exact authentic counts",
+    "final inputs match successful full replay",
+    "final model matches successful full replay",
+    "no graph/solver authority"
+  ],
+  "no_cluster_access": true
+}
