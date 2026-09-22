@@ -1,0 +1,5 @@
+# Figure explanations and independent review 22 September 2026
+
+[Plain-language guide to Figures 2–5](../../research_management_20260922/figure_explanations/README.md) records the original pilot budgets, C1 incumbent-transfer qualification, upper/lower-bound distinction, initialization changes and packed-graph scope. All measured results and original figure files are preserved. Caption correction: six comparison runs exhausted the overall two-hour CG budget during import, not a separate import timer.
+
+[Independent Opus 5.5 review](../../independent_review_20260922_opus55/README.md) is running in a separate read-only Claude Code session, with the actual model verified. The prompt supplies locations without expected findings. On the existing four-hour check, run `python3 outputs/independent_review_20260922_opus55/collect_review.py` once; do not poll frequently. If a final report appears, audit its material claims against code and raw results before changing research conclusions or launching work. Do not treat the review as verified evidence by itself. No additional monitor or cluster experiment was launched for this request.

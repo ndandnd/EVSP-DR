@@ -1,3 +1,7 @@
+## 22 September: figure explanations and independent Opus review
+
+[Reader’s guide and review record](entries/20260922_figure_explanations_and_opus55.md). Figure results are unchanged. The guide defines pool MIP, graph-build time allowance, C1 incumbent transfer, heuristic upper bounds, route replay, the 512-route cap and packed graph scope. A read-only Opus5.5 review is running; collect it during the existing four-hour check, then verify findings before adopting them.
+
 ## Current verified continuation — 22 September 2026, 21:31 UTC
 
 [Current endpoints, full logs and validation](../research_management_20260922/monitor_20260922T195842Z/README.md). All six k33 MIPs are complete. C1–C6 use 36/36/34/38/39/38 buses, with pool bounds 33/32/33/32/32/32. All are open target misses. All six CGs stopped at four hours without pricing certificates. New k34–35 endpoints also remain open. Operations: 423/423 checks pass. Preserve source dirty flags, numerical disclosures, physical/proof scopes and separate graph/CG/MIP timing.

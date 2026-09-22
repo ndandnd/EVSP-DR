@@ -4,6 +4,8 @@
 
 All five figures have **PNG, PDF and editable-text SVG** versions and adjacent CSV data. Titles, claims and captions below stay editable outside the images. These are reanalyses of existing evidence, with no new optimization. [Rebuild script](build_figures.py) · [Source hashes, settings and 268 checks](provenance.json).
 
+[Plain-language guide to Figures 2–5](../../research_management_20260922/figure_explanations/README.md) explains the labels and original budgets.
+
 ## 1. A pricing certificate does not guarantee a useful integer pool
 
 ![Matched accumulated-budget comparison](figure1_paired_budget.png)
@@ -42,7 +44,7 @@ All five figures have **PNG, PDF and editable-text SVG** versions and adjacent C
 
 **Claim:** Indexed replay reduces CG time by 12.4–18.1%; omitting unused LP setup by 9.3–14.6%. Full rather than 512-column inheritance saves 40.6–64.5% and improves tested fleets 9→8, 11→10 and 17→15.
 
-**Caption:** Three frozen cases, with two reversed execution-order repetitions per contrast (circle/square); repeats are not new cases or seed replicates. Index/setup contrasts preserve the inherited initial pool, iteration counts and certified objectives. Full inheritance intentionally changes the pool, so its effect includes composition and trajectory. Times are target-step CG only, not accumulated chain cost. Six original full-scan/full-pool arms hit the two-hour import limit and are retained in the CSV; they are excluded from percentage-speedup points because they never obtained comparable certified endpoints.
+**Caption:** Three frozen cases, with two reversed execution-order repetitions per contrast (circle/square); repeats are not new cases or seed replicates. Index/setup contrasts preserve the inherited initial pool, iteration counts and certified objectives. Full inheritance intentionally changes the pool, so its effect includes composition and trajectory. Times are target-step CG only, not accumulated chain cost. Six original full-scan/full-pool arms exhausted the overall two-hour CG budget during import (the separate import timer was disabled) and are retained in the CSV; they are excluded from percentage-speedup points because they never obtained comparable certified endpoints.
 
 [All 24 allocations and source identities](figure4_controlled_algorithms.csv) · [PDF](figure4_controlled_algorithms.pdf)
 

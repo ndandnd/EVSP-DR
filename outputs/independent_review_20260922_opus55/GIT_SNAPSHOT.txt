@@ -1,0 +1,410 @@
+$ git worktree list --porcelain
+worktree /Users/nadan/Documents/projects/demandresponse
+HEAD f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c
+branch refs/heads/main
+
+worktree /private/tmp/dr-k3-audit.uujvN8
+HEAD 0209d3e05d7b024f5aba6854f857b3ce22ff1e1c
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-algorithm-benchmarks-source-20260912
+HEAD b142f360f8a9018c2f50e3419f0dddcaf87a489d
+branch refs/heads/codex/algorithm-benchmarks-20260912
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-algorithm-review-source-20260912
+HEAD 206315dddd99f44a49141c04bb786f2b38f459dd
+branch refs/heads/codex/algorithm-review-20260912
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-baseline-efficiency-20260912
+HEAD 11afd8372dd14fdb2a11cd5eaddbee1d02644b1f
+branch refs/heads/codex/baseline-efficiency-20260912
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-capacity-efficiency-20260912
+HEAD 309d98d266ebaf6b7e99543a67f8f2be5736874a
+branch refs/heads/codex/capacity-efficiency-20260912
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-capacity-speed-pilot
+HEAD 37d26e7f86f59c94ecd1f1857daf7ca3d2a0fb00
+branch refs/heads/codex/capacity-speed-pilot-20260910
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-dr-gurobi-primary-20260906
+HEAD a8102d10607c20e4b1b3f80f790ba380a5a04d8f
+branch refs/heads/codex/gurobi-primary-20260906
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-dr-luna-proof-reporting-20260904
+HEAD 67b3ad1ac12aa2c96b744ce94447b415f9b5e66e
+branch refs/heads/codex/luna-proof-reporting-20260904
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-easy-exec-smoke-aaf83f6
+HEAD aaf83f65aa76b4af23319fbfee5e00b46633ba84
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-easy-ladder-20260908
+HEAD eaca565903772e356c280b686ad2e95761123935
+branch refs/heads/codex/easy-trip-ladder-20260908
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-efficiency-evidence-20260912
+HEAD 9bfbfc8fa977279e12e410c6f3761a6949a4f87b
+branch refs/heads/codex/efficiency-validation-20260912
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-event-graph-tiekey-20260912
+HEAD fd5b3ef08cf0cbddca1dde56f0eef08030986801
+branch refs/heads/codex/event-graph-startup-tiekey-20260912
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-event-native-warm-chain
+HEAD ecb60c154a9a5db385e3a573949ec9fd0a737af3
+branch refs/heads/codex/event-native-warm-chain-20260909
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-event-seed-prerequisite
+HEAD 4472cfc578497477fbf05c427cf2617f97ce8dcb
+branch refs/heads/codex/event-seed-mip-prerequisite
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-giro-k1-recovery
+HEAD c4dbef784e0fd717f8cd5976a15901b105cfd0e1
+branch refs/heads/codex/giro-k1-recovery-20260909
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-greedy-campaign-smoke
+HEAD eaca565903772e356c280b686ad2e95761123935
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-heavy-ladder-20260908
+HEAD 9665429111b461006cc6b844d7d6989daf323454
+branch refs/heads/codex/heavy-trip-ladder-20260908
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-heavy-preflight-9665429
+HEAD 9665429111b461006cc6b844d7d6989daf323454
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-import-deadline-fix-20260912
+HEAD 68fce0093ec9768392442fe1b107a1b67ab0cb7b
+branch refs/heads/codex/import-deadline-fix-20260912
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-input-ff7
+HEAD ff7fb2ba93cf13a31171e1e4aeb2d28dc8aeee20
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-legacy-exec-smoke-bead344
+HEAD bead34452aa422ec6b2c7799d0c9c9698208aa32
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-luna-review-300445a
+HEAD 300445a1a707f1c3cca0890934d12bf8399e7d88
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-matched-tariff-20260908
+HEAD a6e5059688703641db9aa3349b6ab6a9f76c1987
+branch refs/heads/codex/matched-fleet-tariff-20260908
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-matched-tariff-smoke-a9a9720
+HEAD a9a9720f471e5d3b30acff6f46208f20c22f18fc
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-mip-structure-20260922
+HEAD 74906efe7d8787c82795d6dd80a640a56a594beb
+branch refs/heads/codex/mip-structure-20260922
+
+worktree /private/tmp/evsp-mip36h-launcher
+HEAD dab4400680f4624ec81de42d465e8a53097b4a8f
+branch refs/heads/codex/k5-raw-mip36h-status-fix-20260905
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-nested-replication-20260909
+HEAD 0209d3e05d7b024f5aba6854f857b3ce22ff1e1c
+branch refs/heads/codex/nested-replication-20260909
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-nested-smoke-20260908
+HEAD 4c423e55391e471310bbd8ead751e555aeaa8108
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-nested-threshold-20260908
+HEAD 21fbecba826824c44f897feef038fcf51c532582
+branch refs/heads/codex/nested-threshold-k2-15-20260908
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-overnight-mip-20260908
+HEAD 2d7a21a07ef0b89f6e34e8504bf0638bee61113a
+branch refs/heads/codex/overnight-pool-mip-20260908
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-queue-graph-recovery-20260912
+HEAD a0e0bb7681c8451e3cbbbfa06aef390026d9af4b
+branch refs/heads/codex/queue-graph-recovery-20260912
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-queue-recovery-code-20260912
+HEAD e091a4dba549510238507ef5e5367abea958bd30
+branch refs/heads/codex/queue-recovery-code-20260912
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-replacement-exec-dcfabf0
+HEAD dcfabf0fa2bbb503102a8b2f384d256123f9b123
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-replay-index-20260912
+HEAD 0d3f1129d3ee306285ba22d40cb567beb5a384de
+branch refs/heads/codex/replay-index-20260912
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-replication42-smoke
+HEAD 0209d3e05d7b024f5aba6854f857b3ce22ff1e1c
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-research-register-20260910
+HEAD dac4005840ffa6fc8da950de7ecf0822a1f16c4a
+branch refs/heads/codex/research-register-20260910
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-small-threshold-0903
+HEAD 9bdbb17d14f068745b198d4ade81e062addc62b4
+branch refs/heads/codex/small-exact-threshold-20260903
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-tariff-extension-smoke
+HEAD 1a0028f968e2b0143ffdf986c7c550eeb374d3da
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-terminal-energy-20260910
+HEAD 2424369f4b5c40198a22698b7a460d6aa8129169
+branch refs/heads/codex/terminal-energy-fair-comparison-20260910
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/evsp-warm-multichain-p1246
+HEAD 58a69ad83017254fe290e7018bec4d527a67c116
+branch refs/heads/codex/warm-multichain-p1246-20260910
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/giro-worker-test
+HEAD 0096c82d8a3da930f9884599ba100bf59504f1a0
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/giro-zero-start-fee-20260913
+HEAD f895c61a525c51d32ab09276f12074217c1788ce
+branch refs/heads/codex/giro-zero-start-fee-20260913
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/terminal-energy-exec.6kPI1q
+HEAD 88fed506d44c4cd0add44242298615e2751e7485
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/terminal-energy-exec.8rxFMv
+HEAD 75397554ee5209f5aac4beb0e3d5e503bc5458bd
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/terminal-energy-exec.XzF2z2
+HEAD 48ddb2de2c8528a1a2ce8aa0058ee3a9ee426d34
+detached
+prunable gitdir file points to non-existent location
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/action3-full-20260916
+HEAD be624eb486a7c3a4137f8b0fe660f9bb273ddf98
+branch refs/heads/codex/action3-full-20260916
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/advisor-f6-k5-20260916
+HEAD a12ced439503bb3b70a0ca0418661ce5f8fb35a2
+detached
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-parallel-followup-20260914
+HEAD bea983e9e8d9e16fb3d12a104dabaaf2b8a00ec7
+branch refs/heads/codex/capacity-parallel-followup-20260914
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-shortcircuit-20260917
+HEAD cf61e2c8618b067df032c3eb795476e64184ed0a
+branch refs/heads/codex/capacity-shortcircuit-20260917
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-timeout-checkpoint-20260911
+HEAD 253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6
+branch refs/heads/codex/capacity-timeout-checkpoint-20260911
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/charging-factorial-20260921
+HEAD b931772dadf1e5930fd87bf4a89edd7dcaf6c51a
+branch refs/heads/codex/charging-factorial-20260921
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/decomposition-map-20260910
+HEAD 39b84978c06100cc7bcb2817ca0fa552233d90f5
+branch refs/heads/codex/decomposition-map-20260910
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/dispatch-cleanup-20260918
+HEAD 663ece9c8d5d02e03087a300ecca0605a4ad9292
+branch refs/heads/codex/dispatch-cleanup-20260918
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/diving-pricing-20260919
+HEAD 79a677d8ecc94beff95a72e6385e4c18b7856e41
+branch refs/heads/codex/diving-pricing-20260919
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/early-stop-20260917
+HEAD 689d3646ce77ed0ffce8722ba5724b2cda303a66
+branch refs/heads/codex/fleet-certified-early-stop-20260917
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/graph-checkpoints-20260921
+HEAD 71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a
+branch refs/heads/codex/graph-checkpoints-20260921
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/integer-columns-20260921
+HEAD c50e5f207869bac25507adfae90bb830a44039b7
+branch refs/heads/codex/integer-columns-20260921
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/research-register-20260915
+HEAD 4a0c2b2c76d5ab150acebc70bd725266c8aef835
+branch refs/heads/codex/research-register-20260915
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-dr-mincharge-20260916
+HEAD 67636d44ce59d2dafb12401a75dac045d2b326e4
+detached
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-fdl-cg-20260916
+HEAD daac18d5598902c28baa6c43e58942930fc733bc
+branch refs/heads/codex/review-fdl-cg-20260916
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-fdl-mip-20260916
+HEAD 0c51b1fa491492212f5d875d1c082b476db0f1c3
+branch refs/heads/codex/review-fdl-mip-20260916
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-mip-seeds-20260916
+HEAD 6830caa225856903d1157ef8587863c7ae21ad53
+detached
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-strict-chain-20260916
+HEAD 50ceb6c095a580f79f87b53bef536cac31f81963
+branch refs/heads/codex/review-strict-chain-20260916
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/stage2_cap_4400dbb
+HEAD 4400dbb3f28471ffcd4a4628cb2487ea0a8ff6d8
+detached
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/stage2_cap_recovery_20260910
+HEAD 2d797b897c8a89dcdb3eae36351ac6a8655e59d2
+branch refs/heads/codex/stage2-cap-recovery-20260910
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-graph-reuse-20260922
+HEAD fedf421461f94727e6b1292a0e7789ab76ed8587
+branch refs/heads/codex/strict-graph-reuse-20260922
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-graph-validation-20260922
+HEAD 3bb32c1a84af73c97689dfc9f5ad43136cfcead9
+branch refs/heads/codex/strict-graph-validation-20260922
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-lineage-gate-20260922
+HEAD 34d39caff534c089fbffed397f5a42b223b590ad
+branch refs/heads/codex/strict-lineage-gate-20260922
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-packed-20260921
+HEAD 35770aae2c08e7d5a356cc3b673e67608e5b1036
+branch refs/heads/codex/strict-packed-20260921
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-successors-20260921
+HEAD 550bc5b061b05b82247e4f2f94793c3563c98087
+branch refs/heads/codex/strict-successors-20260921
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/terminal-replay-compat-20260910
+HEAD 4400dbb3f28471ffcd4a4628cb2487ea0a8ff6d8
+branch refs/heads/codex/terminal-replay-compat-20260910
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/terminal-replay-compat-2424369-20260910
+HEAD 5cdb8138c29faef9d5bf949175cb1e815a0b4220
+branch refs/heads/codex/terminal-replay-compat-2424369-20260910
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/warm-chain-p5-20260910
+HEAD 689b882789119bf6a6686157c757db39286ee6db
+branch refs/heads/codex/warm-chain-p5-20260910
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/week-cleanup-20260921
+HEAD 24fbda8100f612c45477c28a92747e00cf7cb42a
+branch refs/heads/codex/week-cleanup-20260921
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/week-evidence-20260921
+HEAD cfdee92c0b7ab3fc335e08d9a8eaa9871143dd34
+branch refs/heads/codex/week-evidence-20260921
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/zero-charge-start-fee-20260913
+HEAD 06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0
+branch refs/heads/codex/zero-charge-start-fee-20260913
+
+worktree /Users/nadan/Documents/projects/demandresponse/.codex-work/zero-fee-terminal-cg
+HEAD 2c7445ac6449eb7d338c83f8320574da042a65b5
+branch refs/heads/codex/zero-fee-terminal-cg
+
+worktree /Users/nadan/Documents/projects/evsp-dr-nested-auditor
+HEAD 9bdbb17d14f068745b198d4ade81e062addc62b4
+branch refs/heads/cursor/nested-threshold-auditor-20260904
+
+
+
+$ git log -15 --format=%H %cs %s codex/week-evidence-20260921
+cfdee92c0b7ab3fc335e08d9a8eaa9871143dd34 2026-09-22 Audit larger-chain endpoints and launch validated cached strict CG
+152424b945a5477e48cfc193879fcc71475cc421 2026-09-22 Audit k33 endpoints and validate strict graph lineage
+08763e5cd1d20a6a1793403d99859e9357efc584 2026-09-22 Record k33 endpoints and validated strict graph cache implementation
+623e05d92d22d4838d596f4f435c404005bdac71 2026-09-22 Record completed MIP pilot, strict continuation endpoint and verified publications
+9ace81677343ee293a398a1dbf5b5cc4c1774e9c 2026-09-22 Record charging matrix equivalence and controlled MIP structure tests
+ac4318fbd1a0eefd56e34eb0d3962871dd1c77a2 2026-09-22 Record verified native fleet-time tables and MIP structure in Doc and Slides
+9ea683dc28c2afa85ed30e195ae5adc97c51679c 2026-09-22 Publish actual MIP matrix audit and automatic Doc/Slides update policy
+86162955693b08084b6a6e652409c48e1b93bbaa 2026-09-22 Summarize fleet-search times and outcomes across all six chains
+b6b826700a8f7978ceef7876bbb7fa40e77df1f9 2026-09-22 Publish focused k15 recovery and strict endpoint heartbeat evidence
+3fb0b6ef4540abb15fa9557e52fbdee014db9f15 2026-09-21 Publish verified 28-slide research deck and six-page document follow-up
+6fcc672b16db3255ec552294ff0f34a1b5c9290e 2026-09-21 Record battery-only repairs, actual MIP timings and integer pricing mechanism
+493cfcbb378a22dc7a4fd9dc4384adc03a327984 2026-09-21 Verify the concise journal update and preserve current figures and sources
+4132ba69db4ca8f058df0d9db8094363a90734bb 2026-09-21 Record the strict ten-duty CG endpoint with certificate limits
+1c0266cf17cdcda3db9ff98e2b247f1dd72a515c 2026-09-21 Verify paired integer pricing results and recover the approved k15 continuation
+0a465d87d87568c800a276cb560014776b4b6a8f 2026-09-21 Record journal update and verify preservation of earlier figures
+
+
+$ git log -12 --format=%H %cs %s codex/zero-fee-terminal-cg
+2c7445ac6449eb7d338c83f8320574da042a65b5 2026-09-16 Add explicit duplicate-trip cleanup with terminal-energy charging frontiers
+c92a34eaffd95affc12ba4f6d05082fb72438072 2026-09-16 Validate exact-once executable selections from frozen terminal CG pools
+c210187bb50a2eac2022178ea21aa39d7ff6b9b1 2026-09-15 Add isolated zero-fee full CG with return-energy pricing and safe terminal alternatives
+a0e0bb7681c8451e3cbbbfa06aef390026d9af4b 2026-09-12 Defer event graph JSON tie keys
+e091a4dba549510238507ef5e5367abea958bd30 2026-09-12 Validate indexed replay with cancellation-safe workers and unlimited pools
+046295887a97fdeb2f8f1a36447c36f3c2839953 2026-09-12 Bound inherited replay shutdown and observe preparation cancellation
+89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a 2026-09-12 Avoid collector cache and log rereads during paired timing
+14dbc75635b870600c4af400fdff902f0d72e54c 2026-09-12 Collect preparation and live paired validation attempts with evidence hashes
+dd16c9f079e4e3e6e8689da2d414034feb6cc182 2026-09-12 Add authenticated paired efficiency validation campaign tooling
+a850ceb23d88e5c09cad6e853e01163cbba25c41 2026-09-12 Add opt-in complete-successor index for fixed-sequence replay
+9a957e9a1a317988660396c5d06e4ccfc5dbd679 2026-09-12 Add opt-in omission of unused Gurobi incidence matrices
+a29992196acb74d02b8c7891be4061718889999f 2026-09-12 Bind MIP execution and pool input hashes
+
+
+$ git log -12 --format=%H %cs %s codex/integer-columns-20260921
+c50e5f207869bac25507adfae90bb830a44039b7 2026-09-21 Read bounded replication budgets from registered campaign manifest
+1be819f0b4e3ea9dc9766497efa169a03e476ad5 2026-09-21 Preserve dive incumbents and measure matched replication budgets
+79a677d8ecc94beff95a72e6385e4c18b7856e41 2026-09-21 Report remaining dive artificials without an infeasibility claim
+a3392e2c8f6722da9538d88a34bab7ef85f7cc72 2026-09-20 Add diving-with-pricing pilot for integer-directed column generation
+6830caa225856903d1157ef8587863c7ae21ad53 2026-09-16 Expose explicit Gurobi seed for controlled saved-pool repeats
+871d057e1067411f09581e37d78f7c1ca43f68bb 2026-09-10 Preserve expanded paths when seeding saved MIP starts
+4400dbb3f28471ffcd4a4628cb2487ea0a8ff6d8 2026-09-10 Seed covering MIPs from validated saved incumbents
+15e781ad6c269f4cda9caf3329ea2b7700b7cabe 2026-09-10 Run charging stage under feasible fleet cap
+8a55e97d940878f583c342bc5980c7f684cb3905 2026-09-10 Allow audited inherited event pools in terminal freeze
+c4dbef784e0fd717f8cd5976a15901b105cfd0e1 2026-09-09 Validate covering pools and incumbents physically
+233e110283cf7eaacb8dd635ef116d662e7e34d5 2026-09-09 Assert chronological charger-row separation
+ed3f1538d1987a5692fabb2961b3245b6cf7c257 2026-09-09 Price conservative charger capacity duals
+
