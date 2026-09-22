@@ -1,0 +1,651 @@
+{
+  "checks": {
+    "28_slides": true,
+    "original_1_to_14_preserved_except2": true,
+    "six_correct_chain_images": true,
+    "math24_to26_editable": true,
+    "slide27_editable_table": true,
+    "notes15_to28_source_urls": true,
+    "slides_pdf28": true,
+    "followup_pdf6": true,
+    "new_doc3tables": true,
+    "new_doc6_markdown_images": true,
+    "no_placeholder_text": true,
+    "new_doc6_correct_resampled_images": true,
+    "current_exactly_one_paragraph_updated": true,
+    "current_source_footer_preserved": true,
+    "current_pdf_old_images_preserved": true,
+    "old_slide_images_preserved": true
+  },
+  "slides": {
+    "before_count": 14,
+    "after_count": 28,
+    "original_preservation": [
+      {
+        "slide": 1,
+        "text_equal": true,
+        "images_equal": true,
+        "tables_equal": true,
+        "geometry_equal": true
+      },
+      {
+        "slide": 2,
+        "text_equal": false,
+        "images_equal": true,
+        "tables_equal": true,
+        "geometry_equal": true
+      },
+      {
+        "slide": 3,
+        "text_equal": true,
+        "images_equal": true,
+        "tables_equal": true,
+        "geometry_equal": true
+      },
+      {
+        "slide": 4,
+        "text_equal": true,
+        "images_equal": true,
+        "tables_equal": true,
+        "geometry_equal": true
+      },
+      {
+        "slide": 5,
+        "text_equal": true,
+        "images_equal": true,
+        "tables_equal": true,
+        "geometry_equal": true
+      },
+      {
+        "slide": 6,
+        "text_equal": true,
+        "images_equal": true,
+        "tables_equal": true,
+        "geometry_equal": true
+      },
+      {
+        "slide": 7,
+        "text_equal": true,
+        "images_equal": true,
+        "tables_equal": true,
+        "geometry_equal": true
+      },
+      {
+        "slide": 8,
+        "text_equal": true,
+        "images_equal": true,
+        "tables_equal": true,
+        "geometry_equal": true
+      },
+      {
+        "slide": 9,
+        "text_equal": true,
+        "images_equal": true,
+        "tables_equal": true,
+        "geometry_equal": true
+      },
+      {
+        "slide": 10,
+        "text_equal": true,
+        "images_equal": true,
+        "tables_equal": true,
+        "geometry_equal": true
+      },
+      {
+        "slide": 11,
+        "text_equal": true,
+        "images_equal": true,
+        "tables_equal": true,
+        "geometry_equal": true
+      },
+      {
+        "slide": 12,
+        "text_equal": true,
+        "images_equal": true,
+        "tables_equal": true,
+        "geometry_equal": true
+      },
+      {
+        "slide": 13,
+        "text_equal": true,
+        "images_equal": true,
+        "tables_equal": true,
+        "geometry_equal": true
+      },
+      {
+        "slide": 14,
+        "text_equal": true,
+        "images_equal": true,
+        "tables_equal": true,
+        "geometry_equal": true
+      }
+    ],
+    "slide2_before": {
+      "text": [
+        "What changed this week",
+        "Eight jobs finished; completion is not the same as convergence.\n\nNew pricing recovered 8 buses in 3 of 4 fresh k=8 cases.\nChain 1 also reaches 8 when its dive incumbent is passed to MIP.\n\nCapacity pricing improved; k=2 and k=3 still hit the time limit.\nThe strict large case spent its budget building the graph.\n"
+      ],
+      "pictures": [],
+      "tables": [],
+      "geometry": [
+        [
+          311700,
+          445025,
+          8520600,
+          572700
+        ],
+        [
+          311700,
+          1152475,
+          8520600,
+          3416400
+        ]
+      ]
+    },
+    "slide2_after": {
+      "text": [
+        "What changed this week",
+        "All six chains now have paired CG, integer and MIP-time figures.\nTheir LPs agree; sequential pools give much better integer fleets.\nNew paired pricing test: eight buses in 7/8 runs, controls 0/8.\nAll 195 smaller-battery failures repair without changing trips.\nNew figures and code-backed explanations follow on slides 15\u201328.\nEarlier pilot and constraint experiments remain for context.\n"
+      ],
+      "pictures": [],
+      "tables": [],
+      "geometry": [
+        [
+          311700,
+          445025,
+          8520600,
+          572700
+        ],
+        [
+          311700,
+          1152475,
+          8520600,
+          3416400
+        ]
+      ]
+    },
+    "chain_images": [
+      {
+        "chain": 1,
+        "slide": 16,
+        "expected_sha256": "2da6629ac1507695f049f125a94c7a0ffa5018f76c6c9d75c4344398be32e60a",
+        "image_count": 1,
+        "byte_match": false,
+        "pixel_match": false,
+        "resampled_identification": [
+          {
+            "best_chain": 1,
+            "rmse_by_chain": [
+              0.808719596919264,
+              9.35096931524015,
+              8.705297231023446,
+              8.578791937479156,
+              9.778367983772075,
+              10.99145843234397
+            ],
+            "verified": true
+          }
+        ]
+      },
+      {
+        "chain": 2,
+        "slide": 17,
+        "expected_sha256": "12d5092171eef9e55f7520e2d48ba0ef6eb3f3725cc4affebe302a3270f478f5",
+        "image_count": 1,
+        "byte_match": false,
+        "pixel_match": false,
+        "resampled_identification": [
+          {
+            "best_chain": 2,
+            "rmse_by_chain": [
+              9.372252272651798,
+              0.8149117605145132,
+              9.361627957693676,
+              9.241978786837027,
+              9.614931517474476,
+              10.146345133367138
+            ],
+            "verified": true
+          }
+        ]
+      },
+      {
+        "chain": 3,
+        "slide": 18,
+        "expected_sha256": "e97f1f961a3550d052eae508f0f8c83026fde7da4d5eb2db2e03de2ee85fe702",
+        "image_count": 1,
+        "byte_match": false,
+        "pixel_match": false,
+        "resampled_identification": [
+          {
+            "best_chain": 3,
+            "rmse_by_chain": [
+              8.71249815637451,
+              9.330908955534579,
+              0.8113432286643265,
+              9.123855159207018,
+              9.539645282537109,
+              10.407123018812092
+            ],
+            "verified": true
+          }
+        ]
+      },
+      {
+        "chain": 4,
+        "slide": 19,
+        "expected_sha256": "108e2140a27ff04a295532a982be2e05531022917f8e0019ec79275173912f5d",
+        "image_count": 1,
+        "byte_match": false,
+        "pixel_match": false,
+        "resampled_identification": [
+          {
+            "best_chain": 4,
+            "rmse_by_chain": [
+              8.580211952008728,
+              9.227698519958217,
+              9.11752582284765,
+              0.8099756524413646,
+              9.286164661687591,
+              10.715337516780862
+            ],
+            "verified": true
+          }
+        ]
+      },
+      {
+        "chain": 5,
+        "slide": 20,
+        "expected_sha256": "a7db3003c3fb2d64eff7afbc10271715291d0d8b246095e4894932e1bcbd095e",
+        "image_count": 1,
+        "byte_match": false,
+        "pixel_match": false,
+        "resampled_identification": [
+          {
+            "best_chain": 5,
+            "rmse_by_chain": [
+              9.772464886077838,
+              9.58064888379146,
+              9.531557372092978,
+              9.29502947827758,
+              0.8171907079600389,
+              10.688448652493706
+            ],
+            "verified": true
+          }
+        ]
+      },
+      {
+        "chain": 6,
+        "slide": 21,
+        "expected_sha256": "dc6055c55122b9e180ff39d680e0e1aa74a6320688532bdef3d3619f0417d848",
+        "image_count": 1,
+        "byte_match": false,
+        "pixel_match": false,
+        "resampled_identification": [
+          {
+            "best_chain": 6,
+            "rmse_by_chain": [
+              10.997419908426124,
+              10.122680703128314,
+              10.406671006761215,
+              10.711844985506042,
+              10.697324085633142,
+              0.8040823414832874
+            ],
+            "verified": true
+          }
+        ]
+      }
+    ],
+    "editable_math": [
+      {
+        "slide": 24,
+        "text_frames": 2,
+        "text": [
+          "Integer-directed pricing: how the search works",
+          "Start from the fresh pool and impose the target fleet cap K = 8.\nFix one promising fractional route at x\u1d63 = 1.\nRe-solve the LP. Remaining trips and bus slots change the duals.\nPrice new routes that help complete this partial integer choice.\nFix another route, or release a fixing and try an alternative.\nKeep new columns and pass any discovered cover to the final MIP.\nNo known sequential routes enter this test. The search is heuristic.\n"
+        ],
+        "pictures": 0
+      },
+      {
+        "slide": 25,
+        "text_frames": 2,
+        "text": [
+          "Why a useful integer route can have positive reduced cost",
+          "Covering LP: min c\u1d40x, subject to Ax \u2265 1 and x \u2265 0.\nDual: max 1\u1d40\u03c0, subject to A\u1d40\u03c0 \u2264 c and \u03c0 \u2265 0.\nFor any integer cover y: c\u1d40y \u2212 zLP = r\u1d40y + \u03c0\u1d40(Ay \u2212 1),\nwhere r = c \u2212 A\u1d40\u03c0 is the vector of route reduced costs.\nC1\u2019s eight-route witness: 96.272 = 72.142 + 24.130.\nThe integer cover pays a small premium above the fractional LP.\nThose positive reduced-cost routes can still reduce the integer fleet.\n"
+        ],
+        "pictures": 0
+      },
+      {
+        "slide": 26,
+        "text_frames": 2,
+        "text": [
+          "Fixing routes changes the pricing problem",
+          "For fixed routes F, free routes must cover 1 \u2212 A_F1,\nusing at most K \u2212 |F| remaining bus slots.\nNew reduced cost: r\u1d63 = c\u1d63 \u2212 a\u1d63\u1d40\u03c0 \u2212 \u03bc, with \u03bc \u2264 0.\n\u03c0 prices uncovered service; \u03bc prices the remaining fleet cap.\nA formerly positive reduced-cost route can now have negative reduced cost.\nThe search tries up to 3 alternatives per level and 2 restarts.\nIt is a bounded diving heuristic, not exhaustive branch-and-price.\n"
+        ],
+        "pictures": 0
+      }
+    ],
+    "slide27_tables": [
+      [
+        [
+          "Chain",
+          "New pricing hits",
+          "Unchanged-pool hits"
+        ],
+        [
+          "C1",
+          "2 / 2",
+          "0 / 2"
+        ],
+        [
+          "C3",
+          "2 / 2",
+          "0 / 2"
+        ],
+        [
+          "C4",
+          "1 / 2",
+          "0 / 2"
+        ],
+        [
+          "C5",
+          "2 / 2",
+          "0 / 2"
+        ]
+      ]
+    ],
+    "notes": [
+      {
+        "slide": 15,
+        "text": "Sources pinned at commit 6fcc672b16db3255ec552294ff0f34a1b5c9290e:\nhttps://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times\n\n48 optimizer endpoints form 24 fresh/sequential pairs at k = 5, 8, 10, 15. Cumulative CG excludes graph construction, all earlier MIPs and queue time. MIP panels show only the final k. Stage times measure optimize calls, not first-incumbent timestamps. Pricing tolerance: 0.0001. Historical physics: 240 kWh / 240 kW, zero reserve, no shared capacity, flat tariff, start fee 5 and covering. Exact CSVs, statuses, source paths and plotting code are linked.\n",
+        "urls": [
+          "https://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times"
+        ]
+      },
+      {
+        "slide": 16,
+        "text": "Sources pinned at commit 6fcc672b16db3255ec552294ff0f34a1b5c9290e:\nhttps://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times\n\n48 optimizer endpoints form 24 fresh/sequential pairs at k = 5, 8, 10, 15. Cumulative CG excludes graph construction, all earlier MIPs and queue time. MIP panels show only the final k. Stage times measure optimize calls, not first-incumbent timestamps. Pricing tolerance: 0.0001. Historical physics: 240 kWh / 240 kW, zero reserve, no shared capacity, flat tariff, start fee 5 and covering. Exact CSVs, statuses, source paths and plotting code are linked.\n",
+        "urls": [
+          "https://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times"
+        ]
+      },
+      {
+        "slide": 17,
+        "text": "Sources pinned at commit 6fcc672b16db3255ec552294ff0f34a1b5c9290e:\nhttps://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times\n\n48 optimizer endpoints form 24 fresh/sequential pairs at k = 5, 8, 10, 15. Cumulative CG excludes graph construction, all earlier MIPs and queue time. MIP panels show only the final k. Stage times measure optimize calls, not first-incumbent timestamps. Pricing tolerance: 0.0001. Historical physics: 240 kWh / 240 kW, zero reserve, no shared capacity, flat tariff, start fee 5 and covering. Exact CSVs, statuses, source paths and plotting code are linked.\n",
+        "urls": [
+          "https://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times"
+        ]
+      },
+      {
+        "slide": 18,
+        "text": "Sources pinned at commit 6fcc672b16db3255ec552294ff0f34a1b5c9290e:\nhttps://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times\n\n48 optimizer endpoints form 24 fresh/sequential pairs at k = 5, 8, 10, 15. Cumulative CG excludes graph construction, all earlier MIPs and queue time. MIP panels show only the final k. Stage times measure optimize calls, not first-incumbent timestamps. Pricing tolerance: 0.0001. Historical physics: 240 kWh / 240 kW, zero reserve, no shared capacity, flat tariff, start fee 5 and covering. Exact CSVs, statuses, source paths and plotting code are linked.\n",
+        "urls": [
+          "https://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times"
+        ]
+      },
+      {
+        "slide": 19,
+        "text": "Sources pinned at commit 6fcc672b16db3255ec552294ff0f34a1b5c9290e:\nhttps://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times\n\n48 optimizer endpoints form 24 fresh/sequential pairs at k = 5, 8, 10, 15. Cumulative CG excludes graph construction, all earlier MIPs and queue time. MIP panels show only the final k. Stage times measure optimize calls, not first-incumbent timestamps. Pricing tolerance: 0.0001. Historical physics: 240 kWh / 240 kW, zero reserve, no shared capacity, flat tariff, start fee 5 and covering. Exact CSVs, statuses, source paths and plotting code are linked.\n",
+        "urls": [
+          "https://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times"
+        ]
+      },
+      {
+        "slide": 20,
+        "text": "Sources pinned at commit 6fcc672b16db3255ec552294ff0f34a1b5c9290e:\nhttps://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times\n\n48 optimizer endpoints form 24 fresh/sequential pairs at k = 5, 8, 10, 15. Cumulative CG excludes graph construction, all earlier MIPs and queue time. MIP panels show only the final k. Stage times measure optimize calls, not first-incumbent timestamps. Pricing tolerance: 0.0001. Historical physics: 240 kWh / 240 kW, zero reserve, no shared capacity, flat tariff, start fee 5 and covering. Exact CSVs, statuses, source paths and plotting code are linked.\n",
+        "urls": [
+          "https://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times"
+        ]
+      },
+      {
+        "slide": 21,
+        "text": "Sources pinned at commit 6fcc672b16db3255ec552294ff0f34a1b5c9290e:\nhttps://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times\n\n48 optimizer endpoints form 24 fresh/sequential pairs at k = 5, 8, 10, 15. Cumulative CG excludes graph construction, all earlier MIPs and queue time. MIP panels show only the final k. Stage times measure optimize calls, not first-incumbent timestamps. Pricing tolerance: 0.0001. Historical physics: 240 kWh / 240 kW, zero reserve, no shared capacity, flat tariff, start fee 5 and covering. Exact CSVs, statuses, source paths and plotting code are linked.\n",
+        "urls": [
+          "https://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times"
+        ]
+      },
+      {
+        "slide": 22,
+        "text": "Sources pinned at commit 6fcc672b16db3255ec552294ff0f34a1b5c9290e:\nhttps://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times\n\n48 optimizer endpoints form 24 fresh/sequential pairs at k = 5, 8, 10, 15. Cumulative CG excludes graph construction, all earlier MIPs and queue time. MIP panels show only the final k. Stage times measure optimize calls, not first-incumbent timestamps. Pricing tolerance: 0.0001. Historical physics: 240 kWh / 240 kW, zero reserve, no shared capacity, flat tariff, start fee 5 and covering. Exact CSVs, statuses, source paths and plotting code are linked.\n",
+        "urls": [
+          "https://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/chain_comparison_mip_times"
+        ]
+      },
+      {
+        "slide": 23,
+        "text": "Sources pinned at commit 6fcc672b16db3255ec552294ff0f34a1b5c9290e:\nhttps://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/battery_repair\n\n487 route occurrences represent 463 distinct schedules. The 195 failed occurrences contain 180 distinct schedules. 194 repairs fit their original intervals; one extends by 0.1499625 seconds. All 48 fleets pass individual route-time and energy replay. Charging power is bounded by 240 kW, with zero reserve and no terminal floor or shared capacity. These continuous witnesses do not inherit the event-grid certificates. A second reviewer independently confirmed replay. The repair minimizes absolute charging-energy changes, not charging cost.\n",
+        "urls": [
+          "https://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/battery_repair"
+        ]
+      },
+      {
+        "slide": 24,
+        "text": "Sources pinned at commit 6fcc672b16db3255ec552294ff0f34a1b5c9290e:\nhttps://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/integer_pricing_explanation\n\nFour selected cases (C1, C3, C4, C5), each with two paired seeds: 7/8 treatment hits versus 0/8 controls. Target K = 8 is supplied; no sequential or GIRO witness routes enter the treatment. New columns and the self-discovered incumbent start are tested together, without a separate ablation. All seven hits prove eight in their finite pools. Five controls prove nine. The treatment miss remains nine with bound eight. Nominal charged budget is 3,600 seconds of dive wall time plus MIP solver time, with MIP setup additional. Termination overruns are 0.68\u20134.70 seconds. Six hits retain duplicate service; shared capacity is absent. proof_links.md indexes the Gurobi logs. method_and_math.md gives the residual dual including fleet-cap price \u03bc.\n",
+        "urls": [
+          "https://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/integer_pricing_explanation"
+        ]
+      },
+      {
+        "slide": 25,
+        "text": "Sources pinned at commit 6fcc672b16db3255ec552294ff0f34a1b5c9290e:\nhttps://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/integer_pricing_explanation\n\nFour selected cases (C1, C3, C4, C5), each with two paired seeds: 7/8 treatment hits versus 0/8 controls. Target K = 8 is supplied; no sequential or GIRO witness routes enter the treatment. New columns and the self-discovered incumbent start are tested together, without a separate ablation. All seven hits prove eight in their finite pools. Five controls prove nine. The treatment miss remains nine with bound eight. Nominal charged budget is 3,600 seconds of dive wall time plus MIP solver time, with MIP setup additional. Termination overruns are 0.68\u20134.70 seconds. Six hits retain duplicate service; shared capacity is absent. proof_links.md indexes the Gurobi logs. method_and_math.md gives the residual dual including fleet-cap price \u03bc.\n",
+        "urls": [
+          "https://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/integer_pricing_explanation"
+        ]
+      },
+      {
+        "slide": 26,
+        "text": "Sources pinned at commit 6fcc672b16db3255ec552294ff0f34a1b5c9290e:\nhttps://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/integer_pricing_explanation\n\nFour selected cases (C1, C3, C4, C5), each with two paired seeds: 7/8 treatment hits versus 0/8 controls. Target K = 8 is supplied; no sequential or GIRO witness routes enter the treatment. New columns and the self-discovered incumbent start are tested together, without a separate ablation. All seven hits prove eight in their finite pools. Five controls prove nine. The treatment miss remains nine with bound eight. Nominal charged budget is 3,600 seconds of dive wall time plus MIP solver time, with MIP setup additional. Termination overruns are 0.68\u20134.70 seconds. Six hits retain duplicate service; shared capacity is absent. proof_links.md indexes the Gurobi logs. method_and_math.md gives the residual dual including fleet-cap price \u03bc.\n",
+        "urls": [
+          "https://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/integer_pricing_explanation"
+        ]
+      },
+      {
+        "slide": 27,
+        "text": "Sources pinned at commit 6fcc672b16db3255ec552294ff0f34a1b5c9290e:\nhttps://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/integer_pricing_explanation\n\nFour selected cases (C1, C3, C4, C5), each with two paired seeds: 7/8 treatment hits versus 0/8 controls. Target K = 8 is supplied; no sequential or GIRO witness routes enter the treatment. New columns and the self-discovered incumbent start are tested together, without a separate ablation. All seven hits prove eight in their finite pools. Five controls prove nine. The treatment miss remains nine with bound eight. Nominal charged budget is 3,600 seconds of dive wall time plus MIP solver time, with MIP setup additional. Termination overruns are 0.68\u20134.70 seconds. Six hits retain duplicate service; shared capacity is absent. proof_links.md indexes the Gurobi logs. method_and_math.md gives the residual dual including fleet-cap price \u03bc.\n",
+        "urls": [
+          "https://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/integer_pricing_explanation"
+        ]
+      },
+      {
+        "slide": 28,
+        "text": "Sources pinned at commit 6fcc672b16db3255ec552294ff0f34a1b5c9290e:\nhttps://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/integer_pricing_explanation\n\nFour selected cases (C1, C3, C4, C5), each with two paired seeds: 7/8 treatment hits versus 0/8 controls. Target K = 8 is supplied; no sequential or GIRO witness routes enter the treatment. New columns and the self-discovered incumbent start are tested together, without a separate ablation. All seven hits prove eight in their finite pools. Five controls prove nine. The treatment miss remains nine with bound eight. Nominal charged budget is 3,600 seconds of dive wall time plus MIP solver time, with MIP setup additional. Termination overruns are 0.68\u20134.70 seconds. Six hits retain duplicate service; shared capacity is absent. proof_links.md indexes the Gurobi logs. method_and_math.md gives the residual dual including fleet-cap price \u03bc.\n",
+        "urls": [
+          "https://github.com/ndandnd/EVSP-DR/tree/6fcc672b16db3255ec552294ff0f34a1b5c9290e/outputs/research_followup_20260921/integer_pricing_explanation"
+        ]
+      }
+    ]
+  },
+  "documents": {
+    "new_doc_tables": 3,
+    "new_doc_markdown_images": 6,
+    "placeholder_hits": [],
+    "embedded_images": [
+      {
+        "page": 4,
+        "name": "X15.png",
+        "size": [
+          2048,
+          977
+        ],
+        "matching_chains": [],
+        "rgb_sha256": "780b97b4292ee86ed450681703c581a933bd2eabc3812e11ca77ef52cde64cd2",
+        "resampled_identification": {
+          "best_chain": 1,
+          "rmse_by_chain": [
+            0.808719596919264,
+            9.35096931524015,
+            8.705297231023446,
+            8.578791937479156,
+            9.778367983772075,
+            10.99145843234397
+          ],
+          "verified": true
+        }
+      },
+      {
+        "page": 4,
+        "name": "X18.png",
+        "size": [
+          2048,
+          977
+        ],
+        "matching_chains": [],
+        "rgb_sha256": "e64fbca98400d4b93d3b745bc8ed6ef3fef128a914b04b9ffe55e0fe582ec67b",
+        "resampled_identification": {
+          "best_chain": 2,
+          "rmse_by_chain": [
+            9.372252272651798,
+            0.8149117605145132,
+            9.361627957693676,
+            9.241978786837027,
+            9.614931517474476,
+            10.146345133367138
+          ],
+          "verified": true
+        }
+      },
+      {
+        "page": 5,
+        "name": "X22.png",
+        "size": [
+          2048,
+          977
+        ],
+        "matching_chains": [],
+        "rgb_sha256": "d84b91945e65e9298764355deb292b4f23bad57957004f5fe2d14c5a976b4138",
+        "resampled_identification": {
+          "best_chain": 3,
+          "rmse_by_chain": [
+            8.71249815637451,
+            9.330908955534579,
+            0.8113432286643265,
+            9.123855159207018,
+            9.539645282537109,
+            10.407123018812092
+          ],
+          "verified": true
+        }
+      },
+      {
+        "page": 5,
+        "name": "X24.png",
+        "size": [
+          2048,
+          977
+        ],
+        "matching_chains": [],
+        "rgb_sha256": "f8e5333427c5a16aeb883c6bf056a9f8760a6c84ed68fb733f96b0a07e35f130",
+        "resampled_identification": {
+          "best_chain": 4,
+          "rmse_by_chain": [
+            8.580211952008728,
+            9.227698519958217,
+            9.11752582284765,
+            0.8099756524413646,
+            9.286164661687591,
+            10.715337516780862
+          ],
+          "verified": true
+        }
+      },
+      {
+        "page": 6,
+        "name": "X28.png",
+        "size": [
+          2048,
+          977
+        ],
+        "matching_chains": [],
+        "rgb_sha256": "423a0a84bea5a5c92c13fce2f45dcdb9548e08ba7aed2182f56b81dac6ec0055",
+        "resampled_identification": {
+          "best_chain": 5,
+          "rmse_by_chain": [
+            9.772464886077838,
+            9.58064888379146,
+            9.531557372092978,
+            9.29502947827758,
+            0.8171907079600389,
+            10.688448652493706
+          ],
+          "verified": true
+        }
+      },
+      {
+        "page": 6,
+        "name": "X30.png",
+        "size": [
+          2048,
+          977
+        ],
+        "matching_chains": [],
+        "rgb_sha256": "3ae2b2b34bf0858d3f8fff1f329e421107cf2bc42aeb862dbeae02a615f1ca55",
+        "resampled_identification": {
+          "best_chain": 6,
+          "rmse_by_chain": [
+            10.997419908426124,
+            10.122680703128314,
+            10.406671006761215,
+            10.711844985506042,
+            10.697324085633142,
+            0.8040823414832874
+          ],
+          "verified": true
+        }
+      }
+    ],
+    "current_changed_line_blocks": [
+      [
+        "replace",
+        18,
+        19,
+        18,
+        19
+      ]
+    ],
+    "current_diff": "--- current_before.md\n\n+++ current_after.md\n\n@@ -16,7 +16,7 @@\n\n | 239.01 kWh throughout | 40 / 487 | 29 / 48 |\n | 236.44 kWh throughout | 195 / 487 | 46 / 48 |\n \n-These are frozen-schedule sensitivity tests, not actual vehicle assignments. Deficits are at most 0.99 and 3.56 kWh; charging repair was not tested. Optimized schedules often approach zero SOC, so small rounding is not automatically harmless. [Replay, source hashes and limits](https://github.com/ndandnd/EVSP-DR/blob/3f2228605e0c9e1cc46140a3dbd03fd6c1f6e3ce/outputs/research_followup_20260921/battery_rounding/README.md).\n+These frozen-schedule tests are not actual vehicle assignments. Follow-up: all 195 failures at 236.44 kWh were repaired with unchanged trips and bus counts. 194 fit the original intervals; one needs 0.150 seconds more. All 487 occurrences pass independent replay. This is a continuous capacity-only repair under 240 kW and zero reserve, not a new event-grid optimality proof. See the \u201c21 Sep \u2014 chains and pricing\u201d tab for all six figures, actual MIP times, repair results and the 7/8 versus 0/8 pricing experiment. [Replay, source hashes and limits](https://github.com/ndandnd/EVSP-DR/blob/3f2228605e0c9e1cc46140a3dbd03fd6c1f6e3ce/outputs/research_followup_20260921/battery_rounding/README.md).\n \n **Duty 13309, whole day:** the same C6 k5 input provides a fee0 route sharing all 22 original trips and a fee5 route sharing 11\\. Displayed charging starts are 4 / 7 / 1\\. Both counterparts pass the capacity-only 239.01 kWh check; their historical zero-reserve charging physics still differ from GIRO. [Full-day figures and exact itineraries](https://github.com/ndandnd/EVSP-DR/blob/3f2228605e0c9e1cc46140a3dbd03fd6c1f6e3ce/outputs/research_followup_20260921/duty13309/README.md).\n "
+  },
+  "issues": [],
+  "source_hashes": {
+    "slides_before.pptx": "7cb6a75048b73b20ce08f3a0823509586f648484211d4bdc7f70709200408eec",
+    "slides_after.pptx": "034b491aeef493aa43f2f41485d21478a01ced71688848bed959e9ed8ea0abcc",
+    "slides_before.pdf": "b1eb4100f18bfa659d3e7f27193c1f7b382628fcf0f3f91e110616a8f1c8cfc4",
+    "slides_after.pdf": "88105ea47eab6f545c70bf404feaa87c42c69612b3ee6fc6fb3ac3136a73462d",
+    "current_before.md": "95053c817ce5123284c468f7908dfa7b3d9448e34e2aae920ffe73d435915014",
+    "current_after.md": "d45e2931a1ebfa9d3f4b75d3935442b49fdbbde415ef370568f64996f286f65f",
+    "current_before.pdf": "13cbfe390f71b6288997e710037b6cef1b94a631f542b3b9758fcc11db621b77",
+    "current_after.pdf": "5c4177af7955116f6bc487d7ca84fbdab36c0b6979c81a5c74101892eb83b4af",
+    "followup_after.md": "465649888f8f9ecd223c3cffc32761b7e48f402c68de1b9d4f572dd5539dc146",
+    "followup_after.pdf": "10c0708ed6a574797db245a2958b9043a4e130fa425b649039319fb08b023f91"
+  },
+  "image_resampling_note": "Published charts are 2048x977 rather than source2730x1302. Exact hashes differ. Each uniquely matches its expected source by normalized pixel RMSE<1.5 versus >5 for all alternatives; no byte identity claim.",
+  "visual_review": {
+    "slides_pdf_pages": [
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28
+    ],
+    "followup_doc_pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "all_rendered_with": "bundled pdftoppm,1500pixel longest dimension",
+    "inspection": "No clipping, missing images, overlapping text or placeholders found in the new slides and all six document pages."
+  }
+}

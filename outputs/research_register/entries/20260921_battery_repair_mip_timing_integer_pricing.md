@@ -1,6 +1,6 @@
 # 21 September follow-up: capacity-only repairs, measured MIP timing and integer pricing
 
-This entry records local postprocessing and explanation of saved experiments. No CG, new cluster allocation, restart, dependency change or new global certificate was produced. Original source artifacts and earlier results remain unchanged. Doc/Slides publication receipts will be recorded separately by the coordinating task.
+This entry records local postprocessing and explanation of saved experiments. No CG, new cluster allocation, restart, dependency change or new global certificate was produced. Original source artifacts and earlier results remain unchanged. [Doc/Slides publication and verification](../../research_followup_20260921/presentation_update/README.md) now records the verified 28-slide deck and new six-page Doc tab, with all 16 automated checks passing.
 
 ## Battery-only repair at 236.44 kWh
 
