@@ -1,0 +1,5 @@
+#!/bin/bash
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+exec /home/nc437/evsp_env/bin/python "$1/code_v3/benchmark_loader.py" "$1"
