@@ -84,3 +84,25 @@ class LaunchTests(unittest.TestCase):
                 self.assertIn('--cpus-per-task=8',c)
                 self.assertIn('--mem=32G',c)
                 self.assertFalse(any('--array' in s for s in c))
+
+class IdempotenceTests(unittest.TestCase):
+    def test_second_launch_submits_nothing_and_uncertain_intent_blocks(self):
+        import tempfile,json,io,contextlib
+        from pathlib import Path
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        import launch
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);(root/'manifest.json').write_text(json.dumps({'cases':[{'id':'a'},{'id':'b'}]}));calls=[]
+            def fake(cmd,**kwargs):
+                calls.append(cmd);return SimpleNamespace(stdout=str(1000+len(calls))+'\n',stderr='')
+            with patch('sys.argv',['launch',str(root)]),patch('launch.subprocess.run',side_effect=fake),contextlib.redirect_stdout(io.StringIO()):
+                launch.main();launch.main()
+            self.assertEqual(len(calls),12)
+            self.assertTrue(all('--dependency=afterok:1001' in c for c in calls[1:6]))
+            self.assertTrue(all('--dependency=afterok:1007' in c for c in calls[7:12]))
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);(root/'manifest.json').write_text(json.dumps({'cases':[{'id':'a'}]}));(root/'a__prepare_SUBMIT_INTENT.json').write_text('{}')
+            with patch('sys.argv',['launch',str(root)]),patch('launch.subprocess.run') as submit:
+                with self.assertRaises(RuntimeError):launch.main()
+                submit.assert_not_called()
