@@ -19,15 +19,15 @@ def validate_start(columns, m, selected, cap=None):
 
 
 def structure(columns,costs,m,max_seconds=600):
-    """Bitset indexed safe dominance for nonnegative-cost binary covering.
+    """Bitset indexed safe dominance for signed-cost binary covering.
 
     No reductions are applied. Row implication holds for both objectives. Column
-    witnesses respect both unit fleet cost and nonnegative charging cost, plus
+    witnesses remove only nonnegative-cost victims, respect unit fleet cost, plus
     an optional at-most fleet cap; no other side constraints are covered.
     """
     started=time.monotonic();n=len(columns)
-    if len(costs)!=n or any(not math.isfinite(c) or c<0 for c in costs):
-        raise ValueError('safe replacement requires finite nonnegative costs')
+    if len(costs)!=n or any(not math.isfinite(c) for c in costs):
+        raise ValueError('safe replacement requires finite costs')
     bits=[0]*m;counts=[0]*m;parent=list(range(m));seen={};duplicates=[]
     def root(i):
         while parent[i]!=i:parent[i]=parent[parent[i]];i=parent[i]
@@ -56,7 +56,7 @@ def structure(columns,costs,m,max_seconds=600):
         for t in sorted(columns[j],key=lambda t:counts[t]):
             cand &= bits[t];intersections+=1
             if not cand:break
-        if cand:
+        if cand and costs[j]>=0:
             k=(cand & -cand).bit_length()-1
             assert set(columns[j])<=set(columns[k]) and costs[k]<=costs[j]
             witness.append([j,k])
@@ -69,7 +69,8 @@ def structure(columns,costs,m,max_seconds=600):
             'safe_cost_respecting_column_witnesses':witness,'dominance_complete':processed==n,
             'dominance_processed_columns':processed,'dominance_candidate_intersections':intersections,
             'components':list(comps.values()),'wall_s':time.monotonic()-started,
-            'scope':'nonnegative charging cost; binary covering; optional at-most fleet cap; no capacity/other side rows'}
+            'negative_cost_columns_retained':sum(c<0 for c in costs),
+            'scope':'Only nonnegative-cost victim columns are removed; binary covering; optional at-most fleet cap; no capacity/other side rows'}
 
 
 def floor_scaled(x,scale):

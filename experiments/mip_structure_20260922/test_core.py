@@ -35,7 +35,7 @@ class CoreTests(unittest.TestCase):
     def test_safe_dominance_preserves_optimum_and_fleet_cap(self):
         rng=random.Random(24)
         for _ in range(60):
-            m=3;cols=[[i] for i in range(m)]+[rng.sample(range(m),rng.randint(1,m)) for _ in range(4)];cost=[rng.randint(0,7) for c in cols];d=structure(cols,cost,m);drop={j for j,k in d['safe_cost_respecting_column_witnesses']}
+            m=3;cols=[[i] for i in range(m)]+[rng.sample(range(m),rng.randint(1,m)) for _ in range(4)];cost=[rng.randint(-3,7) for c in cols];d=structure(cols,cost,m);drop={j for j,k in d['safe_cost_respecting_column_witnesses']}
             for objective in [cost,[1]*len(cols)]:
                 for cap in [None,2,3]:
                     vals=[sum(v*c for v,c in zip(b,objective)) for b in feasible(cols,m,cap)];vals2=[sum(v*c for v,c in zip(b,objective)) for b in feasible(cols,m,cap) if not any(b[j] for j in drop)]
@@ -61,8 +61,11 @@ class CoreTests(unittest.TestCase):
     def test_strict_screen_retains_equal_objective(self):
         d=dual_certificate([[0],[0]],[1,1],[1],0,None,[0]);self.assertEqual(d['safe_fix_zero_indices'],[])
 
-    def test_negative_cost_disables_simple_dominance(self):
-        with self.assertRaises(ValueError):structure([[0]],[-1],1)
+    def test_negative_cost_victim_is_retained(self):
+        d=structure([[0],[0,1],[1]],[-1,-2,3],2)
+        self.assertNotIn(0,[j for j,k in d['safe_cost_respecting_column_witnesses']])
+        self.assertIn([2,1],d['safe_cost_respecting_column_witnesses'])
+        self.assertEqual(d['negative_cost_columns_retained'],2)
 
     def test_timeout_diagnostic_is_explicit(self):
         d=structure([[0],[1]],[1,1],2,max_seconds=-1);self.assertFalse(d['dominance_complete']);self.assertEqual(d['dominance_processed_columns'],0)

@@ -67,7 +67,7 @@ def prepare(root,manifest,case,out):
     assert ordered==endpoint['physical_pool_audit']['mip_ordered_pool_sha256']
     assert len(routes)==case['columns'] and audit['rejected_columns']==audit['deterministically_repaired']==0
     mapping={t:i for i,t in enumerate(trips)};columns=[[mapping[t] for t in r['trips']] for r in routes];costs=[float(r['cost'])-100000.0 for r in routes];hashes=[route_hash(r) for r in routes]
-    assert len(set(hashes))==len(hashes);assert sum(map(len,columns))==case['nonzeros'];assert all(c>=0 and math.isfinite(c) for c in costs)
+    assert len(set(hashes))==len(hashes);assert sum(map(len,columns))==case['nonzeros'];assert all(math.isfinite(c) for c in costs)
     singleton=mod.singleton_partition_indices(routes,trips);greedy=mod.greedy_partition_start_indices(routes,trips,singleton)
     assert len(greedy)==endpoint['mip_start']['validated_bus_count'];validate_start(columns,len(trips),greedy)
     strong=endpoint['two_stage']['stage1_selected_route_indices'];strong_reason=None
@@ -82,7 +82,7 @@ def prepare(root,manifest,case,out):
     offsets=[0]
     for col in columns:offsets.append(offsets[-1]+len(col))
     np.savez_compressed(out/'matrix.npz',indptr=np.asarray(offsets,dtype=np.int64),indices=np.asarray([t for col in columns for t in col],dtype=np.int32),costs=np.asarray(costs,dtype=np.float64))
-    meta={'case':case['id'],'trips':trips,'route_hashes':hashes,'ordered_native_pool_sha256':ordered,'matrix_identity_sha256':matrix_hash,'matrix_file_sha256':sha(out/'matrix.npz'),'rows':len(trips),'columns':len(columns),'nonzeros':sum(map(len,columns)),'greedy_start':greedy,'strong_start':strong,'strong_start_available':strong is not None,'strong_start_blocked_reason':strong_reason,'charging_incumbent':charging,'strong_start_scope':'Offline saved stage-one incumbent from this exact ordered pool; original acquisition time excluded from new trial, not a timed algorithm','strong_start_source':case['endpoint'],'strong_start_source_sha256':pins[case['endpoint']],'physical_pool_audit':audit,'preparation_s':time.monotonic()-started,'host':socket.gethostname(),'pins':pins,'gurobi_version':'.'.join(map(str,gp.gurobi.version()))}
+    meta={'case':case['id'],'trips':trips,'route_hashes':hashes,'ordered_native_pool_sha256':ordered,'matrix_identity_sha256':matrix_hash,'matrix_file_sha256':sha(out/'matrix.npz'),'rows':len(trips),'columns':len(columns),'nonzeros':sum(map(len,columns)),'greedy_start':greedy,'strong_start':strong,'strong_start_available':strong is not None,'strong_start_blocked_reason':strong_reason,'charging_incumbent':charging,'strong_start_scope':'Offline saved stage-one incumbent from this exact ordered pool; original acquisition time excluded from new trial, not a timed algorithm','strong_start_source':case['endpoint'],'strong_start_source_sha256':pins[case['endpoint']],'physical_pool_audit':audit,'preparation_s':time.monotonic()-started,'host':socket.gethostname(),'pins':pins,'signed_costs':{'negative_count':sum(c<0 for c in costs),'min':min(costs),'max':max(costs)},'gurobi_version':'.'.join(map(str,gp.gurobi.version()))}
     write(out/'matrix.json',meta)
     # No matrix change from the diagnostic findings is applied to the 25 trials.
     diagnostic=structure(columns,costs,len(trips),max_seconds=600);write(out/'structure.json',diagnostic)
@@ -132,8 +132,8 @@ def trial(root,manifest,case,arm,out):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('root',type=Path);p.add_argument('mode',choices=['prepare','trial']);p.add_argument('case');p.add_argument('--arm',default='default');args=p.parse_args();manifest=json.loads((args.root/'manifest.json').read_text());assert sha(__file__)==manifest['runner_sha256'];assert sha(Path(__file__).with_name('core.py'))==manifest['core_sha256'];case=next(c for c in manifest['cases'] if c['id']==args.case);attempt=os.environ.get('SLURM_JOB_ID','local')+'_r'+os.environ.get('SLURM_RESTART_COUNT','0');out=args.root/'results'/args.case/(args.mode if args.mode=='prepare' else args.arm)/attempt;out.mkdir(parents=True,exist_ok=False)
-    write(out/'execution.json',{'manifest_sha256':sha(args.root/'manifest.json'),'script_sha256':sha(__file__),'core_sha256':sha(Path(__file__).with_name('core.py')),'code_commit':manifest['code_commit'],'argv':sys.argv,'job_id':os.environ.get('SLURM_JOB_ID'),'restart':os.environ.get('SLURM_RESTART_COUNT','0'),'host':socket.gethostname(),'started_unix':time.time()})
+    p=argparse.ArgumentParser();p.add_argument('root',type=Path);p.add_argument('mode',choices=['prepare','trial']);p.add_argument('case');p.add_argument('--arm',default='default');p.add_argument('--manifest',type=Path);args=p.parse_args();manifest_path=args.manifest or args.root/'manifest.json';manifest=json.loads(manifest_path.read_text());assert sha(__file__)==manifest['runner_sha256'];assert sha(Path(__file__).with_name('core.py'))==manifest['core_sha256'];case=next(c for c in manifest['cases'] if c['id']==args.case);attempt=os.environ.get('SLURM_JOB_ID','local')+'_r'+os.environ.get('SLURM_RESTART_COUNT','0');out=args.root/'results'/args.case/(args.mode if args.mode=='prepare' else args.arm)/attempt;out.mkdir(parents=True,exist_ok=False)
+    write(out/'execution.json',{'manifest_path':str(manifest_path),'manifest_sha256':sha(manifest_path),'script_sha256':sha(__file__),'core_sha256':sha(Path(__file__).with_name('core.py')),'code_commit':manifest['code_commit'],'argv':sys.argv,'job_id':os.environ.get('SLURM_JOB_ID'),'restart':os.environ.get('SLURM_RESTART_COUNT','0'),'host':socket.gethostname(),'started_unix':time.time()})
     if args.mode=='prepare':prepare(args.root,manifest,case,out)
     else:trial(args.root,manifest,case,args.arm,out)
 if __name__=='__main__':main()
