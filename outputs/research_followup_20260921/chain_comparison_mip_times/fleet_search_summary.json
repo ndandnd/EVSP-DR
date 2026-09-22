@@ -1,0 +1,220 @@
+{
+  "source_csv_sha256": "173e1073a4b97b6d0fa391f71c8030a573d0a4a114cbd7ac84bcf103aae3512a",
+  "source_mip_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "per_chain": {
+    "1": {
+      "fresh": {
+        "n": 4,
+        "mean_s": 1295.6374016483896,
+        "median_s": 1690.514505804982,
+        "min_s": 1.3043858176097274,
+        "max_s": 1800.2162091659848,
+        "total_s": 5182.549606593559,
+        "target_matches": 1,
+        "pool_optima_proved": 2,
+        "fleet_time_limits": 2,
+        "total_mip_median_s": 3598.321115603787
+      },
+      "sequential": {
+        "n": 4,
+        "mean_s": 71.58727427455597,
+        "median_s": 66.45099418004975,
+        "min_s": 1.1599803380668163,
+        "max_s": 152.28712840005755,
+        "total_s": 286.34909709822387,
+        "target_matches": 4,
+        "pool_optima_proved": 4,
+        "fleet_time_limits": 0,
+        "total_mip_median_s": 3596.757225648151
+      }
+    },
+    "2": {
+      "fresh": {
+        "n": 4,
+        "mean_s": 1365.9115991337458,
+        "median_s": 1800.0830374124926,
+        "min_s": 63.226342868991196,
+        "max_s": 1800.2539788410068,
+        "total_s": 5463.646396534983,
+        "target_matches": 1,
+        "pool_optima_proved": 1,
+        "fleet_time_limits": 3,
+        "total_mip_median_s": 3599.471060456126
+      },
+      "sequential": {
+        "n": 4,
+        "mean_s": 108.03006028407253,
+        "median_s": 10.450399650493637,
+        "min_s": 5.259003296028823,
+        "max_s": 405.96043853927404,
+        "total_s": 432.12024113629013,
+        "target_matches": 4,
+        "pool_optima_proved": 4,
+        "fleet_time_limits": 0,
+        "total_mip_median_s": 3597.6630014167167
+      }
+    },
+    "3": {
+      "fresh": {
+        "n": 4,
+        "mean_s": 1350.9414629690582,
+        "median_s": 1800.1062519755214,
+        "min_s": 3.3799684583209455,
+        "max_s": 1800.173379466869,
+        "total_s": 5403.765851876233,
+        "target_matches": 1,
+        "pool_optima_proved": 1,
+        "fleet_time_limits": 3,
+        "total_mip_median_s": 3599.398302070331
+      },
+      "sequential": {
+        "n": 4,
+        "mean_s": 57.5030038068071,
+        "median_s": 2.6816736654145643,
+        "min_s": 0.9434191132895648,
+        "max_s": 223.7052487831097,
+        "total_s": 230.0120152272284,
+        "target_matches": 4,
+        "pool_optima_proved": 4,
+        "fleet_time_limits": 0,
+        "total_mip_median_s": 2228.899871590198
+      }
+    },
+    "4": {
+      "fresh": {
+        "n": 4,
+        "mean_s": 1123.7178251814912,
+        "median_s": 1339.74439566792,
+        "min_s": 14.886346774175763,
+        "max_s": 1800.4961626159493,
+        "total_s": 4494.871300725965,
+        "target_matches": 1,
+        "pool_optima_proved": 2,
+        "fleet_time_limits": 2,
+        "total_mip_median_s": 3598.653052777052
+      },
+      "sequential": {
+        "n": 4,
+        "mean_s": 45.98454390128609,
+        "median_s": 2.197278682840988,
+        "min_s": 0.9465302438475192,
+        "max_s": 178.59708799561486,
+        "total_s": 183.93817560514435,
+        "target_matches": 4,
+        "pool_optima_proved": 4,
+        "fleet_time_limits": 0,
+        "total_mip_median_s": 2223.734683431918
+      }
+    },
+    "5": {
+      "fresh": {
+        "n": 4,
+        "mean_s": 1132.347082896682,
+        "median_s": 1346.6715947410557,
+        "min_s": 35.87502365373075,
+        "max_s": 1800.1701184508856,
+        "total_s": 4529.388331586728,
+        "target_matches": 0,
+        "pool_optima_proved": 2,
+        "fleet_time_limits": 2,
+        "total_mip_median_s": 3598.624177738675
+      },
+      "sequential": {
+        "n": 4,
+        "mean_s": 8.022392028593458,
+        "median_s": 5.51717233157251,
+        "min_s": 2.1286072731018066,
+        "max_s": 18.926616178127006,
+        "total_s": 32.08956811437383,
+        "target_matches": 4,
+        "pool_optima_proved": 4,
+        "fleet_time_limits": 0,
+        "total_mip_median_s": 2283.04257422057
+      }
+    },
+    "6": {
+      "fresh": {
+        "n": 4,
+        "mean_s": 904.1367171887541,
+        "median_s": 907.9202009015717,
+        "min_s": 0.46424342785030603,
+        "max_s": 1800.2422235240228,
+        "total_s": 3616.5468687550165,
+        "target_matches": 2,
+        "pool_optima_proved": 2,
+        "fleet_time_limits": 2,
+        "total_mip_median_s": 1845.8749741311185
+      },
+      "sequential": {
+        "n": 4,
+        "mean_s": 112.77296282228781,
+        "median_s": 3.354966914979741,
+        "min_s": 0.41580667113885283,
+        "max_s": 443.9661107880529,
+        "total_s": 451.09185128915124,
+        "target_matches": 4,
+        "pool_optima_proved": 4,
+        "fleet_time_limits": 0,
+        "total_mip_median_s": 1822.0623933061725
+      }
+    }
+  },
+  "chains_2_to_6": {
+    "fresh": {
+      "n": 20,
+      "mean_s": 1175.4109374739462,
+      "median_s": 1800.079626916442,
+      "min_s": 0.46424342785030603,
+      "max_s": 1800.4961626159493,
+      "total_s": 23508.218749478925,
+      "target_matches": 5,
+      "pool_optima_proved": 8,
+      "fleet_time_limits": 12,
+      "total_mip_median_s": 3599.1836909923004
+    },
+    "sequential": {
+      "n": 20,
+      "mean_s": 66.4625925686094,
+      "median_s": 4.229686814476736,
+      "min_s": 0.41580667113885283,
+      "max_s": 443.9661107880529,
+      "total_s": 1329.251851372188,
+      "target_matches": 20,
+      "pool_optima_proved": 20,
+      "fleet_time_limits": 0,
+      "total_mip_median_s": 3597.081036736723
+    }
+  },
+  "all_six_chains": {
+    "fresh": {
+      "n": 24,
+      "mean_s": 1195.4486815030202,
+      "median_s": 1800.0788762774318,
+      "min_s": 0.46424342785030603,
+      "max_s": 1800.4961626159493,
+      "total_s": 28690.768356072484,
+      "target_matches": 6,
+      "pool_optima_proved": 10,
+      "fleet_time_limits": 14,
+      "total_mip_median_s": 3599.1493458456825
+    },
+    "sequential": {
+      "n": 24,
+      "mean_s": 67.31670618626715,
+      "median_s": 5.311229570070282,
+      "min_s": 0.41580667113885283,
+      "max_s": 443.9661107880529,
+      "total_s": 1615.6009484704118,
+      "target_matches": 24,
+      "pool_optima_proved": 24,
+      "fleet_time_limits": 0,
+      "total_mip_median_s": 3597.081036736723
+    }
+  },
+  "checks": {
+    "all_48_source_hashes_match": true,
+    "all_48_direct_fleet_timers_match": true,
+    "all_stage1_and_final_bus_counts_agree": true
+  },
+  "timing_scope": "Direct final-k fleet optimization only; not first-target time; excludes charging optimization, CG, preparation, earlier sequential MIPs. Time-limited observations included as time spent, not time to proof. Original campaign only; later repeats and integer-directed pricing excluded."
+}

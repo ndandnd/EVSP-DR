@@ -1,5 +1,7 @@
 # Chain comparisons with actual final-MIP timing
 
+[Simple fleet-search tables for all six chains and summary statistics](fleet_search_tables.md) · [Exact summary values](fleet_search_summary.json)
+
 [Chain 1 charts](chain1_charts.png) · [Chain 2](chain2_charts.png) · [Chain 3](chain3_charts.png) · [Chain 4](chain4_charts.png) · [Chain 5](chain5_charts.png) · [Chain 6](chain6_charts.png) · [All chains](all_chains_charts.png)
 
 Each chain has a **charts-only 13 × 6.2 inch PNG/PDF/SVG**, suitable for a 16:9 slide with a native editable title/caption outside the image. The six panels preserve cumulative CG work, integer excess and the precise weighted-LP comparison, then add actual fleet-search, charging-cost-search and total optimizer times. All time axes are logarithmic; 0.01 minute is 0.6 seconds. The dotted guides mark nominal fleet-search (30 min) and total MIP (60 min) allowances, not observations.
