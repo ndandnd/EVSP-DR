@@ -3,6 +3,14 @@ from __future__ import annotations
 import copy,csv,hashlib,json,math
 from pathlib import Path
 
+# Explicit source-audited compatibility only; all input/physics/replay gates
+# below remain mandatory. The second pin differs in cache I/O and CG timing,
+# not event graph physics, objective constants or route realization/replay.
+AUDITED_COMPATIBLE_PARENT_COMMITS = (
+    '50ceb6c095a580f79f87b53bef536cac31f81963',
+    '35770aae2c08e7d5a356cc3b673e67608e5b1036',
+)
+
 def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def canonical(value):return hashlib.sha256(json.dumps(value,sort_keys=True,separators=(',',':'),allow_nan=False).encode()).hexdigest()
 def identity(row):return int(float(row['Ordered_Trip_ID']))
@@ -44,7 +52,7 @@ def inherit_pool(parent_status,parent_pool,parent_csv,child_csv,*,expected_physi
     if prov['instance_sha256']!=sha(parent_csv):raise ValueError('parent instance hash mismatch')
     if prov['git_commit'] != child_provenance['git_commit'] and prov['git_commit'] != compatible_parent_commit:
         raise ValueError('parent model/input provenance mismatch: git_commit')
-    if compatible_parent_commit is not None and compatible_parent_commit != '50ceb6c095a580f79f87b53bef536cac31f81963':
+    if compatible_parent_commit is not None and compatible_parent_commit not in AUDITED_COMPATIBLE_PARENT_COMMITS:
         raise ValueError('unaudited compatible parent commit')
     if prov['git_commit'] != child_provenance['git_commit'] and expected_physics.get('capacity_enforced') is not False:
         raise ValueError('compatible parent is audited only without shared capacity')

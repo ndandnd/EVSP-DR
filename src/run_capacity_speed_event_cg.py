@@ -36,7 +36,9 @@ from event_pricer_network import (
     conservative_capacity_rows,
 )
 from run_exact_pool_mip import validate_injected_route
+from inherit_capacity_pool import AUDITED_COMPATIBLE_PARENT_COMMITS
 from utils_v2 import base_station_name, load_station_hourly_prices
+from strict_event_graph_cache import graph_identity, load_graph_cache, prepare_graph_cache
 
 
 SCHEMA = "evsp-dr-capacity-speed-exact-event-pilot-v1"
@@ -149,7 +151,12 @@ def load_resume_pool(
     keys = set()
     for index, route in enumerate(routes):
         if route.get("cg_checkpoint_id") != expected_id:
-            raise ValueError(f"resume pool checkpoint identity mismatch at route {index}")
+            raise ValueError(
+                f"resume pool checkpoint identity mismatch at route {index}; "
+                "old execution commits are blocked by default. A graph cache does "
+                "not authorize pool migration; retain the original pool and audit "
+                "source/objective compatibility before adding a migration gate."
+            )
         if not route.get("trips") or not set(route["trips"]).issubset(allowed_trips):
             raise ValueError(f"resume pool has invalid trips at route {index}")
         if not math.isfinite(float(route["cost"])):
@@ -242,6 +249,46 @@ def build_network(args, problem, prices):
     )
 
 
+def strict_graph_identity(args, problem, prices, prov):
+    return graph_identity(args, problem, prices, prov, arm=ARMS[args.arm])
+
+
+def run_graph_preparation(args, problem, prices, prov, out, *, clock=time.perf_counter):
+    """Prepare or verify a graph without creating a master or route pool."""
+    started = clock()
+    if out.exists():
+        raise FileExistsError("refusing to overwrite graph preparation status")
+    cache = Path(args.graph_cache).expanduser().resolve()
+    if out.expanduser().resolve() in {cache, cache.with_name(cache.name + ".lock")}:
+        raise ValueError("graph status output must differ from graph cache and lock paths")
+    identity = strict_graph_identity(args, problem, prices, prov)
+    build_s = 0.0
+    if args.mode == "prepare-graph":
+        network, manifest = prepare_graph_cache(
+            cache, identity, lambda: build_network(args, problem, prices), clock=clock,
+        )
+        build_s = manifest["build_s"]
+        load_s = 0.0
+    else:
+        load_started = clock()
+        network, manifest = load_graph_cache(cache, identity)
+        load_s = clock() - load_started
+    payload = {
+        "schema": "evsp-dr-strict-graph-preparation-v1", "mode": args.mode,
+        "status": "complete", "graph_cache": str(cache),
+        "graph_cache_identity_sha256": manifest["identity_sha256"],
+        "graph_payload_sha256": manifest["payload_sha256"],
+        "network": network.metrics(), "network_build_s": build_s,
+        "network_load_s": load_s, "runtime_s": clock() - started,
+        "source_graph_build_s": manifest["build_s"],
+        "serialization_and_hash_s": manifest["serialization_and_hash_s"],
+        "provenance": prov, "solver_started": False,
+        "pricing_certificate": None,
+    }
+    atomic_json(out, payload)
+    return payload
+
+
 class ExactCapacityMaster:
     def __init__(self, trips, *, capacity: bool, threads: int, log_path=None):
         self.trips = tuple(trips)
@@ -328,31 +375,46 @@ def run_cg(
             raise FileNotFoundError("--resume requires an existing pool checkpoint")
         raise FileExistsError("pool checkpoint exists; use --resume with a new --out")
     started = clock()
-    deadline = started + float(args.cg_wall_s)
-    network_started = clock()
-    network = build_network(args, problem, prices)
-    network_build_s = clock() - network_started
-    log_path = out.with_suffix(out.suffix + ".gurobi.log")
-    master = ExactCapacityMaster(
-        problem.trips, capacity=ARMS[args.arm]["capacity"], threads=args.threads,
-        log_path=log_path,
-    )
     identity = checkpoint_id(args, problem, prov)
-    keys = set()
-    inheritance = None
     if resume and getattr(args, "inherit_status", None):
         raise ValueError("same-instance resume and cross-instance inheritance are mutually exclusive")
+    # Fail incompatible old-commit pools before spending graph build/load time.
+    seed_routes = None
     if resume:
         seed_routes = load_resume_pool(
-            pool_out,
-            expected_id=identity,
-            trips=problem.trips,
+            pool_out, expected_id=identity, trips=problem.trips,
             route_validator=lambda route: validate_injected_route(
                 problem, route, args.battery_kwh, args.non_parx_kw,
                 args.reserve_kwh, HORIZON_MIN, arrival_grace_min=0.0,
                 station_charge_kw=station_power(args.arm),
             ),
         )
+    cache_path = getattr(args, "graph_cache", None)
+    cache_manifest = None
+    network_started = clock()
+    if cache_path:
+        network, cache_manifest = load_graph_cache(
+            Path(cache_path).expanduser().resolve(),
+            strict_graph_identity(args, problem, prices, prov),
+        )
+        network_build_s = 0.0
+        network_load_s = clock() - network_started
+    else:
+        network = build_network(args, problem, prices)
+        network_build_s = clock() - network_started
+        network_load_s = 0.0
+    solver_started = clock()
+    # Default legacy runs keep the existing graph-inclusive allowance. Only a
+    # verified, explicitly supplied cache opts into the new solver allowance.
+    deadline = (solver_started if cache_path else started) + float(args.cg_wall_s)
+    log_path = out.with_suffix(out.suffix + ".gurobi.log")
+    master = ExactCapacityMaster(
+        problem.trips, capacity=ARMS[args.arm]["capacity"], threads=args.threads,
+        log_path=log_path,
+    )
+    keys = set()
+    inheritance = None
+    if resume:
         for route in seed_routes:
             keys.add(route_key(route))
             master.add_route(route)
@@ -519,6 +581,17 @@ def run_cg(
         "capacity_selector": getattr(args, "capacity_selector", "reference"),
         "network": network.metrics(),
         "network_build_s": network_build_s,
+        "network_load_s": network_load_s,
+        "solver_runtime_s": clock() - solver_started,
+        "cg_allowance_scope": "solver_after_verified_graph_load" if cache_path else "legacy_graph_inclusive",
+        "graph_cache": ({
+            "path": str(Path(cache_path).expanduser().resolve()),
+            "identity_sha256": cache_manifest["identity_sha256"],
+            "payload_sha256": cache_manifest["payload_sha256"],
+            "source_graph_build_s": cache_manifest["build_s"],
+            "source_serialization_and_hash_s": cache_manifest["serialization_and_hash_s"],
+            "campaign_accounting": "add separate prepare-graph status runtime to this attempt runtime",
+        } if cache_manifest else None),
         "gurobi_log": str(log_path),
         "iterations": iterations,
         "runtime_s": clock() - started,
@@ -858,21 +931,22 @@ def run_mip(args, problem, prov, out: Path, pool: Path, cg_status: Path):
 
 def parser():
     value = argparse.ArgumentParser()
-    value.add_argument("--mode", choices=("cg", "mip"), required=True)
+    value.add_argument("--mode", choices=("cg", "mip", "prepare-graph", "verify-graph"), required=True)
     value.add_argument("--arm", choices=tuple(ARMS), required=True)
     value.add_argument("--instance", type=Path, required=True)
     value.add_argument("--prices", type=Path, required=True)
     value.add_argument("--reference-data-dir", type=Path, required=True)
     value.add_argument("--out", type=Path, required=True)
+    value.add_argument("--graph-cache", type=Path,
+        help="immutable strict packed graph artifact; CG loads only and never rebuilds on error")
     value.add_argument("--pool-out", type=Path)
     value.add_argument("--pool", type=Path)
     value.add_argument("--cg-status", type=Path)
     value.add_argument("--inherit-status", type=Path)
     value.add_argument("--inherit-pool", type=Path)
     value.add_argument("--inherit-instance", type=Path)
-    value.add_argument("--inherit-compatible-commit", choices=(
-        "50ceb6c095a580f79f87b53bef536cac31f81963",
-    ), help="audited strict explicit-graph parent; input/physics/replay gates remain")
+    value.add_argument("--inherit-compatible-commit", choices=AUDITED_COMPATIBLE_PARENT_COMMITS,
+        help="explicit audited strict parent commit; input/physics/replay gates remain")
     value.add_argument("--arc-mode", choices=("explicit", "lazy"), default="explicit",
                        help="lazy packs non-capacity transitions; capacity requires explicit")
     value.add_argument("--max-station-wait-min", type=float, default=220.0)
@@ -900,6 +974,14 @@ def parser():
 
 def main():
     args = parser().parse_args()
+    if args.mode in {"prepare-graph", "verify-graph"}:
+        if args.graph_cache is None:
+            raise ValueError("graph preparation/verification requires --graph-cache")
+        if (args.resume or args.inherit_status or args.inherit_compatible_commit
+                or args.pool_out or args.pool or args.cg_status):
+            raise ValueError("graph-only modes cannot accept route-pool/solver initialization options")
+    if args.mode == "mip" and args.graph_cache:
+        raise ValueError("--graph-cache is not used by MIP")
     inheritance_args = (args.inherit_status, args.inherit_pool, args.inherit_instance)
     if any(inheritance_args) and not all(inheritance_args):
         raise ValueError("all three inheritance paths must be supplied together")
@@ -915,7 +997,9 @@ def main():
         prices_path, sorted({base_station_name(station) for station in STATIONS}),
     )
     prov = provenance(args, instance, prices_path, reference)
-    if args.mode == "cg":
+    if args.mode in {"prepare-graph", "verify-graph"}:
+        payload = run_graph_preparation(args, problem, prices, prov, out)
+    elif args.mode == "cg":
         if args.pool_out is None:
             raise ValueError("--pool-out is required for CG")
         payload = run_cg(
