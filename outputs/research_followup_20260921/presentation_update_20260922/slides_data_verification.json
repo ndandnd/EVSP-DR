@@ -1,0 +1,867 @@
+{
+  "verified_utc": "2026-09-22T05:12:33.142703+00:00",
+  "scope": "Read-only native artifact data/editability/preservation/shape-bounds QA. Root owns PDF visual verification; shape bounds do not prove absence of internal text clipping.",
+  "checks": {
+    "39_slides": true,
+    "original28_unchanged": true,
+    "slide29_native_table_exact": true,
+    "slide29_limit_definition": true,
+    "slide30_native_table_exact": true,
+    "slide30_limit_definition": true,
+    "slide31_native_table_exact": true,
+    "slide31_limit_definition": true,
+    "slide32_native_table_exact": true,
+    "slide32_limit_definition": true,
+    "slide33_native_table_exact": true,
+    "slide33_limit_definition": true,
+    "slide34_native_table_exact": true,
+    "slide34_limit_definition": true,
+    "slide35_native_table_exact": true,
+    "slide36_native_table_exact": true,
+    "slide37_native_table_exact": true,
+    "new_shapes_within_slide_bounds": true,
+    "slide38_native_text": true,
+    "slide39_native_text": true,
+    "slide38_time_and_fleet_cap_scope": true,
+    "slide39_measured_root_lp_time": true,
+    "slide39_paired_matrix_claim": true
+  },
+  "issues": [],
+  "original_slide_preservation": [
+    {
+      "slide": 1,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 2,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 3,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 4,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 5,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 6,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 7,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 8,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 9,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 10,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 11,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 12,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 13,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 14,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 15,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 16,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 17,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 18,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 19,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 20,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 21,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 22,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 23,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 24,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 25,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 26,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 27,
+      "text_images_tables_geometry_identical": true
+    },
+    {
+      "slide": 28,
+      "text_images_tables_geometry_identical": true
+    }
+  ],
+  "table_comparisons": [
+    {
+      "slide": 29,
+      "native_table_count": 1,
+      "rows": 5,
+      "columns": 4,
+      "all_cells_match": true,
+      "actual": [
+        [
+          "Target k",
+          "Fresh fleet search",
+          "Sequential fleet search",
+          "Buses fresh / seq."
+        ],
+        [
+          "5",
+          "1.30 s",
+          "1.16 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "26.35 min",
+          "27.15 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "152.29 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "105.75 s",
+          "18 / 15"
+        ]
+      ],
+      "expected": [
+        [
+          "Target k",
+          "Fresh fleet search",
+          "Sequential fleet search",
+          "Buses fresh / seq."
+        ],
+        [
+          "5",
+          "1.30 s",
+          "1.16 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "26.35 min",
+          "27.15 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "152.29 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "105.75 s",
+          "18 / 15"
+        ]
+      ]
+    },
+    {
+      "slide": 30,
+      "native_table_count": 1,
+      "rows": 5,
+      "columns": 4,
+      "all_cells_match": true,
+      "actual": [
+        [
+          "Target k",
+          "Fresh fleet search",
+          "Sequential fleet search",
+          "Buses fresh / seq."
+        ],
+        [
+          "5",
+          "63.23 s",
+          "5.26 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "30 min*",
+          "8.27 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "12.63 s",
+          "12 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "405.96 s",
+          "17 / 15"
+        ]
+      ],
+      "expected": [
+        [
+          "Target k",
+          "Fresh fleet search",
+          "Sequential fleet search",
+          "Buses fresh / seq."
+        ],
+        [
+          "5",
+          "63.23 s",
+          "5.26 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "30 min*",
+          "8.27 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "12.63 s",
+          "12 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "405.96 s",
+          "17 / 15"
+        ]
+      ]
+    },
+    {
+      "slide": 31,
+      "native_table_count": 1,
+      "rows": 5,
+      "columns": 4,
+      "all_cells_match": true,
+      "actual": [
+        [
+          "Target k",
+          "Fresh fleet search",
+          "Sequential fleet search",
+          "Buses fresh / seq."
+        ],
+        [
+          "5",
+          "3.38 s",
+          "2.16 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "30 min*",
+          "0.94 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "3.20 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "223.71 s",
+          "18 / 15"
+        ]
+      ],
+      "expected": [
+        [
+          "Target k",
+          "Fresh fleet search",
+          "Sequential fleet search",
+          "Buses fresh / seq."
+        ],
+        [
+          "5",
+          "3.38 s",
+          "2.16 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "30 min*",
+          "0.94 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "3.20 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "223.71 s",
+          "18 / 15"
+        ]
+      ]
+    },
+    {
+      "slide": 32,
+      "native_table_count": 1,
+      "rows": 5,
+      "columns": 4,
+      "all_cells_match": true,
+      "actual": [
+        [
+          "Target k",
+          "Fresh fleet search",
+          "Sequential fleet search",
+          "Buses fresh / seq."
+        ],
+        [
+          "5",
+          "14.89 s",
+          "0.95 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "14.66 min",
+          "1.94 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "2.45 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "178.60 s",
+          "19 / 15"
+        ]
+      ],
+      "expected": [
+        [
+          "Target k",
+          "Fresh fleet search",
+          "Sequential fleet search",
+          "Buses fresh / seq."
+        ],
+        [
+          "5",
+          "14.89 s",
+          "0.95 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "14.66 min",
+          "1.94 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "2.45 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "178.60 s",
+          "19 / 15"
+        ]
+      ]
+    },
+    {
+      "slide": 33,
+      "native_table_count": 1,
+      "rows": 5,
+      "columns": 4,
+      "all_cells_match": true,
+      "actual": [
+        [
+          "Target k",
+          "Fresh fleet search",
+          "Sequential fleet search",
+          "Buses fresh / seq."
+        ],
+        [
+          "5",
+          "35.88 s",
+          "3.02 s",
+          "6 / 5"
+        ],
+        [
+          "8",
+          "14.89 min",
+          "2.13 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "8.02 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "18.93 s",
+          "16 / 15"
+        ]
+      ],
+      "expected": [
+        [
+          "Target k",
+          "Fresh fleet search",
+          "Sequential fleet search",
+          "Buses fresh / seq."
+        ],
+        [
+          "5",
+          "35.88 s",
+          "3.02 s",
+          "6 / 5"
+        ],
+        [
+          "8",
+          "14.89 min",
+          "2.13 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "8.02 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "18.93 s",
+          "16 / 15"
+        ]
+      ]
+    },
+    {
+      "slide": 34,
+      "native_table_count": 1,
+      "rows": 5,
+      "columns": 4,
+      "all_cells_match": true,
+      "actual": [
+        [
+          "Target k",
+          "Fresh fleet search",
+          "Sequential fleet search",
+          "Buses fresh / seq."
+        ],
+        [
+          "5",
+          "0.46 s",
+          "0.42 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "15.77 s",
+          "5.36 s",
+          "8 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "1.35 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "443.97 s",
+          "20 / 15"
+        ]
+      ],
+      "expected": [
+        [
+          "Target k",
+          "Fresh fleet search",
+          "Sequential fleet search",
+          "Buses fresh / seq."
+        ],
+        [
+          "5",
+          "0.46 s",
+          "0.42 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "15.77 s",
+          "5.36 s",
+          "8 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "1.35 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "443.97 s",
+          "20 / 15"
+        ]
+      ]
+    },
+    {
+      "slide": 35,
+      "native_table_count": 1,
+      "rows": 7,
+      "columns": 4,
+      "all_cells_match": true,
+      "actual": [
+        [
+          "Chain",
+          "Fresh mean",
+          "Seq. mean",
+          "Hits F \u2192 S"
+        ],
+        [
+          "1",
+          "21.59 min",
+          "71.59 s",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "2",
+          "22.77 min",
+          "108.03 s",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "3",
+          "22.52 min",
+          "57.50 s",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "4",
+          "18.73 min",
+          "45.98 s",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "5",
+          "18.87 min",
+          "8.02 s",
+          "0/4 \u2192 4/4"
+        ],
+        [
+          "6",
+          "15.07 min",
+          "112.77 s",
+          "2/4 \u2192 4/4"
+        ]
+      ],
+      "expected": [
+        [
+          "Chain",
+          "Fresh mean",
+          "Seq. mean",
+          "Hits F \u2192 S"
+        ],
+        [
+          "1",
+          "21.59 min",
+          "71.59 s",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "2",
+          "22.77 min",
+          "108.03 s",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "3",
+          "22.52 min",
+          "57.50 s",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "4",
+          "18.73 min",
+          "45.98 s",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "5",
+          "18.87 min",
+          "8.02 s",
+          "0/4 \u2192 4/4"
+        ],
+        [
+          "6",
+          "15.07 min",
+          "112.77 s",
+          "2/4 \u2192 4/4"
+        ]
+      ]
+    },
+    {
+      "slide": 36,
+      "native_table_count": 1,
+      "rows": 7,
+      "columns": 4,
+      "all_cells_match": true,
+      "actual": [
+        [
+          "Metric",
+          "Fresh",
+          "Sequential",
+          "Cases per arm"
+        ],
+        [
+          "Mean",
+          "19.59 min",
+          "66.46 s",
+          "20"
+        ],
+        [
+          "Median",
+          "30.00 min",
+          "4.23 s",
+          "20"
+        ],
+        [
+          "Target hits",
+          "5 / 20",
+          "20 / 20",
+          "20"
+        ],
+        [
+          "Pool proofs",
+          "8 / 20",
+          "20 / 20",
+          "20"
+        ],
+        [
+          "Time limits",
+          "12 / 20",
+          "0 / 20",
+          "20"
+        ],
+        [
+          "Total time",
+          "6.53 h",
+          "22.15 min",
+          "20"
+        ]
+      ],
+      "expected": [
+        [
+          "Metric",
+          "Fresh",
+          "Sequential",
+          "Cases per arm"
+        ],
+        [
+          "Mean",
+          "19.59 min",
+          "66.46 s",
+          "20"
+        ],
+        [
+          "Median",
+          "30.00 min",
+          "4.23 s",
+          "20"
+        ],
+        [
+          "Target hits",
+          "5 / 20",
+          "20 / 20",
+          "20"
+        ],
+        [
+          "Pool proofs",
+          "8 / 20",
+          "20 / 20",
+          "20"
+        ],
+        [
+          "Time limits",
+          "12 / 20",
+          "0 / 20",
+          "20"
+        ],
+        [
+          "Total time",
+          "6.53 h",
+          "22.15 min",
+          "20"
+        ]
+      ]
+    },
+    {
+      "slide": 37,
+      "native_table_count": 1,
+      "rows": 7,
+      "columns": 4,
+      "all_cells_match": true,
+      "actual": [
+        [
+          "C1 k / pool",
+          "Rows \u00d7 columns",
+          "Nonzeros",
+          "Nonzero %"
+        ],
+        [
+          "5 / fresh",
+          "104 \u00d7 28,549",
+          "596,747",
+          "20.10%"
+        ],
+        [
+          "5 / sequential",
+          "104 \u00d7 27,340",
+          "623,626",
+          "21.93%"
+        ],
+        [
+          "8 / fresh",
+          "194 \u00d7 39,940",
+          "1,092,654",
+          "14.10%"
+        ],
+        [
+          "8 / sequential",
+          "194 \u00d7 78,053",
+          "2,107,909",
+          "13.92%"
+        ],
+        [
+          "15 / fresh",
+          "364 \u00d7 79,611",
+          "2,322,459",
+          "8.01%"
+        ],
+        [
+          "15 / sequential",
+          "364 \u00d7 130,468",
+          "3,541,122",
+          "7.46%"
+        ]
+      ],
+      "expected": [
+        [
+          "C1 k / pool",
+          "Rows \u00d7 columns",
+          "Nonzeros",
+          "Nonzero %"
+        ],
+        [
+          "5 / fresh",
+          "104 \u00d7 28,549",
+          "596,747",
+          "20.10%"
+        ],
+        [
+          "5 / sequential",
+          "104 \u00d7 27,340",
+          "623,626",
+          "21.93%"
+        ],
+        [
+          "8 / fresh",
+          "194 \u00d7 39,940",
+          "1,092,654",
+          "14.10%"
+        ],
+        [
+          "8 / sequential",
+          "194 \u00d7 78,053",
+          "2,107,909",
+          "13.92%"
+        ],
+        [
+          "15 / fresh",
+          "364 \u00d7 79,611",
+          "2,322,459",
+          "8.01%"
+        ],
+        [
+          "15 / sequential",
+          "364 \u00d7 130,468",
+          "3,541,122",
+          "7.46%"
+        ]
+      ]
+    }
+  ],
+  "shape_bounds_issues": [],
+  "invisible_character_note": "Slide29 target15 has two zero-width spaces; normalized during semantic cell comparison. No visible numeric difference.",
+  "source_hashes": {
+    "outputs/research_followup_20260921/presentation_update_20260922/slides_before.pptx": "45be3e2eb3218de759eb72ce610d5ee9b099022e4f9ee7bf75b2cb9a3b911536",
+    "outputs/research_followup_20260921/presentation_update_20260922/slides_after.pptx": "6b439fa334e0310c86cdc0f74d4fe59c8544ae8efbb88f3d35c7ff14ee80efc8",
+    "outputs/research_followup_20260921/presentation_update_20260922/slides_after.pdf": "a97edae7f619f0afc69d31bf2efec2c8592281080a5221347b19e38b2f1ef58d",
+    "outputs/research_followup_20260921/chain_comparison_mip_times/mip_stage_times.csv": "173e1073a4b97b6d0fa391f71c8030a573d0a4a114cbd7ac84bcf103aae3512a",
+    "outputs/research_followup_20260921/chain_comparison_mip_times/fleet_search_tables.md": "c2f26b0728b582d7d22c33dcd61ca3f31a757cd66feda21b7439a82b1985abbf",
+    "outputs/research_followup_20260921/mip_matrix_audit/matrix_dimensions.csv": "395c8f01be22f3a3568b2ebb340179d8a06ed05875220a4936ac679fd980be8f"
+  }
+}

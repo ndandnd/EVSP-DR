@@ -1,0 +1,691 @@
+{
+  "verified_utc": "2026-09-22T05:16:26.107328+00:00",
+  "scope": "Read-only data and original-body preservation verification; root owns PDF visual QA.",
+  "checks": {
+    "nine_markdown_tables": true,
+    "chain1_all_data_cells_exact": true,
+    "chain2_all_data_cells_exact": true,
+    "chain3_all_data_cells_exact": true,
+    "chain4_all_data_cells_exact": true,
+    "chain5_all_data_cells_exact": true,
+    "chain6_all_data_cells_exact": true,
+    "per_chain_summary_all_cells_exact": true,
+    "combined_C2_to6_all_cells_exact": true,
+    "C1_matrix_all8rows_exact": true,
+    "stage2_derived_dimensions_exact": true,
+    "current_original_body_byte_preserved": true,
+    "current_only_new_link_prefix": true,
+    "structure_heading_occurs_once": true
+  },
+  "issues": [],
+  "table_comparisons": [
+    {
+      "table_number": 1,
+      "description": "chain1_all_data_cells_exact",
+      "all_data_cells_match": true,
+      "actual": [
+        [
+          "5",
+          "1.30 s",
+          "1.16 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "26.35 min",
+          "27.15 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "152.29 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "105.75 s",
+          "18 / 15"
+        ]
+      ],
+      "expected": [
+        [
+          "5",
+          "1.30 s",
+          "1.16 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "26.35 min",
+          "27.15 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "152.29 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "105.75 s",
+          "18 / 15"
+        ]
+      ]
+    },
+    {
+      "table_number": 2,
+      "description": "chain2_all_data_cells_exact",
+      "all_data_cells_match": true,
+      "actual": [
+        [
+          "5",
+          "63.23 s",
+          "5.26 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "30 min*",
+          "8.27 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "12.63 s",
+          "12 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "405.96 s",
+          "17 / 15"
+        ]
+      ],
+      "expected": [
+        [
+          "5",
+          "63.23 s",
+          "5.26 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "30 min*",
+          "8.27 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "12.63 s",
+          "12 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "405.96 s",
+          "17 / 15"
+        ]
+      ]
+    },
+    {
+      "table_number": 3,
+      "description": "chain3_all_data_cells_exact",
+      "all_data_cells_match": true,
+      "actual": [
+        [
+          "5",
+          "3.38 s",
+          "2.16 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "30 min*",
+          "0.94 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "3.20 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "223.71 s",
+          "18 / 15"
+        ]
+      ],
+      "expected": [
+        [
+          "5",
+          "3.38 s",
+          "2.16 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "30 min*",
+          "0.94 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "3.20 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "223.71 s",
+          "18 / 15"
+        ]
+      ]
+    },
+    {
+      "table_number": 4,
+      "description": "chain4_all_data_cells_exact",
+      "all_data_cells_match": true,
+      "actual": [
+        [
+          "5",
+          "14.89 s",
+          "0.95 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "14.66 min",
+          "1.94 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "2.45 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "178.60 s",
+          "19 / 15"
+        ]
+      ],
+      "expected": [
+        [
+          "5",
+          "14.89 s",
+          "0.95 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "14.66 min",
+          "1.94 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "2.45 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "178.60 s",
+          "19 / 15"
+        ]
+      ]
+    },
+    {
+      "table_number": 5,
+      "description": "chain5_all_data_cells_exact",
+      "all_data_cells_match": true,
+      "actual": [
+        [
+          "5",
+          "35.88 s",
+          "3.02 s",
+          "6 / 5"
+        ],
+        [
+          "8",
+          "14.89 min",
+          "2.13 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "8.02 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "18.93 s",
+          "16 / 15"
+        ]
+      ],
+      "expected": [
+        [
+          "5",
+          "35.88 s",
+          "3.02 s",
+          "6 / 5"
+        ],
+        [
+          "8",
+          "14.89 min",
+          "2.13 s",
+          "9 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "8.02 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "18.93 s",
+          "16 / 15"
+        ]
+      ]
+    },
+    {
+      "table_number": 6,
+      "description": "chain6_all_data_cells_exact",
+      "all_data_cells_match": true,
+      "actual": [
+        [
+          "5",
+          "0.46 s",
+          "0.42 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "15.77 s",
+          "5.36 s",
+          "8 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "1.35 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "443.97 s",
+          "20 / 15"
+        ]
+      ],
+      "expected": [
+        [
+          "5",
+          "0.46 s",
+          "0.42 s",
+          "5 / 5"
+        ],
+        [
+          "8",
+          "15.77 s",
+          "5.36 s",
+          "8 / 8"
+        ],
+        [
+          "10",
+          "30 min*",
+          "1.35 s",
+          "11 / 10"
+        ],
+        [
+          "15",
+          "30 min*",
+          "443.97 s",
+          "20 / 15"
+        ]
+      ]
+    },
+    {
+      "table_number": 7,
+      "description": "per_chain_summary_all_cells_exact",
+      "all_data_cells_match": true,
+      "actual": [
+        [
+          "1",
+          "21.59",
+          "71.59",
+          "28.18",
+          "66.45",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "2",
+          "22.77",
+          "108.03",
+          "30.00",
+          "10.45",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "3",
+          "22.52",
+          "57.50",
+          "30.00",
+          "2.68",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "4",
+          "18.73",
+          "45.98",
+          "22.33",
+          "2.20",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "5",
+          "18.87",
+          "8.02",
+          "22.44",
+          "5.52",
+          "0/4 \u2192 4/4"
+        ],
+        [
+          "6",
+          "15.07",
+          "112.77",
+          "15.13",
+          "3.35",
+          "2/4 \u2192 4/4"
+        ]
+      ],
+      "expected": [
+        [
+          "1",
+          "21.59",
+          "71.59",
+          "28.18",
+          "66.45",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "2",
+          "22.77",
+          "108.03",
+          "30.00",
+          "10.45",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "3",
+          "22.52",
+          "57.50",
+          "30.00",
+          "2.68",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "4",
+          "18.73",
+          "45.98",
+          "22.33",
+          "2.20",
+          "1/4 \u2192 4/4"
+        ],
+        [
+          "5",
+          "18.87",
+          "8.02",
+          "22.44",
+          "5.52",
+          "0/4 \u2192 4/4"
+        ],
+        [
+          "6",
+          "15.07",
+          "112.77",
+          "15.13",
+          "3.35",
+          "2/4 \u2192 4/4"
+        ]
+      ]
+    },
+    {
+      "table_number": 8,
+      "description": "combined_C2_to6_all_cells_exact",
+      "all_data_cells_match": true,
+      "actual": [
+        [
+          "Mean fleet-search time spent",
+          "19.59 min",
+          "66.46 s"
+        ],
+        [
+          "Median fleet-search time spent",
+          "30.00 min",
+          "4.23 s"
+        ],
+        [
+          "Range",
+          "0.46 s\u201330.01 min",
+          "0.42 s\u20137.40 min"
+        ],
+        [
+          "Targets matched",
+          "5/20",
+          "20/20"
+        ],
+        [
+          "Fleet optima proved within saved pools",
+          "8/20",
+          "20/20"
+        ],
+        [
+          "Fleet time limits",
+          "12/20",
+          "0/20"
+        ],
+        [
+          "Total fleet-search time",
+          "6.53 h",
+          "22.15 min"
+        ]
+      ],
+      "expected": [
+        [
+          "Mean fleet-search time spent",
+          "19.59 min",
+          "66.46 s"
+        ],
+        [
+          "Median fleet-search time spent",
+          "30.00 min",
+          "4.23 s"
+        ],
+        [
+          "Range",
+          "0.46 s\u201330.01 min",
+          "0.42 s\u20137.40 min"
+        ],
+        [
+          "Targets matched",
+          "5/20",
+          "20/20"
+        ],
+        [
+          "Fleet optima proved within saved pools",
+          "8/20",
+          "20/20"
+        ],
+        [
+          "Fleet time limits",
+          "12/20",
+          "0/20"
+        ],
+        [
+          "Total fleet-search time",
+          "6.53 h",
+          "22.15 min"
+        ]
+      ]
+    },
+    {
+      "table_number": 9,
+      "description": "C1_matrix_all8rows_exact",
+      "all_data_cells_match": true,
+      "actual": [
+        [
+          "5 / fresh",
+          "104",
+          "28,549",
+          "596,747",
+          "20.10%"
+        ],
+        [
+          "5 / sequential",
+          "104",
+          "27,340",
+          "623,626",
+          "21.93%"
+        ],
+        [
+          "8 / fresh",
+          "194",
+          "39,940",
+          "1,092,654",
+          "14.10%"
+        ],
+        [
+          "8 / sequential",
+          "194",
+          "78,053",
+          "2,107,909",
+          "13.92%"
+        ],
+        [
+          "10 / fresh",
+          "225",
+          "50,585",
+          "1,329,898",
+          "11.68%"
+        ],
+        [
+          "10 / sequential",
+          "225",
+          "84,209",
+          "2,237,466",
+          "11.81%"
+        ],
+        [
+          "15 / fresh",
+          "364",
+          "79,611",
+          "2,322,459",
+          "8.01%"
+        ],
+        [
+          "15 / sequential",
+          "364",
+          "130,468",
+          "3,541,122",
+          "7.46%"
+        ]
+      ],
+      "expected": [
+        [
+          "5 / fresh",
+          "104",
+          "28,549",
+          "596,747",
+          "20.10%"
+        ],
+        [
+          "5 / sequential",
+          "104",
+          "27,340",
+          "623,626",
+          "21.93%"
+        ],
+        [
+          "8 / fresh",
+          "194",
+          "39,940",
+          "1,092,654",
+          "14.10%"
+        ],
+        [
+          "8 / sequential",
+          "194",
+          "78,053",
+          "2,107,909",
+          "13.92%"
+        ],
+        [
+          "10 / fresh",
+          "225",
+          "50,585",
+          "1,329,898",
+          "11.68%"
+        ],
+        [
+          "10 / sequential",
+          "225",
+          "84,209",
+          "2,237,466",
+          "11.81%"
+        ],
+        [
+          "15 / fresh",
+          "364",
+          "79,611",
+          "2,322,459",
+          "8.01%"
+        ],
+        [
+          "15 / sequential",
+          "364",
+          "130,468",
+          "3,541,122",
+          "7.46%"
+        ]
+      ]
+    }
+  ],
+  "current_added_prefix": "[22 Sep: six-chain fleet timing tables, summaries and MIP matrix sizes](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.lt33xg84cn65)\n\n",
+  "current_diff": "--- \n\n+++ \n\n@@ -1 +1,3 @@\n\n+[22 Sep: six-chain fleet timing tables, summaries and MIP matrix sizes](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.lt33xg84cn65)\n+\n # **EVSP DR research journal**",
+  "source_hashes": {
+    "outputs/research_followup_20260921/presentation_update_20260922/doc_tables_after.md": "0fac7497f931f5e22b1d807ba90daef4a929e5e3d1323ab7ef04778c62c6d87a",
+    "outputs/research_followup_20260921/presentation_update_20260922/doc_tables_after.pdf": "5ffae8f3824fc5b5da5921c95c19fdaaae40192916e4c20052b2f73847d66fb3",
+    "outputs/research_followup_20260921/presentation_update_20260922/current_before.md": "64f7b83b5b8ec13251baf652f4c63b494b5f14d003df2be4cd555613d739f630",
+    "outputs/research_followup_20260921/presentation_update_20260922/current_after.md": "89950b03796ded309d96a52f55976fbdcc2fdd34b61f86eea0d8665cf9191538",
+    "outputs/research_followup_20260921/chain_comparison_mip_times/mip_stage_times.csv": "173e1073a4b97b6d0fa391f71c8030a573d0a4a114cbd7ac84bcf103aae3512a",
+    "outputs/research_followup_20260921/mip_matrix_audit/matrix_dimensions.csv": "395c8f01be22f3a3568b2ebb340179d8a06ed05875220a4936ac679fd980be8f"
+  },
+  "resolved_initial_issues": [
+    {
+      "issue": "Consecutive duplicate How can we exploit this structure? heading",
+      "resolution": "Root removed duplicate; final exported Markdown has exactly one occurrence."
+    },
+    {
+      "issue": "C1 k10 fresh density displayed 11.69%",
+      "exact_percent": 11.684605669225617,
+      "resolution": "Root corrected to 11.68%; final exported table matches direct two-decimal rounding."
+    }
+  ]
+}
