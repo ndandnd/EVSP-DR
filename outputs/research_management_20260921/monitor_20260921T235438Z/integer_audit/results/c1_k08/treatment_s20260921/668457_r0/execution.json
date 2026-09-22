@@ -1,0 +1,101 @@
+{
+ "case": "c1_k08",
+ "arm": "treatment",
+ "seed": 20260921,
+ "execution_commit": "1be819f0b4e3ea9dc9766497efa169a03e476ad5",
+ "source_hashes": [
+  "c024cc4e235234ed4244abaa1e7738f3600c264a2ffe4c05c5026198b69d56b0",
+  "2e75b32ab3f2c11e7677892844b33c9fe8c0351529927d08980370c113d2845c"
+ ],
+ "status": "finished",
+ "global_certificate": null,
+ "external_witness_columns_used": false,
+ "budget_scope": "3600s dive subprocess wall plus MIP solver time; MIP setup/replay overhead external",
+ "original_graph_build_s": 7279.346693992615,
+ "graph_policy": "verified reusable graph prerequisite; original build not repeated or hidden",
+ "dive_wall_s": 1272.236233303789,
+ "dive_returncode": 0,
+ "incumbent_export": {
+  "path": "/home/nc437/ladder-lite/integer_columns_20260921/results/c1_k08/treatment_s20260921/668457_r0/dive/dive_incumbent.json",
+  "sha256": "2ec4e8d6c52ef56db059243848afd90b2002d18040fae8b2178b697d81d3603d",
+  "buses": 8,
+  "source_record_ordinals": [
+   34335,
+   35832,
+   35844,
+   42837,
+   44768,
+   52013,
+   53783,
+   55883
+  ]
+ },
+ "dive_integer_buses": 8,
+ "columns_generated": 15966,
+ "mip_solver_budget_s": 2327,
+ "mip_wall_s": 828.8441577432677,
+ "mip_returncode": 0,
+ "actual_solver_runtime_s": 753.690443277359,
+ "physical_pool_preparation_wall_s": 72.5487917480059,
+ "mip_external_overhead_s": 75.1537144659087,
+ "actual_charged_dive_plus_solver_s": 2025.926676581148,
+ "handoff_validation": {
+  "actual_start_column_hashes": [
+   "8ae4c1f165eecf36e398cef81b425b5fd5be954ce6e787705eb9f898ed8d96aa",
+   "6cea9f67bf6f0c7a20128795af86f98911b7ee44be267578267223c43c96b621",
+   "6b6095e9dba7730976cf68de4d61bd53a68201627b18e3d923b7b4d7d4c7a323",
+   "fba61ff4849158d7d154004cd404be5074cedfadb92c8500164139c978a98d26",
+   "a9b3ef25ab54b54c3fb22a60797ec4c9b30d810c2b8d30630f48fb39740f61a0",
+   "9d7bc164dd7f2c494e379ea97a7c2465b5063e07fbc1a2d58c47f3e8c05bb1af",
+   "d3d4be30e5e5a51110a8eefa6ce05c8861f3f984e9981d78173f7975d91456c8",
+   "ee69bdfdd28d5c03cad09a5fd526ff980c5ac08f9574b9cfe889734b4a254796"
+  ],
+  "added_giro_route_count": 8,
+  "added_giro_route_set_sha256": "2be314dd727a1233fe12001b3ce9c3d061a9ad6ec8ac106745af8dc6ef575571",
+  "assigned_mip_start_route_count": 8,
+  "assigned_variable_count": 55913,
+  "assignment_complete": true,
+  "covering": true,
+  "expected_full_objective": 800453.312,
+  "kind": "validated_covering_start",
+  "pool_columns_added": 0,
+  "pool_columns_replaced": 0,
+  "pool_columns_reused": 0,
+  "pool_duplicate_incidences_preserved": 8,
+  "repeated_trip_count": 7,
+  "selected_variable_count": 8,
+  "solver_acceptance": {
+   "accepted": true,
+   "messages": [
+    "Loaded user MIP start with objective 8"
+   ],
+   "rejection_observed": false,
+   "status": "accepted"
+  },
+  "source": "/home/nc437/ladder-lite/integer_columns_20260921/results/c1_k08/treatment_s20260921/668457_r0/dive/dive_incumbent.json",
+  "source_sha256": "2ec4e8d6c52ef56db059243848afd90b2002d18040fae8b2178b697d81d3603d",
+  "validated": true,
+  "validated_bus_count": 8
+ },
+ "source_immutable": true,
+ "actual_end_to_end_wall_s": 2106.139340172056,
+ "shared_budget_s": 3600,
+ "charged_dive_wall_s": 1272.236233303789,
+ "strict_end_to_end_budget_claim": false,
+ "output_sha256": {
+  "dive_argv.json": "be8c4534d09ad111fbf305cc35434f8130cbde0af15e557cb7d591187d4b535e",
+  "dive_stdout.log": "06f820a70404b1201c66d5dd268731fab9d9c0b42d2237767c01ce0d4a7d3bf2",
+  "dive_stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "dive_gurobi.log": "41745e6052138cc89791cd1827ec095a3cca617df613072b158315a5623ac123",
+  "mip_argv.json": "8193701e90774d91aa3217d1db1e45b06ee03ab1904a474bca3c971b8b8e2913",
+  "mip_stdout.log": "5fc3143554cf18d90ed0cb0187a3b2f1f1960df8d4ccc4887086175877c67641",
+  "mip_stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "mip_gurobi.log": "bd854f4b7f91954f6582e7953d257ef19df323d014ea1927a9040285459f73f1",
+  "result.json": "dfdfa6548d34af57d8de9de41b5b6fe641e70b2f8ea6df7fa755174287c12a85",
+  "dive/dive_journal.jsonl": "e6283d38b727f5a700d6a33e36b75ec60df15d4f0b88bf9bcc774e6f12b0e67f",
+  "dive/cg.json.columns.jsonl": "106de5276e4e05479f343f75cb8949f930d0fca0564bd906f4be3a7f91b526ef",
+  "dive/cg.json": "91aba35bcb62e1c53ac515272d4df27dbfa752c6a0f19c097f13b021c270cd40",
+  "dive/dive_incumbent.json": "2ec4e8d6c52ef56db059243848afd90b2002d18040fae8b2178b697d81d3603d",
+  "dive/manifest.json": "06a4d66ae8a919bdd6c6d01ba9cf9e3e72666561c44106095588e47e6ba353d4"
+ }
+}

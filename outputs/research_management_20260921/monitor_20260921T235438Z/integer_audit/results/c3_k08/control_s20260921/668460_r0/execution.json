@@ -1,0 +1,35 @@
+{
+ "case": "c3_k08",
+ "arm": "control",
+ "seed": 20260921,
+ "execution_commit": "1be819f0b4e3ea9dc9766497efa169a03e476ad5",
+ "source_hashes": [
+  "9e8376a2835c071c76011325de652348eda5bf3937a3faad03d9bb7544e78082",
+  "7ea9fdbc17fc11def3c741a5c2d0525e078391ed41d47ae1bc14a0182704d5f6"
+ ],
+ "status": "finished",
+ "global_certificate": null,
+ "external_witness_columns_used": false,
+ "budget_scope": "3600s dive subprocess wall plus MIP solver time; MIP setup/replay overhead external",
+ "original_graph_build_s": 3295.2819998264313,
+ "graph_policy": "verified reusable graph prerequisite; original build not repeated or hidden",
+ "mip_solver_budget_s": 3600,
+ "mip_wall_s": 3619.047331544105,
+ "mip_returncode": 0,
+ "actual_solver_runtime_s": 3601.0451736450195,
+ "physical_pool_preparation_wall_s": 16.890182513277978,
+ "mip_external_overhead_s": 18.002157899085432,
+ "actual_charged_dive_plus_solver_s": 3601.0451736450195,
+ "source_immutable": true,
+ "actual_end_to_end_wall_s": 3619.617583030369,
+ "shared_budget_s": 3600,
+ "charged_dive_wall_s": 0.0,
+ "strict_end_to_end_budget_claim": false,
+ "output_sha256": {
+  "mip_argv.json": "9287ad571504b232464a4e8891d260ea0c4be5513a6337b9136ee3defc8afecc",
+  "mip_stdout.log": "90623fa00fd3c865e6641441af7e87697a4534c8243e31f23b7afb407166653e",
+  "mip_stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "mip_gurobi.log": "0718520081ab6368af6796611d6b9125a094c70a0a8ffb70ff9b909ad0285411",
+  "result.json": "84056b5e8625f99b608cd0c8f88b00058f714273049d6f7e1bb2bd3eb3056d23"
+ }
+}

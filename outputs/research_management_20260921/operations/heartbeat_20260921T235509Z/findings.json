@@ -1,0 +1,75 @@
+{
+  "collected_utc": "2026-09-21T23:55:09.916644+00:00",
+  "running_in_scope": 45,
+  "pending_in_scope": 99,
+  "all_pending_are_dependencies": true,
+  "baseline_cases_dependencies_verified": 48,
+  "graph_builds_running": 44,
+  "graph_complete_endpoints": 0,
+  "preempted_attempts": 6,
+  "preempted_wall_s": 5076,
+  "new_preemptions_since_200821Z": 0,
+  "unrecovered_failed_jobs": [],
+  "graph_source_row_fraction_range": [
+    0.11942867710867369,
+    0.4349430292063672
+  ],
+  "graph_peak_process_rss_GiB_range": [
+    8.085681915283203,
+    24.66608428955078
+  ],
+  "graph_phases": {
+    "_build_arcs": 44
+  },
+  "strict_successor_endpoint_available": false,
+  "strict_k17_live_elapsed": "03:53:58",
+  "strict_k17_scope": "277trips/10reference18E2duties atglobalprefix17",
+  "benchmark_checks": [
+    {
+      "case": "w5_k04_18E2",
+      "result_sha256": "974f1e1431c44924ae5912f1ea1c117c0575c4a5d397e8dfbf75acf1a739ec34",
+      "manifest_hash_matches": true,
+      "completion_hash_matches": true,
+      "exact_input_hash_matches": true,
+      "event_lattice_hash_matches": true,
+      "all_15_physical_replay_flags_pass": true,
+      "five_reduced_costs_match": true,
+      "source_commits": {
+        "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0": "50ceb6c095a580f79f87b53bef536cac31f81963",
+        "/home/nc437/ladder-lite/strict_packed_20260921/code": "35770aae2c08e7d5a356cc3b673e67608e5b1036"
+      }
+    },
+    {
+      "case": "w5_k06_18E2",
+      "result_sha256": "d32ed53e9528ea0063552b0d74464cdf87d32c372d7eb42875078f30fcdb9b49",
+      "manifest_hash_matches": true,
+      "completion_hash_matches": true,
+      "exact_input_hash_matches": true,
+      "event_lattice_hash_matches": true,
+      "all_15_physical_replay_flags_pass": true,
+      "five_reduced_costs_match": true,
+      "source_commits": {
+        "/home/nc437/ladder-lite/code_pins/review_strict_50ceb6c0": "50ceb6c095a580f79f87b53bef536cac31f81963",
+        "/home/nc437/ladder-lite/strict_packed_20260921/code": "35770aae2c08e7d5a356cc3b673e67608e5b1036"
+      }
+    }
+  ],
+  "benchmark_ratios": [
+    {
+      "trips": 53,
+      "original_to_new_explicit_build_speedup": 2.3224778512926307,
+      "original_to_packed_build_speedup": 2.83698557075016,
+      "original_to_packed_process_memory_ratio": 29.350181657501963,
+      "original_to_packed_mean_pricing_speedup": 977.374556558197
+    },
+    {
+      "trips": 90,
+      "original_to_new_explicit_build_speedup": 2.1995182025966717,
+      "original_to_packed_build_speedup": 2.5841774739163896,
+      "original_to_packed_process_memory_ratio": 40.69311965482703,
+      "original_to_packed_mean_pricing_speedup": 2109.8394308578877
+    }
+  ],
+  "mutations": 0,
+  "ssh_collections": 1
+}

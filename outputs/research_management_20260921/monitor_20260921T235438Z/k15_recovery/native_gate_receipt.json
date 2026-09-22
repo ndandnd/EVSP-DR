@@ -1,0 +1,131 @@
+{
+ "eligible": true,
+ "passed_native_smokes": [
+  {
+   "receipt": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260922/668463_r0/execution.json",
+   "checks": {
+    "own_dive_incumbent": true,
+    "validated_handoff": true,
+    "fleet_matches": true,
+    "zero_added_columns": true,
+    "zero_replaced_columns": true,
+    "physical_replay": true,
+    "immutable_source": true,
+    "no_budget_floor": true,
+    "charged_accounting": true,
+    "end_to_end_recorded": true,
+    "not_claiming_hard_wallcap": true
+   },
+   "charged_s": 817.5347601026297,
+   "actual_end_to_end_s": 848.1121918237768
+  },
+  {
+   "receipt": "/home/nc437/ladder-lite/integer_columns_20260921/results/c3_k08/treatment_s20260921/668461_r0/execution.json",
+   "checks": {
+    "own_dive_incumbent": true,
+    "validated_handoff": true,
+    "fleet_matches": true,
+    "zero_added_columns": true,
+    "zero_replaced_columns": true,
+    "physical_replay": true,
+    "immutable_source": true,
+    "no_budget_floor": true,
+    "charged_accounting": true,
+    "end_to_end_recorded": true,
+    "not_claiming_hard_wallcap": true
+   },
+   "charged_s": 1091.1895220205188,
+   "actual_end_to_end_s": 1125.9158961256035
+  },
+  {
+   "receipt": "/home/nc437/ladder-lite/integer_columns_20260921/results/c1_k08/treatment_s20260922/668459_r0/execution.json",
+   "checks": {
+    "own_dive_incumbent": true,
+    "validated_handoff": true,
+    "fleet_matches": true,
+    "zero_added_columns": true,
+    "zero_replaced_columns": true,
+    "physical_replay": true,
+    "immutable_source": true,
+    "no_budget_floor": true,
+    "charged_accounting": true,
+    "end_to_end_recorded": true,
+    "not_claiming_hard_wallcap": true
+   },
+   "charged_s": 2043.6227259631269,
+   "actual_end_to_end_s": 2124.3226479720324
+  },
+  {
+   "receipt": "/home/nc437/ladder-lite/integer_columns_20260921/results/c1_k08/treatment_s20260921/668457_r0/execution.json",
+   "checks": {
+    "own_dive_incumbent": true,
+    "validated_handoff": true,
+    "fleet_matches": true,
+    "zero_added_columns": true,
+    "zero_replaced_columns": true,
+    "physical_replay": true,
+    "immutable_source": true,
+    "no_budget_floor": true,
+    "charged_accounting": true,
+    "end_to_end_recorded": true,
+    "not_claiming_hard_wallcap": true
+   },
+   "charged_s": 2025.926676581148,
+   "actual_end_to_end_s": 2106.139340172056
+  },
+  {
+   "receipt": "/home/nc437/ladder-lite/integer_columns_20260921/results/c4_k08/treatment_s20260922/668467_r0/execution.json",
+   "checks": {
+    "own_dive_incumbent": true,
+    "validated_handoff": true,
+    "fleet_matches": true,
+    "zero_added_columns": true,
+    "zero_replaced_columns": true,
+    "physical_replay": true,
+    "immutable_source": true,
+    "no_budget_floor": true,
+    "charged_accounting": true,
+    "end_to_end_recorded": true,
+    "not_claiming_hard_wallcap": true
+   },
+   "charged_s": 2008.6103893630207,
+   "actual_end_to_end_s": 2092.5085010020994
+  },
+  {
+   "receipt": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260921/668469_r0/execution.json",
+   "checks": {
+    "own_dive_incumbent": true,
+    "validated_handoff": true,
+    "fleet_matches": true,
+    "zero_added_columns": true,
+    "zero_replaced_columns": true,
+    "physical_replay": true,
+    "immutable_source": true,
+    "no_budget_floor": true,
+    "charged_accounting": true,
+    "end_to_end_recorded": true,
+    "not_claiming_hard_wallcap": true
+   },
+   "charged_s": 1008.5583143255208,
+   "actual_end_to_end_s": 1064.643613132881
+  },
+  {
+   "receipt": "/home/nc437/ladder-lite/integer_columns_20260921/results/c5_k08/treatment_s20260922/668471_r0/execution.json",
+   "checks": {
+    "own_dive_incumbent": true,
+    "validated_handoff": true,
+    "fleet_matches": true,
+    "zero_added_columns": true,
+    "zero_replaced_columns": true,
+    "physical_replay": true,
+    "immutable_source": true,
+    "no_budget_floor": true,
+    "charged_accounting": true,
+    "end_to_end_recorded": true,
+    "not_claiming_hard_wallcap": true
+   },
+   "charged_s": 1064.1976913427934,
+   "actual_end_to_end_s": 1120.14959996799
+  }
+ ]
+}

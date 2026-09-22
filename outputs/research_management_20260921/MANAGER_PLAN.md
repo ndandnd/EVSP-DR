@@ -1,3 +1,7 @@
+## Latest verified check — 21 September, 20:00 EDT
+
+The complete paired k8 replication has **7/8 treatment target matches versus 0/8 controls**, four selected cases at two seeds. Every hit has a finite-pool fleet proof and own-incumbent handoff; full dispatch/capacity feasibility remains separate. The failed automatic k15 gate was an accounting-query error; the unchanged login-node validation passed and all six approved follow-ups **704510–704515 are running**. Do not submit duplicates. Both larger strict fixed-dual benchmarks completed; all 44 baseline graphs continue. [Dated results, audit and recovery receipts](monitor_20260921T235438Z/README.md). Earlier status paragraphs below are historical.
+
 # Research management — 21 September 2026
 
 The user renewed authorization today to manage EVSP–DR, run Astra subagents, use the cluster productively, fix research/code gaps, and prepare paper-quality figures and tables. This supersedes older dated blanket submission holds for these registered workstreams. Held historical jobs and EVSP–V2G stochastic work remain protected. Slides remain unchanged.

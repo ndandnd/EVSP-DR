@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/home/nc437/ladder-lite/integer_columns_k15_20260921/check_native_gate.py", line 7, in <module>
+    raw=subprocess.run(['/usr/local/slurm/current/bin/sacct','-j',','.join(ids),'-n','-P','--format=JobID,State'],check=True,capture_output=True,text=True).stdout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/nc437/evsp_env/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/usr/local/slurm/current/bin/sacct', '-j', '668455,668457,668458,668459,668460,668461,668462,668463,668464,668465,668466,668467,668468,668469,668470,668471', '-n', '-P', '--format=JobID,State']' returned non-zero exit status 1.

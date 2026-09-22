@@ -1,0 +1,434 @@
+[
+  {
+    "case": "c1_k08",
+    "arm": "control",
+    "seed": "20260921",
+    "job_id": "668455",
+    "log": "results/c1_k08/control_s20260921/668455_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 181,
+        "text": "Best objective 9.000000000000e+00, best bound 8.000000000000e+00, gap 11.1111%"
+      },
+      {
+        "line": 400,
+        "text": "Best objective 4.275680000000e+02, best bound 3.647893310147e+02, gap 14.6827%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 63"
+      },
+      {
+        "line": 204,
+        "text": "Loaded user MIP start with objective 617.72"
+      }
+    ]
+  },
+  {
+    "case": "c1_k08",
+    "arm": "treatment",
+    "seed": "20260921",
+    "job_id": "668457",
+    "log": "results/c1_k08/treatment_s20260921/668457_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 63,
+        "text": "Best objective 8.000000000000e+00, best bound 8.000000000000e+00, gap 0.0000%"
+      },
+      {
+        "line": 298,
+        "text": "Best objective 4.533120000000e+02, best bound 4.533120000000e+02, gap 0.0000%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 8"
+      },
+      {
+        "line": 86,
+        "text": "Loaded user MIP start with objective 453.312"
+      }
+    ]
+  },
+  {
+    "case": "c1_k08",
+    "arm": "control",
+    "seed": "20260922",
+    "job_id": "668458",
+    "log": "results/c1_k08/control_s20260922/668458_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 167,
+        "text": "Best objective 9.000000000000e+00, best bound 9.000000000000e+00, gap 0.0000%"
+      },
+      {
+        "line": 387,
+        "text": "Best objective 4.749279999995e+02, best bound 3.648303847808e+02, gap 23.1820%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 63"
+      },
+      {
+        "line": 190,
+        "text": "Loaded user MIP start with objective 501.296"
+      }
+    ]
+  },
+  {
+    "case": "c1_k08",
+    "arm": "treatment",
+    "seed": "20260922",
+    "job_id": "668459",
+    "log": "results/c1_k08/treatment_s20260922/668459_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 63,
+        "text": "Best objective 8.000000000000e+00, best bound 8.000000000000e+00, gap 0.0000%"
+      },
+      {
+        "line": 251,
+        "text": "Best objective 4.164880000000e+02, best bound 4.164880000000e+02, gap 0.0000%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 8"
+      },
+      {
+        "line": 86,
+        "text": "Loaded user MIP start with objective 416.488"
+      }
+    ]
+  },
+  {
+    "case": "c3_k08",
+    "arm": "control",
+    "seed": "20260921",
+    "job_id": "668460",
+    "log": "results/c3_k08/control_s20260921/668460_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 408,
+        "text": "Best objective 9.000000000000e+00, best bound 8.000000000000e+00, gap 11.1111%"
+      },
+      {
+        "line": 740,
+        "text": "Best objective 2.494720000000e+02, best bound 1.947412349578e+02, gap 21.9386%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 51"
+      },
+      {
+        "line": 431,
+        "text": "Loaded user MIP start with objective 464.624"
+      }
+    ]
+  },
+  {
+    "case": "c3_k08",
+    "arm": "treatment",
+    "seed": "20260921",
+    "job_id": "668461",
+    "log": "results/c3_k08/treatment_s20260921/668461_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 65,
+        "text": "Best objective 8.000000000000e+00, best bound 8.000000000000e+00, gap 0.0000%"
+      },
+      {
+        "line": 196,
+        "text": "Best objective 2.157040000000e+02, best bound 2.157040000000e+02, gap 0.0000%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 8"
+      },
+      {
+        "line": 88,
+        "text": "Loaded user MIP start with objective 215.704"
+      }
+    ]
+  },
+  {
+    "case": "c3_k08",
+    "arm": "control",
+    "seed": "20260922",
+    "job_id": "668462",
+    "log": "results/c3_k08/control_s20260922/668462_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 367,
+        "text": "Best objective 9.000000000000e+00, best bound 8.000000000000e+00, gap 11.1111%"
+      },
+      {
+        "line": 631,
+        "text": "Best objective 3.162080000002e+02, best bound 1.903792895767e+02, gap 39.7930%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 51"
+      },
+      {
+        "line": 390,
+        "text": "Loaded user MIP start with objective 469.544"
+      }
+    ]
+  },
+  {
+    "case": "c3_k08",
+    "arm": "treatment",
+    "seed": "20260922",
+    "job_id": "668463",
+    "log": "results/c3_k08/treatment_s20260922/668463_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 61,
+        "text": "Best objective 8.000000000000e+00, best bound 8.000000000000e+00, gap 0.0000%"
+      },
+      {
+        "line": 192,
+        "text": "Best objective 2.181840000000e+02, best bound 2.181840000000e+02, gap 0.0000%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 8"
+      },
+      {
+        "line": 84,
+        "text": "Loaded user MIP start with objective 218.184"
+      }
+    ]
+  },
+  {
+    "case": "c4_k08",
+    "arm": "control",
+    "seed": "20260921",
+    "job_id": "668464",
+    "log": "results/c4_k08/control_s20260921/668464_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 190,
+        "text": "Best objective 9.000000000000e+00, best bound 9.000000000000e+00, gap 0.0000%"
+      },
+      {
+        "line": 471,
+        "text": "Best objective 4.578159999999e+02, best bound 3.462376113972e+02, gap 24.3719%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 59"
+      },
+      {
+        "line": 213,
+        "text": "Loaded user MIP start with objective 496.992"
+      }
+    ]
+  },
+  {
+    "case": "c4_k08",
+    "arm": "treatment",
+    "seed": "20260921",
+    "job_id": "668465",
+    "log": "results/c4_k08/treatment_s20260921/668465_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 151,
+        "text": "Best objective 9.000000000000e+00, best bound 8.000000000000e+00, gap 11.1111%"
+      },
+      {
+        "line": 297,
+        "text": "Best objective 3.856560000000e+02, best bound 3.369737597389e+02, gap 12.6232%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 59"
+      },
+      {
+        "line": 174,
+        "text": "Loaded user MIP start with objective 509.184"
+      }
+    ]
+  },
+  {
+    "case": "c4_k08",
+    "arm": "control",
+    "seed": "20260922",
+    "job_id": "668466",
+    "log": "results/c4_k08/control_s20260922/668466_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 170,
+        "text": "Best objective 9.000000000000e+00, best bound 9.000000000000e+00, gap 0.0000%"
+      },
+      {
+        "line": 422,
+        "text": "Best objective 4.301680000000e+02, best bound 3.462608746504e+02, gap 19.5057%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 59"
+      },
+      {
+        "line": 193,
+        "text": "Loaded user MIP start with objective 512.416"
+      }
+    ]
+  },
+  {
+    "case": "c4_k08",
+    "arm": "treatment",
+    "seed": "20260922",
+    "job_id": "668467",
+    "log": "results/c4_k08/treatment_s20260922/668467_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 64,
+        "text": "Best objective 8.000000000000e+00, best bound 8.000000000000e+00, gap 0.0000%"
+      },
+      {
+        "line": 210,
+        "text": "Best objective 3.904880000000e+02, best bound 3.904880000000e+02, gap 0.0000%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 8"
+      },
+      {
+        "line": 87,
+        "text": "Loaded user MIP start with objective 390.488"
+      }
+    ]
+  },
+  {
+    "case": "c5_k08",
+    "arm": "control",
+    "seed": "20260921",
+    "job_id": "668468",
+    "log": "results/c5_k08/control_s20260921/668468_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 170,
+        "text": "Best objective 9.000000000000e+00, best bound 9.000000000000e+00, gap 0.0000%"
+      },
+      {
+        "line": 600,
+        "text": "Best objective 4.618720000000e+02, best bound 4.243899043880e+02, gap 8.1153%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 42"
+      },
+      {
+        "line": 193,
+        "text": "Loaded user MIP start with objective 653.88"
+      }
+    ]
+  },
+  {
+    "case": "c5_k08",
+    "arm": "treatment",
+    "seed": "20260921",
+    "job_id": "668469",
+    "log": "results/c5_k08/treatment_s20260921/668469_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 70,
+        "text": "Best objective 8.000000000000e+00, best bound 8.000000000000e+00, gap 0.0000%"
+      },
+      {
+        "line": 231,
+        "text": "Best objective 4.632320000000e+02, best bound 4.632320000000e+02, gap 0.0000%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 8"
+      },
+      {
+        "line": 93,
+        "text": "Loaded user MIP start with objective 463.232"
+      }
+    ]
+  },
+  {
+    "case": "c5_k08",
+    "arm": "control",
+    "seed": "20260922",
+    "job_id": "668470",
+    "log": "results/c5_k08/control_s20260922/668470_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 190,
+        "text": "Best objective 9.000000000000e+00, best bound 9.000000000000e+00, gap 0.0000%"
+      },
+      {
+        "line": 720,
+        "text": "Best objective 4.578640000000e+02, best bound 4.270652068823e+02, gap 6.7266%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 42"
+      },
+      {
+        "line": 213,
+        "text": "Loaded user MIP start with objective 543.128"
+      }
+    ]
+  },
+  {
+    "case": "c5_k08",
+    "arm": "treatment",
+    "seed": "20260922",
+    "job_id": "668471",
+    "log": "results/c5_k08/treatment_s20260922/668471_r0/mip_gurobi.log",
+    "stage_summaries": [
+      {
+        "line": 66,
+        "text": "Best objective 8.000000000000e+00, best bound 8.000000000000e+00, gap 0.0000%"
+      },
+      {
+        "line": 226,
+        "text": "Best objective 4.433120000000e+02, best bound 4.433120000000e+02, gap 0.0000%"
+      }
+    ],
+    "accepted_start_lines": [
+      {
+        "line": 30,
+        "text": "Loaded user MIP start with objective 8"
+      },
+      {
+        "line": 89,
+        "text": "Loaded user MIP start with objective 443.312"
+      }
+    ]
+  }
+]

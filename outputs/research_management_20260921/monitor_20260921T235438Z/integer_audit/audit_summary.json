@@ -1,0 +1,20 @@
+{
+  "all16_completed": true,
+  "treatment_hits": 7,
+  "control_hits": 0,
+  "independent_cases": 4,
+  "seeds_per_case": 2,
+  "control_finite_pool9_proofs": 5,
+  "own_handoffs": 7,
+  "source_hashes_unchanged": true,
+  "all7_own_exports_independently_matched_journal_ordinals": true,
+  "pinned_remote_code_matches_git_blobs": true,
+  "max_charged_excess_s": 4.704120397567749,
+  "hit_end_to_end_range_s": [
+    848.1121918237768,
+    2124.3226479720324
+  ],
+  "fetched_artifacts": 103,
+  "scope": "saved-pool fleet proofs and individual route replay; no global B&P or shared capacity certificate",
+  "checks_passed": true
+}

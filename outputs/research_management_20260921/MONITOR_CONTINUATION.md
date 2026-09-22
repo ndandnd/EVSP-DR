@@ -1,3 +1,7 @@
+## Latest verified check — 21 September, 20:00 EDT
+
+The complete paired k8 replication has **7/8 treatment target matches versus 0/8 controls**, four selected cases at two seeds. Every hit has a finite-pool fleet proof and own-incumbent handoff; full dispatch/capacity feasibility remains separate. The failed automatic k15 gate was an accounting-query error; the unchanged login-node validation passed and all six approved follow-ups **704510–704515 are running**. Do not submit duplicates. Both larger strict fixed-dual benchmarks completed; all 44 baseline graphs continue. [Dated results, audit and recovery receipts](monitor_20260921T235438Z/README.md). Earlier status paragraphs below are historical.
+
 # Four-hour continuation
 
 Read MANAGER_PLAN.md first. Reuse a recent successful collection; do not rebuild historical evidence or export Docs on unchanged checks. Alert immediately on SSH loss. Preserve held537227 and the separate stochastic project. Read the remote resource policy before new submissions; exclude scaglione-compute-01 from every CPU allocation.
