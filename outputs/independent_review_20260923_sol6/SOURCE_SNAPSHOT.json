@@ -1,0 +1,55 @@
+{
+  "created_utc": "2026-09-23T03:16:19.913930+00:00",
+  "repository": "https://github.com/ndandnd/EVSP-DR",
+  "worktrees": [
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse",
+      "commit": "f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c",
+      "branch": "main"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/.codex-work/zero-fee-terminal-cg",
+      "commit": "2c7445ac6449eb7d338c83f8320574da042a65b5",
+      "branch": "codex/zero-fee-terminal-cg"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/.codex-work/integer-columns-20260921",
+      "commit": "c50e5f207869bac25507adfae90bb830a44039b7",
+      "branch": "codex/integer-columns-20260921"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/.codex-work/strict-graph-reuse-20260922",
+      "commit": "fedf421461f94727e6b1292a0e7789ab76ed8587",
+      "branch": "codex/strict-graph-reuse-20260922"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-shortcircuit-20260917",
+      "commit": "cf61e2c8618b067df032c3eb795476e64184ed0a",
+      "branch": "codex/capacity-shortcircuit-20260917"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/.codex-work/charging-factorial-20260921",
+      "commit": "b931772dadf1e5930fd87bf4a89edd7dcaf6c51a",
+      "branch": "codex/charging-factorial-20260921"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/.codex-work/dispatch-cleanup-20260918",
+      "commit": "663ece9c8d5d02e03087a300ecca0605a4ad9292",
+      "branch": "codex/dispatch-cleanup-20260918"
+    },
+    {
+      "path": "/Users/nadan/Documents/projects/demandresponse/.codex-work/week-evidence-20260921",
+      "commit": "9a770f39d6dbf245860a2bdcf5721255b28c371a",
+      "branch": "codex/week-evidence-20260921"
+    }
+  ],
+  "source_hashes": {
+    "outputs/research_register/README.md": "c1dc8c80bd88fbc556da9ace9e400c353b0c0dd87c2d4c33dd701c09c7dacea6",
+    "outputs/research_management_20260921/paper_results/figure1_paired_budget.csv": "52940daf0ddebbb2cdf5a20f7f89b791797e4a68b7311c57198ac5b1536dafa9",
+    "outputs/research_management_20260921/paper_results/experiment_settings.json": "26049608109df05fc5ecd91347c2a10a3c147dddce085090d8c560e7efb291d5",
+    "outputs/research_management_20260921/paper_results/provenance.json": "e636d55630247f20c99be913e3b9c0a7bd8447ecf5d84e1c269239bcff5489ce",
+    "outputs/independent_review_20260922_opus55/followup_response/time_bounds.json": "3efc32ad771514a4b5d251e786a34a8d68401441523674df4d03a218ef8ed1ab",
+    "outputs/independent_review_20260922_opus55/followup_response/time_certificates.json": "ec2f09ba109f63064292921cd3c3c1bdfc83009ffe24870f60ed934c61d86ddf"
+  },
+  "note": "Location/HEAD snapshot only, not an execution-time source snapshot or a clean-working-tree assertion. Follow each experiment manifest to its actual executed revision. No credential-bearing remote configuration collected."
+}
