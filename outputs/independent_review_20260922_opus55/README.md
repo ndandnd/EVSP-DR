@@ -6,6 +6,8 @@ Launched 22 September 2026 using Claude Code 2.1.280 and the user's existing Cla
 
 The brief supplies project goals and evidence locations without a list of expected findings. The reviewer has only Read, Glob and Grep tools, no previous conversation, and no inherited project instructions, plugins or memory. It cannot edit the project or launch jobs. The review is complete. Its original text is preserved; the separate assessment checks its material claims against code and primary evidence.
 
+**Scope clarification:** this was a fresh-session local code/evidence review, not a blind or comprehensive external review. URLs in its brief did not grant web, Drive or SSH access. It read earlier reviewer interpretations during its local inspection, so it was not insulated from prior views. The report explicitly excludes the live Doc/Slides and several campaigns. Its novelty statements were not backed by a literature review. A separate [focused follow-up brief](FOLLOWUP_AUDIT_BRIEF.md) asks a reviewer with broader access to audit these remaining gaps, while disclosing prior involvement. That follow-up has been prepared, not launched.
+
 Session name: **EVSP-DR independent review — Opus 5.5**
 
 Session ID: `701b774a-2ebe-4d6f-93fa-27c55cb9943b`
