@@ -1,0 +1,98 @@
+{
+  "status": "passed",
+  "checks_passed": 21,
+  "checks_total": 21,
+  "checks": [
+    {
+      "check": "exactly two intended Doc replacements",
+      "passed": true
+    },
+    {
+      "check": "Doc table rows unchanged",
+      "passed": true
+    },
+    {
+      "check": "Doc image references and inline data unchanged",
+      "passed": true
+    },
+    {
+      "check": "Doc source links retained",
+      "passed": true
+    },
+    {
+      "check": "42 slides preserved",
+      "passed": true
+    },
+    {
+      "check": "only slides2and28 visible text changed",
+      "passed": true
+    },
+    {
+      "check": "all images identical",
+      "passed": true
+    },
+    {
+      "check": "slide2 previous notes preserved",
+      "passed": true
+    },
+    {
+      "check": "slide2 exact source link in notes",
+      "passed": true
+    },
+    {
+      "check": "slide2 scope in notes",
+      "passed": true
+    },
+    {
+      "check": "slide28 previous notes preserved",
+      "passed": true
+    },
+    {
+      "check": "slide28 exact source link in notes",
+      "passed": true
+    },
+    {
+      "check": "slide28 scope in notes",
+      "passed": true
+    },
+    {
+      "check": "all other notes unchanged",
+      "passed": true
+    },
+    {
+      "check": "all other slide XML unchanged except export GUID",
+      "passed": true
+    },
+    {
+      "check": "all editable tables preserved except export GUID",
+      "passed": true
+    },
+    {
+      "check": "table style definitions unchanged except export GUID",
+      "passed": true
+    },
+    {
+      "check": "35 exact witnesses",
+      "passed": true
+    },
+    {
+      "check": "24 sequential baseline fleet optima",
+      "passed": true
+    },
+    {
+      "check": "6 fresh baseline fleet optima",
+      "passed": true
+    },
+    {
+      "check": "script matches recorded execution",
+      "passed": true
+    }
+  ],
+  "export_hashes": {
+    "doc_before.md": "6bdf63acc96c3d6b98b962dfba07f94aa2066c8592dcb0222ecef5828fd7dd26",
+    "doc_after.md": "84c8c14f255fe3d453f9cd95057dca934f42eacb05ddd5f4bd729b7c1118d955",
+    "slides_before.pptx": "1df1f71f6beb194fb3f28ff61e83124107fcffe57058ae43d9e8983210f2b91b",
+    "slides_after.pptx": "2f6cf85d12f473384abd09b8f745457ee0a42343e74aa0045eb6dc8d30418e01"
+  },
+  "scope": "Current Doc body and slides2/28 only. All seven tab names verified in UI; other tab bodies not re-exported. PDF visual review of slides2/28 passed; Doc review paragraph inspected in UI."
+}

@@ -1,12 +1,14 @@
 # Independent Opus 5.5 review
 
+**Follow-up received and checked, 23 September UTC:** [original follow-up](FOLLOWUP_AUDIT.md) · [manager response and exact certificates](followup_response/README.md). A solver-free check establishes the minimum baseline fleet in all 24 sequential benchmark cases, including C1/C3 k15. Eleven larger endpoint fleet floors also have exact time-only certificates. This corrects the follow-up's proposed 14-bus long-wait test; charging optimality and full GIRO compliance remain separate. No new cluster jobs were submitted.
+
 Launched 22 September 2026 using Claude Code 2.1.280 and the user's existing Claude subscription. The actual assistant-message metadata reports `claude-opus-5-5`; effort is high. No alternative model was substituted.
 
 [Exact brief](REVIEW_PROMPT.md) · [Git snapshot](GIT_SNAPSHOT.txt) · [Launch receipt](launch_receipt.json) · [Observed model](model_receipt.json)
 
 The brief supplies project goals and evidence locations without a list of expected findings. The reviewer has only Read, Glob and Grep tools, no previous conversation, and no inherited project instructions, plugins or memory. It cannot edit the project or launch jobs. The review is complete. Its original text is preserved; the separate assessment checks its material claims against code and primary evidence.
 
-**Scope clarification:** this was a fresh-session local code/evidence review, not a blind or comprehensive external review. URLs in its brief did not grant web, Drive or SSH access. It read earlier reviewer interpretations during its local inspection, so it was not insulated from prior views. The report explicitly excludes the live Doc/Slides and several campaigns. Its novelty statements were not backed by a literature review. A separate [focused follow-up brief](FOLLOWUP_AUDIT_BRIEF.md) asks a reviewer with broader access to audit these remaining gaps, while disclosing prior involvement. That follow-up has been prepared, not launched.
+**Scope clarification:** this was a fresh-session local code/evidence review, not a blind or comprehensive external review. URLs in its brief did not grant web, Drive or SSH access. It read earlier reviewer interpretations during its local inspection, so it was not insulated from prior views. The report explicitly excludes the live Doc/Slides and several campaigns. Its novelty statements were not backed by a literature review. A separate [focused follow-up brief](FOLLOWUP_AUDIT_BRIEF.md) asked a reviewer with broader access to audit these remaining gaps, while disclosing prior involvement. The user has now supplied the follow-up linked above; its claims and recommendations are checked separately.
 
 Session name: **EVSP-DR independent review — Opus 5.5**
 

@@ -1,3 +1,7 @@
+## 23 September UTC: exact fleet certificates and follow-up review
+
+[Checked follow-up, reproducible script and 35 exact certificates](../independent_review_20260922_opus55/followup_response/README.md). All 24 benchmark trip sets have time-and-travel lower bound equal to target: sequential reaches the baseline covering fleet minimum in 24/24; fresh in 6/24. C1/C3 k15 need 15 even without the 57-minute waiting restriction. Eleven larger endpoint floors are also exact time-only bounds; their weighted CG objectives remain uncertified and no matching integer solution is established here. The calculation took 2.520 seconds locally, with source/input hashes and explicit antichain witnesses. It reuses previously audited native upper-bound validation; no full dispatch replay or new cluster submission. Original follow-up preserved. Its proposed 14-bus long-wait test and cap-ablation interpretation require the corrections in the response. Current queue status remains the last collected snapshot below.
+
 ## 22 September: figure explanations and independent Opus review
 
 [Reader’s guide and review record](entries/20260922_figure_explanations_and_opus55.md). Figure results are unchanged. The guide defines pool MIP, graph-build time allowance, C1 incumbent transfer, heuristic upper bounds, route replay, the 512-route cap and packed graph scope. The read-only Opus5.5 review is complete; the original report and checked findings are linked in the register entry. No numerical figure results changed.
