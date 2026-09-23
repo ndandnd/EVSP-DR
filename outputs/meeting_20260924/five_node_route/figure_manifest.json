@@ -1,0 +1,27 @@
+{
+  "source_schedule_sha256": "d6901c13453f7a92ed953aeb518651e083687092de14523551f9bc6a9db766d3",
+  "source_renderer_sha256": "a875290613ee5167d68b2ced6db8cb4dce9230b151a071dae3cee65357678098",
+  "script_sha256": "cbf0321bfd8d865a157a3e9eea686aa2fd6c1d38b6c9dbae928b46ab7d2014cc",
+  "schedules": [
+    "original_13309",
+    "w6_k05_fee0"
+  ],
+  "checks": {
+    "same22ordered_trip_records": true,
+    "charge_counts": [
+      4,
+      7
+    ],
+    "our_route_no_depot_charge": true
+  },
+  "scope": "Historical saved schedules; different physics. No new optimizer/physical validation, no cost saving claim. Graph shows all cross-area movements; local moves remain in archived itinerary. Trip labels are prepared source IDs.",
+  "sources": "outputs/research_followup_20260921/duty13309",
+  "figures": {
+    "13309_time_comparison.svg": "1a905fb9099b56375f1db02fa117063f591ada0785af6948e82fb977fbeae8a4",
+    "13309_time_comparison.pdf": "0345bd66532e5c471a7d96c21cc6b7ce739f320680dc7d8176d98cfade1c3280",
+    "13309_time_comparison.png": "6f8189a834fbae77c547f043fe0523e1bc125ccecf7fba064783afa65bd00c9a",
+    "13309_node_comparison.png": "d7b54f0c1b1d696a2cf37c84693f60e070df815c2b713001cc733566ae5b2cf1",
+    "13309_node_comparison.pdf": "2e9ae22733cb3ff36f2cae5a60a1011400e82987c329730ea33a1c132e1bb524",
+    "13309_node_comparison.svg": "4cca19644074880ea3696ccae021099acfc2b4d6bb119a988902a7a44fda4621"
+  }
+}
