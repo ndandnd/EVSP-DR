@@ -1,0 +1,1542 @@
+{
+  "observed_utc": "2026-09-23T00:01:28.126168+00:00",
+  "checks_passed": 252,
+  "checks_total": 252,
+  "nonfatal_discrepancies": [],
+  "checks": [
+    {
+      "check": "copied hash baseline/jobs.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k33/cache/661665_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k33/cache/661665_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k34/cache/661666_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k34/cache/661666_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k35/cache/661667_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k35/cache/661667_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k36/cache/661746_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k36/cache/661746_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k36/cg/661625_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k36/cg/661625_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k36/cg/661625_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k36/mip/661626_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k37/cache/661747_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k37/cache/661747_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k37/cg/661627_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k37/cg/661627_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k38/cache/661761_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k38/cache/661761_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k39/cache/661762_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k39/cache/661762_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k39/cache/661762_r1/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k40/cache/661791_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w1_k40/cache/661791_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k33/cache/661813_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k33/cache/661813_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k34/cache/661814_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k34/cache/661814_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k35/cache/661833_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k35/cache/661833_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k35/cg/661640_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k35/cg/661640_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k35/cg/661640_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k35/mip/661641_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k35/mip/661641_r0/gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k35/mip/661641_r0/result.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k36/cache/661834_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k36/cache/661834_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k36/cg/661642_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k36/cg/661642_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k36/cg/661642_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k37/cache/661835_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k37/cache/661835_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k38/cache/661836_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k38/cache/661836_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k39/cache/661837_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k39/cache/661837_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k39/cache/661837_r1/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k40/cache/661858_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w2_k40/cache/661858_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k33/cache/661859_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k33/cache/661859_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k34/cache/661882_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k34/cache/661882_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k35/cache/661883_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k35/cache/661883_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k36/cache/661898_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k36/cache/661898_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k36/cg/661678_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k36/cg/661678_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k36/cg/661678_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k36/mip/661679_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k37/cache/661899_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k37/cache/661899_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k37/cg/661680_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k37/cg/661680_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k37/cg/661680_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k38/cache/661900_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w3_k38/cache/661900_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k33/cache/661934_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k33/cache/661934_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k34/cache/661935_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k34/cache/661935_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k35/cache/661936_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k35/cache/661936_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k36/cache/661937_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k36/cache/661937_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k36/cg/661697_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k36/cg/661697_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k36/cg/661697_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k36/mip/661698_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k37/cache/661938_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k37/cache/661938_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k37/cache/661938_r1/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k37/cg/661699_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k37/cg/661699_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k38/cache/661939_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k38/cache/661939_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k38/cache/661939_r1/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k39/cache/661940_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w4_k39/cache/661940_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k33/cache/661941_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k33/cache/661941_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k33/cache/661941_r1/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k34/cache/661942_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k34/cache/661942_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k34/cg/661709_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k34/cg/661709_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k34/cg/661709_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k35/cache/661943_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k35/cache/661943_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k36/cache/661944_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k36/cache/661944_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k37/cache/661945_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k37/cache/661945_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k38/cache/661946_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k38/cache/661946_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k38/cache/661946_r1/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k39/cache/661947_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k39/cache/661947_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k40/cache/661948_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w5_k40/cache/661948_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k33/cache/661949_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k33/cache/661949_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k33/cache/661949_r1/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k34/cache/661950_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k34/cache/661950_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k35/cache/661951_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k35/cache/661951_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k35/cg/661729_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k35/cg/661729_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k35/cg/661729_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k35/mip/661730_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k36/cache/661952_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k36/cache/661952_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k36/cg/661731_r0/cg.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k36/cg/661731_r0/cg.json.gurobi.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k36/cg/661731_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k37/cache/661953_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k37/cache/661953_r1/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k37/cache/661953_r1/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k38/cache/661954_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k38/cache/661954_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k39/cache/661616_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash baseline/cases/w6_k39/cache/661616_r0/network.pkl.manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash strict_cg/manifest.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash strict_cg/STARTED.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash strict_cg/attempts/824877_r0/CG_STARTED.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash strict_cg/attempts/824877_r0/command.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash strict_cg/attempts/824877_r0/execution.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash strict_cg/attempts/824877_r0/license.log",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "copied hash strict_cg/attempts/824877_r0/license_command.json",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "44 graph allocations",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "42complete2running",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "52 genuine dependencies",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661741",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661739",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661736",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661733",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661721",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661719",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661717",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661715",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661713",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661711",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661705",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661703",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661701",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661686",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661684",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661682",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661650",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661648",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661646",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661644",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661633",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661631",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661629",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661742",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661740",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661738",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661735",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661732",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661722",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661720",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661718",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661716",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661714",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661712",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661710",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661706",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661704",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661702",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661700",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661687",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661685",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661683",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661681",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661651",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661649",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661647",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661645",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661643",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661634",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661632",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661630",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "registered predecessor 661628",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "preemptions already recovered",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "no allocation failures",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "no reserved compute01",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k36 LP coverage",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k36 LP objective reconstructed",
+      "passed": true,
+      "required": false
+    },
+    {
+      "check": "w1_k36 route weight reconstructed",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k36 uncertified walllimit",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k36 pin/input identity",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k36 execution gate",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w1_k36 graph reused",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 LP coverage",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 LP objective reconstructed",
+      "passed": true,
+      "required": false
+    },
+    {
+      "check": "w2_k35 route weight reconstructed",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 uncertified walllimit",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 pin/input identity",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 execution gate",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 graph reused",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w3_k36 LP coverage",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w3_k36 LP objective reconstructed",
+      "passed": true,
+      "required": false
+    },
+    {
+      "check": "w3_k36 route weight reconstructed",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w3_k36 uncertified walllimit",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w3_k36 pin/input identity",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w3_k36 execution gate",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w3_k36 graph reused",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k36 LP coverage",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k36 LP objective reconstructed",
+      "passed": true,
+      "required": false
+    },
+    {
+      "check": "w4_k36 route weight reconstructed",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k36 uncertified walllimit",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k36 pin/input identity",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k36 execution gate",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w4_k36 graph reused",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w6_k35 LP coverage",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w6_k35 LP objective reconstructed",
+      "passed": true,
+      "required": false
+    },
+    {
+      "check": "w6_k35 route weight reconstructed",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w6_k35 uncertified walllimit",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w6_k35 pin/input identity",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w6_k35 execution gate",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w6_k35 graph reused",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "five new terminal CGs",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 source CG hash",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 source journal recorded",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 MIP finished",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 MIP clean pin",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 native physical gate",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 pool unaugmented",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 selected coverage",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 fleet count",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 selected route charge reconstructed",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 open proof scope",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 recorded physical scope",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 two log stages",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 fleet log agrees",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "w2_k35 charge log agrees",
+      "passed": true,
+      "required": true
+    },
+    {
+      "check": "one new terminal MIP",
+      "passed": true,
+      "required": true
+    }
+  ],
+  "queue_states": {
+    "PENDING": 106,
+    "RUNNING": 13
+  },
+  "baseline_running": 12,
+  "graphs_running": 2,
+  "graphs_completed": 42,
+  "CG_running": 6,
+  "MIP_running": 4,
+  "solver_dependency_waits": 52,
+  "broken_active_dependencies": 0,
+  "new_actionable_allocation_failures": [],
+  "cumulative_preemptions": 10,
+  "cg_endpoints": [
+    {
+      "case": "w1_k36",
+      "job": "661625",
+      "target_duties": 36,
+      "trips": 871,
+      "iterations": 51,
+      "pricing_certified": false,
+      "stop_reason": "wall_limit",
+      "route_weight": 34.99999999999996,
+      "weighted_RMP": 3501592.518573265,
+      "last_pricing_min_rc": -56.28905703338013,
+      "artificials": 0.0,
+      "graph_original_build_s": 70558.04609274864,
+      "cache_io_s": 151.06191635131836,
+      "reported_cg_wall_s": 14397.407404840924,
+      "wrapper_wall_s": 14559.477200746536,
+      "scheduler_elapsed": "04:02:50",
+      "app_RUSAGE_SELF_peak_mb": 54168.73046875,
+      "slurm_batch_MaxRSS": "300513356K",
+      "git_dirty_reported": true,
+      "saved_positive_objective_delta": 1.4244578778743744e-06,
+      "saved_positive_weight_delta": 1.4239276424632408e-11,
+      "reported_max_bound_violation": 4.143888362760126e-12,
+      "reported_feasibility_tolerance": 1e-06,
+      "result_sha256": "4590bb2de268cd638e12575ff47c38ae1bb98327f87ebb3164998727af5abb4a"
+    },
+    {
+      "case": "w2_k35",
+      "job": "661640",
+      "target_duties": 35,
+      "trips": 841,
+      "iterations": 168,
+      "pricing_certified": false,
+      "stop_reason": "wall_limit",
+      "route_weight": 33.999999999999964,
+      "weighted_RMP": 3401467.085178798,
+      "last_pricing_min_rc": -0.36097726094627625,
+      "artificials": 0.0,
+      "graph_original_build_s": 83681.35081624985,
+      "cache_io_s": 112.53464388847351,
+      "reported_cg_wall_s": 14394.484960933216,
+      "wrapper_wall_s": 14513.28384065628,
+      "scheduler_elapsed": "04:02:16",
+      "app_RUSAGE_SELF_peak_mb": 50699.66796875,
+      "slurm_batch_MaxRSS": "272206436K",
+      "git_dirty_reported": true,
+      "saved_positive_objective_delta": 3.1944364309310913e-07,
+      "saved_positive_weight_delta": 3.197442310920451e-12,
+      "reported_max_bound_violation": 5.622100007762754e-13,
+      "reported_feasibility_tolerance": 1e-06,
+      "result_sha256": "da1e8b2cf2b435d520a5028861d19791fa04546dbdb6452b17ec49a0b94fd6f0"
+    },
+    {
+      "case": "w3_k36",
+      "job": "661678",
+      "target_duties": 36,
+      "trips": 851,
+      "iterations": 222,
+      "pricing_certified": false,
+      "stop_reason": "wall_limit",
+      "route_weight": 35.99999999999858,
+      "weighted_RMP": 3601490.549934656,
+      "last_pricing_min_rc": -0.0544192235656471,
+      "artificials": 0.0,
+      "graph_original_build_s": 61890.31452584267,
+      "cache_io_s": 114.09360551834106,
+      "reported_cg_wall_s": 14380.807086728513,
+      "wrapper_wall_s": 14501.20751452446,
+      "scheduler_elapsed": "04:01:50",
+      "app_RUSAGE_SELF_peak_mb": 51531.875,
+      "slurm_batch_MaxRSS": "272524324K",
+      "git_dirty_reported": true,
+      "saved_positive_objective_delta": 9.5367431640625e-07,
+      "saved_positive_weight_delta": 9.528378086542943e-12,
+      "reported_max_bound_violation": 9.617445728693497e-13,
+      "reported_feasibility_tolerance": 1e-06,
+      "result_sha256": "f29277df9a737ce813909e613b3fd18ac00bb4b636dd5757f039934a9622048f"
+    },
+    {
+      "case": "w4_k36",
+      "job": "661697",
+      "target_duties": 36,
+      "trips": 853,
+      "iterations": 113,
+      "pricing_certified": false,
+      "stop_reason": "wall_limit",
+      "route_weight": 35.000000000000746,
+      "weighted_RMP": 3501516.270128513,
+      "last_pricing_min_rc": -0.4659917465287977,
+      "artificials": 0.0,
+      "graph_original_build_s": 40566.177894830704,
+      "cache_io_s": 143.19278001785278,
+      "reported_cg_wall_s": 14371.734302281402,
+      "wrapper_wall_s": 14681.293460607529,
+      "scheduler_elapsed": "04:04:54",
+      "app_RUSAGE_SELF_peak_mb": 51838.45703125,
+      "slurm_batch_MaxRSS": "283864452K",
+      "git_dirty_reported": true,
+      "saved_positive_objective_delta": 6.291083991527557e-07,
+      "saved_positive_weight_delta": 6.281197784119286e-12,
+      "reported_max_bound_violation": 8.480022239965024e-13,
+      "reported_feasibility_tolerance": 1e-06,
+      "result_sha256": "95c824a1d93cc4451a9ce477f63aa43a83fafb09f501dd635d22a7f7bcb8bd64"
+    },
+    {
+      "case": "w6_k35",
+      "job": "661729",
+      "target_duties": 35,
+      "trips": 831,
+      "iterations": 130,
+      "pricing_certified": false,
+      "stop_reason": "wall_limit",
+      "route_weight": 34.00000000000025,
+      "weighted_RMP": 3401482.521646823,
+      "last_pricing_min_rc": -0.43306350991165843,
+      "artificials": 0.0,
+      "graph_original_build_s": 30999.746131181717,
+      "cache_io_s": 134.33646941184998,
+      "reported_cg_wall_s": 14395.519919466227,
+      "wrapper_wall_s": 14645.977278709412,
+      "scheduler_elapsed": "04:04:19",
+      "app_RUSAGE_SELF_peak_mb": 49148.8671875,
+      "slurm_batch_MaxRSS": "269327012K",
+      "git_dirty_reported": true,
+      "saved_positive_objective_delta": 5.150213837623596e-07,
+      "saved_positive_weight_delta": 5.144329406903125e-12,
+      "reported_max_bound_violation": 5.084682674905139e-13,
+      "reported_feasibility_tolerance": 1e-06,
+      "result_sha256": "fc4637b455876f36ef67e9a500cb312637f98dcacc8206d27caacee01bb98376"
+    }
+  ],
+  "mip_endpoints": [
+    {
+      "case": "w2_k35",
+      "job": "661641",
+      "target_duties": 35,
+      "trips": 841,
+      "fleet": 37,
+      "finite_pool_fleet_bound": 34.00000000000008,
+      "fleet_proven": false,
+      "target_attained": false,
+      "stage1_status": "TIME_LIMIT",
+      "stage2_status": "TIME_LIMIT",
+      "pool_columns": 237336,
+      "charging_cost": 2490.9839999997057,
+      "charging_bound": 1367.3076241929978,
+      "stage2_solver_variable_objective": 2490.983999999866,
+      "selected_vs_solver_charge_delta": -1.6007106751203537e-10,
+      "gurobi_stage1_wall_s": 1801.161067338,
+      "gurobi_stage2_wall_s": 1786.5111325470007,
+      "gurobi_total_wall_s": 3587.6721998850007,
+      "native_stage1_runtime_s": 1813.8065276145935,
+      "reported_runtime_s": 3615.7281289100647,
+      "physical_pool_preparation_wall_s": 391.9033971099998,
+      "prepublication_wall_s": 4012.321180646999,
+      "wrapper_wall_s": 4036.116135597229,
+      "scheduler_elapsed": "01:07:36",
+      "slurm_batch_MaxRSS": "8198720K",
+      "overcovered_trips": 172,
+      "extra_trip_assignments": 226,
+      "native_selected_route_replay": true,
+      "new_independent_physical_simulation": false,
+      "duplicate_cleanup_validated": false,
+      "shared_capacity_validated": false,
+      "result_sha256": "75087ab6b869999d588cf137b09a19587f0e88071f141edbbbf9bfd26713160b"
+    }
+  ],
+  "interim_CG": [
+    {
+      "case": "w1_k37",
+      "job": "661627",
+      "iterations": 0,
+      "stop_reason": "initializing",
+      "certified": false,
+      "final": null
+    },
+    {
+      "case": "w2_k36",
+      "job": "661642",
+      "iterations": 24,
+      "stop_reason": "running",
+      "certified": false,
+      "final": {
+        "iter": 24,
+        "attempt_iter": 24,
+        "lp_obj": 3501560.7113696043,
+        "route_weight": 35.000000000001066,
+        "artificials": 0.0,
+        "min_rc": -90.3528349491169,
+        "max_row_violation": 6.863398738232718e-13,
+        "max_bound_violation": 5.171141292947823e-13
+      }
+    },
+    {
+      "case": "w3_k37",
+      "job": "661680",
+      "iterations": 0,
+      "stop_reason": "initializing",
+      "certified": false,
+      "final": null
+    },
+    {
+      "case": "w4_k37",
+      "job": "661699",
+      "iterations": 0,
+      "stop_reason": "initializing",
+      "certified": false,
+      "final": null
+    },
+    {
+      "case": "w5_k34",
+      "job": "661709",
+      "iterations": 49,
+      "stop_reason": "running",
+      "certified": false,
+      "final": {
+        "iter": 49,
+        "attempt_iter": 49,
+        "lp_obj": 3301451.711700059,
+        "route_weight": 33.000000000000085,
+        "artificials": 0.0,
+        "min_rc": -35.423229980957814,
+        "max_row_violation": 4.2088554863539684e-13,
+        "max_bound_violation": 5.592193375036913e-13
+      }
+    },
+    {
+      "case": "w6_k36",
+      "job": "661731",
+      "iterations": 0,
+      "stop_reason": "initializing",
+      "certified": false,
+      "final": null
+    }
+  ],
+  "registered_resources": {
+    "cache": {
+      "cpus": 2,
+      "mem": "96G",
+      "wall": "37:00:00"
+    },
+    "cg": {
+      "cpus": 8,
+      "mem": "96G",
+      "wall": "05:00:00"
+    },
+    "mip": {
+      "cpus": 8,
+      "mem": "24G",
+      "wall": "02:00:00"
+    }
+  },
+  "prior_source_references": [
+    {
+      "case": "w2_k35",
+      "source_CG_audit_file": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260922/monitor_20260922T235958Z/operations/baseline/cases/w2_k35/cg/661640_r0/cg.json",
+      "source_CG_sha256": "da1e8b2cf2b435d520a5028861d19791fa04546dbdb6452b17ec49a0b94fd6f0",
+      "reused_previous_collection": false
+    }
+  ]
+}

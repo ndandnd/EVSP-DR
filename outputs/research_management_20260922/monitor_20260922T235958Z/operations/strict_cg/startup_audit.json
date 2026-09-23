@@ -1,0 +1,94 @@
+{
+  "status": "passed",
+  "checks_passed": 15,
+  "checks_total": 15,
+  "checks": [
+    {
+      "check": "manifest exact approved bytes",
+      "passed": true
+    },
+    {
+      "check": "worker execution pin matches approved source",
+      "passed": true
+    },
+    {
+      "check": "execution plan hash",
+      "passed": true
+    },
+    {
+      "check": "job and unique attempt",
+      "passed": true
+    },
+    {
+      "check": "model pin",
+      "passed": true
+    },
+    {
+      "check": "root exclusive start agrees",
+      "passed": true
+    },
+    {
+      "check": "CG started receipt",
+      "passed": true
+    },
+    {
+      "check": "license log digest",
+      "passed": true
+    },
+    {
+      "check": "native Gurobi license probe optimal",
+      "passed": true
+    },
+    {
+      "check": "exact approved native command",
+      "passed": true
+    },
+    {
+      "check": "no old resume",
+      "passed": true
+    },
+    {
+      "check": "no graph rebuild or MIP",
+      "passed": true
+    },
+    {
+      "check": "scheduler running native8CPU16G",
+      "passed": true
+    },
+    {
+      "check": "no terminal or failure receipt",
+      "passed": true
+    },
+    {
+      "check": "native restricted master progressing",
+      "passed": true
+    }
+  ],
+  "observed_utc": "2026-09-23T00:01:28.126168+00:00",
+  "scheduler_state": "RUNNING",
+  "elapsed": "01:39:24",
+  "node": "snavely-cpu-01",
+  "restart": 0,
+  "manifest_sha256": "206fafab7e514ef9e8f1bee94db5a3cde5767bc9edf7a01a027419fcb96b3c37",
+  "native_license": {
+    "license_path": "/share/apps/software/gurobi/gurobi.lic",
+    "solver": "gurobi",
+    "status": "OPTIMAL",
+    "version": "12.0.3"
+  },
+  "guarded_native_preflight_complete": true,
+  "preflight_scope": "CG_STARTED is written only after native source HEAD/clean/all253files, inputs, lineage, full cache hash and license checks pass in the hash-matched worker. This local audit does not rehash remote model/cache bytes.",
+  "last_logged_restricted_master": {
+    "rows": 331,
+    "columns": 9611,
+    "nonzeros": 280080,
+    "weighted_objective_printed": "1.100468132e+06"
+  },
+  "cg_endpoint": null,
+  "pricing_certificate": null,
+  "route_weight": null,
+  "fleet_result": null,
+  "shared_capacity_validation": null,
+  "peak_memory": null,
+  "scope": "Interim startup/log evidence only; no pool download or scientific endpoint; no extra SSH"
+}

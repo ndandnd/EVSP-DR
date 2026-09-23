@@ -1,0 +1,45 @@
+{
+  "original_dive_results": [
+    {
+      "case": "c1_k08",
+      "path": "outputs/week_20260921/evidence/pilot/c1_k08/treatment/586633_r0/timing.json",
+      "sha256": "f8196cfdb256c8204815100bea9084d54a734d69589ffad15817334b69ac1148",
+      "dive_stop_reason": "integer_solution",
+      "dive_fleet": 8,
+      "total_stage_s": 3692
+    },
+    {
+      "case": "c3_k08",
+      "path": "outputs/week_20260921/evidence/pilot/c3_k08/treatment/586636_r0/timing.json",
+      "sha256": "e43e0bf1edcfb1e05f4937d3cb16d91f26cfcddf815dcbbacc90ce3446c82723",
+      "dive_stop_reason": "integer_solution",
+      "dive_fleet": 8,
+      "total_stage_s": 1207
+    },
+    {
+      "case": "c4_k08",
+      "path": "outputs/week_20260921/evidence/pilot/c4_k08/treatment/586639_r0/timing.json",
+      "sha256": "d887829690760d9b34254655177fe82423de8255ef29c205ec437fb6babf0e5f",
+      "dive_stop_reason": "integer_solution",
+      "dive_fleet": 8,
+      "total_stage_s": 2372
+    },
+    {
+      "case": "c5_k08",
+      "path": "outputs/week_20260921/evidence/pilot/c5_k08/treatment/586642_r0/timing.json",
+      "sha256": "2e6f4038fe059517748ab823a47471525dde705dc0fbd870717241727be37481",
+      "dive_stop_reason": "integer_solution",
+      "dive_fleet": 8,
+      "total_stage_s": 773
+    }
+  ],
+  "figure1": {
+    "case_count": 24,
+    "fresh_allowance_fraction_min": 0.027673400781092247,
+    "fresh_allowance_fraction_max": 0.5616376504059573,
+    "sequential_fleet_hits": 24,
+    "fresh_fleet_hits": 6,
+    "source": "outputs/research_management_20260921/paper_results/figure1_paired_budget.csv",
+    "sha256": "52940daf0ddebbb2cdf5a20f7f89b791797e4a68b7311c57198ac5b1536dafa9"
+  }
+}

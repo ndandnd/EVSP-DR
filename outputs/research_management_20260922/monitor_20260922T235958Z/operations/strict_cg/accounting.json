@@ -1,0 +1,86 @@
+{
+  "observed_utc": "2026-09-23T00:01:28.126168+00:00",
+  "rows": [
+    [
+      "824877",
+      "strict_k19_cached_cg",
+      "RUNNING",
+      "01:39:24",
+      "",
+      "16G",
+      "0:0",
+      "snavely-cpu-01",
+      "2026-09-22T18:22:05",
+      "Unknown",
+      "8"
+    ],
+    [
+      "824877.batch",
+      "batch",
+      "RUNNING",
+      "01:39:24",
+      "",
+      "",
+      "0:0",
+      "snavely-cpu-01",
+      "2026-09-22T18:22:05",
+      "Unknown",
+      "8"
+    ],
+    [
+      "824877.extern",
+      "extern",
+      "RUNNING",
+      "01:39:24",
+      "",
+      "",
+      "0:0",
+      "snavely-cpu-01",
+      "2026-09-22T18:22:05",
+      "Unknown",
+      "8"
+    ]
+  ],
+  "artifact_metadata": [
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214/attempts/824877_r0/CG_STARTED.json",
+      "bytes": 521,
+      "modified_unix": 1790115791.1426337
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214/attempts/824877_r0/cg.log",
+      "bytes": 726368,
+      "modified_unix": 1790121665.1522238
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214/attempts/824877_r0/command.json",
+      "bytes": 1765,
+      "modified_unix": 1790115786.0014727
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214/attempts/824877_r0/execution.json",
+      "bytes": 430,
+      "modified_unix": 1790115735.1148632
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214/attempts/824877_r0/license.log",
+      "bytes": 273,
+      "modified_unix": 1790115791.0686314
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214/attempts/824877_r0/license_command.json",
+      "bytes": 150,
+      "modified_unix": 1790115786.0154731
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214/attempts/824877_r0/pool.jsonl",
+      "bytes": 36169745,
+      "modified_unix": 1790121693.790166
+    },
+    {
+      "remote": "/home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214/attempts/824877_r0/result.json.gurobi.log",
+      "bytes": 726214,
+      "modified_unix": 1790121665.1522238
+    }
+  ]
+}

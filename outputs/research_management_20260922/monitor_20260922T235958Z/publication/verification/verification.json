@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "reviewed_utc": "2026-09-23T00:20:24.258025+00:00",
+  "automated_checks_passed": 38,
+  "automated_checks_total": 38,
+  "doc_verification_sha256": "15cf13080897c95e24523001314614cce7cdd24a6c3779ef5495ef349d0ec632",
+  "slides_verification_sha256": "355882b8538f3e2c04e7a46bdc522eb5be4e614d61b133ea3ee6d86d7119a7fd",
+  "visual_review": {
+    "status": "passed",
+    "doc_pages": [
+      2,
+      3,
+      7
+    ],
+    "slides": [
+      10,
+      42
+    ],
+    "findings": "No clipped or split words, no overlap, native k33table unchanged, timestamp only bold, strict job identity/resources restored and readable."
+  },
+  "initial_findings_resolved": [
+    "Queue paragraph was wholly bold; final timestamp alone is bold.",
+    "Strict recovery job identity/resources were removed during link insertion; restored before current running status.",
+    "Parent repaired notes10/42; verifier confirms full original note bodies remain exact prefixes before appended updates."
+  ],
+  "scope": "Final local exports only; no live edits or additional SSH; predicates unchanged between initial failure and final successful rerun."
+}

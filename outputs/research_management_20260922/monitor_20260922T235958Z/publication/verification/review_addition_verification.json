@@ -1,0 +1,113 @@
+{
+  "status": "passed",
+  "checks_passed": 21,
+  "checks_total": 21,
+  "checks": [
+    {
+      "check": "exactly two designated added paragraphs",
+      "passed": true
+    },
+    {
+      "check": "remove two additions gives exact previous final Doc bytes",
+      "passed": true
+    },
+    {
+      "check": "figure explanation accurately scoped",
+      "passed": true
+    },
+    {
+      "check": "review restriction and unmeasured impact exact",
+      "passed": true
+    },
+    {
+      "check": "no numerical or certificate reclassification",
+      "passed": true
+    },
+    {
+      "check": "exact two source links",
+      "passed": true
+    },
+    {
+      "check": "figure guide supports pool and512 explanation",
+      "passed": true
+    },
+    {
+      "check": "assessment supports exact restriction scope",
+      "passed": true
+    },
+    {
+      "check": "longwait audit defines gap precisely",
+      "passed": true
+    },
+    {
+      "check": "original38checkstage preserved",
+      "passed": true
+    },
+    {
+      "check": "retained Doc matches originally audited bytes",
+      "passed": true
+    },
+    {
+      "check": "retained deck matches originally audited bytes",
+      "passed": true
+    },
+    {
+      "check": "all42visible slides unchanged",
+      "passed": true
+    },
+    {
+      "check": "table style definitions unchanged",
+      "passed": true
+    },
+    {
+      "check": "all slide image references unchanged",
+      "passed": true
+    },
+    {
+      "check": "only notes42change",
+      "passed": true
+    },
+    {
+      "check": "entire previous notes42 preserved as prefix",
+      "passed": true
+    },
+    {
+      "check": "notes appendix restriction qualification and sources",
+      "passed": true
+    },
+    {
+      "check": "notes appendix preserves numerical certificate scope",
+      "passed": true
+    },
+    {
+      "check": "visible Slides PDF unchanged from38checkstage",
+      "passed": true
+    },
+    {
+      "check": "new paragraphs present in finalPDF",
+      "passed": true
+    }
+  ],
+  "final_export_sha256": {
+    "current_after.md": "6bdf63acc96c3d6b98b962dfba07f94aa2066c8592dcb0222ecef5828fd7dd26",
+    "current_after.pdf": "8655374545caafecd37baeff038530339a5182c1d0be89af63c9a187ce5c9274",
+    "slides_after.pptx": "9c31c53fcf72db7c2ca56ef77ffce7d1ef0245718e81be18f6d304278ca18619",
+    "slides_after.pdf": "f463427734f4ab9070d42f4d040e5ae56443d428d88e49c801fc11c4d3ec12c0"
+  },
+  "original_stage_receipt_sha256": "34a56c5c44f59dccdaa03f86d9f66cc7e0e631bff7df516ac5774945c3203b05",
+  "source_sha256": {
+    "outputs/research_management_20260922/figure_explanations/README.md": "59feb904a5b6353e3b25c9e90f175fe61b49f60621b7a6600278376b37217b8e",
+    "outputs/independent_review_20260922_opus55/ASSESSMENT.md": "d7ef195c5df8b14cc2d556b493209e98620507f324e33fe662b9a6df81119af7",
+    "outputs/independent_review_20260922_opus55/audit_long_wait.md": "ad112389eea4ff71780bded6e3122aadf00e39f991085025a8e668af4bd28c60"
+  },
+  "doc_pdf_pages": 11,
+  "scope": "Two Doc paragraphs plus slide42notes appendix only; original38checkstage unchanged; no UI or cluster calls",
+  "visual_review": {
+    "status": "passed",
+    "doc_pages": [
+      2,
+      3
+    ],
+    "findings": "Both linked paragraphs are readable and intact; no overlap or clipping. The unchanged k33 table now continues between complete rows across pages2\u20133; no cell content is lost. All42 visible slides remain unchanged from the prior verified stage."
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "status": "passed",
+  "checks_passed": 19,
+  "checks_total": 19,
+  "checks": [
+    {
+      "check": "42slides same membership",
+      "passed": true
+    },
+    {
+      "check": "only slides10/42 semantic edits",
+      "passed": true
+    },
+    {
+      "check": "table definitions preserved modulo export GUID",
+      "passed": true
+    },
+    {
+      "check": "all embedded image bytes preserved",
+      "passed": true
+    },
+    {
+      "check": "image shape references preserved",
+      "passed": true
+    },
+    {
+      "check": "k33 native editable table unchanged",
+      "passed": true
+    },
+    {
+      "check": "only notes10/42 changed",
+      "passed": true
+    },
+    {
+      "check": "notes10 preserve entire old body before append",
+      "passed": true
+    },
+    {
+      "check": "notes10 have new evidence reference",
+      "passed": true
+    },
+    {
+      "check": "notes42 preserve entire old body before append",
+      "passed": true
+    },
+    {
+      "check": "notes42 have new evidence reference",
+      "passed": true
+    },
+    {
+      "check": "slide10 running scope with no final result",
+      "passed": true
+    },
+    {
+      "check": "slide10 historical physics and graph evidence retained",
+      "passed": true
+    },
+    {
+      "check": "slide42 caption newdate unchanged proof limits",
+      "passed": true
+    },
+    {
+      "check": "notes10 correct currentjob and startup",
+      "passed": true
+    },
+    {
+      "check": "notes42 latest fleet and separate scopes",
+      "passed": true
+    },
+    {
+      "check": "42PDFpages",
+      "passed": true
+    },
+    {
+      "check": "PDF10newrunningtext",
+      "passed": true
+    },
+    {
+      "check": "PDF42newtimestamp",
+      "passed": true
+    }
+  ],
+  "export_hashes": {
+    "slides_before.pptx": "b73b12df2437d822a32230c1f1bf8949f3dde68334ad0816e295be762bb1842e",
+    "slides_after.pptx": "170c356de731c842218977bc5be93d6ccb72035f83616b49b2b5265ea5652d08",
+    "slides_after.pdf": "f463427734f4ab9070d42f4d040e5ae56443d428d88e49c801fc11c4d3ec12c0"
+  },
+  "normalization": "Only generated GUIDs; actual table definitions and per-slide image references checked separately",
+  "scope": "Final local export check; initial notes draft excluded; no live edits"
+}

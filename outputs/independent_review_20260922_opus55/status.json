@@ -1,5 +1,5 @@
 {
-  "checked_utc": "2026-09-22T23:32:52.635933+00:00",
+  "checked_utc": "2026-09-23T00:00:43.216469+00:00",
   "session": [
     {
       "pid": 4574,
@@ -9,10 +9,11 @@
       "startedAt": 1790119714496,
       "sessionId": "701b774a-2ebe-4d6f-93fa-27c55cb9943b",
       "name": "EVSP-DR independent review \u2014 Opus 5.5",
-      "status": "busy",
+      "status": "idle",
       "state": "working"
     }
   ],
-  "report_exported": false,
-  "note": "Review still running, unavailable, or needs inspection before export."
+  "report_exported": true,
+  "model": "claude-opus-5-5",
+  "sha256": "ad5c6a18f1d0399722fb91772857c0b7d0f62a10f0c609098208b1b3971727c2"
 }

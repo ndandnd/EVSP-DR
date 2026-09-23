@@ -1,0 +1,42 @@
+{
+  "case_id": "w1_k36",
+  "mode": "mip",
+  "attempt": "661626_r0",
+  "started_epoch": 1790120778.7175655,
+  "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "manifest_sha256": "e3d7164834a388b69def78840acf6038129d9aa8dddc18f9db3bcfe6e575046e",
+  "input_sha256": "b48b772ed231cf2ac7752390f7e4ccda2225203a355fc7aa7ab7bef9ca3678ae",
+  "resource_request": {
+    "cpus": 8,
+    "mem": "24G",
+    "wall": "02:00:00"
+  },
+  "source_status": "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k36/cg.json",
+  "source_status_sha256": "4590bb2de268cd638e12575ff47c38ae1bb98327f87ebb3164998727af5abb4a",
+  "source_journal_sha256": "195523b4a0175dbfeb3ed2e0bec1a6e798ee0883df57fa7dacda29b27a1ca634",
+  "argv": [
+    "/home/nc437/evsp_env/bin/python",
+    "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb/src/run_exact_pool_mip.py",
+    "--result",
+    "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k36/cg.json",
+    "--data-dir",
+    "/home/nc437/ladder-lite/chain_extension_33_40_20260921/code/data",
+    "--reference-data-dir",
+    "/home/nc437/ladder-lite/chain_extension_33_40_20260921/code/data",
+    "--cover",
+    "--two-stage",
+    "--timelimit",
+    "3600",
+    "--stage1-timelimit",
+    "1800",
+    "--threads",
+    "8",
+    "--mipgap",
+    "0.0001",
+    "--gurobi-log",
+    "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k36/mip/661626_r0/gurobi.log",
+    "--out",
+    "/home/nc437/ladder-lite/chain_extension_33_40_20260921/cases/w1_k36/mip/661626_r0/result.json"
+  ],
+  "status": "running"
+}

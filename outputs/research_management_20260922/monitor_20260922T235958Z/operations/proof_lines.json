@@ -1,0 +1,40 @@
+[
+  {
+    "case": "w2_k35",
+    "log": "baseline/cases/w2_k35/mip/661641_r0/gurobi.log",
+    "lines": [
+      {
+        "line": 19,
+        "text": "Optimize a model with 841 rows, 237336 columns and 6374199 nonzeros"
+      },
+      {
+        "line": 88,
+        "text": "Explored 1 nodes (102989 simplex iterations) in 1800.19 seconds (1509.78 work units)"
+      },
+      {
+        "line": 93,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 94,
+        "text": "Best objective 3.700000000000e+01, best bound 3.400000000000e+01, gap 8.1081%"
+      },
+      {
+        "line": 107,
+        "text": "Optimize a model with 842 rows, 237336 columns and 6611535 nonzeros"
+      },
+      {
+        "line": 189,
+        "text": "Explored 1 nodes (82380 simplex iterations) in 1786.31 seconds (1365.64 work units)"
+      },
+      {
+        "line": 194,
+        "text": "Time limit reached"
+      },
+      {
+        "line": 195,
+        "text": "Best objective 2.490984000000e+03, best bound 1.367307624193e+03, gap 45.1097%"
+      }
+    ]
+  }
+]

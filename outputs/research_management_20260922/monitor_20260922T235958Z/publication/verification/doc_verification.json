@@ -1,0 +1,98 @@
+{
+  "status": "passed",
+  "checks_passed": 19,
+  "checks_total": 19,
+  "checks": [
+    {
+      "check": "source252baseline checks",
+      "passed": true
+    },
+    {
+      "check": "source15startup checks",
+      "passed": true
+    },
+    {
+      "check": "all other Doc text exact",
+      "passed": true
+    },
+    {
+      "check": "all prior links preserved",
+      "passed": true
+    },
+    {
+      "check": "all native table markdown rows preserved",
+      "passed": true
+    },
+    {
+      "check": "source evidence link once",
+      "passed": true
+    },
+    {
+      "check": "only timestamp bold not whole status",
+      "passed": true
+    },
+    {
+      "check": "queue counts exact",
+      "passed": true
+    },
+    {
+      "check": "C2k35 new fleet bound37/34",
+      "passed": true
+    },
+    {
+      "check": "k36 CG weights scoped uncertified",
+      "passed": true
+    },
+    {
+      "check": "C6MIP pending and k35CG scope",
+      "passed": true
+    },
+    {
+      "check": "historical numerical disclosure retained",
+      "passed": true
+    },
+    {
+      "check": "strict job identity and request retained",
+      "passed": true
+    },
+    {
+      "check": "strict running native checks",
+      "passed": true
+    },
+    {
+      "check": "strict no endpoint or memory claim",
+      "passed": true
+    },
+    {
+      "check": "not dangling separated pronoun",
+      "passed": true
+    },
+    {
+      "check": "physical limits preserved",
+      "passed": true
+    },
+    {
+      "check": "PDF queue and strict identity present",
+      "passed": true
+    },
+    {
+      "check": "PDF retains11pages",
+      "passed": true
+    }
+  ],
+  "hashes": {
+    "current_before.md": "adcaff4fc256f0f2b8790d6249adb35ae625e2f05d9334acdc3f019d75c33335",
+    "current_after.md": "beffa56d049745d165e12d2f4d5964da560e4bc933a6a1a87fb6dbc32b5b55ca",
+    "current_after.pdf": "707151246efb047b9d3255800d1da48718dd03385e423f745a99b5ca48ec0aea"
+  },
+  "source_hashes": {
+    "operations": "5ba809a44acd073a1413aa0f934911520cbea234643fbc106e775d0364566f84",
+    "strict_startup": "dd4be3d36b320f5fe59ebec28c26ab505035a7883625a0a59079807f75d302ce"
+  },
+  "affected_pdf_pages": [
+    2,
+    3,
+    7
+  ],
+  "scope": "Local read-only exported Doc QA; no live edits"
+}

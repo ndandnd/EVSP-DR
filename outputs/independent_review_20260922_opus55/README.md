@@ -4,7 +4,7 @@ Launched 22 September 2026 using Claude Code 2.1.280 and the user's existing Cla
 
 [Exact brief](REVIEW_PROMPT.md) · [Git snapshot](GIT_SNAPSHOT.txt) · [Launch receipt](launch_receipt.json) · [Observed model](model_receipt.json)
 
-The brief supplies project goals and evidence locations without a list of expected findings. The reviewer has only Read, Glob and Grep tools, no previous conversation, and no inherited project instructions, plugins or memory. It cannot edit the project or launch jobs. The report will be an independent opinion until its findings are checked against primary evidence.
+The brief supplies project goals and evidence locations without a list of expected findings. The reviewer has only Read, Glob and Grep tools, no previous conversation, and no inherited project instructions, plugins or memory. It cannot edit the project or launch jobs. The review is complete. Its original text is preserved; the separate assessment checks its material claims against code and primary evidence.
 
 Session name: **EVSP-DR independent review — Opus 5.5**
 
@@ -12,4 +12,6 @@ Session ID: `701b774a-2ebe-4d6f-93fa-27c55cb9943b`
 
 Open it from Terminal with `claude attach 701b774a`. `claude agents` shows its status. It is a Claude Code session, not a Codex sidebar task or a Claude web chat.
 
-Run `python3 collect_review.py` from this directory to collect a finished response. While the reviewer is busy, that command records status without exporting a partial report. The existing four-hour research check can collect the result; no extra recurring monitor is needed.
+[Original review](REVIEW.md) · [Checked findings and corrections](ASSESSMENT.md) · [Long-wait graph audit](audit_long_wait.md) · [Fleet-bound audit](audit_bounds.md). The collector exported the final response and recorded its hash in status.json. No further polling of this completed review is needed.
+
+The strongest new verified modeling question is the restriction on direct trip connections beyond 57 minutes and the lack of zero-charge station bridges at the top SOC grid level. Its production fleet/cost impact remains unmeasured. Several review statements confused intermediate and final results or missed later experiments; consult the assessment before quoting them. No solver or new cluster job was run for these audits.

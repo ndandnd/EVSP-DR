@@ -1,0 +1,63 @@
+{
+  "status": "prepared_for_parent_publication",
+  "observed_utc": "2026-09-23T00:01:28.126168+00:00",
+  "source_operations": "../operations/verified_summary.json",
+  "source_startup": "../operations/strict_cg/startup_audit.json",
+  "prior_doc_export_sha256": "adcaff4fc256f0f2b8790d6249adb35ae625e2f05d9334acdc3f019d75c33335",
+  "prior_slides_export_sha256": "d0c9d678c93fa39bf3bfc08f90838902fd96f2068dd6e869dbda22f1bac2ceee",
+  "substitutions": [
+    {
+      "artifact": "Doc",
+      "scope": "existing extension status paragraph",
+      "old": "**22 September, 17:31 EDT:** 41/44 graphs are ready; nine baseline jobs run (three graphs and six CGs). All 62 pending solver dependencies are genuine. No failed allocation or broken dependency needs recovery. All six k33 MIPs have finished.",
+      "new": "**22 September, 20:01 EDT:** 42/44 graphs are ready; 13 jobs run (two baseline graphs, six baseline CGs, four baseline MIPs and the strict cached CG). All 52 pending baseline dependencies are genuine. No failed allocation or broken dependency needs recovery. The six k33 MIP results below are unchanged."
+    },
+    {
+      "artifact": "Doc",
+      "scope": "existing larger-endpoint paragraph",
+      "old": "Latest larger endpoints: at k35, C1/C3/C4 found 42/36/42 buses, with pool bounds 34/35/34. At k34, C2/C6 found 36/40 buses, both with pool bound 33\\. All these CGs stopped at four hours without certificates, and both MIP stages timed out. C2 k33’s saved positive-only LP support differs from its scalar objective by 0.038 cost units; the audit retains this numerical discrepancy.",
+      "new": "Latest larger endpoints: at k35, C1/C2/C3/C4 found 42/37/36/42 buses, with pool bounds 34/34/35/34. C6 k34 remains 40 buses with bound 33; its k35 MIP is running. New C1/C3/C4 k36 CGs stopped at four hours with fractional route weights 35/36/35, without pricing certificates; their MIPs are running. C2/C6 k35 CGs also stopped without certificates, each with route weight 34. All completed MIPs remain open after both stage limits. C2 k33’s saved positive-only LP support differs from its scalar objective by 0.038 cost units; the audit retains this numerical discrepancy."
+    },
+    {
+      "artifact": "Doc",
+      "scope": "strict recovery status sentence only",
+      "old": "Recovery job 824877 was submitted at 17:43 EDT with 8 CPUs, 16 GiB and a five-hour allocation.",
+      "new": "Recovery job 824877 was submitted at 17:43 EDT with 8 CPUs, 16 GiB and a five-hour allocation. At 20:01 EDT it was running, restart 0, after the native source/input/cache checks and Gurobi license probe passed. Restricted-master solves are progressing; there is no final CG result or pricing certificate yet. Full-run memory remains unmeasured."
+    },
+    {
+      "artifact": "Slides",
+      "slide": 10,
+      "scope": "last visible body paragraph only",
+      "old": "Next: four hours of cached CG. Duplicates and charger conflicts remain unchecked.",
+      "new": "Now: cached CG is running after native license checks. No final result yet."
+    },
+    {
+      "artifact": "Slides",
+      "slide": 42,
+      "scope": "existing caption only; native table and title unchanged",
+      "old": "All six CGs hit 4 h; fractional weights are not certified LP lower bounds. All MIPs hit both time limits. Duplicate cleanup and shared capacity remain unvalidated. Graph builds: 9.56–15.10 h separately; prior CG excluded. Baseline 240/240. Snapshot: 22 Sep, 17:31 EDT. New k34–35 results and full logs are in notes.",
+      "new": "All six CGs hit 4 h; fractional weights are not certified LP lower bounds. All MIPs hit both time limits. Duplicate cleanup and shared capacity remain unvalidated. Graph builds: 9.56–15.10 h separately; prior CG excluded. Baseline 240/240. Queue update: 22 Sep, 20:01 EDT. New k34–36 results and full logs are in notes."
+    }
+  ],
+  "append_operations": [
+    {
+      "artifact": "Doc",
+      "scope": "one linked sentence after existing current operations evidence link",
+      "text": "[22 September, 20:01 EDT: five new CG endpoints, C2 k35 MIP37/bound34, and cached-CG startup audit](https://github.com/ndandnd/EVSP-DR/tree/codex/week-evidence-20260921/outputs/research_management_20260922/monitor_20260922T235958Z/operations)"
+    },
+    {
+      "artifact": "Slides",
+      "slide": 10,
+      "scope": "append speaker-note update, retain all existing notes/source footer",
+      "text": "Update: 23 September 00:01:28 UTC (22 September 20:01 EDT). Cached-CG 824877 is RUNNING, elapsed 1:39:24, restart 0, 8 CPUs / 16 GiB. All 15 startup checks pass, including the approved source/input/cache/lineage gate and native Gurobi 12.0.3 license probe. Active 331-row restricted masters are visible in the log. There is no final result, pricing certificate, integer result or measured peak memory yet. Duplicate cleanup and shared capacity remain unvalidated; keep future MIP/k20 gates. Source: https://github.com/ndandnd/EVSP-DR/tree/codex/week-evidence-20260921/outputs/research_management_20260922/monitor_20260922T235958Z/operations"
+    },
+    {
+      "artifact": "Slides",
+      "slide": 42,
+      "scope": "append speaker-note update, retain all existing notes/source footer",
+      "text": "Update: 23 September 00:01:28 UTC (22 September 20:01 EDT). 42/44 graphs are ready; 13 jobs run (2 graphs, 6 baseline CGs, 4 MIPs and 1 strict CG), with 52 genuine pending baseline dependencies and no allocation failure. All 252 baseline audit checks pass. New CGs: C1 k36 (871 trips, route weight 35), C2 k35 (841, 34), C3 k36 (851, 36), C4 k36 (853, 35), C6 k35 (831, 34); all stopped on wall_limit without a pricing certificate. C2 k35 MIP uses 37 buses with pool bound 34, missing target 35; both stages reached TIME_LIMIT. All 237,336 pool columns were accepted with zero repairs/rejections. Native selected-route replay passes; 172 trips are overcovered, with 226 extra assignments. Duplicate cleanup and shared capacity remain unvalidated. The six-chain k33 table is unchanged. Preserve separate graph/application/scheduler timing and memory scopes, and the CG dirty-source flag. Source: https://github.com/ndandnd/EVSP-DR/tree/codex/week-evidence-20260921/outputs/research_management_20260922/monitor_20260922T235958Z/operations"
+    }
+  ],
+  "preserve": "All figures, historical tabs/decks, source footer, old source links, editable six-chain k33table and all non10/42slides. Do not rewrite unchanged table cells.",
+  "blocker": "Document-control no sessions; CUA has no browser providers and nativeChrome access reports Computer Use permissions are not granted. Parent owns working in-app tabs and will publish."
+}

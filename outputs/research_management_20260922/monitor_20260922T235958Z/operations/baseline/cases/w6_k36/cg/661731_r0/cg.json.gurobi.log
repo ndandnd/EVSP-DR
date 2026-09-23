@@ -1,0 +1,107 @@
+
+Gurobi 12.0.3 (linux64) logging started Tue Sep 22 19:56:26 2026
+
+Set parameter LogFile to value "/share/scaglione/nc437/evsp-dr/chain_extension_33_40_20260921/cases/w6_k36/cg/661731_r0/cg.json.gurobi.log"
+Set parameter TimeLimit to value 1.1887791878117248e+04
+Set parameter TimeLimit to value 1.1887791878117248e+04
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2690 v2 @ 3.00GHz, instruction set [SSE2|AVX]
+Thread count: 20 physical cores, 20 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1.1887791878117248e+04
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 843 rows, 263065 columns and 7011104 nonzeros
+Model fingerprint: 0xd332d11a
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 12 rows and 855 columns
+Presolve time: 3.16s
+Presolved: 831 rows, 262210 columns, 7010249 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.2000000e+06   8.310000e+02   0.000000e+00      4s
+
+Starting sifting (using dual simplex for sub-problems)...
+
+    Iter     Pivots    Primal Obj      Dual Obj        Time
+       0          0     infinity      1.2000000e+06      4s
+       1       1145   4.6484650e+07   2.2699045e+06      4s
+       2       5322   9.2051229e+06   2.7018104e+06      5s
+       3      10398   5.0151773e+06   3.2625965e+06      7s
+       4      22576   4.6222183e+06   3.9144444e+06     14s
+       5      33448   4.6018961e+06   4.5999361e+06     22s
+       6      41974   4.6016067e+06   4.6008989e+06     30s
+       7      50385   4.6015215e+06   4.6012583e+06     40s
+       8      58230   4.6015014e+06   4.6013283e+06     51s
+       9      66071   4.6014878e+06   4.6014231e+06     62s
+      10      73651   4.6014837e+06   4.6014534e+06     73s
+      11      81161   4.6014826e+06   4.6014696e+06     83s
+      12      88606   4.6014824e+06   4.6014755e+06     95s
+
+Sifting complete
+
+   95566    4.6014824e+06   0.000000e+00   1.046340e+01    105s
+   96346    4.6014824e+06   0.000000e+00   0.000000e+00    107s
+
+Solved in 96346 iterations and 107.26 seconds (187.76 work units)
+Optimal objective  4.601482435e+06
+Set parameter TimeLimit to value 1.1731232162049040e+04
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU E5-2690 v2 @ 3.00GHz, instruction set [SSE2|AVX]
+Thread count: 20 physical cores, 20 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1.1731232162049040e+04
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 843 rows, 263095 columns and 7011693 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+LP warm-start: use basis
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -3.2998647e+37   2.231325e+34   3.299865e+07      1s
+     348    3.5015235e+06   1.307051e+04   0.000000e+00      7s
+     587    3.5015239e+06   6.546397e+03   0.000000e+00     11s
+     827    3.5015241e+06   3.193096e+04   0.000000e+00     15s
+    1183    3.5015243e+06   1.898704e+03   0.000000e+00     22s
+    1420    3.5015246e+06   3.852126e+03   0.000000e+00     26s
+    1659    3.5015248e+06   5.016049e+03   0.000000e+00     30s
+    2017    3.5015251e+06   4.901044e+02   0.000000e+00     37s
+    2257    3.5015252e+06   4.905692e+02   0.000000e+00     41s
+    2493    3.5015253e+06   2.215559e+03   0.000000e+00     45s
+    2850    3.5015254e+06   1.308109e+03   0.000000e+00     52s
+    3082    3.5015255e+06   6.147584e+02   0.000000e+00     56s
+    3315    3.5015255e+06   4.514107e+02   0.000000e+00     60s
+    3668    3.5015256e+06   2.162969e+02   0.000000e+00     66s
+    3908    3.5015257e+06   2.360491e+02   0.000000e+00     70s
+    4262    3.5015257e+06   4.921410e+02   0.000000e+00     77s
+    4500    3.5015258e+06   1.369043e+02   0.000000e+00     81s
+    4738    3.5015258e+06   1.646470e+02   0.000000e+00     86s
+    5091    3.5015258e+06   6.255292e+01   0.000000e+00     92s
+    5324    3.5015259e+06   1.468994e+02   0.000000e+00     96s
+    5564    3.5015259e+06   8.372595e+01   0.000000e+00    100s
+    5918    3.5015259e+06   6.749057e+02   0.000000e+00    107s
+    6154    3.5015259e+06   5.019320e+01   0.000000e+00    111s
+    6391    3.5015259e+06   4.118721e+01   0.000000e+00    115s
+    6749    3.5015259e+06   6.065879e+00   0.000000e+00    122s
+    6949    3.5015259e+06   0.000000e+00   0.000000e+00    126s
+
+Solved in 6949 iterations and 125.71 seconds (162.04 work units)
+Optimal objective  3.501525941e+06
