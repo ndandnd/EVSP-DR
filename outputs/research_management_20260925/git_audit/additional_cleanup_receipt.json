@@ -1,0 +1,521 @@
+{
+  "started_at_utc": "2026-09-25T17:37:15.180370+00:00",
+  "authorization": "Parent approved five shortlisted branches eligible for nonforce git branch -d, after archive tags and mapping; preserve origin branches.",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "for-each-ref",
+        "--format=%(refname)\t%(objectname)",
+        "refs/remotes"
+      ],
+      "exit_code": 0,
+      "stdout": "refs/remotes/origin/HEAD\tc4002c58f1beb50d1b793154e12bfdd9412217d2\nrefs/remotes/origin/cluster-preserve-d44b67a-20260805\td44b67a028d5dd82fea66717fb48e5eba5e9881d\nrefs/remotes/origin/codex/algorithm-benchmarks-20260912\tb142f360f8a9018c2f50e3419f0dddcaf87a489d\nrefs/remotes/origin/codex/algorithm-review-20260912\t206315dddd99f44a49141c04bb786f2b38f459dd\nrefs/remotes/origin/codex/baseline-efficiency-20260912\t11afd8372dd14fdb2a11cd5eaddbee1d02644b1f\nrefs/remotes/origin/codex/capacity-efficiency-20260912\t309d98d266ebaf6b7e99543a67f8f2be5736874a\nrefs/remotes/origin/codex/capacity-timeout-checkpoint-20260911\t253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6\nrefs/remotes/origin/codex/charging-column-structure-20260922\tf37c6ce4c6e0a7ccffd3719a633bacd40b9a351c\nrefs/remotes/origin/codex/charging-factorial-20260921\tb931772dadf1e5930fd87bf4a89edd7dcaf6c51a\nrefs/remotes/origin/codex/easy-trip-ladder-20260908\teaca565903772e356c280b686ad2e95761123935\nrefs/remotes/origin/codex/efficiency-validation-20260912\t9bfbfc8fa977279e12e410c6f3761a6949a4f87b\nrefs/remotes/origin/codex/event-uniform-cluster-tools-20260824\t21fbecba826824c44f897feef038fcf51c532582\nrefs/remotes/origin/codex/giro-zero-start-fee-20260913\tf895c61a525c51d32ab09276f12074217c1788ce\nrefs/remotes/origin/codex/goal2-research-registry-20260830\td7a7cbd81980e13b73f065430005ba404d51cf86\nrefs/remotes/origin/codex/graph-checkpoints-20260921\t71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a\nrefs/remotes/origin/codex/gurobi-primary-20260906\ta8102d10607c20e4b1b3f80f790ba380a5a04d8f\nrefs/remotes/origin/codex/heavy-trip-ladder-20260908\t9665429111b461006cc6b844d7d6989daf323454\nrefs/remotes/origin/codex/import-deadline-fix-20260912\t68fce0093ec9768392442fe1b107a1b67ab0cb7b\nrefs/remotes/origin/codex/integer-columns-20260921\tc50e5f207869bac25507adfae90bb830a44039b7\nrefs/remotes/origin/codex/luna-proof-reporting-20260904\t67b3ad1ac12aa2c96b744ce94447b415f9b5e66e\nrefs/remotes/origin/codex/matched-fleet-tariff-20260908\ta6e5059688703641db9aa3349b6ab6a9f76c1987\nrefs/remotes/origin/codex/mip-structure-20260922\t74906efe7d8787c82795d6dd80a640a56a594beb\nrefs/remotes/origin/codex/nested-replication-20260909\t0209d3e05d7b024f5aba6854f857b3ce22ff1e1c\nrefs/remotes/origin/codex/nested-threshold-k2-15-20260908\t21fbecba826824c44f897feef038fcf51c532582\nrefs/remotes/origin/codex/overnight-extension-20260912\ta29992196acb74d02b8c7891be4061718889999f\nrefs/remotes/origin/codex/overnight-pool-mip-20260908\t2d7a21a07ef0b89f6e34e8504bf0638bee61113a\nrefs/remotes/origin/codex/parallel-research-20260911\t4a0c2b2c76d5ab150acebc70bd725266c8aef835\nrefs/remotes/origin/codex/queue-graph-recovery-20260912\ta0e0bb7681c8451e3cbbbfa06aef390026d9af4b\nrefs/remotes/origin/codex/queue-recovery-code-20260912\te091a4dba549510238507ef5e5367abea958bd30\nrefs/remotes/origin/codex/research-register-20260910\t67c3d1bb48c37ec77bb46924985ff248b7d87be7\nrefs/remotes/origin/codex/scale-ladder-probe-recovery-20260818\t1d80402d79d1cbb4b786b780f7287c12b02d3621\nrefs/remotes/origin/codex/storage-cleanup-20260912\tb1129bf45f176f24c58f17ba7dee32c1f1827758\nrefs/remotes/origin/codex/strict-graph-reuse-20260922\tfedf421461f94727e6b1292a0e7789ab76ed8587\nrefs/remotes/origin/codex/strict-graph-validation-20260922\t3bb32c1a84af73c97689dfc9f5ad43136cfcead9\nrefs/remotes/origin/codex/strict-lineage-gate-20260922\t34d39caff534c089fbffed397f5a42b223b590ad\nrefs/remotes/origin/codex/strict-successors-20260921\t550bc5b061b05b82247e4f2f94793c3563c98087\nrefs/remotes/origin/codex/terminal-energy-fair-comparison-20260910\t2424369f4b5c40198a22698b7a460d6aa8129169\nrefs/remotes/origin/codex/terminal-replay-compat-2424369-20260910\t5cdb8138c29faef9d5bf949175cb1e815a0b4220\nrefs/remotes/origin/codex/week-evidence-20260921\td04b11876cb38866b524c3793c8aff996545e3b3\nrefs/remotes/origin/codex/zero-charge-start-fee-20260913\t06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0\nrefs/remotes/origin/codex/zero-fee-terminal-cg\t2c7445ac6449eb7d338c83f8320574da042a65b5\nrefs/remotes/origin/cursor/arcflow-oracle-2969-3a99\t585f98c01fcba562bca8e28bde10f969bcd68b3d\nrefs/remotes/origin/cursor/branch-and-price-experiment-2969-1451\td63a4da1ac2965c4348f3a2653044eb138ce81cb\nrefs/remotes/origin/cursor/cross-generation-evidence-2969\t86fd1127ed353afb82b6c82bfb943ddc0a6fb446\nrefs/remotes/origin/cursor/cross-generation-evidence-refresh-2969\t390a4dcb63e7d37a962c458a03564beab152e7b7\nrefs/remotes/origin/cursor/duty-grid-transition-audit-2969\t86b0a4269f061b49b5c5ce49db7fd931a3585cfc\nrefs/remotes/origin/cursor/event-based-pricer-2969\t2683c775c2ba29018404c5f41ca2aff3266b5739\nrefs/remotes/origin/cursor/exact-cg-performance-audit-2969\tae736fbc9c5fef71f39d7d758b7062355c485313\nrefs/remotes/origin/cursor/exact-scale-ladder-2969\tf51733b4163a26ac8b36771d6584e8402ef6686f\nrefs/remotes/origin/cursor/expanded-soc-realization-audit-2969\t636dc0912f47e6ce85284fad3b36af30b4135887\nrefs/remotes/origin/cursor/fixed-duty-charging-2969-b22e\t53d2355a737485f27cd067cdaa6ebb488c17c88a\nrefs/remotes/origin/cursor/k40-factorial-analysis-mip-2969\tf40b1206b244cbc9accad272ac852837c8debdb3\nrefs/remotes/origin/cursor/ladder-lite-20260819-2969\tff7fb2ba93cf13a31171e1e4aeb2d28dc8aeee20\nrefs/remotes/origin/cursor/mip-convergence-statistics-2969\tbcdd57db7d0ee15496288e186246e6ed789f2b73\nrefs/remotes/origin/cursor/records-curator-2969-8502\tada787fb3862f3b74e7a93cf4f580fd4c4570298\nrefs/remotes/origin/cursor/recovery-audit\teb5abf68fc427651764c56a827fbf236f20517d4\nrefs/remotes/origin/cursor/slurm-state-contract-audit-2969\tfa4d5516a8d0e8e0365113ade4ca68cd4d66e843\nrefs/remotes/origin/cursor/slurm-state-contract-audit-corrected-2969\t79b21dd6337ae18def7c31bec35e3b8abfaa9838\nrefs/remotes/origin/cursor/tariff-response-experiment-2969\t77baf667a06946c692f959d66fed4e2bca36cd32\nrefs/remotes/origin/issue11\t37d2e5d6a255ba50f5f46d6e1c589dc3cb12780d\nrefs/remotes/origin/issue18\t85fd6a85cfef898183ea0bd9075aaed2a81ca7ad\nrefs/remotes/origin/issue20\tfd4d818946b2fde50a9288dc577995891f690d2a\nrefs/remotes/origin/issue20-local-pricing-audit\te0790098c36c9bfad1906e144b860e794d8bd383\nrefs/remotes/origin/issue7\tf8f4cea7d648cb22b6bf3a85501123be886a8454\nrefs/remotes/origin/main\tc4002c58f1beb50d1b793154e12bfdd9412217d2\nrefs/remotes/origin/peel-and-price\t0a3a720e8470c13f534f9003438a9eac50ac4260\nrefs/remotes/origin/records/ladder-lite-20260819-2969\t0ea56c142cd4bc3c85591e151ec11ce84e91ffcc\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "main"
+      ],
+      "exit_code": 0,
+      "stdout": "f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "for-each-ref",
+        "--format=%(refname)",
+        "refs/heads"
+      ],
+      "exit_code": 0,
+      "stdout": "refs/heads/archive/issue20-artifacts-20260730\nrefs/heads/cluster-preserve-d44b67a-20260805\nrefs/heads/codex/action3-full-20260916\nrefs/heads/codex/algorithm-benchmarks-20260912\nrefs/heads/codex/algorithm-review-20260912\nrefs/heads/codex/baseline-efficiency-20260912\nrefs/heads/codex/capacity-efficiency-20260912\nrefs/heads/codex/capacity-parallel-followup-20260914\nrefs/heads/codex/capacity-shortcircuit-20260917\nrefs/heads/codex/capacity-speed-pilot-20260910\nrefs/heads/codex/capacity-timeout-checkpoint-20260911\nrefs/heads/codex/charging-factorial-20260921\nrefs/heads/codex/decomposition-map-20260910\nrefs/heads/codex/dispatch-cleanup-20260918\nrefs/heads/codex/dive-cap-escalation-20260923\nrefs/heads/codex/diving-pricing-20260919\nrefs/heads/codex/easy-trip-ladder-20260908\nrefs/heads/codex/efficiency-validation-20260912\nrefs/heads/codex/event-graph-startup-tiekey-20260912\nrefs/heads/codex/event-native-warm-chain-20260909\nrefs/heads/codex/event-seed-mip-prerequisite\nrefs/heads/codex/event-uniform-cluster-tools-20260824\nrefs/heads/codex/fleet-certified-early-stop-20260917\nrefs/heads/codex/giro-k1-recovery-20260909\nrefs/heads/codex/giro-zero-start-fee-20260913\nrefs/heads/codex/goal2-research-registry-20260830\nrefs/heads/codex/graph-checkpoints-20260921\nrefs/heads/codex/gurobi-primary-20260906\nrefs/heads/codex/heavy-trip-ladder-20260908\nrefs/heads/codex/highs-baseline-20260906\nrefs/heads/codex/import-deadline-fix-20260912\nrefs/heads/codex/integer-columns-20260921\nrefs/heads/codex/issue18-clean\nrefs/heads/codex/k5-raw-mip36h-20260905\nrefs/heads/codex/k5-raw-mip36h-status-fix-20260905\nrefs/heads/codex/luna-proof-reporting-20260904\nrefs/heads/codex/matched-fleet-tariff-20260908\nrefs/heads/codex/mip-structure-20260922\nrefs/heads/codex/nested-replication-20260909\nrefs/heads/codex/nested-threshold-k2-15-20260908\nrefs/heads/codex/overnight-extension-20260912\nrefs/heads/codex/overnight-pool-mip-20260908\nrefs/heads/codex/queue-graph-recovery-20260912\nrefs/heads/codex/queue-recovery-code-20260912\nrefs/heads/codex/replay-index-20260912\nrefs/heads/codex/research-maintenance-20260925\nrefs/heads/codex/research-register-20260910\nrefs/heads/codex/research-register-20260915\nrefs/heads/codex/review-fdl-cg-20260916\nrefs/heads/codex/review-fdl-mip-20260916\nrefs/heads/codex/review-strict-chain-20260916\nrefs/heads/codex/small-exact-threshold-20260903\nrefs/heads/codex/spatial-tariff-recipe-20260925\nrefs/heads/codex/stage2-cap-recovery-20260910\nrefs/heads/codex/storage-cleanup-20260912\nrefs/heads/codex/strict-graph-reuse-20260922\nrefs/heads/codex/strict-graph-validation-20260922\nrefs/heads/codex/strict-lineage-gate-20260922\nrefs/heads/codex/strict-packed-20260921\nrefs/heads/codex/strict-successors-20260921\nrefs/heads/codex/terminal-energy-fair-comparison-20260910\nrefs/heads/codex/terminal-replay-compat-20260910\nrefs/heads/codex/terminal-replay-compat-2424369-20260910\nrefs/heads/codex/warm-chain-p5-20260910\nrefs/heads/codex/warm-multichain-p1246-20260910\nrefs/heads/codex/week-cleanup-20260921\nrefs/heads/codex/week-evidence-20260921\nrefs/heads/codex/zero-charge-start-fee-20260913\nrefs/heads/codex/zero-fee-terminal-cg\nrefs/heads/cursor/nested-threshold-auditor-20260904\nrefs/heads/issue1-fix-readme\nrefs/heads/issue10\nrefs/heads/issue11\nrefs/heads/issue14\nrefs/heads/issue14-BattSoCChargingFix\nrefs/heads/issue14-prev_ver\nrefs/heads/issue15\nrefs/heads/issue16\nrefs/heads/issue17\nrefs/heads/issue18\nrefs/heads/issue19\nrefs/heads/issue2-unicorn-parallel\nrefs/heads/issue20\nrefs/heads/issue8\nrefs/heads/issue9\nrefs/heads/main\nrefs/heads/peel-and-price\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "worktree",
+        "list",
+        "--porcelain"
+      ],
+      "exit_code": 0,
+      "stdout": "worktree /Users/nadan/Documents/projects/demandresponse\nHEAD f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c\nbranch refs/heads/main\n\nworktree /private/tmp/evsp-mip-structure-20260922\nHEAD 74906efe7d8787c82795d6dd80a640a56a594beb\nbranch refs/heads/codex/mip-structure-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/action3-full-20260916\nHEAD be624eb486a7c3a4137f8b0fe660f9bb273ddf98\nbranch refs/heads/codex/action3-full-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/advisor-f6-k5-20260916\nHEAD a12ced439503bb3b70a0ca0418661ce5f8fb35a2\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-parallel-followup-20260914\nHEAD bea983e9e8d9e16fb3d12a104dabaaf2b8a00ec7\nbranch refs/heads/codex/capacity-parallel-followup-20260914\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-shortcircuit-20260917\nHEAD cf61e2c8618b067df032c3eb795476e64184ed0a\nbranch refs/heads/codex/capacity-shortcircuit-20260917\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-timeout-checkpoint-20260911\nHEAD 253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6\nbranch refs/heads/codex/capacity-timeout-checkpoint-20260911\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/charging-factorial-20260921\nHEAD b931772dadf1e5930fd87bf4a89edd7dcaf6c51a\nbranch refs/heads/codex/charging-factorial-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/decomposition-map-20260910\nHEAD 39b84978c06100cc7bcb2817ca0fa552233d90f5\nbranch refs/heads/codex/decomposition-map-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/dispatch-cleanup-20260918\nHEAD 663ece9c8d5d02e03087a300ecca0605a4ad9292\nbranch refs/heads/codex/dispatch-cleanup-20260918\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/dive-cap-escalation-20260923\nHEAD d8fbf40b922c158d53959a12ac950371e7c7c6fe\nbranch refs/heads/codex/dive-cap-escalation-20260923\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/diving-pricing-20260919\nHEAD 79a677d8ecc94beff95a72e6385e4c18b7856e41\nbranch refs/heads/codex/diving-pricing-20260919\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/early-stop-20260917\nHEAD 689d3646ce77ed0ffce8722ba5724b2cda303a66\nbranch refs/heads/codex/fleet-certified-early-stop-20260917\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/graph-checkpoints-20260921\nHEAD 71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a\nbranch refs/heads/codex/graph-checkpoints-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/integer-columns-20260921\nHEAD c50e5f207869bac25507adfae90bb830a44039b7\nbranch refs/heads/codex/integer-columns-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/research-maintenance-20260925\nHEAD d04b11876cb38866b524c3793c8aff996545e3b3\nbranch refs/heads/codex/research-maintenance-20260925\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/research-register-20260915\nHEAD 4a0c2b2c76d5ab150acebc70bd725266c8aef835\nbranch refs/heads/codex/research-register-20260915\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-dr-mincharge-20260916\nHEAD 67636d44ce59d2dafb12401a75dac045d2b326e4\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-fdl-cg-20260916\nHEAD daac18d5598902c28baa6c43e58942930fc733bc\nbranch refs/heads/codex/review-fdl-cg-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-fdl-mip-20260916\nHEAD 0c51b1fa491492212f5d875d1c082b476db0f1c3\nbranch refs/heads/codex/review-fdl-mip-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-mip-seeds-20260916\nHEAD 6830caa225856903d1157ef8587863c7ae21ad53\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-strict-chain-20260916\nHEAD 50ceb6c095a580f79f87b53bef536cac31f81963\nbranch refs/heads/codex/review-strict-chain-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/spatial-tariff-recipe-20260925\nHEAD 4a8b497e668be9962bca5906a8b69116fa634882\nbranch refs/heads/codex/spatial-tariff-recipe-20260925\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/stage2_cap_4400dbb\nHEAD 4400dbb3f28471ffcd4a4628cb2487ea0a8ff6d8\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/stage2_cap_recovery_20260910\nHEAD 2d797b897c8a89dcdb3eae36351ac6a8655e59d2\nbranch refs/heads/codex/stage2-cap-recovery-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-graph-reuse-20260922\nHEAD fedf421461f94727e6b1292a0e7789ab76ed8587\nbranch refs/heads/codex/strict-graph-reuse-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-graph-validation-20260922\nHEAD 3bb32c1a84af73c97689dfc9f5ad43136cfcead9\nbranch refs/heads/codex/strict-graph-validation-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-lineage-gate-20260922\nHEAD 34d39caff534c089fbffed397f5a42b223b590ad\nbranch refs/heads/codex/strict-lineage-gate-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-packed-20260921\nHEAD 35770aae2c08e7d5a356cc3b673e67608e5b1036\nbranch refs/heads/codex/strict-packed-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-successors-20260921\nHEAD 550bc5b061b05b82247e4f2f94793c3563c98087\nbranch refs/heads/codex/strict-successors-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/terminal-replay-compat-20260910\nHEAD 4400dbb3f28471ffcd4a4628cb2487ea0a8ff6d8\nbranch refs/heads/codex/terminal-replay-compat-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/terminal-replay-compat-2424369-20260910\nHEAD 5cdb8138c29faef9d5bf949175cb1e815a0b4220\nbranch refs/heads/codex/terminal-replay-compat-2424369-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/warm-chain-p5-20260910\nHEAD 689b882789119bf6a6686157c757db39286ee6db\nbranch refs/heads/codex/warm-chain-p5-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/week-cleanup-20260921\nHEAD 24fbda8100f612c45477c28a92747e00cf7cb42a\nbranch refs/heads/codex/week-cleanup-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/week-evidence-20260921\nHEAD d04b11876cb38866b524c3793c8aff996545e3b3\nbranch refs/heads/codex/week-evidence-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/zero-charge-start-fee-20260913\nHEAD 06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0\nbranch refs/heads/codex/zero-charge-start-fee-20260913\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/zero-fee-terminal-cg\nHEAD 2c7445ac6449eb7d338c83f8320574da042a65b5\nbranch refs/heads/codex/zero-fee-terminal-cg\n\nworktree /Users/nadan/Documents/projects/evsp-dr-nested-auditor\nHEAD 9bdbb17d14f068745b198d4ade81e062addc62b4\nbranch refs/heads/cursor/nested-threshold-auditor-20260904\n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "worktree",
+        "list",
+        "--porcelain"
+      ],
+      "exit_code": 0,
+      "stdout": "worktree /Users/nadan/Documents/projects/demandresponse\nHEAD f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c\nbranch refs/heads/main\n\nworktree /private/tmp/evsp-mip-structure-20260922\nHEAD 74906efe7d8787c82795d6dd80a640a56a594beb\nbranch refs/heads/codex/mip-structure-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/action3-full-20260916\nHEAD be624eb486a7c3a4137f8b0fe660f9bb273ddf98\nbranch refs/heads/codex/action3-full-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/advisor-f6-k5-20260916\nHEAD a12ced439503bb3b70a0ca0418661ce5f8fb35a2\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-parallel-followup-20260914\nHEAD bea983e9e8d9e16fb3d12a104dabaaf2b8a00ec7\nbranch refs/heads/codex/capacity-parallel-followup-20260914\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-shortcircuit-20260917\nHEAD cf61e2c8618b067df032c3eb795476e64184ed0a\nbranch refs/heads/codex/capacity-shortcircuit-20260917\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-timeout-checkpoint-20260911\nHEAD 253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6\nbranch refs/heads/codex/capacity-timeout-checkpoint-20260911\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/charging-factorial-20260921\nHEAD b931772dadf1e5930fd87bf4a89edd7dcaf6c51a\nbranch refs/heads/codex/charging-factorial-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/decomposition-map-20260910\nHEAD 39b84978c06100cc7bcb2817ca0fa552233d90f5\nbranch refs/heads/codex/decomposition-map-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/dispatch-cleanup-20260918\nHEAD 663ece9c8d5d02e03087a300ecca0605a4ad9292\nbranch refs/heads/codex/dispatch-cleanup-20260918\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/dive-cap-escalation-20260923\nHEAD d8fbf40b922c158d53959a12ac950371e7c7c6fe\nbranch refs/heads/codex/dive-cap-escalation-20260923\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/diving-pricing-20260919\nHEAD 79a677d8ecc94beff95a72e6385e4c18b7856e41\nbranch refs/heads/codex/diving-pricing-20260919\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/early-stop-20260917\nHEAD 689d3646ce77ed0ffce8722ba5724b2cda303a66\nbranch refs/heads/codex/fleet-certified-early-stop-20260917\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/graph-checkpoints-20260921\nHEAD 71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a\nbranch refs/heads/codex/graph-checkpoints-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/integer-columns-20260921\nHEAD c50e5f207869bac25507adfae90bb830a44039b7\nbranch refs/heads/codex/integer-columns-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/research-maintenance-20260925\nHEAD d04b11876cb38866b524c3793c8aff996545e3b3\nbranch refs/heads/codex/research-maintenance-20260925\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/research-register-20260915\nHEAD 4a0c2b2c76d5ab150acebc70bd725266c8aef835\nbranch refs/heads/codex/research-register-20260915\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-dr-mincharge-20260916\nHEAD 67636d44ce59d2dafb12401a75dac045d2b326e4\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-fdl-cg-20260916\nHEAD daac18d5598902c28baa6c43e58942930fc733bc\nbranch refs/heads/codex/review-fdl-cg-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-fdl-mip-20260916\nHEAD 0c51b1fa491492212f5d875d1c082b476db0f1c3\nbranch refs/heads/codex/review-fdl-mip-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-mip-seeds-20260916\nHEAD 6830caa225856903d1157ef8587863c7ae21ad53\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-strict-chain-20260916\nHEAD 50ceb6c095a580f79f87b53bef536cac31f81963\nbranch refs/heads/codex/review-strict-chain-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/spatial-tariff-recipe-20260925\nHEAD 4a8b497e668be9962bca5906a8b69116fa634882\nbranch refs/heads/codex/spatial-tariff-recipe-20260925\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/stage2_cap_4400dbb\nHEAD 4400dbb3f28471ffcd4a4628cb2487ea0a8ff6d8\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/stage2_cap_recovery_20260910\nHEAD 2d797b897c8a89dcdb3eae36351ac6a8655e59d2\nbranch refs/heads/codex/stage2-cap-recovery-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-graph-reuse-20260922\nHEAD fedf421461f94727e6b1292a0e7789ab76ed8587\nbranch refs/heads/codex/strict-graph-reuse-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-graph-validation-20260922\nHEAD 3bb32c1a84af73c97689dfc9f5ad43136cfcead9\nbranch refs/heads/codex/strict-graph-validation-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-lineage-gate-20260922\nHEAD 34d39caff534c089fbffed397f5a42b223b590ad\nbranch refs/heads/codex/strict-lineage-gate-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-packed-20260921\nHEAD 35770aae2c08e7d5a356cc3b673e67608e5b1036\nbranch refs/heads/codex/strict-packed-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-successors-20260921\nHEAD 550bc5b061b05b82247e4f2f94793c3563c98087\nbranch refs/heads/codex/strict-successors-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/terminal-replay-compat-20260910\nHEAD 4400dbb3f28471ffcd4a4628cb2487ea0a8ff6d8\nbranch refs/heads/codex/terminal-replay-compat-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/terminal-replay-compat-2424369-20260910\nHEAD 5cdb8138c29faef9d5bf949175cb1e815a0b4220\nbranch refs/heads/codex/terminal-replay-compat-2424369-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/warm-chain-p5-20260910\nHEAD 689b882789119bf6a6686157c757db39286ee6db\nbranch refs/heads/codex/warm-chain-p5-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/week-cleanup-20260921\nHEAD 24fbda8100f612c45477c28a92747e00cf7cb42a\nbranch refs/heads/codex/week-cleanup-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/week-evidence-20260921\nHEAD d04b11876cb38866b524c3793c8aff996545e3b3\nbranch refs/heads/codex/week-evidence-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/zero-charge-start-fee-20260913\nHEAD 06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0\nbranch refs/heads/codex/zero-charge-start-fee-20260913\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/zero-fee-terminal-cg\nHEAD 2c7445ac6449eb7d338c83f8320574da042a65b5\nbranch refs/heads/codex/zero-fee-terminal-cg\n\nworktree /Users/nadan/Documents/projects/evsp-dr-nested-auditor\nHEAD 9bdbb17d14f068745b198d4ade81e062addc62b4\nbranch refs/heads/cursor/nested-threshold-auditor-20260904\n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "refs/heads/codex/event-uniform-cluster-tools-20260824"
+      ],
+      "exit_code": 0,
+      "stdout": "b5436f5476f5ff1fcf3dae776297005a9aadecdf\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "b5436f5476f5ff1fcf3dae776297005a9aadecdf",
+        "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "b5436f5476f5ff1fcf3dae776297005a9aadecdf",
+        "refs/remotes/origin/codex/event-uniform-cluster-tools-20260824"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "tag",
+        "codex/archive-branch-20260925-event-uniform-cluster-tools-20260824",
+        "b5436f5476f5ff1fcf3dae776297005a9aadecdf"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "refs/tags/codex/archive-branch-20260925-event-uniform-cluster-tools-20260824"
+      ],
+      "exit_code": 0,
+      "stdout": "b5436f5476f5ff1fcf3dae776297005a9aadecdf\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "refs/heads/codex/gurobi-primary-20260906"
+      ],
+      "exit_code": 0,
+      "stdout": "a8102d10607c20e4b1b3f80f790ba380a5a04d8f\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "a8102d10607c20e4b1b3f80f790ba380a5a04d8f",
+        "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "a8102d10607c20e4b1b3f80f790ba380a5a04d8f",
+        "refs/remotes/origin/codex/event-uniform-cluster-tools-20260824"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "tag",
+        "codex/archive-branch-20260925-gurobi-primary-20260906",
+        "a8102d10607c20e4b1b3f80f790ba380a5a04d8f"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "refs/tags/codex/archive-branch-20260925-gurobi-primary-20260906"
+      ],
+      "exit_code": 0,
+      "stdout": "a8102d10607c20e4b1b3f80f790ba380a5a04d8f\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "refs/heads/codex/highs-baseline-20260906"
+      ],
+      "exit_code": 0,
+      "stdout": "2d39eaab5c5b9098ae205515a7a6df1204921d3a\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "2d39eaab5c5b9098ae205515a7a6df1204921d3a",
+        "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "2d39eaab5c5b9098ae205515a7a6df1204921d3a",
+        "refs/remotes/origin/codex/event-uniform-cluster-tools-20260824"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "tag",
+        "codex/archive-branch-20260925-highs-baseline-20260906",
+        "2d39eaab5c5b9098ae205515a7a6df1204921d3a"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "refs/tags/codex/archive-branch-20260925-highs-baseline-20260906"
+      ],
+      "exit_code": 0,
+      "stdout": "2d39eaab5c5b9098ae205515a7a6df1204921d3a\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "refs/heads/codex/issue18-clean"
+      ],
+      "exit_code": 0,
+      "stdout": "85fd6a85cfef898183ea0bd9075aaed2a81ca7ad\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "85fd6a85cfef898183ea0bd9075aaed2a81ca7ad",
+        "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "85fd6a85cfef898183ea0bd9075aaed2a81ca7ad",
+        "refs/remotes/origin/issue18"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "tag",
+        "codex/archive-branch-20260925-issue18-clean",
+        "85fd6a85cfef898183ea0bd9075aaed2a81ca7ad"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "refs/tags/codex/archive-branch-20260925-issue18-clean"
+      ],
+      "exit_code": 0,
+      "stdout": "85fd6a85cfef898183ea0bd9075aaed2a81ca7ad\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "refs/heads/codex/small-exact-threshold-20260903"
+      ],
+      "exit_code": 0,
+      "stdout": "9bdbb17d14f068745b198d4ade81e062addc62b4\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "9bdbb17d14f068745b198d4ade81e062addc62b4",
+        "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "9bdbb17d14f068745b198d4ade81e062addc62b4",
+        "refs/remotes/origin/codex/event-uniform-cluster-tools-20260824"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "tag",
+        "codex/archive-branch-20260925-small-exact-threshold-20260903",
+        "9bdbb17d14f068745b198d4ade81e062addc62b4"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "refs/tags/codex/archive-branch-20260925-small-exact-threshold-20260903"
+      ],
+      "exit_code": 0,
+      "stdout": "9bdbb17d14f068745b198d4ade81e062addc62b4\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "branch",
+        "-d",
+        "codex/event-uniform-cluster-tools-20260824"
+      ],
+      "exit_code": 0,
+      "stdout": "Deleted branch codex/event-uniform-cluster-tools-20260824 (was b5436f54).\n",
+      "stderr": "warning: deleting branch 'codex/event-uniform-cluster-tools-20260824' that has been merged to\n         'refs/remotes/origin/codex/event-uniform-cluster-tools-20260824', but not yet merged to HEAD\n"
+    },
+    {
+      "argv": [
+        "git",
+        "branch",
+        "-d",
+        "codex/gurobi-primary-20260906"
+      ],
+      "exit_code": 0,
+      "stdout": "Deleted branch codex/gurobi-primary-20260906 (was a8102d10).\n",
+      "stderr": "warning: deleting branch 'codex/gurobi-primary-20260906' that has been merged to\n         'refs/remotes/origin/codex/event-uniform-cluster-tools-20260824', but not yet merged to HEAD\n"
+    },
+    {
+      "argv": [
+        "git",
+        "branch",
+        "-d",
+        "codex/highs-baseline-20260906"
+      ],
+      "exit_code": 0,
+      "stdout": "Deleted branch codex/highs-baseline-20260906 (was 2d39eaab).\n",
+      "stderr": "warning: deleting branch 'codex/highs-baseline-20260906' that has been merged to\n         'refs/remotes/origin/codex/event-uniform-cluster-tools-20260824', but not yet merged to HEAD\n"
+    },
+    {
+      "argv": [
+        "git",
+        "branch",
+        "-d",
+        "codex/issue18-clean"
+      ],
+      "exit_code": 0,
+      "stdout": "Deleted branch codex/issue18-clean (was 85fd6a85).\n",
+      "stderr": "warning: deleting branch 'codex/issue18-clean' that has been merged to\n         'refs/remotes/origin/issue18', but not yet merged to HEAD\n"
+    },
+    {
+      "argv": [
+        "git",
+        "branch",
+        "-d",
+        "codex/small-exact-threshold-20260903"
+      ],
+      "exit_code": 0,
+      "stdout": "Deleted branch codex/small-exact-threshold-20260903 (was 9bdbb17d).\n",
+      "stderr": "warning: deleting branch 'codex/small-exact-threshold-20260903' that has been merged to\n         'refs/remotes/origin/codex/event-uniform-cluster-tools-20260824', but not yet merged to HEAD\n"
+    },
+    {
+      "argv": [
+        "git",
+        "for-each-ref",
+        "--format=%(refname)",
+        "refs/heads"
+      ],
+      "exit_code": 0,
+      "stdout": "refs/heads/archive/issue20-artifacts-20260730\nrefs/heads/cluster-preserve-d44b67a-20260805\nrefs/heads/codex/action3-full-20260916\nrefs/heads/codex/algorithm-benchmarks-20260912\nrefs/heads/codex/algorithm-review-20260912\nrefs/heads/codex/baseline-efficiency-20260912\nrefs/heads/codex/capacity-efficiency-20260912\nrefs/heads/codex/capacity-parallel-followup-20260914\nrefs/heads/codex/capacity-shortcircuit-20260917\nrefs/heads/codex/capacity-speed-pilot-20260910\nrefs/heads/codex/capacity-timeout-checkpoint-20260911\nrefs/heads/codex/charging-factorial-20260921\nrefs/heads/codex/decomposition-map-20260910\nrefs/heads/codex/dispatch-cleanup-20260918\nrefs/heads/codex/dive-cap-escalation-20260923\nrefs/heads/codex/diving-pricing-20260919\nrefs/heads/codex/easy-trip-ladder-20260908\nrefs/heads/codex/efficiency-validation-20260912\nrefs/heads/codex/event-graph-startup-tiekey-20260912\nrefs/heads/codex/event-native-warm-chain-20260909\nrefs/heads/codex/event-seed-mip-prerequisite\nrefs/heads/codex/fleet-certified-early-stop-20260917\nrefs/heads/codex/giro-k1-recovery-20260909\nrefs/heads/codex/giro-zero-start-fee-20260913\nrefs/heads/codex/goal2-research-registry-20260830\nrefs/heads/codex/graph-checkpoints-20260921\nrefs/heads/codex/heavy-trip-ladder-20260908\nrefs/heads/codex/import-deadline-fix-20260912\nrefs/heads/codex/integer-columns-20260921\nrefs/heads/codex/k5-raw-mip36h-20260905\nrefs/heads/codex/k5-raw-mip36h-status-fix-20260905\nrefs/heads/codex/luna-proof-reporting-20260904\nrefs/heads/codex/matched-fleet-tariff-20260908\nrefs/heads/codex/mip-structure-20260922\nrefs/heads/codex/nested-replication-20260909\nrefs/heads/codex/nested-threshold-k2-15-20260908\nrefs/heads/codex/overnight-extension-20260912\nrefs/heads/codex/overnight-pool-mip-20260908\nrefs/heads/codex/queue-graph-recovery-20260912\nrefs/heads/codex/queue-recovery-code-20260912\nrefs/heads/codex/replay-index-20260912\nrefs/heads/codex/research-maintenance-20260925\nrefs/heads/codex/research-register-20260910\nrefs/heads/codex/research-register-20260915\nrefs/heads/codex/review-fdl-cg-20260916\nrefs/heads/codex/review-fdl-mip-20260916\nrefs/heads/codex/review-strict-chain-20260916\nrefs/heads/codex/spatial-tariff-recipe-20260925\nrefs/heads/codex/stage2-cap-recovery-20260910\nrefs/heads/codex/storage-cleanup-20260912\nrefs/heads/codex/strict-graph-reuse-20260922\nrefs/heads/codex/strict-graph-validation-20260922\nrefs/heads/codex/strict-lineage-gate-20260922\nrefs/heads/codex/strict-packed-20260921\nrefs/heads/codex/strict-successors-20260921\nrefs/heads/codex/terminal-energy-fair-comparison-20260910\nrefs/heads/codex/terminal-replay-compat-20260910\nrefs/heads/codex/terminal-replay-compat-2424369-20260910\nrefs/heads/codex/warm-chain-p5-20260910\nrefs/heads/codex/warm-multichain-p1246-20260910\nrefs/heads/codex/week-cleanup-20260921\nrefs/heads/codex/week-evidence-20260921\nrefs/heads/codex/zero-charge-start-fee-20260913\nrefs/heads/codex/zero-fee-terminal-cg\nrefs/heads/cursor/nested-threshold-auditor-20260904\nrefs/heads/issue1-fix-readme\nrefs/heads/issue10\nrefs/heads/issue11\nrefs/heads/issue14\nrefs/heads/issue14-BattSoCChargingFix\nrefs/heads/issue14-prev_ver\nrefs/heads/issue15\nrefs/heads/issue16\nrefs/heads/issue17\nrefs/heads/issue18\nrefs/heads/issue19\nrefs/heads/issue2-unicorn-parallel\nrefs/heads/issue20\nrefs/heads/issue8\nrefs/heads/issue9\nrefs/heads/main\nrefs/heads/peel-and-price\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "worktree",
+        "list",
+        "--porcelain"
+      ],
+      "exit_code": 0,
+      "stdout": "worktree /Users/nadan/Documents/projects/demandresponse\nHEAD f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c\nbranch refs/heads/main\n\nworktree /private/tmp/evsp-mip-structure-20260922\nHEAD 74906efe7d8787c82795d6dd80a640a56a594beb\nbranch refs/heads/codex/mip-structure-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/action3-full-20260916\nHEAD be624eb486a7c3a4137f8b0fe660f9bb273ddf98\nbranch refs/heads/codex/action3-full-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/advisor-f6-k5-20260916\nHEAD a12ced439503bb3b70a0ca0418661ce5f8fb35a2\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-parallel-followup-20260914\nHEAD bea983e9e8d9e16fb3d12a104dabaaf2b8a00ec7\nbranch refs/heads/codex/capacity-parallel-followup-20260914\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-shortcircuit-20260917\nHEAD cf61e2c8618b067df032c3eb795476e64184ed0a\nbranch refs/heads/codex/capacity-shortcircuit-20260917\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-timeout-checkpoint-20260911\nHEAD 253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6\nbranch refs/heads/codex/capacity-timeout-checkpoint-20260911\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/charging-factorial-20260921\nHEAD b931772dadf1e5930fd87bf4a89edd7dcaf6c51a\nbranch refs/heads/codex/charging-factorial-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/decomposition-map-20260910\nHEAD 39b84978c06100cc7bcb2817ca0fa552233d90f5\nbranch refs/heads/codex/decomposition-map-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/dispatch-cleanup-20260918\nHEAD 663ece9c8d5d02e03087a300ecca0605a4ad9292\nbranch refs/heads/codex/dispatch-cleanup-20260918\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/dive-cap-escalation-20260923\nHEAD d8fbf40b922c158d53959a12ac950371e7c7c6fe\nbranch refs/heads/codex/dive-cap-escalation-20260923\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/diving-pricing-20260919\nHEAD 79a677d8ecc94beff95a72e6385e4c18b7856e41\nbranch refs/heads/codex/diving-pricing-20260919\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/early-stop-20260917\nHEAD 689d3646ce77ed0ffce8722ba5724b2cda303a66\nbranch refs/heads/codex/fleet-certified-early-stop-20260917\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/graph-checkpoints-20260921\nHEAD 71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a\nbranch refs/heads/codex/graph-checkpoints-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/integer-columns-20260921\nHEAD c50e5f207869bac25507adfae90bb830a44039b7\nbranch refs/heads/codex/integer-columns-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/research-maintenance-20260925\nHEAD d04b11876cb38866b524c3793c8aff996545e3b3\nbranch refs/heads/codex/research-maintenance-20260925\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/research-register-20260915\nHEAD 4a0c2b2c76d5ab150acebc70bd725266c8aef835\nbranch refs/heads/codex/research-register-20260915\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-dr-mincharge-20260916\nHEAD 67636d44ce59d2dafb12401a75dac045d2b326e4\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-fdl-cg-20260916\nHEAD daac18d5598902c28baa6c43e58942930fc733bc\nbranch refs/heads/codex/review-fdl-cg-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-fdl-mip-20260916\nHEAD 0c51b1fa491492212f5d875d1c082b476db0f1c3\nbranch refs/heads/codex/review-fdl-mip-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-mip-seeds-20260916\nHEAD 6830caa225856903d1157ef8587863c7ae21ad53\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-strict-chain-20260916\nHEAD 50ceb6c095a580f79f87b53bef536cac31f81963\nbranch refs/heads/codex/review-strict-chain-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/spatial-tariff-recipe-20260925\nHEAD 4a8b497e668be9962bca5906a8b69116fa634882\nbranch refs/heads/codex/spatial-tariff-recipe-20260925\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/stage2_cap_4400dbb\nHEAD 4400dbb3f28471ffcd4a4628cb2487ea0a8ff6d8\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/stage2_cap_recovery_20260910\nHEAD 2d797b897c8a89dcdb3eae36351ac6a8655e59d2\nbranch refs/heads/codex/stage2-cap-recovery-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-graph-reuse-20260922\nHEAD fedf421461f94727e6b1292a0e7789ab76ed8587\nbranch refs/heads/codex/strict-graph-reuse-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-graph-validation-20260922\nHEAD 3bb32c1a84af73c97689dfc9f5ad43136cfcead9\nbranch refs/heads/codex/strict-graph-validation-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-lineage-gate-20260922\nHEAD 34d39caff534c089fbffed397f5a42b223b590ad\nbranch refs/heads/codex/strict-lineage-gate-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-packed-20260921\nHEAD 35770aae2c08e7d5a356cc3b673e67608e5b1036\nbranch refs/heads/codex/strict-packed-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-successors-20260921\nHEAD 550bc5b061b05b82247e4f2f94793c3563c98087\nbranch refs/heads/codex/strict-successors-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/terminal-replay-compat-20260910\nHEAD 4400dbb3f28471ffcd4a4628cb2487ea0a8ff6d8\nbranch refs/heads/codex/terminal-replay-compat-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/terminal-replay-compat-2424369-20260910\nHEAD 5cdb8138c29faef9d5bf949175cb1e815a0b4220\nbranch refs/heads/codex/terminal-replay-compat-2424369-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/warm-chain-p5-20260910\nHEAD 689b882789119bf6a6686157c757db39286ee6db\nbranch refs/heads/codex/warm-chain-p5-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/week-cleanup-20260921\nHEAD 24fbda8100f612c45477c28a92747e00cf7cb42a\nbranch refs/heads/codex/week-cleanup-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/week-evidence-20260921\nHEAD d04b11876cb38866b524c3793c8aff996545e3b3\nbranch refs/heads/codex/week-evidence-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/zero-charge-start-fee-20260913\nHEAD 06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0\nbranch refs/heads/codex/zero-charge-start-fee-20260913\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/zero-fee-terminal-cg\nHEAD 2c7445ac6449eb7d338c83f8320574da042a65b5\nbranch refs/heads/codex/zero-fee-terminal-cg\n\nworktree /Users/nadan/Documents/projects/evsp-dr-nested-auditor\nHEAD 9bdbb17d14f068745b198d4ade81e062addc62b4\nbranch refs/heads/cursor/nested-threshold-auditor-20260904\n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "for-each-ref",
+        "--format=%(refname)\t%(objectname)",
+        "refs/remotes"
+      ],
+      "exit_code": 0,
+      "stdout": "refs/remotes/origin/HEAD\tc4002c58f1beb50d1b793154e12bfdd9412217d2\nrefs/remotes/origin/cluster-preserve-d44b67a-20260805\td44b67a028d5dd82fea66717fb48e5eba5e9881d\nrefs/remotes/origin/codex/algorithm-benchmarks-20260912\tb142f360f8a9018c2f50e3419f0dddcaf87a489d\nrefs/remotes/origin/codex/algorithm-review-20260912\t206315dddd99f44a49141c04bb786f2b38f459dd\nrefs/remotes/origin/codex/baseline-efficiency-20260912\t11afd8372dd14fdb2a11cd5eaddbee1d02644b1f\nrefs/remotes/origin/codex/capacity-efficiency-20260912\t309d98d266ebaf6b7e99543a67f8f2be5736874a\nrefs/remotes/origin/codex/capacity-timeout-checkpoint-20260911\t253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6\nrefs/remotes/origin/codex/charging-column-structure-20260922\tf37c6ce4c6e0a7ccffd3719a633bacd40b9a351c\nrefs/remotes/origin/codex/charging-factorial-20260921\tb931772dadf1e5930fd87bf4a89edd7dcaf6c51a\nrefs/remotes/origin/codex/easy-trip-ladder-20260908\teaca565903772e356c280b686ad2e95761123935\nrefs/remotes/origin/codex/efficiency-validation-20260912\t9bfbfc8fa977279e12e410c6f3761a6949a4f87b\nrefs/remotes/origin/codex/event-uniform-cluster-tools-20260824\t21fbecba826824c44f897feef038fcf51c532582\nrefs/remotes/origin/codex/giro-zero-start-fee-20260913\tf895c61a525c51d32ab09276f12074217c1788ce\nrefs/remotes/origin/codex/goal2-research-registry-20260830\td7a7cbd81980e13b73f065430005ba404d51cf86\nrefs/remotes/origin/codex/graph-checkpoints-20260921\t71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a\nrefs/remotes/origin/codex/gurobi-primary-20260906\ta8102d10607c20e4b1b3f80f790ba380a5a04d8f\nrefs/remotes/origin/codex/heavy-trip-ladder-20260908\t9665429111b461006cc6b844d7d6989daf323454\nrefs/remotes/origin/codex/import-deadline-fix-20260912\t68fce0093ec9768392442fe1b107a1b67ab0cb7b\nrefs/remotes/origin/codex/integer-columns-20260921\tc50e5f207869bac25507adfae90bb830a44039b7\nrefs/remotes/origin/codex/luna-proof-reporting-20260904\t67b3ad1ac12aa2c96b744ce94447b415f9b5e66e\nrefs/remotes/origin/codex/matched-fleet-tariff-20260908\ta6e5059688703641db9aa3349b6ab6a9f76c1987\nrefs/remotes/origin/codex/mip-structure-20260922\t74906efe7d8787c82795d6dd80a640a56a594beb\nrefs/remotes/origin/codex/nested-replication-20260909\t0209d3e05d7b024f5aba6854f857b3ce22ff1e1c\nrefs/remotes/origin/codex/nested-threshold-k2-15-20260908\t21fbecba826824c44f897feef038fcf51c532582\nrefs/remotes/origin/codex/overnight-extension-20260912\ta29992196acb74d02b8c7891be4061718889999f\nrefs/remotes/origin/codex/overnight-pool-mip-20260908\t2d7a21a07ef0b89f6e34e8504bf0638bee61113a\nrefs/remotes/origin/codex/parallel-research-20260911\t4a0c2b2c76d5ab150acebc70bd725266c8aef835\nrefs/remotes/origin/codex/queue-graph-recovery-20260912\ta0e0bb7681c8451e3cbbbfa06aef390026d9af4b\nrefs/remotes/origin/codex/queue-recovery-code-20260912\te091a4dba549510238507ef5e5367abea958bd30\nrefs/remotes/origin/codex/research-register-20260910\t67c3d1bb48c37ec77bb46924985ff248b7d87be7\nrefs/remotes/origin/codex/scale-ladder-probe-recovery-20260818\t1d80402d79d1cbb4b786b780f7287c12b02d3621\nrefs/remotes/origin/codex/storage-cleanup-20260912\tb1129bf45f176f24c58f17ba7dee32c1f1827758\nrefs/remotes/origin/codex/strict-graph-reuse-20260922\tfedf421461f94727e6b1292a0e7789ab76ed8587\nrefs/remotes/origin/codex/strict-graph-validation-20260922\t3bb32c1a84af73c97689dfc9f5ad43136cfcead9\nrefs/remotes/origin/codex/strict-lineage-gate-20260922\t34d39caff534c089fbffed397f5a42b223b590ad\nrefs/remotes/origin/codex/strict-successors-20260921\t550bc5b061b05b82247e4f2f94793c3563c98087\nrefs/remotes/origin/codex/terminal-energy-fair-comparison-20260910\t2424369f4b5c40198a22698b7a460d6aa8129169\nrefs/remotes/origin/codex/terminal-replay-compat-2424369-20260910\t5cdb8138c29faef9d5bf949175cb1e815a0b4220\nrefs/remotes/origin/codex/week-evidence-20260921\td04b11876cb38866b524c3793c8aff996545e3b3\nrefs/remotes/origin/codex/zero-charge-start-fee-20260913\t06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0\nrefs/remotes/origin/codex/zero-fee-terminal-cg\t2c7445ac6449eb7d338c83f8320574da042a65b5\nrefs/remotes/origin/cursor/arcflow-oracle-2969-3a99\t585f98c01fcba562bca8e28bde10f969bcd68b3d\nrefs/remotes/origin/cursor/branch-and-price-experiment-2969-1451\td63a4da1ac2965c4348f3a2653044eb138ce81cb\nrefs/remotes/origin/cursor/cross-generation-evidence-2969\t86fd1127ed353afb82b6c82bfb943ddc0a6fb446\nrefs/remotes/origin/cursor/cross-generation-evidence-refresh-2969\t390a4dcb63e7d37a962c458a03564beab152e7b7\nrefs/remotes/origin/cursor/duty-grid-transition-audit-2969\t86b0a4269f061b49b5c5ce49db7fd931a3585cfc\nrefs/remotes/origin/cursor/event-based-pricer-2969\t2683c775c2ba29018404c5f41ca2aff3266b5739\nrefs/remotes/origin/cursor/exact-cg-performance-audit-2969\tae736fbc9c5fef71f39d7d758b7062355c485313\nrefs/remotes/origin/cursor/exact-scale-ladder-2969\tf51733b4163a26ac8b36771d6584e8402ef6686f\nrefs/remotes/origin/cursor/expanded-soc-realization-audit-2969\t636dc0912f47e6ce85284fad3b36af30b4135887\nrefs/remotes/origin/cursor/fixed-duty-charging-2969-b22e\t53d2355a737485f27cd067cdaa6ebb488c17c88a\nrefs/remotes/origin/cursor/k40-factorial-analysis-mip-2969\tf40b1206b244cbc9accad272ac852837c8debdb3\nrefs/remotes/origin/cursor/ladder-lite-20260819-2969\tff7fb2ba93cf13a31171e1e4aeb2d28dc8aeee20\nrefs/remotes/origin/cursor/mip-convergence-statistics-2969\tbcdd57db7d0ee15496288e186246e6ed789f2b73\nrefs/remotes/origin/cursor/records-curator-2969-8502\tada787fb3862f3b74e7a93cf4f580fd4c4570298\nrefs/remotes/origin/cursor/recovery-audit\teb5abf68fc427651764c56a827fbf236f20517d4\nrefs/remotes/origin/cursor/slurm-state-contract-audit-2969\tfa4d5516a8d0e8e0365113ade4ca68cd4d66e843\nrefs/remotes/origin/cursor/slurm-state-contract-audit-corrected-2969\t79b21dd6337ae18def7c31bec35e3b8abfaa9838\nrefs/remotes/origin/cursor/tariff-response-experiment-2969\t77baf667a06946c692f959d66fed4e2bca36cd32\nrefs/remotes/origin/issue11\t37d2e5d6a255ba50f5f46d6e1c589dc3cb12780d\nrefs/remotes/origin/issue18\t85fd6a85cfef898183ea0bd9075aaed2a81ca7ad\nrefs/remotes/origin/issue20\tfd4d818946b2fde50a9288dc577995891f690d2a\nrefs/remotes/origin/issue20-local-pricing-audit\te0790098c36c9bfad1906e144b860e794d8bd383\nrefs/remotes/origin/issue7\tf8f4cea7d648cb22b6bf3a85501123be886a8454\nrefs/remotes/origin/main\tc4002c58f1beb50d1b793154e12bfdd9412217d2\nrefs/remotes/origin/peel-and-price\t0a3a720e8470c13f534f9003438a9eac50ac4260\nrefs/remotes/origin/records/ladder-lite-20260819-2969\t0ea56c142cd4bc3c85591e151ec11ce84e91ffcc\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "main"
+      ],
+      "exit_code": 0,
+      "stdout": "f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "for-each-ref",
+        "--format=%(refname)\t%(objectname)",
+        "refs/heads",
+        "refs/remotes",
+        "refs/tags"
+      ],
+      "exit_code": 0,
+      "stdout": "refs/heads/archive/issue20-artifacts-20260730\t0d7b48b5fb238c428f9c71e55aed132bfc6e80ce\nrefs/heads/cluster-preserve-d44b67a-20260805\td44b67a028d5dd82fea66717fb48e5eba5e9881d\nrefs/heads/codex/action3-full-20260916\tbe624eb486a7c3a4137f8b0fe660f9bb273ddf98\nrefs/heads/codex/algorithm-benchmarks-20260912\tb142f360f8a9018c2f50e3419f0dddcaf87a489d\nrefs/heads/codex/algorithm-review-20260912\t206315dddd99f44a49141c04bb786f2b38f459dd\nrefs/heads/codex/baseline-efficiency-20260912\t11afd8372dd14fdb2a11cd5eaddbee1d02644b1f\nrefs/heads/codex/capacity-efficiency-20260912\t309d98d266ebaf6b7e99543a67f8f2be5736874a\nrefs/heads/codex/capacity-parallel-followup-20260914\tbea983e9e8d9e16fb3d12a104dabaaf2b8a00ec7\nrefs/heads/codex/capacity-shortcircuit-20260917\tcf61e2c8618b067df032c3eb795476e64184ed0a\nrefs/heads/codex/capacity-speed-pilot-20260910\t37d26e7f86f59c94ecd1f1857daf7ca3d2a0fb00\nrefs/heads/codex/capacity-timeout-checkpoint-20260911\t253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6\nrefs/heads/codex/charging-factorial-20260921\tb931772dadf1e5930fd87bf4a89edd7dcaf6c51a\nrefs/heads/codex/decomposition-map-20260910\t39b84978c06100cc7bcb2817ca0fa552233d90f5\nrefs/heads/codex/dispatch-cleanup-20260918\t663ece9c8d5d02e03087a300ecca0605a4ad9292\nrefs/heads/codex/dive-cap-escalation-20260923\td8fbf40b922c158d53959a12ac950371e7c7c6fe\nrefs/heads/codex/diving-pricing-20260919\t79a677d8ecc94beff95a72e6385e4c18b7856e41\nrefs/heads/codex/easy-trip-ladder-20260908\teaca565903772e356c280b686ad2e95761123935\nrefs/heads/codex/efficiency-validation-20260912\t9bfbfc8fa977279e12e410c6f3761a6949a4f87b\nrefs/heads/codex/event-graph-startup-tiekey-20260912\tfd5b3ef08cf0cbddca1dde56f0eef08030986801\nrefs/heads/codex/event-native-warm-chain-20260909\tecb60c154a9a5db385e3a573949ec9fd0a737af3\nrefs/heads/codex/event-seed-mip-prerequisite\t4472cfc578497477fbf05c427cf2617f97ce8dcb\nrefs/heads/codex/fleet-certified-early-stop-20260917\t689d3646ce77ed0ffce8722ba5724b2cda303a66\nrefs/heads/codex/giro-k1-recovery-20260909\tc4dbef784e0fd717f8cd5976a15901b105cfd0e1\nrefs/heads/codex/giro-zero-start-fee-20260913\tf895c61a525c51d32ab09276f12074217c1788ce\nrefs/heads/codex/goal2-research-registry-20260830\td7a7cbd81980e13b73f065430005ba404d51cf86\nrefs/heads/codex/graph-checkpoints-20260921\t71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a\nrefs/heads/codex/heavy-trip-ladder-20260908\t9665429111b461006cc6b844d7d6989daf323454\nrefs/heads/codex/import-deadline-fix-20260912\t68fce0093ec9768392442fe1b107a1b67ab0cb7b\nrefs/heads/codex/integer-columns-20260921\tc50e5f207869bac25507adfae90bb830a44039b7\nrefs/heads/codex/k5-raw-mip36h-20260905\t1019bddc204d183a69fea54f56225a9bd81ba0eb\nrefs/heads/codex/k5-raw-mip36h-status-fix-20260905\tdab4400680f4624ec81de42d465e8a53097b4a8f\nrefs/heads/codex/luna-proof-reporting-20260904\t67b3ad1ac12aa2c96b744ce94447b415f9b5e66e\nrefs/heads/codex/matched-fleet-tariff-20260908\ta6e5059688703641db9aa3349b6ab6a9f76c1987\nrefs/heads/codex/mip-structure-20260922\t74906efe7d8787c82795d6dd80a640a56a594beb\nrefs/heads/codex/nested-replication-20260909\t0209d3e05d7b024f5aba6854f857b3ce22ff1e1c\nrefs/heads/codex/nested-threshold-k2-15-20260908\t21fbecba826824c44f897feef038fcf51c532582\nrefs/heads/codex/overnight-extension-20260912\ta29992196acb74d02b8c7891be4061718889999f\nrefs/heads/codex/overnight-pool-mip-20260908\t2d7a21a07ef0b89f6e34e8504bf0638bee61113a\nrefs/heads/codex/queue-graph-recovery-20260912\ta0e0bb7681c8451e3cbbbfa06aef390026d9af4b\nrefs/heads/codex/queue-recovery-code-20260912\te091a4dba549510238507ef5e5367abea958bd30\nrefs/heads/codex/replay-index-20260912\t0d3f1129d3ee306285ba22d40cb567beb5a384de\nrefs/heads/codex/research-maintenance-20260925\td04b11876cb38866b524c3793c8aff996545e3b3\nrefs/heads/codex/research-register-20260910\tdac4005840ffa6fc8da950de7ecf0822a1f16c4a\nrefs/heads/codex/research-register-20260915\t4a0c2b2c76d5ab150acebc70bd725266c8aef835\nrefs/heads/codex/review-fdl-cg-20260916\tdaac18d5598902c28baa6c43e58942930fc733bc\nrefs/heads/codex/review-fdl-mip-20260916\t0c51b1fa491492212f5d875d1c082b476db0f1c3\nrefs/heads/codex/review-strict-chain-20260916\t50ceb6c095a580f79f87b53bef536cac31f81963\nrefs/heads/codex/spatial-tariff-recipe-20260925\t4a8b497e668be9962bca5906a8b69116fa634882\nrefs/heads/codex/stage2-cap-recovery-20260910\t2d797b897c8a89dcdb3eae36351ac6a8655e59d2\nrefs/heads/codex/storage-cleanup-20260912\tb1129bf45f176f24c58f17ba7dee32c1f1827758\nrefs/heads/codex/strict-graph-reuse-20260922\tfedf421461f94727e6b1292a0e7789ab76ed8587\nrefs/heads/codex/strict-graph-validation-20260922\t3bb32c1a84af73c97689dfc9f5ad43136cfcead9\nrefs/heads/codex/strict-lineage-gate-20260922\t34d39caff534c089fbffed397f5a42b223b590ad\nrefs/heads/codex/strict-packed-20260921\t35770aae2c08e7d5a356cc3b673e67608e5b1036\nrefs/heads/codex/strict-successors-20260921\t550bc5b061b05b82247e4f2f94793c3563c98087\nrefs/heads/codex/terminal-energy-fair-comparison-20260910\t2424369f4b5c40198a22698b7a460d6aa8129169\nrefs/heads/codex/terminal-replay-compat-20260910\t4400dbb3f28471ffcd4a4628cb2487ea0a8ff6d8\nrefs/heads/codex/terminal-replay-compat-2424369-20260910\t5cdb8138c29faef9d5bf949175cb1e815a0b4220\nrefs/heads/codex/warm-chain-p5-20260910\t689b882789119bf6a6686157c757db39286ee6db\nrefs/heads/codex/warm-multichain-p1246-20260910\t58a69ad83017254fe290e7018bec4d527a67c116\nrefs/heads/codex/week-cleanup-20260921\t24fbda8100f612c45477c28a92747e00cf7cb42a\nrefs/heads/codex/week-evidence-20260921\td04b11876cb38866b524c3793c8aff996545e3b3\nrefs/heads/codex/zero-charge-start-fee-20260913\t06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0\nrefs/heads/codex/zero-fee-terminal-cg\t2c7445ac6449eb7d338c83f8320574da042a65b5\nrefs/heads/cursor/nested-threshold-auditor-20260904\t9bdbb17d14f068745b198d4ade81e062addc62b4\nrefs/heads/issue1-fix-readme\t1e58a9e7865962bf7f1caeb5854cde2c6bda3bed\nrefs/heads/issue10\td34cde44cda9e13977fc39c0aa93dd6246899228\nrefs/heads/issue11\t37d2e5d6a255ba50f5f46d6e1c589dc3cb12780d\nrefs/heads/issue14\ta5f63e34869d51c850738f7eec382bc94f36570c\nrefs/heads/issue14-BattSoCChargingFix\t1f53b517a2592b39a1ba1e0c37d9551f6c822801\nrefs/heads/issue14-prev_ver\tbe4defe73ce18df587d8f121275ea8e849e8b614\nrefs/heads/issue15\t62256692319f74f266fa2bad4db2a008ef97a901\nrefs/heads/issue16\tbae9b6478e94a2d95736daac0be73b98b97c1092\nrefs/heads/issue17\t86cf39e316ab694dd77d84ed56e013829be1467c\nrefs/heads/issue18\tcb7d7cc43773e5ee7e890e26addece52aace48e7\nrefs/heads/issue19\t3d0a7ccde90dcf1122382de54503a5c9b97aae26\nrefs/heads/issue2-unicorn-parallel\teeef75d0703cfb03363e410833db9e153a0322ce\nrefs/heads/issue20\tfd4d818946b2fde50a9288dc577995891f690d2a\nrefs/heads/issue8\t6d5f4c9568e54fdd9ee3e27c1252cd8d19e18382\nrefs/heads/issue9\t3f10daeac7c9c0511ada00917360f68e542e905f\nrefs/heads/main\tf37c6ce4c6e0a7ccffd3719a633bacd40b9a351c\nrefs/heads/peel-and-price\t0a3a720e8470c13f534f9003438a9eac50ac4260\nrefs/remotes/origin/HEAD\tc4002c58f1beb50d1b793154e12bfdd9412217d2\nrefs/remotes/origin/cluster-preserve-d44b67a-20260805\td44b67a028d5dd82fea66717fb48e5eba5e9881d\nrefs/remotes/origin/codex/algorithm-benchmarks-20260912\tb142f360f8a9018c2f50e3419f0dddcaf87a489d\nrefs/remotes/origin/codex/algorithm-review-20260912\t206315dddd99f44a49141c04bb786f2b38f459dd\nrefs/remotes/origin/codex/baseline-efficiency-20260912\t11afd8372dd14fdb2a11cd5eaddbee1d02644b1f\nrefs/remotes/origin/codex/capacity-efficiency-20260912\t309d98d266ebaf6b7e99543a67f8f2be5736874a\nrefs/remotes/origin/codex/capacity-timeout-checkpoint-20260911\t253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6\nrefs/remotes/origin/codex/charging-column-structure-20260922\tf37c6ce4c6e0a7ccffd3719a633bacd40b9a351c\nrefs/remotes/origin/codex/charging-factorial-20260921\tb931772dadf1e5930fd87bf4a89edd7dcaf6c51a\nrefs/remotes/origin/codex/easy-trip-ladder-20260908\teaca565903772e356c280b686ad2e95761123935\nrefs/remotes/origin/codex/efficiency-validation-20260912\t9bfbfc8fa977279e12e410c6f3761a6949a4f87b\nrefs/remotes/origin/codex/event-uniform-cluster-tools-20260824\t21fbecba826824c44f897feef038fcf51c532582\nrefs/remotes/origin/codex/giro-zero-start-fee-20260913\tf895c61a525c51d32ab09276f12074217c1788ce\nrefs/remotes/origin/codex/goal2-research-registry-20260830\td7a7cbd81980e13b73f065430005ba404d51cf86\nrefs/remotes/origin/codex/graph-checkpoints-20260921\t71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a\nrefs/remotes/origin/codex/gurobi-primary-20260906\ta8102d10607c20e4b1b3f80f790ba380a5a04d8f\nrefs/remotes/origin/codex/heavy-trip-ladder-20260908\t9665429111b461006cc6b844d7d6989daf323454\nrefs/remotes/origin/codex/import-deadline-fix-20260912\t68fce0093ec9768392442fe1b107a1b67ab0cb7b\nrefs/remotes/origin/codex/integer-columns-20260921\tc50e5f207869bac25507adfae90bb830a44039b7\nrefs/remotes/origin/codex/luna-proof-reporting-20260904\t67b3ad1ac12aa2c96b744ce94447b415f9b5e66e\nrefs/remotes/origin/codex/matched-fleet-tariff-20260908\ta6e5059688703641db9aa3349b6ab6a9f76c1987\nrefs/remotes/origin/codex/mip-structure-20260922\t74906efe7d8787c82795d6dd80a640a56a594beb\nrefs/remotes/origin/codex/nested-replication-20260909\t0209d3e05d7b024f5aba6854f857b3ce22ff1e1c\nrefs/remotes/origin/codex/nested-threshold-k2-15-20260908\t21fbecba826824c44f897feef038fcf51c532582\nrefs/remotes/origin/codex/overnight-extension-20260912\ta29992196acb74d02b8c7891be4061718889999f\nrefs/remotes/origin/codex/overnight-pool-mip-20260908\t2d7a21a07ef0b89f6e34e8504bf0638bee61113a\nrefs/remotes/origin/codex/parallel-research-20260911\t4a0c2b2c76d5ab150acebc70bd725266c8aef835\nrefs/remotes/origin/codex/queue-graph-recovery-20260912\ta0e0bb7681c8451e3cbbbfa06aef390026d9af4b\nrefs/remotes/origin/codex/queue-recovery-code-20260912\te091a4dba549510238507ef5e5367abea958bd30\nrefs/remotes/origin/codex/research-register-20260910\t67c3d1bb48c37ec77bb46924985ff248b7d87be7\nrefs/remotes/origin/codex/scale-ladder-probe-recovery-20260818\t1d80402d79d1cbb4b786b780f7287c12b02d3621\nrefs/remotes/origin/codex/storage-cleanup-20260912\tb1129bf45f176f24c58f17ba7dee32c1f1827758\nrefs/remotes/origin/codex/strict-graph-reuse-20260922\tfedf421461f94727e6b1292a0e7789ab76ed8587\nrefs/remotes/origin/codex/strict-graph-validation-20260922\t3bb32c1a84af73c97689dfc9f5ad43136cfcead9\nrefs/remotes/origin/codex/strict-lineage-gate-20260922\t34d39caff534c089fbffed397f5a42b223b590ad\nrefs/remotes/origin/codex/strict-successors-20260921\t550bc5b061b05b82247e4f2f94793c3563c98087\nrefs/remotes/origin/codex/terminal-energy-fair-comparison-20260910\t2424369f4b5c40198a22698b7a460d6aa8129169\nrefs/remotes/origin/codex/terminal-replay-compat-2424369-20260910\t5cdb8138c29faef9d5bf949175cb1e815a0b4220\nrefs/remotes/origin/codex/week-evidence-20260921\td04b11876cb38866b524c3793c8aff996545e3b3\nrefs/remotes/origin/codex/zero-charge-start-fee-20260913\t06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0\nrefs/remotes/origin/codex/zero-fee-terminal-cg\t2c7445ac6449eb7d338c83f8320574da042a65b5\nrefs/remotes/origin/cursor/arcflow-oracle-2969-3a99\t585f98c01fcba562bca8e28bde10f969bcd68b3d\nrefs/remotes/origin/cursor/branch-and-price-experiment-2969-1451\td63a4da1ac2965c4348f3a2653044eb138ce81cb\nrefs/remotes/origin/cursor/cross-generation-evidence-2969\t86fd1127ed353afb82b6c82bfb943ddc0a6fb446\nrefs/remotes/origin/cursor/cross-generation-evidence-refresh-2969\t390a4dcb63e7d37a962c458a03564beab152e7b7\nrefs/remotes/origin/cursor/duty-grid-transition-audit-2969\t86b0a4269f061b49b5c5ce49db7fd931a3585cfc\nrefs/remotes/origin/cursor/event-based-pricer-2969\t2683c775c2ba29018404c5f41ca2aff3266b5739\nrefs/remotes/origin/cursor/exact-cg-performance-audit-2969\tae736fbc9c5fef71f39d7d758b7062355c485313\nrefs/remotes/origin/cursor/exact-scale-ladder-2969\tf51733b4163a26ac8b36771d6584e8402ef6686f\nrefs/remotes/origin/cursor/expanded-soc-realization-audit-2969\t636dc0912f47e6ce85284fad3b36af30b4135887\nrefs/remotes/origin/cursor/fixed-duty-charging-2969-b22e\t53d2355a737485f27cd067cdaa6ebb488c17c88a\nrefs/remotes/origin/cursor/k40-factorial-analysis-mip-2969\tf40b1206b244cbc9accad272ac852837c8debdb3\nrefs/remotes/origin/cursor/ladder-lite-20260819-2969\tff7fb2ba93cf13a31171e1e4aeb2d28dc8aeee20\nrefs/remotes/origin/cursor/mip-convergence-statistics-2969\tbcdd57db7d0ee15496288e186246e6ed789f2b73\nrefs/remotes/origin/cursor/records-curator-2969-8502\tada787fb3862f3b74e7a93cf4f580fd4c4570298\nrefs/remotes/origin/cursor/recovery-audit\teb5abf68fc427651764c56a827fbf236f20517d4\nrefs/remotes/origin/cursor/slurm-state-contract-audit-2969\tfa4d5516a8d0e8e0365113ade4ca68cd4d66e843\nrefs/remotes/origin/cursor/slurm-state-contract-audit-corrected-2969\t79b21dd6337ae18def7c31bec35e3b8abfaa9838\nrefs/remotes/origin/cursor/tariff-response-experiment-2969\t77baf667a06946c692f959d66fed4e2bca36cd32\nrefs/remotes/origin/issue11\t37d2e5d6a255ba50f5f46d6e1c589dc3cb12780d\nrefs/remotes/origin/issue18\t85fd6a85cfef898183ea0bd9075aaed2a81ca7ad\nrefs/remotes/origin/issue20\tfd4d818946b2fde50a9288dc577995891f690d2a\nrefs/remotes/origin/issue20-local-pricing-audit\te0790098c36c9bfad1906e144b860e794d8bd383\nrefs/remotes/origin/issue7\tf8f4cea7d648cb22b6bf3a85501123be886a8454\nrefs/remotes/origin/main\tc4002c58f1beb50d1b793154e12bfdd9412217d2\nrefs/remotes/origin/peel-and-price\t0a3a720e8470c13f534f9003438a9eac50ac4260\nrefs/remotes/origin/records/ladder-lite-20260819-2969\t0ea56c142cd4bc3c85591e151ec11ce84e91ffcc\nrefs/tags/codex/archive-branch-20260925-event-uniform-cluster-tools-20260824\tb5436f5476f5ff1fcf3dae776297005a9aadecdf\nrefs/tags/codex/archive-branch-20260925-gurobi-primary-20260906\ta8102d10607c20e4b1b3f80f790ba380a5a04d8f\nrefs/tags/codex/archive-branch-20260925-highs-baseline-20260906\t2d39eaab5c5b9098ae205515a7a6df1204921d3a\nrefs/tags/codex/archive-branch-20260925-issue18-clean\t85fd6a85cfef898183ea0bd9075aaed2a81ca7ad\nrefs/tags/codex/archive-branch-20260925-small-exact-threshold-20260903\t9bdbb17d14f068745b198d4ade81e062addc62b4\nrefs/tags/codex/archive-worktree-20260925-18bf98bb701e566745b3e7dae2eb3dd88bd9e2ca\t18bf98bb701e566745b3e7dae2eb3dd88bd9e2ca\nrefs/tags/codex/archive-worktree-20260925-1a0028f968e2b0143ffdf986c7c550eeb374d3da\t1a0028f968e2b0143ffdf986c7c550eeb374d3da\nrefs/tags/codex/archive-worktree-20260925-2f2a4fbdb59b49c00810522fa449b37b350678fc\t2f2a4fbdb59b49c00810522fa449b37b350678fc\nrefs/tags/codex/archive-worktree-20260925-35b2c41b263842b928f947ebbddae666ef860435\t35b2c41b263842b928f947ebbddae666ef860435\nrefs/tags/codex/archive-worktree-20260925-3c729b9b2d1a3ef08562055dde344cc5322566a6\t3c729b9b2d1a3ef08562055dde344cc5322566a6\nrefs/tags/codex/archive-worktree-20260925-417f686f6e0467259089c9be68d1dccc7a29dc5f\t417f686f6e0467259089c9be68d1dccc7a29dc5f\nrefs/tags/codex/archive-worktree-20260925-48ddb2de2c8528a1a2ce8aa0058ee3a9ee426d34\t48ddb2de2c8528a1a2ce8aa0058ee3a9ee426d34\nrefs/tags/codex/archive-worktree-20260925-5054e7ed608daf40b799ae7729cea09873d48ce4\t5054e7ed608daf40b799ae7729cea09873d48ce4\nrefs/tags/codex/archive-worktree-20260925-556c5274ac0a8e8994401ed397efb2516291fc9a\t556c5274ac0a8e8994401ed397efb2516291fc9a\nrefs/tags/codex/archive-worktree-20260925-5ec9b6240af9fff6af0e926b22a63673ffdb32ed\t5ec9b6240af9fff6af0e926b22a63673ffdb32ed\nrefs/tags/codex/archive-worktree-20260925-618b062d00a53d6e4c45e7663c8a99717ace864a\t618b062d00a53d6e4c45e7663c8a99717ace864a\nrefs/tags/codex/archive-worktree-20260925-65345f3f52638676aee278389b31ac6be28b4af4\t65345f3f52638676aee278389b31ac6be28b4af4\nrefs/tags/codex/archive-worktree-20260925-6c12c983a6e0dd72c863ce7c69169154ba72f075\t6c12c983a6e0dd72c863ce7c69169154ba72f075\nrefs/tags/codex/archive-worktree-20260925-75397554ee5209f5aac4beb0e3d5e503bc5458bd\t75397554ee5209f5aac4beb0e3d5e503bc5458bd\nrefs/tags/codex/archive-worktree-20260925-88fed506d44c4cd0add44242298615e2751e7485\t88fed506d44c4cd0add44242298615e2751e7485\nrefs/tags/codex/archive-worktree-20260925-9fd5011f769ae943860721e3e945d1d952fed5ad\t9fd5011f769ae943860721e3e945d1d952fed5ad\nrefs/tags/codex/archive-worktree-20260925-a1a64f6af38766589aff4578d3a58885214412e3\ta1a64f6af38766589aff4578d3a58885214412e3\nrefs/tags/codex/archive-worktree-20260925-c2ad8162bd6fa2253109f9b998fd2f642620431c\tc2ad8162bd6fa2253109f9b998fd2f642620431c\nrefs/tags/codex/archive-worktree-20260925-d8413f06578e8eff495ebdf1fd29d86756512f7a\td8413f06578e8eff495ebdf1fd29d86756512f7a\nrefs/tags/results-cg-bigtar-867334-final-20260814\tf4e31c372bfb9e440617ed61193e227552dec49d\nrefs/tags/results-exact-mip-failures-20260805\tf43475b732c3fbc8447a30845834a7d9e8822ef3\nrefs/tags/results-exact_big_mip_20260805T135556Z\t0722e2e7aaeaa2bb4ab2b8c6d79ef4aeb320313a\nrefs/tags/results-goal1-5h-20260802\tfd4d818946b2fde50a9288dc577995891f690d2a\nrefs/tags/results-goal1-local-5m-20260802\tf70d3ffb6e9433fa8926f013b76227d62dd07706\nrefs/tags/results-goal1-overnight-single-duty-20260803\tb9037d2345e17bf72d1fd2a9c55c5667f7d0fea4\nrefs/tags/results-goal1-unicorn-5m-round1-20260802\t97c27c732b967799cf91153db7d9679bb3de3876\nrefs/tags/results-goal1-unicorn-gap-depth-round1-20260802\tb9037d2345e17bf72d1fd2a9c55c5667f7d0fea4\nrefs/tags/results-rawk40-mip-80058-physical-audit-20260817\tbc0c386f9aa3e6893129bc298d884be4e4c35674\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "worktree",
+        "list",
+        "--porcelain"
+      ],
+      "exit_code": 0,
+      "stdout": "worktree /Users/nadan/Documents/projects/demandresponse\nHEAD f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c\nbranch refs/heads/main\n\nworktree /private/tmp/evsp-mip-structure-20260922\nHEAD 74906efe7d8787c82795d6dd80a640a56a594beb\nbranch refs/heads/codex/mip-structure-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/action3-full-20260916\nHEAD be624eb486a7c3a4137f8b0fe660f9bb273ddf98\nbranch refs/heads/codex/action3-full-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/advisor-f6-k5-20260916\nHEAD a12ced439503bb3b70a0ca0418661ce5f8fb35a2\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-parallel-followup-20260914\nHEAD bea983e9e8d9e16fb3d12a104dabaaf2b8a00ec7\nbranch refs/heads/codex/capacity-parallel-followup-20260914\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-shortcircuit-20260917\nHEAD cf61e2c8618b067df032c3eb795476e64184ed0a\nbranch refs/heads/codex/capacity-shortcircuit-20260917\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/capacity-timeout-checkpoint-20260911\nHEAD 253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6\nbranch refs/heads/codex/capacity-timeout-checkpoint-20260911\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/charging-factorial-20260921\nHEAD b931772dadf1e5930fd87bf4a89edd7dcaf6c51a\nbranch refs/heads/codex/charging-factorial-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/decomposition-map-20260910\nHEAD 39b84978c06100cc7bcb2817ca0fa552233d90f5\nbranch refs/heads/codex/decomposition-map-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/dispatch-cleanup-20260918\nHEAD 663ece9c8d5d02e03087a300ecca0605a4ad9292\nbranch refs/heads/codex/dispatch-cleanup-20260918\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/dive-cap-escalation-20260923\nHEAD d8fbf40b922c158d53959a12ac950371e7c7c6fe\nbranch refs/heads/codex/dive-cap-escalation-20260923\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/diving-pricing-20260919\nHEAD 79a677d8ecc94beff95a72e6385e4c18b7856e41\nbranch refs/heads/codex/diving-pricing-20260919\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/early-stop-20260917\nHEAD 689d3646ce77ed0ffce8722ba5724b2cda303a66\nbranch refs/heads/codex/fleet-certified-early-stop-20260917\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/graph-checkpoints-20260921\nHEAD 71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a\nbranch refs/heads/codex/graph-checkpoints-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/integer-columns-20260921\nHEAD c50e5f207869bac25507adfae90bb830a44039b7\nbranch refs/heads/codex/integer-columns-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/research-maintenance-20260925\nHEAD d04b11876cb38866b524c3793c8aff996545e3b3\nbranch refs/heads/codex/research-maintenance-20260925\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/research-register-20260915\nHEAD 4a0c2b2c76d5ab150acebc70bd725266c8aef835\nbranch refs/heads/codex/research-register-20260915\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-dr-mincharge-20260916\nHEAD 67636d44ce59d2dafb12401a75dac045d2b326e4\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-fdl-cg-20260916\nHEAD daac18d5598902c28baa6c43e58942930fc733bc\nbranch refs/heads/codex/review-fdl-cg-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-fdl-mip-20260916\nHEAD 0c51b1fa491492212f5d875d1c082b476db0f1c3\nbranch refs/heads/codex/review-fdl-mip-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-mip-seeds-20260916\nHEAD 6830caa225856903d1157ef8587863c7ae21ad53\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/review-strict-chain-20260916\nHEAD 50ceb6c095a580f79f87b53bef536cac31f81963\nbranch refs/heads/codex/review-strict-chain-20260916\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/spatial-tariff-recipe-20260925\nHEAD 4a8b497e668be9962bca5906a8b69116fa634882\nbranch refs/heads/codex/spatial-tariff-recipe-20260925\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/stage2_cap_4400dbb\nHEAD 4400dbb3f28471ffcd4a4628cb2487ea0a8ff6d8\ndetached\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/stage2_cap_recovery_20260910\nHEAD 2d797b897c8a89dcdb3eae36351ac6a8655e59d2\nbranch refs/heads/codex/stage2-cap-recovery-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-graph-reuse-20260922\nHEAD fedf421461f94727e6b1292a0e7789ab76ed8587\nbranch refs/heads/codex/strict-graph-reuse-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-graph-validation-20260922\nHEAD 3bb32c1a84af73c97689dfc9f5ad43136cfcead9\nbranch refs/heads/codex/strict-graph-validation-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-lineage-gate-20260922\nHEAD 34d39caff534c089fbffed397f5a42b223b590ad\nbranch refs/heads/codex/strict-lineage-gate-20260922\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-packed-20260921\nHEAD 35770aae2c08e7d5a356cc3b673e67608e5b1036\nbranch refs/heads/codex/strict-packed-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/strict-successors-20260921\nHEAD 550bc5b061b05b82247e4f2f94793c3563c98087\nbranch refs/heads/codex/strict-successors-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/terminal-replay-compat-20260910\nHEAD 4400dbb3f28471ffcd4a4628cb2487ea0a8ff6d8\nbranch refs/heads/codex/terminal-replay-compat-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/terminal-replay-compat-2424369-20260910\nHEAD 5cdb8138c29faef9d5bf949175cb1e815a0b4220\nbranch refs/heads/codex/terminal-replay-compat-2424369-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/warm-chain-p5-20260910\nHEAD 689b882789119bf6a6686157c757db39286ee6db\nbranch refs/heads/codex/warm-chain-p5-20260910\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/week-cleanup-20260921\nHEAD 24fbda8100f612c45477c28a92747e00cf7cb42a\nbranch refs/heads/codex/week-cleanup-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/week-evidence-20260921\nHEAD d04b11876cb38866b524c3793c8aff996545e3b3\nbranch refs/heads/codex/week-evidence-20260921\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/zero-charge-start-fee-20260913\nHEAD 06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0\nbranch refs/heads/codex/zero-charge-start-fee-20260913\n\nworktree /Users/nadan/Documents/projects/demandresponse/.codex-work/zero-fee-terminal-cg\nHEAD 2c7445ac6449eb7d338c83f8320574da042a65b5\nbranch refs/heads/codex/zero-fee-terminal-cg\n\nworktree /Users/nadan/Documents/projects/evsp-dr-nested-auditor\nHEAD 9bdbb17d14f068745b198d4ade81e062addc62b4\nbranch refs/heads/cursor/nested-threshold-auditor-20260904\n\n",
+      "stderr": ""
+    }
+  ],
+  "archived_branches": [
+    {
+      "branch": "codex/event-uniform-cluster-tools-20260824",
+      "sha": "b5436f5476f5ff1fcf3dae776297005a9aadecdf",
+      "tag": "codex/archive-branch-20260925-event-uniform-cluster-tools-20260824",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      }
+    },
+    {
+      "branch": "codex/gurobi-primary-20260906",
+      "sha": "a8102d10607c20e4b1b3f80f790ba380a5a04d8f",
+      "tag": "codex/archive-branch-20260925-gurobi-primary-20260906",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      }
+    },
+    {
+      "branch": "codex/highs-baseline-20260906",
+      "sha": "2d39eaab5c5b9098ae205515a7a6df1204921d3a",
+      "tag": "codex/archive-branch-20260925-highs-baseline-20260906",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      }
+    },
+    {
+      "branch": "codex/issue18-clean",
+      "sha": "85fd6a85cfef898183ea0bd9075aaed2a81ca7ad",
+      "tag": "codex/archive-branch-20260925-issue18-clean",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      }
+    },
+    {
+      "branch": "codex/small-exact-threshold-20260903",
+      "sha": "9bdbb17d14f068745b198d4ade81e062addc62b4",
+      "tag": "codex/archive-branch-20260925-small-exact-threshold-20260903",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      }
+    }
+  ],
+  "before": {
+    "local_branches": 87,
+    "worktrees": 38
+  },
+  "after": {
+    "local_branches": 82,
+    "worktrees": 38
+  },
+  "remote_refs_unchanged": true,
+  "main_unchanged": true,
+  "completed_at_utc": "2026-09-25T17:37:16.648500+00:00",
+  "success": true
+}

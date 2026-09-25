@@ -1,0 +1,369 @@
+{
+  "invalid_metadata_count": 44,
+  "metadata_total_bytes": 6259112,
+  "unretained_reflog_commit_count": 19,
+  "unretained_reflog_commits_not_covered_by_four_heads": [
+    "18bf98bb701e566745b3e7dae2eb3dd88bd9e2ca",
+    "2f2a4fbdb59b49c00810522fa449b37b350678fc",
+    "35b2c41b263842b928f947ebbddae666ef860435",
+    "3c729b9b2d1a3ef08562055dde344cc5322566a6",
+    "417f686f6e0467259089c9be68d1dccc7a29dc5f",
+    "5054e7ed608daf40b799ae7729cea09873d48ce4",
+    "556c5274ac0a8e8994401ed397efb2516291fc9a",
+    "5ec9b6240af9fff6af0e926b22a63673ffdb32ed",
+    "618b062d00a53d6e4c45e7663c8a99717ace864a",
+    "65345f3f52638676aee278389b31ac6be28b4af4",
+    "6c12c983a6e0dd72c863ce7c69169154ba72f075",
+    "9fd5011f769ae943860721e3e945d1d952fed5ad",
+    "a1a64f6af38766589aff4578d3a58885214412e3",
+    "c2ad8162bd6fa2253109f9b998fd2f642620431c",
+    "d8413f06578e8eff495ebdf1fd29d86756512f7a"
+  ],
+  "entries": [
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-legacy-exec-smoke-bead344",
+      "gitfile": "/private/tmp/evsp-legacy-exec-smoke-bead344/.git",
+      "directory_exists": false,
+      "bytes": 138592,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-research-register-20260910",
+      "gitfile": "/private/tmp/evsp-research-register-20260910/.git",
+      "directory_exists": true,
+      "bytes": 489332,
+      "reflog_commits_without_stable_ref": [
+        "2f2a4fbdb59b49c00810522fa449b37b350678fc"
+      ]
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-capacity-efficiency-20260912",
+      "gitfile": "/private/tmp/evsp-capacity-efficiency-20260912/.git",
+      "directory_exists": true,
+      "bytes": 146174,
+      "reflog_commits_without_stable_ref": [
+        "417f686f6e0467259089c9be68d1dccc7a29dc5f"
+      ]
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-queue-graph-recovery-20260912",
+      "gitfile": "/private/tmp/evsp-queue-graph-recovery-20260912/.git",
+      "directory_exists": false,
+      "bytes": 142352,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-matched-tariff-smoke-a9a9720",
+      "gitfile": "/private/tmp/evsp-matched-tariff-smoke-a9a9720/.git",
+      "directory_exists": false,
+      "bytes": 139098,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-replacement-exec-dcfabf0",
+      "gitfile": "/private/tmp/evsp-replacement-exec-dcfabf0/.git",
+      "directory_exists": false,
+      "bytes": 139015,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-easy-ladder-20260908",
+      "gitfile": "/private/tmp/evsp-easy-ladder-20260908/.git",
+      "directory_exists": false,
+      "bytes": 141564,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-matched-tariff-20260908",
+      "gitfile": "/private/tmp/evsp-matched-tariff-20260908/.git",
+      "directory_exists": false,
+      "bytes": 140785,
+      "reflog_commits_without_stable_ref": [
+        "1a0028f968e2b0143ffdf986c7c550eeb374d3da",
+        "5ec9b6240af9fff6af0e926b22a63673ffdb32ed"
+      ]
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-easy-exec-smoke-aaf83f6",
+      "gitfile": "/private/tmp/evsp-easy-exec-smoke-aaf83f6/.git",
+      "directory_exists": false,
+      "bytes": 137451,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-luna-review-300445a",
+      "gitfile": "/private/tmp/evsp-luna-review-300445a/.git",
+      "directory_exists": false,
+      "bytes": 115003,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-import-deadline-fix-20260912",
+      "gitfile": "/private/tmp/evsp-import-deadline-fix-20260912/.git",
+      "directory_exists": false,
+      "bytes": 141595,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-heavy-preflight-9665429",
+      "gitfile": "/private/tmp/evsp-heavy-preflight-9665429/.git",
+      "directory_exists": true,
+      "bytes": 141146,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-replay-index-20260912",
+      "gitfile": "/private/tmp/evsp-replay-index-20260912/.git",
+      "directory_exists": false,
+      "bytes": 141415,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-input-ff7",
+      "gitfile": "/private/tmp/evsp-input-ff7/.git",
+      "directory_exists": false,
+      "bytes": 74958,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/giro-zero-start-fee-20260913",
+      "gitfile": "/private/tmp/giro-zero-start-fee-20260913/.git",
+      "directory_exists": false,
+      "bytes": 141543,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-dr-luna-proof-reporting-20260904",
+      "gitfile": "/private/tmp/evsp-dr-luna-proof-reporting-20260904/.git",
+      "directory_exists": false,
+      "bytes": 116298,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/dr-k3-audit.uujvN8",
+      "gitfile": "/private/tmp/dr-k3-audit.uujvN8/.git",
+      "directory_exists": false,
+      "bytes": 144441,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/giro-worker-test",
+      "gitfile": "/private/tmp/giro-worker-test/.git",
+      "directory_exists": false,
+      "bytes": 140337,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-replication42-smoke",
+      "gitfile": "/private/tmp/evsp-replication42-smoke/.git",
+      "directory_exists": false,
+      "bytes": 144447,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/terminal-energy-exec.XzF2z2",
+      "gitfile": "/private/tmp/terminal-energy-exec.XzF2z2/.git",
+      "directory_exists": false,
+      "bytes": 139932,
+      "reflog_commits_without_stable_ref": [
+        "48ddb2de2c8528a1a2ce8aa0058ee3a9ee426d34"
+      ]
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-capacity-speed-pilot",
+      "gitfile": "/private/tmp/evsp-capacity-speed-pilot/.git",
+      "directory_exists": false,
+      "bytes": 149654,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-greedy-campaign-smoke",
+      "gitfile": "/private/tmp/evsp-greedy-campaign-smoke/.git",
+      "directory_exists": true,
+      "bytes": 139964,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-nested-threshold-20260908",
+      "gitfile": "/private/tmp/evsp-nested-threshold-20260908/.git",
+      "directory_exists": true,
+      "bytes": 136132,
+      "reflog_commits_without_stable_ref": [
+        "5054e7ed608daf40b799ae7729cea09873d48ce4"
+      ]
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-overnight-mip-20260908",
+      "gitfile": "/private/tmp/evsp-overnight-mip-20260908/.git",
+      "directory_exists": false,
+      "bytes": 119653,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-tariff-extension-smoke",
+      "gitfile": "/private/tmp/evsp-tariff-extension-smoke/.git",
+      "directory_exists": true,
+      "bytes": 139444,
+      "reflog_commits_without_stable_ref": [
+        "1a0028f968e2b0143ffdf986c7c550eeb374d3da"
+      ]
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-mip36h-launcher",
+      "gitfile": "/private/tmp/evsp-mip36h-launcher/.git",
+      "directory_exists": false,
+      "bytes": 119572,
+      "reflog_commits_without_stable_ref": [
+        "c2ad8162bd6fa2253109f9b998fd2f642620431c"
+      ]
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-nested-smoke-20260908",
+      "gitfile": "/private/tmp/evsp-nested-smoke-20260908/.git",
+      "directory_exists": false,
+      "bytes": 135445,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-efficiency-evidence-20260912",
+      "gitfile": "/private/tmp/evsp-efficiency-evidence-20260912/.git",
+      "directory_exists": false,
+      "bytes": 162914,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-baseline-efficiency-20260912",
+      "gitfile": "/private/tmp/evsp-baseline-efficiency-20260912/.git",
+      "directory_exists": false,
+      "bytes": 142902,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-nested-replication-20260909",
+      "gitfile": "/private/tmp/evsp-nested-replication-20260909/.git",
+      "directory_exists": false,
+      "bytes": 144844,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-small-threshold-0903",
+      "gitfile": "/private/tmp/evsp-small-threshold-0903/.git",
+      "directory_exists": false,
+      "bytes": 116655,
+      "reflog_commits_without_stable_ref": [
+        "6c12c983a6e0dd72c863ce7c69169154ba72f075"
+      ]
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-warm-multichain-p1246",
+      "gitfile": "/private/tmp/evsp-warm-multichain-p1246/.git",
+      "directory_exists": false,
+      "bytes": 17254,
+      "reflog_commits_without_stable_ref": [
+        "3c729b9b2d1a3ef08562055dde344cc5322566a6"
+      ]
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-queue-recovery-code-20260912",
+      "gitfile": "/private/tmp/evsp-queue-recovery-code-20260912/.git",
+      "directory_exists": false,
+      "bytes": 142513,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-algorithm-benchmarks-source-20260912",
+      "gitfile": "/private/tmp/evsp-algorithm-benchmarks-source-20260912/.git",
+      "directory_exists": false,
+      "bytes": 147997,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-algorithm-review-source-20260912",
+      "gitfile": "/private/tmp/evsp-algorithm-review-source-20260912/.git",
+      "directory_exists": false,
+      "bytes": 143044,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-dr-gurobi-primary-20260906",
+      "gitfile": "/private/tmp/evsp-dr-gurobi-primary-20260906/.git",
+      "directory_exists": false,
+      "bytes": 120153,
+      "reflog_commits_without_stable_ref": [
+        "18bf98bb701e566745b3e7dae2eb3dd88bd9e2ca",
+        "65345f3f52638676aee278389b31ac6be28b4af4",
+        "a1a64f6af38766589aff4578d3a58885214412e3",
+        "d8413f06578e8eff495ebdf1fd29d86756512f7a"
+      ]
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-terminal-energy-20260910",
+      "gitfile": "/private/tmp/evsp-terminal-energy-20260910/.git",
+      "directory_exists": true,
+      "bytes": 141346,
+      "reflog_commits_without_stable_ref": [
+        "48ddb2de2c8528a1a2ce8aa0058ee3a9ee426d34",
+        "556c5274ac0a8e8994401ed397efb2516291fc9a",
+        "618b062d00a53d6e4c45e7663c8a99717ace864a",
+        "75397554ee5209f5aac4beb0e3d5e503bc5458bd",
+        "88fed506d44c4cd0add44242298615e2751e7485",
+        "9fd5011f769ae943860721e3e945d1d952fed5ad"
+      ]
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-heavy-ladder-20260908",
+      "gitfile": "/private/tmp/evsp-heavy-ladder-20260908/.git",
+      "directory_exists": false,
+      "bytes": 141730,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-giro-k1-recovery",
+      "gitfile": "/private/tmp/evsp-giro-k1-recovery/.git",
+      "directory_exists": false,
+      "bytes": 144772,
+      "reflog_commits_without_stable_ref": [
+        "35b2c41b263842b928f947ebbddae666ef860435"
+      ]
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-event-graph-tiekey-20260912",
+      "gitfile": "/private/tmp/evsp-event-graph-tiekey-20260912/.git",
+      "directory_exists": true,
+      "bytes": 141892,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-event-seed-prerequisite",
+      "gitfile": "/private/tmp/evsp-event-seed-prerequisite/.git",
+      "directory_exists": false,
+      "bytes": 139827,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/terminal-energy-exec.8rxFMv",
+      "gitfile": "/private/tmp/terminal-energy-exec.8rxFMv/.git",
+      "directory_exists": false,
+      "bytes": 139932,
+      "reflog_commits_without_stable_ref": [
+        "75397554ee5209f5aac4beb0e3d5e503bc5458bd"
+      ]
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/evsp-event-native-warm-chain",
+      "gitfile": "/private/tmp/evsp-event-native-warm-chain/.git",
+      "directory_exists": false,
+      "bytes": 136063,
+      "reflog_commits_without_stable_ref": []
+    },
+    {
+      "admin": "/Users/nadan/Documents/projects/demandresponse/.git/worktrees/terminal-energy-exec.6kPI1q",
+      "gitfile": "/private/tmp/terminal-energy-exec.6kPI1q/.git",
+      "directory_exists": false,
+      "bytes": 139932,
+      "reflog_commits_without_stable_ref": [
+        "88fed506d44c4cd0add44242298615e2751e7485"
+      ]
+    }
+  ]
+}

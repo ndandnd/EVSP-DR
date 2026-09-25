@@ -1,0 +1,8 @@
+{
+  "checked_at_utc": "2026-09-25T17:53:35.229544+00:00",
+  "reference_count": 24,
+  "remote_receipt_file": "git_audit/archive_remote_refs.txt",
+  "recovery_tsv_equals_remote_receipt": true,
+  "recovery_tsv_equals_current_local_tags": true,
+  "method": "Exact full SHA equality of all 24 named refs; remote observation is the saved successful post-push ls-remote receipt, not a new network query."
+}

@@ -1,0 +1,214 @@
+23 September — Why does the example bus wait at midday?
+The 79-trip sample contains eight complete trips during its 10:37–12:54 gap. Three pass a travel-time insertion check (IDs 709, 514, 408); other buses already serve them. Thus missing trips alone do not explain the wait. Transferring them still needs battery, charging and donor-route checks. Filling idle time is not itself an objective benefit. GIRO spends 105 minutes charging in this gap; our historical zero-fee example charges for 10 minutes and waits. Its physics differ from GIRO’s. Source: outputs/coauthor_followup_20260923/midday/.
+Five buses are still necessary: five passenger trips overlap at 07:17. That gives a direct five-bus lower bound, regardless of charging. Midday transfers cannot reduce this fleet count; they might still change deadheading or charging costs. We have not yet optimized those transfers.
+The pictured bus was deliberately chosen for its overlap with GIRO duty 13309. Its similarity is partly a selection effect, not evidence that all our routes remain unchanged. The original diagnostic shows where another bus performs that work. A new illustration uses duty 13323: the saved route keeps all eight GIRO trips and adds nine, including 91 service minutes at 11:00–13:00. Its three charges are at Heden; GIRO charges at PARX. This is a historical routing example: return energy is 0.98 versus 107.90 kWh, shared capacity was not checked, and the parent fleet still has duplicate coverage. See Figures with explanations.
+23 September — Compare against reoptimized GIRO charging
+GIRO trip assignments, charging reoptimized: keep each GIRO bus’s passenger trips. CG-derived trip assignments, charging reoptimized: use our saved bus routes. Compare all five buses serving the same 62 trips; a pictured bus alone may serve different trips.
+Tariff peak
+Start fee
+GIRO trips, reoptimized
+CG trips, reoptimized
+CG versus GIRO cost change
+08:00
+0
+174.52
+158.71
+−9.1%
+08:00
+5
+369.64
+333.71
+−9.7%
+12:00
+0
+243.83
+234.29
+−3.9%
+12:00
+5
+438.19
+397.47
+−9.3%
+18:00
+0
+159.38
+163.15
++2.4%
+18:00
+5
+349.57
+313.06
+−10.4%
+Costs include electricity and start fees, in synthetic tariff units. Both use 236.44 kWh, 15% reserve, PARX 60 kW, nonlinear charging, minimum 3-minute sessions, shared charger limits and matched return-energy floors. All shown schedules pass the five-bus physical check.
+Scope: charging times and amounts move within fixed station paths. This is not fresh CG under these constraints or optimization over every charging location. Fee-0 and fee-5 B assignments differ. Some charging MIPs timed out; these are feasible costs, not universal optimality claims. The evening zero-fee example does not beat A.
+Audit and source hashes: outputs/coauthor_followup_20260923/AB_AUDIT.md and AB_AUDIT.csv. Reproducible figures: ab_figures/ within that folder. Historical figures are retained.
+22 Sep: fleet timings and sparsity · Route columns, capacity and tests · 22 Sep completed tests and queue evidence
+EVSP DR research journal
+Week of 21 September 2026. The strongest result is that a good fractional solution can leave an inadequate integer route pool. In 24 matched cases, both methods certify the event-grid LP. Their one-hour MIPs reach the minimum baseline fleet in 6/24 fresh cases versus 24/24 sequential cases. New exact time-and-travel certificates establish these fleet minima; charging optimality and full GIRO compliance do not follow. Sequential growth adds complete GIRO duties. A new four-arm C1 k8 test is running to separate cap choice, stopping rule, and own-incumbent transfer. Its eight-bus starting cap comes from a checked trip-overlap lower bound; no outcome is available yet.
+Paper results preview: five figures, editable tables and source checks. The preview counts accumulated sequential work and separates LP certificates, pool integer proofs and physical validation. Today’s experiments and monitoring plan.
+ 
+21 September LP agreement and battery audit
+Fresh versus sequential: all 24 paired LP endpoints (six chains, k=5,8,10,15) agree within 0.0000010617 cost units. Both certify the event-grid LP at reduced-cost tolerance 0.0001. Their integer pools differ. New per-chain figures show accumulated sequential CG time, fresh time, integer buses above target, and magnified LP costs.
+3.93 GiB means computer memory. Battery energy is measured in kWh. Reducing capacity and initial charge alone makes some saved schedules infeasible:
+Capacity-only scenario
+Failed route occurrences
+Affected saved fleets
+240 kWh control
+0 / 487
+0 / 48
+239.01 kWh throughout
+40 / 487
+29 / 48
+236.44 kWh throughout
+195 / 487
+46 / 48
+These frozen-schedule tests are not actual vehicle assignments. Follow-up: all 195 failures at 236.44 kWh were repaired with unchanged trips and bus counts. 194 fit the original intervals; one needs 0.150 seconds more. All 487 occurrences pass independent replay. This is a continuous capacity-only repair under 240 kW and zero reserve, not a new event-grid optimality proof. See the “21 Sep — chains and pricing” tab for all six figures, actual MIP times, repair results and the 7/8 versus 0/8 pricing experiment. Replay, source hashes and limits.
+Duty 13309, whole day: the same C6 k5 input provides a fee0 route sharing all 22 original trips and a fee5 route sharing 11. Displayed charging starts are 4 / 7 / 1. Both counterparts pass the capacity-only 239.01 kWh check; their historical zero-reserve charging physics still differ from GIRO. Full-day figures and exact itineraries.
+
+21 September Extending all six chains to 40
+All six baseline chains have found 32-bus schedules after longer MIPs and seed repeats. The original one-hour searches reached largest targets 26, 28, 31, 29, 26 and 28. These are largest matches, not a claim that every smaller target matched. At k32 all six CGs stopped at four hours without a pricing certificate.
+Now submitted: 48 cases, k33–40 on each chain, with the full preceding column pool, 4 h CG and 1 h two-stage MIP per case. The 44 graph builds are shared only for identical inputs.
+22 September, 20:01 EDT: 42/44 graphs are ready. Thirteen jobs run: two baseline graphs, six baseline CGs, four baseline MIPs, and the strict cached CG. All 52 pending baseline dependencies are genuine; no failed allocation or broken dependency needs recovery.
+Figure guide: pool MIP selects saved routes; integer-directed pricing creates complementary routes. Heuristic fleet solutions are upper bounds. The guide also explains the 512-route limit and packed graphs.
+Independent Opus review, checked: direct trip connections are capped at 57-minute gaps, and station bridges require positive charging. The follow-up and exact certificates now establish all 24 benchmark fleet minima. C1/C3 k15 still require 15 buses without the 57-minute cap. Charging optimality and broader operating constraints remain separate.
+
+Chain, k=33
+Trips
+CG minutes
+Fractional buses*
+Integer buses / pool bound
+C1
+785
+239.3
+33
+36 / 33 — open
+C2
+787
+239.9
+32
+36 / 32 — open
+C3
+770
+239.3
+33
+34 / 33 — open
+C4
+785
+239.1
+32
+38 / 32 — open
+C5
+768
+239.7
+32
+39 / 32 — open
+C6
+796
+239.9
+32
+38 / 32 — open
+* Fractional buses is the final restricted-master route weight. All six CGs hit the four-hour limit without a pricing certificate; these are not certified LP lower bounds. Separate graph builds took 9.56–15.10 h. CG minutes exclude earlier smaller instances.
+All six completed MIPs missed 33 and reached both time limits. Native route replay passes baseline physics, but duplicate removal and shared capacity remain unvalidated. Extra trip assignments: C1 315, C2 225, C3 118, C4 285, C5 397, C6 182.
+Latest larger endpoints: at k35, C1/C2/C3/C4 found 42/37/36/42 buses, with pool bounds 34/34/35/34. C6 k34 remains 40 buses with bound 33; its k35 MIP is running. New C1/C3/C4 k36 CGs stopped at four hours with fractional route weights 35/36/35, without pricing certificates; their MIPs are running. C2/C6 k35 CGs also stopped without certificates, each with route weight 34. All completed MIPs remain open after both stage limits. C2 k33’s saved positive-only LP support differs from its scalar objective by 0.038 cost units; the audit retains this numerical discrepancy.
+Exact LP values, time definitions, Gurobi logs, source hashes and audit; earlier C3 result.
+
+22 September, 17:31 EDT: new endpoints, full Gurobi logs and 423 passing audit checks
+This extension retains the baseline 240 kWh / 240 kW, flat tariff, 5-unit start fee, and no reserve, shared charger limit or terminal-energy floor. It is separate from the stricter k5 comparison. At full40, identical input groups are C1/C4 (948 trips), C2/C3/C6 (947) and C5 alone (946), because service-day variants were preserved. Within an identical group, fully certified LPs must have the same optimal weighted objective, though their fractional routes can differ. Time-limited LP endpoints and finite-pool integer results may differ with the inherited pool. The true full-model integer optimum is also independent of the path taken.
+New: geographic maps and editable travel table, with charger/depot locations, travel minutes and energy. Sources and remaining movement approximations.
+
+
+21 September Eight jobs completed
+Job
+Test
+Outcome
+628428
+k1 capacity, shortcut off
+CG 4 h limit; pool optimum 1 bus
+628429
+k1 capacity, shortcut on
+CG certified in 26.9 min; pool optimum 1
+628436
+k2 capacity, shortcut off
+CG 4 h limit; pool optimum 3
+628437
+k2 capacity, shortcut on
+CG 4 h limit; pool optimum 2
+628438
+k3 capacity, shortcut off
+CG 4 h limit; pool optimum 21
+628439
+k3 capacity, shortcut on
+CG 4 h limit; pool optimum 5
+628314
+Strict 18E2 k15
+Graph build 4 h 17 min; zero pricing iterations
+628441
+C1 incumbent transfer
+8 buses, bound 8; charging optimum 447.44 in pool
+All six dependent capacity MIPs also finished. “Pool optimum” means the best fleet using only saved routes; it does not prove the full model's optimum. Only one capacity CG certified its LP. These capacity tests use 240 kWh, 240 kW, zero reserve and flat prices. Charger-count checks pass, but k2-off and k3-on retain 1 and 6 extra trip assignments. Settings, results and logs.
+21 September Why the fresh integer pools are worse
+Four fresh k8 pools require nine buses: C1, C3, C4 and C5. Adding eight known sequential routes to each restores a proved eight-bus cover. This is a diagnostic using known solutions, separate from the new pricing pilot.
+The LP spreads eight units of route weight across 80–101 fractional routes. Whole buses need a compatible combination. Of 40 sequential witness routes across five audited cases, 39 trip sets are absent from the fresh pools, 37 have positive reduced cost, and 34 were inherited. A route can help complete an integer cover without improving the fractional objective.
+For C1, the eight-route witness costs 800479.960, versus LP 800383.688. The difference is 96.272 = 72.142 in reduced costs + 24.130 in dual-valued extra coverage. The LP prefers its cheaper fractional mixture, even though the witness avoids an extra integer bus. This explains the mechanism; it does not identify a unique combinatorial obstruction. Derivation and reproducible checks.
+Read the Gurobi proof: C1 control, lines 155–156: objective 9, bound 9, gap zero. Stage 1 uses unit bus costs. After eight added routes, line 112: objective 8, bound 8. The later charging-stage time limit does not undo the fleet proof. These are numerical proofs for the specified finite pools.
+21 September Longer MIPs and new pricing
+All twelve 12-hour fleet searches and their charging stages are finished. For C1–C6, plain search found 18, 17, 17, 19, 16, 18; stronger MIP heuristics found 18, 17, 16, 17, 16, 17. Every fleet bound is 15. This favors generating better columns, but does not prove that a 15-bus solution is absent. All outcomes and full log paths.
+The pricing pilot recovered eight buses in 3/4 final MIPs, versus nine in controls. C1's dive had already found eight, but its final MIP did not receive that incumbent. Follow-up 628441 transferred it and recovered eight in 29.6 additional minutes, with the same distinct routes. The original benchmark remains 3/4. The corrected replication is complete: 7/8 treatment runs recover eight buses, versus 0/8 controls. These are four selected cases with two seeds each. C1, C3 and C5 succeed at both seeds; C4 succeeds once and retains nine with bound eight in the other run. Every hit proves eight within its augmented pool and accepts its own generated incumbent; no known sequential routes were imported. Hits take 14.1–35.4 minutes end-to-end. One validates exactly-once coverage; six still contain 1–7 extra assignments. Shared charger capacity is omitted. The nominal shared allowance is 3,600 seconds, with setup/replay overhead separate and observed solver overshoot at most 4.71 seconds. Complete paired table, independent checks and Gurobi proof lines. The automatic k15 gate failed at a Slurm accounting query before validation. That validation passed and launched the six k15 jobs, which are now terminal.
+
+k15 follow-up, checked 21 September at 23:43 EDT: C3’s new-pricing treatment found 15 buses and proved 15 optimal within its augmented pool; its unchanged-pool control ended at 17, with bound 15. Charging optimization remains open at a 10.93% gap. C1/C5 controls ended at 19/16, both with bound 15. Their treatments stopped before the final MIP: an LP time limit in C1 and a numerical feasibility check in C5. Update, 22 September 01:22 EDT: supplemental MIPs 728184/728185 completed. Both passed native preparation with zero rejected or repaired columns. C1 finished at 18 buses versus control 19; C5 at 17 versus control 16. Both bounds remain 15 and neither reaches the target. These use the remaining original solver allowance and are supplemental recoveries, not replacements for the failed paired trials. The original software stops remain separate from these recoveries. C3 passes route replay but retains 12 extra trip assignments; shared capacity is unvalidated under the historical 240/240, zero-reserve model.
+
+
+k15 endpoints, failure diagnostics and full Gurobi logs
+ Recovery and submission records. Design, tests, completed results and full logs. Follow-up log.
+21 September Harder physics and duplicate service
+The capacity shortcut completed 134 versus 6 pricing iterations at k2, and 51 versus 2 at k3. The strict k15 run instead spent its budget constructing 260.7 million arcs; its 37-bus initial-pool result tells us little about the model. k16 timed out at 211.9 GiB peak memory.
+The packed recovery is complete. Its label k16 is the parent prefix: this subgroup contains 256 trips from nine GIRO duties. Graph construction took 115.4 minutes within the four-hour budget; CG then completed 2,453 iterations at 3.93 GiB peak memory. Fractional route weight is 9, but pricing did not certify convergence. The saved pool provably needs 10 integer buses. Its selected routes cover every trip, with 57 extra assignments, and exceed shared charger limits at two stations. Capacity was omitted from this arm, so this is an important remaining model constraint, not a solver violation. The next strict CG has now published its endpoint: 277 trips from ten subgroup duties, 5,236 iterations and 8,343 columns. Its fractional route weight is ten; weighted RMP objective is 1,000,391.890434. The four-hour deadline stopped CG without a pricing certificate, so this is not a certified full-model lower bound. Graph construction took 73.62 minutes within that budget. Its one-hour MIP is now complete: 11 buses with bound 10, so the ten-duty target remains unmatched and the fleet optimum is unresolved. Both MIP stages hit their time limits. The selected cover has 73 extra trip assignments and exceeds the omitted capacity limits at 7880C (three simultaneous buses versus one charger) and JON_A (four versus one). The eleven-duty continuation (parent prefix k19, 331 trips) spent 271.55 minutes building its graph, exhausting the included four-hour CG allowance before any pricing iteration. Its inherited-plus-singleton RMP has route weight 64 and no pricing certificate; its MIP finished with 65 buses and finite-pool bound 64, both stages at their time limits. It selects all 54 new singletons plus 11 inherited routes. The cover has 73 extra assignments and fails the omitted charger-capacity checks. This is an unpriced initial-pool result, not a lower bound or infeasibility claim for the full model. The graph-save/reload fix passes 13 local and 13 Unicorn tests. A separate native check now reproduces all 8,343 inherited records and validates all 54 new singleton routes: job 768638 completed in 35 seconds. This validates the saved initial pool, not a new CG result. The full 331-trip graph save/reload test now passes: 8,397 initial routes reproduce exactly, two diagnostic pricing queries agree, and native reload takes 15.96 seconds. Job 772820 took 3 h 10 min, with 6.08 GiB scheduler peak memory. This validates graph reuse, not CG optimality. Graph preparation is accounted for separately from the next four-hour CG run. 
+22 September, 20:01 EDT: new CG endpoints, C2 k35 MIP and cached-CG startup evidence
+Recovery job 824877 was submitted at 17:43 EDT with 8 CPUs, 16 GiB and a five-hour allocation. At 22:23 UTC on 22 September it completed normally after verified source, input, graph and native license checks. Cached CG saved 10,620 columns and stopped at its four-hour pricing deadline. Final restricted-master route weight was 11 and weighted objective 1,100,465.822; neither is a certified full-model bound because pricing did not close. No finite-pool MIP or successor started. Full-run memory remains unmeasured. Source: Unicorn /home/nc437/ladder-lite/strict_k19_cached_cg_20260922_fedf4214/attempts/824877_r0/result.json (SHA-256 902f1dc4c379ca4b38e7ff0a66d4d76e4589aac183916dcd7a9c42ac3759fa6f).  Full graph validation and cached-CG recovery. Complete pool check and native logs. Code, native tests and next gates. Audited MIP endpoint and full logs.  Verified endpoint, pool hash and stopping reason. Final results, physical checks and full logs.
+Completed graph benchmark and replay checks — five fixed-dual checks on 26 trips: build 121.11 to 41.81 seconds, peak memory 2.06 to 0.147 GiB. This is a same-node benchmark; the larger recovery used different stopping behavior and hardware. New: the 53- and 90-trip benchmarks also pass. Packed versus original explicit storage cuts graph-build time by factors 2.84 and 2.58, and process peak memory from 9.12 to 0.31 GiB and 26.19 to 0.64 GiB. All five tested reduced costs agree; all fifteen generated routes per case pass replay. Mean fixed-dual pricing falls from 261/520 seconds to 0.267/0.246 seconds. These are same-node implementation tests, not end-to-end CG speedups or capacity-aware pricing results; shared capacity is omitted. Exact benchmark table, source hashes and limits.
+ Code and experiment receipts.
+Duplicate cleanup now chooses one bus to serve each trip, checks shorter connections and reoptimizes charging. It cannot simply wait at the wrong stop. On the historical k5 solution, it preserves five buses and 62 exactly-once trips, lowers charged energy by 80.87 kWh and electricity cost by 2.58. This test retains its historical 240/350, zero-reserve physics. The optional pipeline step saves an independently checked dispatch result without overwriting the source. Implementation, tests and validation.
+21 September Corrected k5 charging comparison
+The replacement figure uses 236.44 kWh, 15% reserve, PARX 60 kW, the documented opportunity-charging taper and a three-minute minimum. All three fleets have five buses, 62 trips and equal total ending energy. New schedules pass exactly-once, SOC and modeled charger-count checks for this five-bus cohort.
+Schedule
+Electricity
+Starts
+Total with its fee
+GIRO, fee 0
+230.64
+52
+230.64
+Saved sequences, fee 0
+158.71
+42
+158.71
+GIRO, fee 5
+230.64
+52
+490.64
+Saved sequences, fee 5
+183.71
+30
+333.71
+Costs are synthetic tariff units. The two saved solutions have different trip sequences and station paths, so 42 versus 30 starts is not a controlled fee-only effect. Fee 5 stops after 120 seconds with a 0.6504% gap. This is charging reoptimization of saved trip sequences, not fresh CG. It restricts each gap's charging to one tariff hour. Deadheads use a static reference; platform blocking, FIFO and crew rules remain unchecked. The other 35 buses are excluded. Optimizing only the original charging windows gives no material saving; that is a narrower fixed-duty benchmark. Figure, solver logs and exact assumptions.
+
+21 September Fee-only comparison completed
+Holding each assignment, station path and physics fixed, all nine fee pairs give 8–22 fewer starts when the fee changes from 0 to 5. Electricity cost rises, while total cost at a common fee of 5 falls by 24.2–73.3 synthetic units. All 18 witnesses pass independent validation; one requires a separately recorded 6 ms charge extension. Six searches retain 0.75–3.83% gaps. This is restricted fixed-path charging optimization, not fresh CG. Nine-row table, bounds and logs; the figure is in the Figures tab.
+Historical context and sources
+
+16–17 September: the baseline audit recorded 67 closed and 35 open event-model fleet gaps among 102 LP endpoints. Sequential searches reached k32 in all six chains after longer searches and repeats; this was not full GIRO physics. 18–20 September: witness-route proofs, open k15 bounds and the pricing pilot. Today's entries supersede their stale running statuses; source artifacts remain intact.
+Local evidence root: /Users/nadan/Documents/projects/demandresponse/outputs/week_20260921/evidence/
+Unicorn C1 proof: /home/nc437/ladder-lite/review_witness_columns_20260917/results/c1_k08/control/391804_r0/gurobi.log
+Log walkthrough · Source hashes · This week's slides
+F1–F9 verdicts and execution ledger · Chain results with numerical lower bounds · Independent review
+Figures with explanations · CG curves and bus schedules · Historical research log
+
+
+
+Figures for 21 September
+Capacity shortcut comparison. Left: best integer fleet in each saved pool. Right: pricing iterations completed. Four-hour budgets; only k1 with the shortcut certified CG, in 26.9 minutes. All other CG runs timed out. These capacity tests use 240 kWh / 240 kW and zero reserve.
+
+
+One bus from the matched k5 comparison. Blue bars are service trips; orange segments are charging. The lower panels show battery energy, with the 15% reserve dashed. The trip IDs are source IDs, sorted by departure time, not newly assigned route-order labels. The original / fee 0 / fee 5 example buses have 9 / 9 / 6 charging starts. All five buses were jointly checked for the modeled charger counts; the picture displays one representative bus from each solution.
+
+The corrected schedules use the matched charging physics listed above. They reoptimize charging on saved trip sequences; they are not fresh full-CG solutions under all GIRO constraints. Open full-resolution figure.

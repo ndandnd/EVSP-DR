@@ -1,0 +1,12 @@
+f37c6ce4 (HEAD -> main, origin/codex/charging-column-structure-20260922, codex/charging-column-structure-20260922, codex/capacity-representation-pilot-20260922) Pin capacity pilot to cluster Gurobi license environment
+3c3cdd2a Add exact fixed-pool charging capacity representation pilot
+d3aba878 Handle missing GIRO validation summaries
+43fd61c3 Audit GIRO physical and cost metrics
+c4002c58 (origin/main, origin/HEAD) cleanup results before pushing
+07f44324 Merge branch 'issue10'
+a2be71c9 merge issue10
+d34cde44 (issue10) -VehicleDetails_updated now shows trip number. Routes_Overhauled sorted the routes in order -Config changes: G to 360, chargemult to 360 -Max_tau is now 30min instead of 2 min (error from wanting 2 hour max. real solution has max 18min.)
+2aaa3a8a Finding good solutions, Added GIRO model solutions
+25d07ead SUCCESS. no q_i, but 300 buses
+e5655a8a checkpoint: 8 missing trips [251, 526, 530, 589, 721, 725, 762, 934]. Did not use reference deadheads yet.
+fec5dbe5 Epsilon changes to make better looking routes

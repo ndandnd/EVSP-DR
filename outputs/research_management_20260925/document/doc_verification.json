@@ -1,0 +1,95 @@
+{
+  "document_url": "https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.79m3d3x4h45m",
+  "before_words": 3565,
+  "after_words": 1260,
+  "before_pages_observed_ui": 13,
+  "after_pages": 6,
+  "current_images_before": 2,
+  "current_images_after": 3,
+  "figures_tab_images_preserved": 22,
+  "checks": [
+    {
+      "check": "all existing current-tab images preserved",
+      "passed": true
+    },
+    {
+      "check": "one new current-tab image",
+      "passed": true
+    },
+    {
+      "check": "separate Figures tab text unchanged",
+      "passed": true
+    },
+    {
+      "check": "separate Figures tab images unchanged",
+      "passed": true
+    },
+    {
+      "check": "separate Figures tab tables unchanged",
+      "passed": true
+    },
+    {
+      "check": "separate Figures tab links unchanged",
+      "passed": true
+    },
+    {
+      "check": "three editable current tables",
+      "passed": true
+    },
+    {
+      "check": "all target40 table cells match source CSV",
+      "passed": true
+    },
+    {
+      "check": "source footer targets preserved",
+      "passed": true
+    },
+    {
+      "check": "current heading once",
+      "passed": true
+    },
+    {
+      "check": "completed extension explicitly 48",
+      "passed": true
+    },
+    {
+      "check": "uncertified LP label explicit",
+      "passed": true
+    },
+    {
+      "check": "new pilot result includes skipped transfer",
+      "passed": true
+    },
+    {
+      "check": "historical charging scope retained",
+      "passed": true
+    },
+    {
+      "check": "recorded GIRO retained in examples",
+      "passed": true
+    },
+    {
+      "check": "Google PDF six pages",
+      "passed": true
+    },
+    {
+      "check": "rendered DOCX six pages",
+      "passed": true
+    },
+    {
+      "check": "new heatmap caption stays with image page",
+      "passed": true
+    },
+    {
+      "check": "all six rendered pages visually inspected",
+      "passed": true
+    }
+  ],
+  "all_passed": true,
+  "file_sha256": {
+    "figures_after.docx": "8b729166e649ef51242ff328450f00c20287a3325221fe1fd1e570a2c4f9a3f1",
+    "figures_before.docx": "41fb36766016b5bde8ac42f0ad670689be37bcff0a1c6c528dd134ad79d4497f",
+    "current_before.docx": "747736b581f2287bc8ccffe614700924bbf650593137d86c221c5f10130c98db",
+    "current_after.docx": "deaad82a0086b994732567d39acab5b5a27513ea53388d51e1f332927197ccbd"
+  }
+}

@@ -1,0 +1,457 @@
+{
+  "generated_at_utc": "2026-09-25T17:34:51.806935+00:00",
+  "scope": "Recommendation only; no branches or refs deleted for this shortlist. Exact ancestor checks against retained local+origin branch pair; no active worktree. Preserve experiment name with archive tag before future deletion.",
+  "count": 15,
+  "delete_d_eligible_count": 5,
+  "candidates": [
+    {
+      "branch": "codex/capacity-efficiency-20260912",
+      "sha": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      },
+      "additional_retaining_pairs": [
+        {
+          "branch": "codex/strict-successors-20260921",
+          "remote": "origin/codex/strict-successors-20260921",
+          "sha": "550bc5b061b05b82247e4f2f94793c3563c98087"
+        }
+      ],
+      "same_name_remote_exists": true,
+      "upstream": "",
+      "delete_d_guard": "refs/heads/main",
+      "delete_d_eligible": false,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-capacity-efficiency-20260912"
+    },
+    {
+      "branch": "codex/event-native-warm-chain-20260909",
+      "sha": "ecb60c154a9a5db385e3a573949ec9fd0a737af3",
+      "retained_by": {
+        "branch": "codex/zero-fee-terminal-cg",
+        "remote": "origin/codex/zero-fee-terminal-cg",
+        "sha": "2c7445ac6449eb7d338c83f8320574da042a65b5"
+      },
+      "additional_retaining_pairs": [
+        {
+          "branch": "codex/graph-checkpoints-20260921",
+          "remote": "origin/codex/graph-checkpoints-20260921",
+          "sha": "71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a"
+        }
+      ],
+      "same_name_remote_exists": false,
+      "upstream": "",
+      "delete_d_guard": "refs/heads/main",
+      "delete_d_eligible": false,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-event-native-warm-chain-20260909"
+    },
+    {
+      "branch": "codex/event-uniform-cluster-tools-20260824",
+      "sha": "b5436f5476f5ff1fcf3dae776297005a9aadecdf",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      },
+      "additional_retaining_pairs": [
+        {
+          "branch": "codex/strict-successors-20260921",
+          "remote": "origin/codex/strict-successors-20260921",
+          "sha": "550bc5b061b05b82247e4f2f94793c3563c98087"
+        },
+        {
+          "branch": "codex/zero-fee-terminal-cg",
+          "remote": "origin/codex/zero-fee-terminal-cg",
+          "sha": "2c7445ac6449eb7d338c83f8320574da042a65b5"
+        },
+        {
+          "branch": "codex/integer-columns-20260921",
+          "remote": "origin/codex/integer-columns-20260921",
+          "sha": "c50e5f207869bac25507adfae90bb830a44039b7"
+        },
+        {
+          "branch": "codex/graph-checkpoints-20260921",
+          "remote": "origin/codex/graph-checkpoints-20260921",
+          "sha": "71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a"
+        }
+      ],
+      "same_name_remote_exists": true,
+      "upstream": "refs/remotes/origin/codex/event-uniform-cluster-tools-20260824",
+      "delete_d_guard": "refs/remotes/origin/codex/event-uniform-cluster-tools-20260824",
+      "delete_d_eligible": true,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-event-uniform-cluster-tools-20260824"
+    },
+    {
+      "branch": "codex/giro-k1-recovery-20260909",
+      "sha": "c4dbef784e0fd717f8cd5976a15901b105cfd0e1",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      },
+      "additional_retaining_pairs": [
+        {
+          "branch": "codex/strict-successors-20260921",
+          "remote": "origin/codex/strict-successors-20260921",
+          "sha": "550bc5b061b05b82247e4f2f94793c3563c98087"
+        },
+        {
+          "branch": "codex/integer-columns-20260921",
+          "remote": "origin/codex/integer-columns-20260921",
+          "sha": "c50e5f207869bac25507adfae90bb830a44039b7"
+        }
+      ],
+      "same_name_remote_exists": false,
+      "upstream": "",
+      "delete_d_guard": "refs/heads/main",
+      "delete_d_eligible": false,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-giro-k1-recovery-20260909"
+    },
+    {
+      "branch": "codex/gurobi-primary-20260906",
+      "sha": "a8102d10607c20e4b1b3f80f790ba380a5a04d8f",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      },
+      "additional_retaining_pairs": [
+        {
+          "branch": "codex/strict-successors-20260921",
+          "remote": "origin/codex/strict-successors-20260921",
+          "sha": "550bc5b061b05b82247e4f2f94793c3563c98087"
+        },
+        {
+          "branch": "codex/zero-fee-terminal-cg",
+          "remote": "origin/codex/zero-fee-terminal-cg",
+          "sha": "2c7445ac6449eb7d338c83f8320574da042a65b5"
+        },
+        {
+          "branch": "codex/integer-columns-20260921",
+          "remote": "origin/codex/integer-columns-20260921",
+          "sha": "c50e5f207869bac25507adfae90bb830a44039b7"
+        },
+        {
+          "branch": "codex/graph-checkpoints-20260921",
+          "remote": "origin/codex/graph-checkpoints-20260921",
+          "sha": "71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a"
+        }
+      ],
+      "same_name_remote_exists": true,
+      "upstream": "refs/remotes/origin/codex/event-uniform-cluster-tools-20260824",
+      "delete_d_guard": "refs/remotes/origin/codex/event-uniform-cluster-tools-20260824",
+      "delete_d_eligible": true,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-gurobi-primary-20260906"
+    },
+    {
+      "branch": "codex/highs-baseline-20260906",
+      "sha": "2d39eaab5c5b9098ae205515a7a6df1204921d3a",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      },
+      "additional_retaining_pairs": [
+        {
+          "branch": "codex/strict-successors-20260921",
+          "remote": "origin/codex/strict-successors-20260921",
+          "sha": "550bc5b061b05b82247e4f2f94793c3563c98087"
+        },
+        {
+          "branch": "codex/zero-fee-terminal-cg",
+          "remote": "origin/codex/zero-fee-terminal-cg",
+          "sha": "2c7445ac6449eb7d338c83f8320574da042a65b5"
+        },
+        {
+          "branch": "codex/integer-columns-20260921",
+          "remote": "origin/codex/integer-columns-20260921",
+          "sha": "c50e5f207869bac25507adfae90bb830a44039b7"
+        },
+        {
+          "branch": "codex/graph-checkpoints-20260921",
+          "remote": "origin/codex/graph-checkpoints-20260921",
+          "sha": "71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a"
+        }
+      ],
+      "same_name_remote_exists": false,
+      "upstream": "refs/remotes/origin/codex/event-uniform-cluster-tools-20260824",
+      "delete_d_guard": "refs/remotes/origin/codex/event-uniform-cluster-tools-20260824",
+      "delete_d_eligible": true,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-highs-baseline-20260906"
+    },
+    {
+      "branch": "codex/issue18-clean",
+      "sha": "85fd6a85cfef898183ea0bd9075aaed2a81ca7ad",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      },
+      "additional_retaining_pairs": [
+        {
+          "branch": "codex/strict-successors-20260921",
+          "remote": "origin/codex/strict-successors-20260921",
+          "sha": "550bc5b061b05b82247e4f2f94793c3563c98087"
+        },
+        {
+          "branch": "codex/zero-fee-terminal-cg",
+          "remote": "origin/codex/zero-fee-terminal-cg",
+          "sha": "2c7445ac6449eb7d338c83f8320574da042a65b5"
+        },
+        {
+          "branch": "codex/integer-columns-20260921",
+          "remote": "origin/codex/integer-columns-20260921",
+          "sha": "c50e5f207869bac25507adfae90bb830a44039b7"
+        },
+        {
+          "branch": "codex/graph-checkpoints-20260921",
+          "remote": "origin/codex/graph-checkpoints-20260921",
+          "sha": "71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a"
+        }
+      ],
+      "same_name_remote_exists": false,
+      "upstream": "refs/remotes/origin/issue18",
+      "delete_d_guard": "refs/remotes/origin/issue18",
+      "delete_d_eligible": true,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-issue18-clean"
+    },
+    {
+      "branch": "codex/k5-raw-mip36h-status-fix-20260905",
+      "sha": "dab4400680f4624ec81de42d465e8a53097b4a8f",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      },
+      "additional_retaining_pairs": [
+        {
+          "branch": "codex/strict-successors-20260921",
+          "remote": "origin/codex/strict-successors-20260921",
+          "sha": "550bc5b061b05b82247e4f2f94793c3563c98087"
+        },
+        {
+          "branch": "codex/zero-fee-terminal-cg",
+          "remote": "origin/codex/zero-fee-terminal-cg",
+          "sha": "2c7445ac6449eb7d338c83f8320574da042a65b5"
+        },
+        {
+          "branch": "codex/integer-columns-20260921",
+          "remote": "origin/codex/integer-columns-20260921",
+          "sha": "c50e5f207869bac25507adfae90bb830a44039b7"
+        },
+        {
+          "branch": "codex/graph-checkpoints-20260921",
+          "remote": "origin/codex/graph-checkpoints-20260921",
+          "sha": "71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a"
+        }
+      ],
+      "same_name_remote_exists": false,
+      "upstream": "",
+      "delete_d_guard": "refs/heads/main",
+      "delete_d_eligible": false,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-k5-raw-mip36h-status-fix-20260905"
+    },
+    {
+      "branch": "codex/nested-threshold-k2-15-20260908",
+      "sha": "21fbecba826824c44f897feef038fcf51c532582",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      },
+      "additional_retaining_pairs": [
+        {
+          "branch": "codex/strict-successors-20260921",
+          "remote": "origin/codex/strict-successors-20260921",
+          "sha": "550bc5b061b05b82247e4f2f94793c3563c98087"
+        },
+        {
+          "branch": "codex/zero-fee-terminal-cg",
+          "remote": "origin/codex/zero-fee-terminal-cg",
+          "sha": "2c7445ac6449eb7d338c83f8320574da042a65b5"
+        },
+        {
+          "branch": "codex/integer-columns-20260921",
+          "remote": "origin/codex/integer-columns-20260921",
+          "sha": "c50e5f207869bac25507adfae90bb830a44039b7"
+        },
+        {
+          "branch": "codex/graph-checkpoints-20260921",
+          "remote": "origin/codex/graph-checkpoints-20260921",
+          "sha": "71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a"
+        }
+      ],
+      "same_name_remote_exists": true,
+      "upstream": "",
+      "delete_d_guard": "refs/heads/main",
+      "delete_d_eligible": false,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-nested-threshold-k2-15-20260908"
+    },
+    {
+      "branch": "codex/overnight-extension-20260912",
+      "sha": "a29992196acb74d02b8c7891be4061718889999f",
+      "retained_by": {
+        "branch": "codex/zero-fee-terminal-cg",
+        "remote": "origin/codex/zero-fee-terminal-cg",
+        "sha": "2c7445ac6449eb7d338c83f8320574da042a65b5"
+      },
+      "additional_retaining_pairs": [
+        {
+          "branch": "codex/graph-checkpoints-20260921",
+          "remote": "origin/codex/graph-checkpoints-20260921",
+          "sha": "71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a"
+        }
+      ],
+      "same_name_remote_exists": true,
+      "upstream": "",
+      "delete_d_guard": "refs/heads/main",
+      "delete_d_eligible": false,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-overnight-extension-20260912"
+    },
+    {
+      "branch": "codex/overnight-pool-mip-20260908",
+      "sha": "2d7a21a07ef0b89f6e34e8504bf0638bee61113a",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      },
+      "additional_retaining_pairs": [
+        {
+          "branch": "codex/strict-successors-20260921",
+          "remote": "origin/codex/strict-successors-20260921",
+          "sha": "550bc5b061b05b82247e4f2f94793c3563c98087"
+        },
+        {
+          "branch": "codex/zero-fee-terminal-cg",
+          "remote": "origin/codex/zero-fee-terminal-cg",
+          "sha": "2c7445ac6449eb7d338c83f8320574da042a65b5"
+        },
+        {
+          "branch": "codex/integer-columns-20260921",
+          "remote": "origin/codex/integer-columns-20260921",
+          "sha": "c50e5f207869bac25507adfae90bb830a44039b7"
+        },
+        {
+          "branch": "codex/graph-checkpoints-20260921",
+          "remote": "origin/codex/graph-checkpoints-20260921",
+          "sha": "71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a"
+        }
+      ],
+      "same_name_remote_exists": true,
+      "upstream": "",
+      "delete_d_guard": "refs/heads/main",
+      "delete_d_eligible": false,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-overnight-pool-mip-20260908"
+    },
+    {
+      "branch": "codex/queue-graph-recovery-20260912",
+      "sha": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+      "retained_by": {
+        "branch": "codex/zero-fee-terminal-cg",
+        "remote": "origin/codex/zero-fee-terminal-cg",
+        "sha": "2c7445ac6449eb7d338c83f8320574da042a65b5"
+      },
+      "additional_retaining_pairs": [
+        {
+          "branch": "codex/graph-checkpoints-20260921",
+          "remote": "origin/codex/graph-checkpoints-20260921",
+          "sha": "71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a"
+        }
+      ],
+      "same_name_remote_exists": true,
+      "upstream": "",
+      "delete_d_guard": "refs/heads/main",
+      "delete_d_eligible": false,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-queue-graph-recovery-20260912"
+    },
+    {
+      "branch": "codex/queue-recovery-code-20260912",
+      "sha": "e091a4dba549510238507ef5e5367abea958bd30",
+      "retained_by": {
+        "branch": "codex/zero-fee-terminal-cg",
+        "remote": "origin/codex/zero-fee-terminal-cg",
+        "sha": "2c7445ac6449eb7d338c83f8320574da042a65b5"
+      },
+      "additional_retaining_pairs": [
+        {
+          "branch": "codex/graph-checkpoints-20260921",
+          "remote": "origin/codex/graph-checkpoints-20260921",
+          "sha": "71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a"
+        }
+      ],
+      "same_name_remote_exists": true,
+      "upstream": "",
+      "delete_d_guard": "refs/heads/main",
+      "delete_d_eligible": false,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-queue-recovery-code-20260912"
+    },
+    {
+      "branch": "codex/research-register-20260910",
+      "sha": "dac4005840ffa6fc8da950de7ecf0822a1f16c4a",
+      "retained_by": {
+        "branch": "codex/week-evidence-20260921",
+        "remote": "origin/codex/week-evidence-20260921",
+        "sha": "d04b11876cb38866b524c3793c8aff996545e3b3"
+      },
+      "additional_retaining_pairs": [],
+      "same_name_remote_exists": true,
+      "upstream": "refs/remotes/origin/codex/research-register-20260910",
+      "delete_d_guard": "refs/remotes/origin/codex/research-register-20260910",
+      "delete_d_eligible": false,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-research-register-20260910"
+    },
+    {
+      "branch": "codex/small-exact-threshold-20260903",
+      "sha": "9bdbb17d14f068745b198d4ade81e062addc62b4",
+      "retained_by": {
+        "branch": "codex/strict-graph-validation-20260922",
+        "remote": "origin/codex/strict-graph-validation-20260922",
+        "sha": "3bb32c1a84af73c97689dfc9f5ad43136cfcead9"
+      },
+      "additional_retaining_pairs": [
+        {
+          "branch": "codex/strict-successors-20260921",
+          "remote": "origin/codex/strict-successors-20260921",
+          "sha": "550bc5b061b05b82247e4f2f94793c3563c98087"
+        },
+        {
+          "branch": "codex/zero-fee-terminal-cg",
+          "remote": "origin/codex/zero-fee-terminal-cg",
+          "sha": "2c7445ac6449eb7d338c83f8320574da042a65b5"
+        },
+        {
+          "branch": "codex/integer-columns-20260921",
+          "remote": "origin/codex/integer-columns-20260921",
+          "sha": "c50e5f207869bac25507adfae90bb830a44039b7"
+        },
+        {
+          "branch": "codex/graph-checkpoints-20260921",
+          "remote": "origin/codex/graph-checkpoints-20260921",
+          "sha": "71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a"
+        }
+      ],
+      "same_name_remote_exists": false,
+      "upstream": "refs/remotes/origin/codex/event-uniform-cluster-tools-20260824",
+      "delete_d_guard": "refs/remotes/origin/codex/event-uniform-cluster-tools-20260824",
+      "delete_d_eligible": true,
+      "active_worktree": false,
+      "experiment_provenance_tag_recommended": "codex/archive-branch-20260925-small-exact-threshold-20260903"
+    }
+  ]
+}

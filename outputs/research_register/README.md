@@ -1,3 +1,7 @@
+## 25 September current status and maintenance
+
+[Current results, organized Doc and Git cleanup](entries/20260925_current_status_and_git_maintenance.md). The targets 33–40 extension is complete: no target matches among 48 cases; target 40 fleets 43/44/44/47/44/45. New C1 cap pilots end at nine buses / bound eight. The 13:30 EDT queue has 12 running spatial-price jobs and five true dependencies. No recovery submission was needed. Earlier dated entries below remain historical; this entry supersedes their running-status claims for these campaigns.
+
 ## 23 September UTC: exact fleet certificates and follow-up review
 
 [Checked follow-up, reproducible script and 35 exact certificates](../independent_review_20260922_opus55/followup_response/README.md). All 24 benchmark trip sets have time-and-travel lower bound equal to target: sequential reaches the baseline covering fleet minimum in 24/24; fresh in 6/24. C1/C3 k15 need 15 even without the 57-minute waiting restriction. Eleven larger endpoint floors are also exact time-only bounds; their weighted CG objectives remain uncertified and no matching integer solution is established here. The calculation took 2.520 seconds locally, with source/input hashes and explicit antichain witnesses. It reuses previously audited native upper-bound validation; no full dispatch replay or new cluster submission. Original follow-up preserved. Its proposed 14-bus long-wait test and cap-ablation interpretation require the corrections in the response. Current queue status remains the last collected snapshot below.

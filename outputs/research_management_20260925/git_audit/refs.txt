@@ -1,0 +1,155 @@
+refs/heads/archive/issue20-artifacts-20260730	0d7b48b5fb238c428f9c71e55aed132bfc6e80ce			2026-07-30T19:45:33-04:00	Add greedy initialization and experiment workflow
+refs/heads/cluster-preserve-d44b67a-20260805	d44b67a028d5dd82fea66717fb48e5eba5e9881d			2026-08-04T22:22:30-04:00	Fix Unicorn Gurobi license override for exact pool MIPs
+refs/heads/codex/action3-full-20260916	be624eb486a7c3a4137f8b0fe660f9bb273ddf98			2026-09-16T20:13:14-04:00	Prepare exact compact cached graphs for full single-factor replay continuation
+refs/heads/codex/algorithm-benchmarks-20260912	b142f360f8a9018c2f50e3419f0dddcaf87a489d	refs/remotes/origin/codex/algorithm-benchmarks-20260912		2026-09-12T02:15:36-04:00	Measure isolated algorithm prototypes and reproduce station-power cost mismatch
+refs/heads/codex/algorithm-review-20260912	206315dddd99f44a49141c04bb786f2b38f459dd	refs/remotes/origin/codex/algorithm-review-20260912		2026-09-12T01:59:48-04:00	Document algorithm and literature review with validated runtime evidence
+refs/heads/codex/baseline-efficiency-20260912	11afd8372dd14fdb2a11cd5eaddbee1d02644b1f			2026-09-12T02:58:45-04:00	Fix cache-only preparation arguments and exercise actual parser and cache path
+refs/heads/codex/capacity-efficiency-20260912	309d98d266ebaf6b7e99543a67f8f2be5736874a			2026-09-12T02:41:01-04:00	Add opt-in bounded capacity prefix and iteration memo selector
+refs/heads/codex/capacity-parallel-followup-20260914	bea983e9e8d9e16fb3d12a104dabaaf2b8a00ec7			2026-09-14T09:09:13-04:00	Add matched MIP collector adapter
+refs/heads/codex/capacity-representation-pilot-20260922	f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c			2026-09-22T01:35:44-04:00	Pin capacity pilot to cluster Gurobi license environment
+refs/heads/codex/capacity-shortcircuit-20260917	cf61e2c8618b067df032c3eb795476e64184ed0a			2026-09-17T22:37:55-04:00	Record the Track C repair: k3 row, verifier corrections, 350 kW tie-rule finding for both fast paths
+refs/heads/codex/capacity-speed-pilot-20260910	37d26e7f86f59c94ecd1f1857daf7ca3d2a0fb00			2026-09-10T18:42:59-04:00	Record requested and effective CG concurrency separately
+refs/heads/codex/capacity-timeout-checkpoint-20260911	253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6			2026-09-11T08:47:25-04:00	Checkpoint capacity CG before pricing timeout
+refs/heads/codex/charging-column-structure-20260922	f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c			2026-09-22T01:35:44-04:00	Pin capacity pilot to cluster Gurobi license environment
+refs/heads/codex/charging-factorial-20260921	b931772dadf1e5930fd87bf4a89edd7dcaf6c51a			2026-09-21T16:02:48-04:00	Freeze crossed fixed-path charging fee factorial and independent validation
+refs/heads/codex/decomposition-map-20260910	39b84978c06100cc7bcb2817ca0fa552233d90f5			2026-09-10T16:18:38-04:00	Save rendered decomposition figures with the source data
+refs/heads/codex/dispatch-cleanup-20260918	663ece9c8d5d02e03087a300ecca0605a4ad9292			2026-09-18T14:38:51-04:00	Validate duplicate cleanup and support matched charging-start fee CG
+refs/heads/codex/dive-cap-escalation-20260923	d8fbf40b922c158d53959a12ac950371e7c7c6fe			2026-09-23T00:03:45-04:00	Add bound-start dive cap and stopping controls for matched pilot
+refs/heads/codex/diving-pricing-20260919	79a677d8ecc94beff95a72e6385e4c18b7856e41			2026-09-21T00:20:43-04:00	Report remaining dive artificials without an infeasibility claim
+refs/heads/codex/easy-trip-ladder-20260908	eaca565903772e356c280b686ad2e95761123935			2026-09-08T19:46:45-04:00	Launch four hash-bound GREEDY event seed CG and MIP cells
+refs/heads/codex/efficiency-validation-20260912	9bfbfc8fa977279e12e410c6f3761a6949a4f87b			2026-09-12T11:59:30-04:00	Summarize completed paired efficiency results with source hash
+refs/heads/codex/event-graph-startup-tiekey-20260912	fd5b3ef08cf0cbddca1dde56f0eef08030986801			2026-09-12T16:26:15-04:00	Record event graph startup benchmark
+refs/heads/codex/event-native-warm-chain-20260909	ecb60c154a9a5db385e3a573949ec9fd0a737af3			2026-09-09T23:01:28-04:00	Parallelize inherited event-pool replay
+refs/heads/codex/event-seed-mip-prerequisite	4472cfc578497477fbf05c427cf2617f97ce8dcb			2026-09-08T19:34:38-04:00	Validate event seed identities and preserve expanded MIP start blocks
+refs/heads/codex/event-uniform-cluster-tools-20260824	b5436f5476f5ff1fcf3dae776297005a9aadecdf	refs/remotes/origin/codex/event-uniform-cluster-tools-20260824	[behind 32]	2026-09-02T22:33:17-04:00	Add k3 k4 k6 k7 transition campaign
+refs/heads/codex/fleet-certified-early-stop-20260917	689d3646ce77ed0ffce8722ba5724b2cda303a66			2026-09-17T22:00:38-04:00	Add fleet-certified early stop to the exact CG runner (CODE_REVIEW 3A)
+refs/heads/codex/giro-k1-recovery-20260909	c4dbef784e0fd717f8cd5976a15901b105cfd0e1			2026-09-09T18:54:01-04:00	Validate covering pools and incumbents physically
+refs/heads/codex/giro-zero-start-fee-20260913	f895c61a525c51d32ab09276f12074217c1788ce			2026-09-13T00:52:58-04:00	Separate execution checkout from campaign outputs
+refs/heads/codex/goal2-research-registry-20260830	d7a7cbd81980e13b73f065430005ba404d51cf86	refs/remotes/origin/codex/goal2-research-registry-20260830		2026-08-30T00:16:39+02:00	Expand medium-scale study sampling plan
+refs/heads/codex/graph-checkpoints-20260921	71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a			2026-09-21T16:22:28-04:00	Checkpoint completed packed graph sources with atomic resumable shards
+refs/heads/codex/gurobi-primary-20260906	a8102d10607c20e4b1b3f80f790ba380a5a04d8f	refs/remotes/origin/codex/event-uniform-cluster-tools-20260824	[behind 7]	2026-09-06T10:27:07-04:00	Harden Gurobi route synchronization and worker logging
+refs/heads/codex/heavy-trip-ladder-20260908	9665429111b461006cc6b844d7d6989daf323454	refs/remotes/origin/codex/heavy-trip-ladder-20260908		2026-09-08T19:28:40-04:00	Add descending trip-count stress ladder with tiered MIP budgets
+refs/heads/codex/highs-baseline-20260906	2d39eaab5c5b9098ae205515a7a6df1204921d3a	refs/remotes/origin/codex/event-uniform-cluster-tools-20260824	[behind 13]	2026-09-06T08:39:17-04:00	Add exact CG master failure diagnostics
+refs/heads/codex/import-deadline-fix-20260912	68fce0093ec9768392442fe1b107a1b67ab0cb7b	refs/remotes/origin/codex/import-deadline-fix-20260912		2026-09-12T11:52:59-04:00	Bound inherited replay shutdown and observe preparation cancellation
+refs/heads/codex/integer-columns-20260921	c50e5f207869bac25507adfae90bb830a44039b7			2026-09-21T15:58:20-04:00	Read bounded replication budgets from registered campaign manifest
+refs/heads/codex/issue18-clean	85fd6a85cfef898183ea0bd9075aaed2a81ca7ad	refs/remotes/origin/issue18		2026-07-30T21:17:36-04:00	Ignore retired utility module
+refs/heads/codex/k5-raw-mip36h-20260905	1019bddc204d183a69fea54f56225a9bd81ba0eb	refs/remotes/origin/codex/event-uniform-cluster-tools-20260824	[ahead 1, behind 22]	2026-09-05T17:26:40-04:00	Add guarded k5 36h RAW pool MIP pilot
+refs/heads/codex/k5-raw-mip36h-status-fix-20260905	dab4400680f4624ec81de42d465e8a53097b4a8f			2026-09-06T09:58:11-04:00	Fix live CG resume scheduler classification
+refs/heads/codex/luna-proof-reporting-20260904	67b3ad1ac12aa2c96b744ce94447b415f9b5e66e			2026-09-05T06:52:50-04:00	Validate all proof representation physics fields
+refs/heads/codex/matched-fleet-tariff-20260908	a6e5059688703641db9aa3349b6ab6a9f76c1987			2026-09-08T19:35:32-04:00	Extend matched tariff coverage with separate Scaglione MIP workers
+refs/heads/codex/mip-structure-20260922	74906efe7d8787c82795d6dd80a640a56a594beb			2026-09-22T01:57:17-04:00	Add authenticated largest-matrix loader benchmark
+refs/heads/codex/nested-replication-20260909	0209d3e05d7b024f5aba6854f857b3ce22ff1e1c			2026-09-09T01:07:07-04:00	Extend original probability chains p7 through p20 at k3 k5 k6
+refs/heads/codex/nested-threshold-k2-15-20260908	21fbecba826824c44f897feef038fcf51c532582			2026-09-08T00:21:39-04:00	Set Gurobi license for nested network workers
+refs/heads/codex/overnight-extension-20260912	a29992196acb74d02b8c7891be4061718889999f			2026-09-12T00:12:59-04:00	Bind MIP execution and pool input hashes
+refs/heads/codex/overnight-pool-mip-20260908	2d7a21a07ef0b89f6e34e8504bf0638bee61113a			2026-09-07T23:29:43-04:00	Add threshold finite-pool MIP campaign
+refs/heads/codex/queue-graph-recovery-20260912	a0e0bb7681c8451e3cbbbfa06aef390026d9af4b			2026-09-12T16:26:28-04:00	Defer event graph JSON tie keys
+refs/heads/codex/queue-recovery-code-20260912	e091a4dba549510238507ef5e5367abea958bd30			2026-09-12T16:20:38-04:00	Validate indexed replay with cancellation-safe workers and unlimited pools
+refs/heads/codex/replay-index-20260912	0d3f1129d3ee306285ba22d40cb567beb5a384de			2026-09-12T02:38:59-04:00	Add opt-in complete-successor index for fixed-sequence replay
+refs/heads/codex/research-register-20260910	dac4005840ffa6fc8da950de7ecf0822a1f16c4a	refs/remotes/origin/codex/research-register-20260910	[ahead 176, behind 1]	2026-09-14T23:30:14-04:00	Verify Unicorn mirror for 23:14 research snapshot
+refs/heads/codex/research-register-20260915	4a0c2b2c76d5ab150acebc70bd725266c8aef835			2026-09-17T08:10:01-04:00	Record verified advisor audit mirror
+refs/heads/codex/review-fdl-cg-20260916	daac18d5598902c28baa6c43e58942930fc733bc			2026-09-16T18:01:29-04:00	Preserve configuration definitions while replacing active station maps
+refs/heads/codex/review-fdl-mip-20260916	0c51b1fa491492212f5d875d1c082b476db0f1c3			2026-09-16T18:01:30-04:00	Preserve configuration definitions while replacing active station maps
+refs/heads/codex/review-strict-chain-20260916	50ceb6c095a580f79f87b53bef536cac31f81963			2026-09-16T17:55:31-04:00	Add validated previous-instance pool inheritance for strict group chains
+refs/heads/codex/small-exact-threshold-20260903	9bdbb17d14f068745b198d4ade81e062addc62b4	refs/remotes/origin/codex/event-uniform-cluster-tools-20260824	[behind 22]	2026-09-04T13:38:40-04:00	Add nested k9-k15 exact CG threshold campaign
+refs/heads/codex/spatial-tariff-recipe-20260925	4a8b497e668be9962bca5906a8b69116fa634882			2026-09-25T13:16:47-04:00	Add union-pool fallback for fresh terminal CG attempts without a selection
+refs/heads/codex/stage2-cap-recovery-20260910	2d797b897c8a89dcdb3eae36351ac6a8655e59d2			2026-09-10T16:37:15-04:00	Guard MIP launches against overlapping cases
+refs/heads/codex/storage-cleanup-20260912	b1129bf45f176f24c58f17ba7dee32c1f1827758	refs/remotes/origin/codex/storage-cleanup-20260912		2026-09-12T01:13:07-04:00	Record verified archival completion and restoration evidence
+refs/heads/codex/strict-graph-reuse-20260922	fedf421461f94727e6b1292a0e7789ab76ed8587			2026-09-22T08:10:55-04:00	Add atomic same-physics graph reuse to strict packed runner
+refs/heads/codex/strict-graph-validation-20260922	3bb32c1a84af73c97689dfc9f5ad43136cfcead9			2026-09-22T12:26:47-04:00	Validate one full strict graph with isolated cold and reload parity
+refs/heads/codex/strict-lineage-gate-20260922	34d39caff534c089fbffed397f5a42b223b590ad			2026-09-22T12:09:03-04:00	Gate strict k17-to-k19 production pool lineage without solving
+refs/heads/codex/strict-packed-20260921	35770aae2c08e7d5a356cc3b673e67608e5b1036			2026-09-21T10:54:15-04:00	Add audited packed graph recovery for strict no-capacity pricing
+refs/heads/codex/strict-successors-20260921	550bc5b061b05b82247e4f2f94793c3563c98087			2026-09-21T15:56:40-04:00	Add independent same-node strict representation scaling controls
+refs/heads/codex/terminal-energy-fair-comparison-20260910	2424369f4b5c40198a22698b7a460d6aa8129169	refs/remotes/origin/codex/terminal-energy-fair-comparison-20260910		2026-09-10T17:21:14-04:00	Add matched terminal-energy comparison pilot
+refs/heads/codex/terminal-replay-compat-20260910	4400dbb3f28471ffcd4a4628cb2487ea0a8ff6d8			2026-09-10T11:13:15-04:00	Seed covering MIPs from validated saved incumbents
+refs/heads/codex/terminal-replay-compat-2424369-20260910	5cdb8138c29faef9d5bf949175cb1e815a0b4220			2026-09-10T18:56:35-04:00	Repair legacy terminal pool replay metadata
+refs/heads/codex/warm-chain-p5-20260910	689b882789119bf6a6686157c757db39286ee6db			2026-09-10T17:29:39-04:00	Record P5 Slurm launch manifests
+refs/heads/codex/warm-multichain-p1246-20260910	58a69ad83017254fe290e7018bec4d527a67c116			2026-09-10T23:38:05-04:00	Record parallel campaign launches and MIP migration
+refs/heads/codex/week-cleanup-20260921	24fbda8100f612c45477c28a92747e00cf7cb42a			2026-09-21T11:02:27-04:00	Add opt-in exact-once dispatch cleanup after terminal CG MIP
+refs/heads/codex/week-evidence-20260921	d04b11876cb38866b524c3793c8aff996545e3b3	refs/remotes/origin/codex/week-evidence-20260921		2026-09-23T01:28:07-04:00	Add duty 13309 timeline and five-node comparison to meeting slides
+refs/heads/codex/zero-charge-start-fee-20260913	06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0			2026-09-13T01:04:24-04:00	Restore MIP progress observer fleet-cap compatibility
+refs/heads/codex/zero-fee-terminal-cg	2c7445ac6449eb7d338c83f8320574da042a65b5			2026-09-16T00:47:15-04:00	Add explicit duplicate-trip cleanup with terminal-energy charging frontiers
+refs/heads/cursor/nested-threshold-auditor-20260904	9bdbb17d14f068745b198d4ade81e062addc62b4			2026-09-04T13:38:40-04:00	Add nested k9-k15 exact CG threshold campaign
+refs/heads/issue1-fix-readme	1e58a9e7865962bf7f1caeb5854cde2c6bda3bed			2025-08-29T16:05:43-04:00	added email
+refs/heads/issue10	d34cde44cda9e13977fc39c0aa93dd6246899228			2026-02-03T23:31:16-05:00	-VehicleDetails_updated now shows trip number. Routes_Overhauled sorted the routes in order -Config changes: G to 360, chargemult to 360 -Max_tau is now 30min instead of 2 min (error from wanting 2 hour max. real solution has max 18min.)
+refs/heads/issue11	37d2e5d6a255ba50f5f46d6e1c589dc3cb12780d	refs/remotes/origin/issue11		2025-12-16T19:05:43+02:00	added function that reads PC_i as a refer number, and every same for deopt to ref, ref to depot, using a reference.csv add block 25 and 26 in hourly prices, since the code showed an error when I tried to run it
+refs/heads/issue14	a5f63e34869d51c850738f7eec382bc94f36570c			2026-02-04T11:31:00-05:00	Appended Parx-location pullin, pullouts because they were missing DHDs.
+refs/heads/issue14-BattSoCChargingFix	1f53b517a2592b39a1ba1e0c37d9551f6c822801	refs/remotes/origin/issue14-BattSoCChargingFix	[gone]	2026-02-10T10:15:50-05:00	7bus running fine, can try more. but 30 has a problem.
+refs/heads/issue14-prev_ver	be4defe73ce18df587d8f121275ea8e849e8b614	refs/remotes/origin/issue14-prev_ver	[gone]	2026-02-06T22:07:18-05:00	par_ref_dhd has EVERY deadhead from ref to ref, as long as it was either in the DHD file originally or in the VehicleDetails solution
+refs/heads/issue15	62256692319f74f266fa2bad4db2a008ef97a901			2026-02-15T17:37:29-05:00	try adding in more charging station options, and removing some based on answers.
+refs/heads/issue16	bae9b6478e94a2d95736daac0be73b98b97c1092			2026-02-13T10:39:38-05:00	practice1 solves exact after 134 iterations.
+refs/heads/issue17	86cf39e316ab694dd77d84ed56e013829be1467c	refs/remotes/origin/issue17	[gone]	2026-03-04T00:04:59-05:00	b_1 attempts the same algo on the original trip set
+refs/heads/issue18	cb7d7cc43773e5ee7e890e26addece52aace48e7	refs/remotes/origin/issue18	[behind 4]	2026-07-30T21:09:47-04:00	Clean repository inputs and experiment workflow
+refs/heads/issue19	3d0a7ccde90dcf1122382de54503a5c9b97aae26			2026-05-13T20:28:19-04:00	commit before reverting
+refs/heads/issue2-unicorn-parallel	eeef75d0703cfb03363e410833db9e153a0322ce			2025-08-29T16:04:04-04:00	deleted code
+refs/heads/issue20	fd4d818946b2fde50a9288dc577995891f690d2a	refs/remotes/origin/issue20		2026-08-01T13:56:29-04:00	Add five-hour Unicorn benchmark profile
+refs/heads/issue8	6d5f4c9568e54fdd9ee3e27c1252cd8d19e18382			2025-11-21T20:29:30-05:00	cstA1 \leq cstA2 \leq ...
+refs/heads/issue9	3f10daeac7c9c0511ada00917360f68e542e905f			2025-11-21T10:14:19-05:00	Check which trips are not covered (q_i = 1).
+refs/heads/main	f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c	refs/remotes/origin/main	[ahead 4]	2026-09-22T01:35:44-04:00	Pin capacity pilot to cluster Gurobi license environment
+refs/heads/peel-and-price	0a3a720e8470c13f534f9003438a9eac50ac4260	refs/remotes/origin/peel-and-price		2026-08-20T06:55:11-04:00	Add ladder-lite iteration statistics for 20260820c
+refs/remotes/origin/HEAD	c4002c58f1beb50d1b793154e12bfdd9412217d2			2026-02-03T23:42:30-05:00	cleanup results before pushing
+refs/remotes/origin/cluster-preserve-d44b67a-20260805	d44b67a028d5dd82fea66717fb48e5eba5e9881d			2026-08-04T22:22:30-04:00	Fix Unicorn Gurobi license override for exact pool MIPs
+refs/remotes/origin/codex/algorithm-benchmarks-20260912	b142f360f8a9018c2f50e3419f0dddcaf87a489d			2026-09-12T02:15:36-04:00	Measure isolated algorithm prototypes and reproduce station-power cost mismatch
+refs/remotes/origin/codex/algorithm-review-20260912	206315dddd99f44a49141c04bb786f2b38f459dd			2026-09-12T01:59:48-04:00	Document algorithm and literature review with validated runtime evidence
+refs/remotes/origin/codex/baseline-efficiency-20260912	11afd8372dd14fdb2a11cd5eaddbee1d02644b1f			2026-09-12T02:58:45-04:00	Fix cache-only preparation arguments and exercise actual parser and cache path
+refs/remotes/origin/codex/capacity-efficiency-20260912	309d98d266ebaf6b7e99543a67f8f2be5736874a			2026-09-12T02:41:01-04:00	Add opt-in bounded capacity prefix and iteration memo selector
+refs/remotes/origin/codex/capacity-timeout-checkpoint-20260911	253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6			2026-09-11T08:47:25-04:00	Checkpoint capacity CG before pricing timeout
+refs/remotes/origin/codex/charging-column-structure-20260922	f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c			2026-09-22T01:35:44-04:00	Pin capacity pilot to cluster Gurobi license environment
+refs/remotes/origin/codex/charging-factorial-20260921	b931772dadf1e5930fd87bf4a89edd7dcaf6c51a			2026-09-21T16:02:48-04:00	Freeze crossed fixed-path charging fee factorial and independent validation
+refs/remotes/origin/codex/easy-trip-ladder-20260908	eaca565903772e356c280b686ad2e95761123935			2026-09-08T19:46:45-04:00	Launch four hash-bound GREEDY event seed CG and MIP cells
+refs/remotes/origin/codex/efficiency-validation-20260912	9bfbfc8fa977279e12e410c6f3761a6949a4f87b			2026-09-12T11:59:30-04:00	Summarize completed paired efficiency results with source hash
+refs/remotes/origin/codex/event-uniform-cluster-tools-20260824	21fbecba826824c44f897feef038fcf51c532582			2026-09-08T00:21:39-04:00	Set Gurobi license for nested network workers
+refs/remotes/origin/codex/giro-zero-start-fee-20260913	f895c61a525c51d32ab09276f12074217c1788ce			2026-09-13T00:52:58-04:00	Separate execution checkout from campaign outputs
+refs/remotes/origin/codex/goal2-research-registry-20260830	d7a7cbd81980e13b73f065430005ba404d51cf86			2026-08-30T00:16:39+02:00	Expand medium-scale study sampling plan
+refs/remotes/origin/codex/graph-checkpoints-20260921	71f3acb8f59501f60adfe49fcbfbb85fa8a6fe2a			2026-09-21T16:22:28-04:00	Checkpoint completed packed graph sources with atomic resumable shards
+refs/remotes/origin/codex/gurobi-primary-20260906	a8102d10607c20e4b1b3f80f790ba380a5a04d8f			2026-09-06T10:27:07-04:00	Harden Gurobi route synchronization and worker logging
+refs/remotes/origin/codex/heavy-trip-ladder-20260908	9665429111b461006cc6b844d7d6989daf323454			2026-09-08T19:28:40-04:00	Add descending trip-count stress ladder with tiered MIP budgets
+refs/remotes/origin/codex/import-deadline-fix-20260912	68fce0093ec9768392442fe1b107a1b67ab0cb7b			2026-09-12T11:52:59-04:00	Bound inherited replay shutdown and observe preparation cancellation
+refs/remotes/origin/codex/integer-columns-20260921	c50e5f207869bac25507adfae90bb830a44039b7			2026-09-21T15:58:20-04:00	Read bounded replication budgets from registered campaign manifest
+refs/remotes/origin/codex/luna-proof-reporting-20260904	67b3ad1ac12aa2c96b744ce94447b415f9b5e66e			2026-09-05T06:52:50-04:00	Validate all proof representation physics fields
+refs/remotes/origin/codex/matched-fleet-tariff-20260908	a6e5059688703641db9aa3349b6ab6a9f76c1987			2026-09-08T19:35:32-04:00	Extend matched tariff coverage with separate Scaglione MIP workers
+refs/remotes/origin/codex/mip-structure-20260922	74906efe7d8787c82795d6dd80a640a56a594beb			2026-09-22T01:57:17-04:00	Add authenticated largest-matrix loader benchmark
+refs/remotes/origin/codex/nested-replication-20260909	0209d3e05d7b024f5aba6854f857b3ce22ff1e1c			2026-09-09T01:07:07-04:00	Extend original probability chains p7 through p20 at k3 k5 k6
+refs/remotes/origin/codex/nested-threshold-k2-15-20260908	21fbecba826824c44f897feef038fcf51c532582			2026-09-08T00:21:39-04:00	Set Gurobi license for nested network workers
+refs/remotes/origin/codex/overnight-extension-20260912	a29992196acb74d02b8c7891be4061718889999f			2026-09-12T00:12:59-04:00	Bind MIP execution and pool input hashes
+refs/remotes/origin/codex/overnight-pool-mip-20260908	2d7a21a07ef0b89f6e34e8504bf0638bee61113a			2026-09-07T23:29:43-04:00	Add threshold finite-pool MIP campaign
+refs/remotes/origin/codex/parallel-research-20260911	4a0c2b2c76d5ab150acebc70bd725266c8aef835			2026-09-17T08:10:01-04:00	Record verified advisor audit mirror
+refs/remotes/origin/codex/queue-graph-recovery-20260912	a0e0bb7681c8451e3cbbbfa06aef390026d9af4b			2026-09-12T16:26:28-04:00	Defer event graph JSON tie keys
+refs/remotes/origin/codex/queue-recovery-code-20260912	e091a4dba549510238507ef5e5367abea958bd30			2026-09-12T16:20:38-04:00	Validate indexed replay with cancellation-safe workers and unlimited pools
+refs/remotes/origin/codex/research-register-20260910	67c3d1bb48c37ec77bb46924985ff248b7d87be7			2026-09-10T18:43:08-04:00	Add reproducible research experiment register builder
+refs/remotes/origin/codex/scale-ladder-probe-recovery-20260818	1d80402d79d1cbb4b786b780f7287c12b02d3621			2026-08-19T14:01:50-04:00	Verify scale ladder release postconditions
+refs/remotes/origin/codex/storage-cleanup-20260912	b1129bf45f176f24c58f17ba7dee32c1f1827758			2026-09-12T01:13:07-04:00	Record verified archival completion and restoration evidence
+refs/remotes/origin/codex/strict-graph-reuse-20260922	fedf421461f94727e6b1292a0e7789ab76ed8587			2026-09-22T08:10:55-04:00	Add atomic same-physics graph reuse to strict packed runner
+refs/remotes/origin/codex/strict-graph-validation-20260922	3bb32c1a84af73c97689dfc9f5ad43136cfcead9			2026-09-22T12:26:47-04:00	Validate one full strict graph with isolated cold and reload parity
+refs/remotes/origin/codex/strict-lineage-gate-20260922	34d39caff534c089fbffed397f5a42b223b590ad			2026-09-22T12:09:03-04:00	Gate strict k17-to-k19 production pool lineage without solving
+refs/remotes/origin/codex/strict-successors-20260921	550bc5b061b05b82247e4f2f94793c3563c98087			2026-09-21T15:56:40-04:00	Add independent same-node strict representation scaling controls
+refs/remotes/origin/codex/terminal-energy-fair-comparison-20260910	2424369f4b5c40198a22698b7a460d6aa8129169			2026-09-10T17:21:14-04:00	Add matched terminal-energy comparison pilot
+refs/remotes/origin/codex/terminal-replay-compat-2424369-20260910	5cdb8138c29faef9d5bf949175cb1e815a0b4220			2026-09-10T18:56:35-04:00	Repair legacy terminal pool replay metadata
+refs/remotes/origin/codex/week-evidence-20260921	d04b11876cb38866b524c3793c8aff996545e3b3			2026-09-23T01:28:07-04:00	Add duty 13309 timeline and five-node comparison to meeting slides
+refs/remotes/origin/codex/zero-charge-start-fee-20260913	06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0			2026-09-13T01:04:24-04:00	Restore MIP progress observer fleet-cap compatibility
+refs/remotes/origin/codex/zero-fee-terminal-cg	2c7445ac6449eb7d338c83f8320574da042a65b5			2026-09-16T00:47:15-04:00	Add explicit duplicate-trip cleanup with terminal-energy charging frontiers
+refs/remotes/origin/cursor/arcflow-oracle-2969-3a99	585f98c01fcba562bca8e28bde10f969bcd68b3d			2026-08-21T14:54:16Z	Document public benchmark selection tradeoff
+refs/remotes/origin/cursor/branch-and-price-experiment-2969-1451	d63a4da1ac2965c4348f3a2653044eb138ce81cb			2026-08-21T14:58:36Z	Report arbitrary-dual differential campaign
+refs/remotes/origin/cursor/cross-generation-evidence-2969	86fd1127ed353afb82b6c82bfb943ddc0a6fb446			2026-08-16T21:25:33Z	Validate every selected route source
+refs/remotes/origin/cursor/cross-generation-evidence-refresh-2969	390a4dcb63e7d37a962c458a03564beab152e7b7			2026-08-17T18:44:43Z	Seal staged executable bytes
+refs/remotes/origin/cursor/duty-grid-transition-audit-2969	86b0a4269f061b49b5c5ce49db7fd931a3585cfc			2026-08-19T22:59:50Z	Republish chronological final oracle evidence
+refs/remotes/origin/cursor/event-based-pricer-2969	2683c775c2ba29018404c5f41ca2aff3266b5739			2026-08-25T00:45:38Z	Fix checksum verification working directory
+refs/remotes/origin/cursor/exact-cg-performance-audit-2969	ae736fbc9c5fef71f39d7d758b7062355c485313			2026-08-14T21:38:25Z	Harden profiler campaign approval and archival
+refs/remotes/origin/cursor/exact-scale-ladder-2969	f51733b4163a26ac8b36771d6584e8402ef6686f			2026-08-19T01:36:34Z	Pin probe artifacts to approved campaign root
+refs/remotes/origin/cursor/expanded-soc-realization-audit-2969	636dc0912f47e6ce85284fad3b36af30b4135887			2026-08-18T04:37:11Z	Clarify atomic array validation wording
+refs/remotes/origin/cursor/fixed-duty-charging-2969-b22e	53d2355a737485f27cd067cdaa6ebb488c17c88a			2026-08-21T14:48:39Z	Document amended k40 validation results
+refs/remotes/origin/cursor/k40-factorial-analysis-mip-2969	f40b1206b244cbc9accad272ac852837c8debdb3			2026-08-16T03:43:27Z	Bind MIP names and LP tolerances
+refs/remotes/origin/cursor/ladder-lite-20260819-2969	ff7fb2ba93cf13a31171e1e4aeb2d28dc8aeee20			2026-08-21T14:29:22Z	Record provisional feature audit finding
+refs/remotes/origin/cursor/mip-convergence-statistics-2969	bcdd57db7d0ee15496288e186246e6ed789f2b73			2026-08-16T21:59:52Z	Separate route and statistics incumbent timelines
+refs/remotes/origin/cursor/records-curator-2969-8502	ada787fb3862f3b74e7a93cf4f580fd4c4570298			2026-08-21T14:52:06Z	records: qualified-optimality RESULTS_LOG schema and model-optimality backfill
+refs/remotes/origin/cursor/recovery-audit	eb5abf68fc427651764c56a827fbf236f20517d4			2026-08-13T19:45:18Z	Close controlled MIP campaign review blockers
+refs/remotes/origin/cursor/slurm-state-contract-audit-2969	fa4d5516a8d0e8e0365113ade4ca68cd4d66e843			2026-08-19T20:12:23Z	Correct audited implementation SHA
+refs/remotes/origin/cursor/slurm-state-contract-audit-corrected-2969	79b21dd6337ae18def7c31bec35e3b8abfaa9838			2026-08-19T21:52:25Z	Bind corrected audit and legacy runbook
+refs/remotes/origin/cursor/tariff-response-experiment-2969	77baf667a06946c692f959d66fed4e2bca36cd32			2026-08-18T14:14:29Z	Handle unavailable stress metrics without imputation
+refs/remotes/origin/issue11	37d2e5d6a255ba50f5f46d6e1c589dc3cb12780d			2025-12-16T19:05:43+02:00	added function that reads PC_i as a refer number, and every same for deopt to ref, ref to depot, using a reference.csv add block 25 and 26 in hourly prices, since the code showed an error when I tried to run it
+refs/remotes/origin/issue18	85fd6a85cfef898183ea0bd9075aaed2a81ca7ad			2026-07-30T21:17:36-04:00	Ignore retired utility module
+refs/remotes/origin/issue20	fd4d818946b2fde50a9288dc577995891f690d2a			2026-08-01T13:56:29-04:00	Add five-hour Unicorn benchmark profile
+refs/remotes/origin/issue20-local-pricing-audit	e0790098c36c9bfad1906e144b860e794d8bd383			2026-08-03T14:52:16-04:00	Standardize runtime on Python 3.12
+refs/remotes/origin/issue7	f8f4cea7d648cb22b6bf3a85501123be886a8454			2025-10-24T15:55:05-04:00	Added variable granularity for easily changing timeblock.
+refs/remotes/origin/main	c4002c58f1beb50d1b793154e12bfdd9412217d2			2026-02-03T23:42:30-05:00	cleanup results before pushing
+refs/remotes/origin/peel-and-price	0a3a720e8470c13f534f9003438a9eac50ac4260			2026-08-20T06:55:11-04:00	Add ladder-lite iteration statistics for 20260820c
+refs/remotes/origin/records/ladder-lite-20260819-2969	0ea56c142cd4bc3c85591e151ec11ce84e91ffcc			2026-08-21T12:37:30-04:00	Add assistant memory snapshot and the operator handoff to agentic/

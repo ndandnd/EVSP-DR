@@ -1,0 +1,107 @@
+{
+  "checked_at_utc": "2026-09-25T17:56:51.395323+00:00",
+  "relative_link_count": 179,
+  "valid_in_packet_or_base": 169,
+  "today_packet_unresolved": [],
+  "register_historical_unresolved": [
+    {
+      "document": "outputs/research_register/README.md",
+      "target": "../research_execution_20260921/README.md",
+      "resolved_repository_path": "outputs/research_execution_20260921/README.md",
+      "selected_or_materialized": false,
+      "tracked_in_base": false,
+      "exists_in_primary_workspace": true
+    },
+    {
+      "document": "outputs/research_register/README.md",
+      "target": "../queue_recovery_20260920/README.md",
+      "resolved_repository_path": "outputs/queue_recovery_20260920/README.md",
+      "selected_or_materialized": false,
+      "tracked_in_base": false,
+      "exists_in_primary_workspace": true
+    },
+    {
+      "document": "outputs/research_register/README.md",
+      "target": "../meeting_update_20260920/README.md",
+      "resolved_repository_path": "outputs/meeting_update_20260920/README.md",
+      "selected_or_materialized": false,
+      "tracked_in_base": false,
+      "exists_in_primary_workspace": true
+    },
+    {
+      "document": "outputs/research_register/README.md",
+      "target": "../recovery_and_diving_20260919/README.md",
+      "resolved_repository_path": "outputs/recovery_and_diving_20260919/README.md",
+      "selected_or_materialized": false,
+      "tracked_in_base": false,
+      "exists_in_primary_workspace": true
+    },
+    {
+      "document": "outputs/research_register/README.md",
+      "target": "../research_day_20260918/RESEARCH_STATE.md",
+      "resolved_repository_path": "outputs/research_day_20260918/RESEARCH_STATE.md",
+      "selected_or_materialized": false,
+      "tracked_in_base": false,
+      "exists_in_primary_workspace": true
+    },
+    {
+      "document": "outputs/research_register/README.md",
+      "target": "../research_day_20260918/longmip_fleet_stage_snapshot.json",
+      "resolved_repository_path": "outputs/research_day_20260918/longmip_fleet_stage_snapshot.json",
+      "selected_or_materialized": false,
+      "tracked_in_base": false,
+      "exists_in_primary_workspace": true
+    },
+    {
+      "document": "outputs/research_register/README.md",
+      "target": "../research_day_20260918/matched_k3/README.md",
+      "resolved_repository_path": "outputs/research_day_20260918/matched_k3/README.md",
+      "selected_or_materialized": false,
+      "tracked_in_base": false,
+      "exists_in_primary_workspace": true
+    },
+    {
+      "document": "outputs/research_register/README.md",
+      "target": "../research_day_20260918/README.md",
+      "resolved_repository_path": "outputs/research_day_20260918/README.md",
+      "selected_or_materialized": false,
+      "tracked_in_base": false,
+      "exists_in_primary_workspace": true
+    },
+    {
+      "document": "outputs/research_register/README.md",
+      "target": "../meeting_20260917/noon_fixed_retry/verified/summary.json",
+      "resolved_repository_path": "outputs/meeting_20260917/noon_fixed_retry/verified/summary.json",
+      "selected_or_materialized": false,
+      "tracked_in_base": false,
+      "exists_in_primary_workspace": true
+    },
+    {
+      "document": "outputs/research_register/README.md",
+      "target": "../meeting_20260917/noon_fixed_retry/verified/independent_physical_audit.json",
+      "resolved_repository_path": "outputs/meeting_20260917/noon_fixed_retry/verified/independent_physical_audit.json",
+      "selected_or_materialized": false,
+      "tracked_in_base": false,
+      "exists_in_primary_workspace": true
+    }
+  ],
+  "converted_local_only_source_links": [
+    {
+      "label": "manifest",
+      "original_target": "../../research_management_20260923/dive_cap_pilot/manifest.json",
+      "local_source_path": "outputs/research_management_20260923/dive_cap_pilot/manifest.json"
+    },
+    {
+      "label": "launch record",
+      "original_target": "../../research_management_20260923/dive_cap_pilot/LAUNCH.md",
+      "local_source_path": "outputs/research_management_20260923/dive_cap_pilot/LAUNCH.md"
+    },
+    {
+      "label": "its existing campaign record",
+      "original_target": "../../independent_review_20260925_spatial_tariffs/campaign/README.md",
+      "local_source_path": "outputs/independent_review_20260925_spatial_tariffs/campaign/README.md"
+    }
+  ],
+  "method": "Markdown inline link targets checked against materialized packet and tracked paths at maintenance HEAD; no external links requested or network queried.",
+  "register_scope": "Exactly four new lines prepended to base HEAD README; all other content is unchanged from the evidence branch base."
+}

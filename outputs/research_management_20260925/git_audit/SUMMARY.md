@@ -1,0 +1,13 @@
+# Git maintenance receipt — 25 September 2026
+
+Removed 44 invalid worktree registrations and seven redundant local branch names, preserving source history and the primary workspace. There are now **82 local branches** (88 − 7 + one new maintenance branch), **38 registered worktrees**, and **zero prunable entries**. At the end of branch/worktree cleanup, the 67 observed origin tracking refs were unchanged; later archive-tag backup and any maintenance-branch publication are separate operations.
+
+- Two deleted branch names exactly duplicated main. Five older codex branch tips were verified as exact ancestors of the retained local and origin strict graph validation branch, archived by named tags, and removed with ordinary `git branch -d`.
+- Preserved four otherwise unreferenced detached tips plus 15 additional worktree-reflog commits with archive tags. Together with the five branch-name tags, **24 archive tags** were created. Exact recovery refs and SHAs: `recovery_refs.tsv`.
+- Main remains `f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c`; both tracked dirty-file hashes remain unchanged. Eight existing directory remnants were preserved. No scientific branch merge, remote deletion or force deletion occurred. The later recovery-tag backup is recorded below.
+- Created the clean sparse evidence worktree `.codex-work/research-maintenance-20260925` from origin’s weekly evidence tip `d04b11876cb38866b524c3793c8aff996545e3b3`; only today’s management outputs and register README/entries are in scope. Initial materialized files totaled 97 KB.
+- Ten further ancestor candidates remain untouched. Modern solver branches diverge substantially from main and remain separate.
+
+The 24 archive tags are now backed up to the existing `ndandnd/EVSP-DR` GitHub repository. The initial upload was blocked by automatic review; a read-only destination check and a scan of all 129 newly uploaded blobs (2.64 MB uncompressed objects in total) supported the approved retry. Exact refs and the successful upload receipt are in `archive_tags_to_back_up.txt` and `archive_push_receipt.json`. A 2 MB metadata archive is retained locally with its SHA256 in `cleanup_receipt.json`; it need not be committed. The full maintenance receipt is retained under `/private/tmp`; its publication copy summarizes the redundant full-tree listing by hash and size.
+
+Validation: exact ancestry and reference reachability, 44-entry dry-run match, individually verified archive tags, ordinary deletion guards, primary-file hashes, clean sparse checkout, unchanged origin refs, and before/after counts. Full evidence and recovery instructions: `REPORT.md`.

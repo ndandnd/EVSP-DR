@@ -1,0 +1,1742 @@
+{
+  "summary": {
+    "captured_utc": "2026-09-25T17:30:26.337622+00:00",
+    "full40_cg_completed": 48,
+    "full40_mip_completed": 48,
+    "full40_pricing_certificates": 0,
+    "full40_finite_pool_fleet_proofs": 0,
+    "full40_own_target_matches": 0,
+    "full40_individual_replays_passed": 48,
+    "full40_k40_fleets": [
+      43,
+      44,
+      44,
+      47,
+      44,
+      45
+    ],
+    "spatial_running": 12,
+    "spatial_running_cg": 5,
+    "spatial_running_cleanup": 7,
+    "spatial_pending_true_dependencies": 5,
+    "dive_cap_completed": 4,
+    "dive_cap_integer_hits": 0,
+    "dive_cap_fleet8_mip_hits": 0,
+    "checks_passed": 428,
+    "checks_total": 428
+  },
+  "checks": [
+    {
+      "check": "w1_k33 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w1_k33 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w1_k33 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w1_k33 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w1_k33 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k33 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k33 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w1_k34 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w1_k34 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w1_k34 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w1_k34 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w1_k34 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k34 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k34 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w1_k34 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w1_k35 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w1_k35 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w1_k35 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w1_k35 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w1_k35 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k35 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k35 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w1_k35 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w1_k36 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w1_k36 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w1_k36 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w1_k36 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w1_k36 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k36 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k36 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w1_k36 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w1_k37 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w1_k37 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w1_k37 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w1_k37 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w1_k37 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k37 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k37 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w1_k37 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w1_k38 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w1_k38 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w1_k38 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w1_k38 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w1_k38 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k38 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k38 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w1_k38 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w1_k39 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w1_k39 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w1_k39 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w1_k39 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w1_k39 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k39 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k39 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w1_k39 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w1_k40 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w1_k40 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w1_k40 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w1_k40 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w1_k40 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k40 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w1_k40 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w1_k40 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w2_k33 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w2_k33 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w2_k33 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w2_k33 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w2_k33 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k33 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k33 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w2_k34 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w2_k34 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w2_k34 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w2_k34 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w2_k34 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k34 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k34 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w2_k34 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w2_k35 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w2_k35 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w2_k35 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w2_k35 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w2_k35 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k35 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k35 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w2_k35 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w2_k36 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w2_k36 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w2_k36 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w2_k36 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w2_k36 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k36 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k36 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w2_k36 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w2_k37 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w2_k37 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w2_k37 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w2_k37 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w2_k37 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k37 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k37 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w2_k37 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w2_k38 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w2_k38 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w2_k38 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w2_k38 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w2_k38 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k38 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k38 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w2_k38 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w2_k39 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w2_k39 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w2_k39 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w2_k39 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w2_k39 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k39 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k39 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w2_k39 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w2_k40 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w2_k40 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w2_k40 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w2_k40 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w2_k40 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k40 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w2_k40 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w2_k40 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w3_k33 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w3_k33 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w3_k33 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w3_k33 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w3_k33 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k33 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k33 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w3_k34 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w3_k34 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w3_k34 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w3_k34 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w3_k34 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k34 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k34 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w3_k34 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w3_k35 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w3_k35 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w3_k35 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w3_k35 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w3_k35 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k35 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k35 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w3_k35 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w3_k36 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w3_k36 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w3_k36 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w3_k36 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w3_k36 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k36 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k36 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w3_k36 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w3_k37 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w3_k37 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w3_k37 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w3_k37 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w3_k37 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k37 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k37 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w3_k37 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w3_k38 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w3_k38 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w3_k38 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w3_k38 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w3_k38 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k38 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k38 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w3_k38 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w3_k39 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w3_k39 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w3_k39 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w3_k39 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w3_k39 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k39 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k39 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w3_k39 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w3_k40 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w3_k40 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w3_k40 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w3_k40 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w3_k40 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k40 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w3_k40 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w3_k40 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w4_k33 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w4_k33 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w4_k33 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w4_k33 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w4_k33 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k33 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k33 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w4_k34 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w4_k34 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w4_k34 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w4_k34 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w4_k34 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k34 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k34 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w4_k34 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w4_k35 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w4_k35 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w4_k35 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w4_k35 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w4_k35 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k35 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k35 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w4_k35 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w4_k36 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w4_k36 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w4_k36 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w4_k36 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w4_k36 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k36 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k36 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w4_k36 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w4_k37 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w4_k37 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w4_k37 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w4_k37 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w4_k37 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k37 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k37 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w4_k37 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w4_k38 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w4_k38 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w4_k38 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w4_k38 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w4_k38 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k38 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k38 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w4_k38 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w4_k39 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w4_k39 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w4_k39 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w4_k39 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w4_k39 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k39 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k39 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w4_k39 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w4_k40 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w4_k40 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w4_k40 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w4_k40 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w4_k40 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k40 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w4_k40 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w4_k40 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w5_k33 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w5_k33 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w5_k33 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w5_k33 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w5_k33 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k33 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k33 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w5_k34 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w5_k34 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w5_k34 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w5_k34 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w5_k34 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k34 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k34 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w5_k34 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w5_k35 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w5_k35 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w5_k35 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w5_k35 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w5_k35 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k35 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k35 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w5_k35 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w5_k36 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w5_k36 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w5_k36 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w5_k36 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w5_k36 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k36 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k36 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w5_k36 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w5_k37 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w5_k37 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w5_k37 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w5_k37 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w5_k37 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k37 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k37 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w5_k37 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w5_k38 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w5_k38 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w5_k38 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w5_k38 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w5_k38 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k38 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k38 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w5_k38 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w5_k39 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w5_k39 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w5_k39 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w5_k39 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w5_k39 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k39 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k39 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w5_k39 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w5_k40 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w5_k40 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w5_k40 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w5_k40 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w5_k40 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k40 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w5_k40 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w5_k40 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w6_k33 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w6_k33 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w6_k33 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w6_k33 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w6_k33 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k33 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k33 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w6_k34 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w6_k34 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w6_k34 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w6_k34 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w6_k34 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k34 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k34 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w6_k34 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w6_k35 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w6_k35 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w6_k35 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w6_k35 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w6_k35 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k35 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k35 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w6_k35 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w6_k36 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w6_k36 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w6_k36 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w6_k36 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w6_k36 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k36 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k36 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w6_k36 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w6_k37 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w6_k37 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w6_k37 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w6_k37 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w6_k37 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k37 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k37 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w6_k37 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w6_k38 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w6_k38 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w6_k38 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w6_k38 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w6_k38 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k38 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k38 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w6_k38 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w6_k39 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w6_k39 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w6_k39 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w6_k39 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w6_k39 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k39 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k39 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w6_k39 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "w6_k40 authenticated source result",
+      "passed": true
+    },
+    {
+      "check": "w6_k40 bound source journal",
+      "passed": true
+    },
+    {
+      "check": "w6_k40 input matches frozen manifest",
+      "passed": true
+    },
+    {
+      "check": "w6_k40 execution commits",
+      "passed": true
+    },
+    {
+      "check": "w6_k40 cg scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k40 mip scheduler completion",
+      "passed": true
+    },
+    {
+      "check": "w6_k40 separate proof and validation flags",
+      "passed": true
+    },
+    {
+      "check": "w6_k40 true previous-k source",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/fixed9_first_feasible/889584_r0 endpoint hash",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/fixed9_first_feasible/889584_r0 manifest hash",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/fixed9_first_feasible/889584_r0 source journal bound",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/fixed9_first_feasible/889584_r0 cap/stopping identity",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/fixed9_first_feasible/889584_r0 source pins",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/fixed9_first_feasible/889584_r0 native solver log identity",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/fixed9_first_feasible/889584_r0 no incumbent transfer comparison",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/fixed9_fixed_budget/889585_r0 endpoint hash",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/fixed9_fixed_budget/889585_r0 manifest hash",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/fixed9_fixed_budget/889585_r0 source journal bound",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/fixed9_fixed_budget/889585_r0 cap/stopping identity",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/fixed9_fixed_budget/889585_r0 source pins",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/fixed9_fixed_budget/889585_r0 native solver log identity",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/fixed9_fixed_budget/889585_r0 no incumbent transfer comparison",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/floor8_first_feasible/889582_r0 endpoint hash",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/floor8_first_feasible/889582_r0 manifest hash",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/floor8_first_feasible/889582_r0 source journal bound",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/floor8_first_feasible/889582_r0 cap/stopping identity",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/floor8_first_feasible/889582_r0 source pins",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/floor8_first_feasible/889582_r0 native solver log identity",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/floor8_first_feasible/889582_r0 no incumbent transfer comparison",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/floor8_fixed_budget/889583_r0 endpoint hash",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/floor8_fixed_budget/889583_r0 manifest hash",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/floor8_fixed_budget/889583_r0 source journal bound",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/floor8_fixed_budget/889583_r0 cap/stopping identity",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/floor8_fixed_budget/889583_r0 source pins",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/floor8_fixed_budget/889583_r0 native solver log identity",
+      "passed": true
+    },
+    {
+      "check": "/home/nc437/ladder-lite/dive_cap_pilot_20260923/results/floor8_fixed_budget/889583_r0 no incumbent transfer comparison",
+      "passed": true
+    },
+    {
+      "check": "462811 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462811 genuine running predecessor",
+      "passed": true
+    },
+    {
+      "check": "462808 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462808 genuine running predecessor",
+      "passed": true
+    },
+    {
+      "check": "462805 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462805 genuine running predecessor",
+      "passed": true
+    },
+    {
+      "check": "462802 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462802 genuine running predecessor",
+      "passed": true
+    },
+    {
+      "check": "462742 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462742 genuine running predecessor",
+      "passed": true
+    },
+    {
+      "check": "462814 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462745 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462785 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462791 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462757 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462776 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462773 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462799 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462804 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462807 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462810 reserved compute node excluded",
+      "passed": true
+    },
+    {
+      "check": "462741 reserved compute node excluded",
+      "passed": true
+    }
+  ]
+}

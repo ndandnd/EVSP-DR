@@ -1,0 +1,29 @@
+{
+  "schema": "evsp-dr-full40-figure-v1",
+  "captured_utc": "2026-09-25T17:30:26.337622+00:00",
+  "source_snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260925/cluster/snapshot.json",
+  "source_snapshot_sha256": "54850fbf2673a9b69b662ae517235a2d64cf1e49673ae4855a919dc85395d380",
+  "extraction_field": "full40_artifacts[case][mip_result.json].content.buses",
+  "annotation": "final published integer fleet",
+  "color": "final buses minus target k",
+  "cells": 48,
+  "target_hits": 0,
+  "cg_certificates": 0,
+  "finite_pool_fleet_proofs": 0,
+  "stage1_final_discrepancies": [],
+  "independent_audited_csv_comparison": {
+    "source": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260925/cluster/full40_cases.csv",
+    "sha256": "f03ee5168f28f0207d4da8aa3d2454ca48a93720069ad628d8150c53b539394f",
+    "matching_final_fleets": 48,
+    "matching_mip_hashes": 48,
+    "matching_pool_bounds": 48
+  },
+  "source_artifact_hashes_in": "full40_fleet_results.csv",
+  "outputs": {
+    "full40_fleet_heatmap.svg": "2e0c054dc232fdb46de9bedce89e7ceee11e22c9abd5d660eaaab2f0da587334",
+    "full40_fleet_heatmap.pdf": "421dc597a887d69963ff71248db9fc7c1424cc7f320ef2949376d3dc13d6ce17",
+    "full40_fleet_heatmap.png": "e43a5c865356c25d354596c4377d9c0db5bc996914e6fc3d396b4b7d0564d162",
+    "full40_fleet_results.csv": "266d9c7db130e05b31730ecc8652007bd37b814b1471e0f1cf0ead91b5a8a63b"
+  },
+  "builder_sha256": "8e25b46555256dee81bdef264248ca6dbaef2054733188538ef71a13e3b27e3d"
+}

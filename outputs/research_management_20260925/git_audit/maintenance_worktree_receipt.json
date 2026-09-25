@@ -1,0 +1,135 @@
+{
+  "started_at_utc": "2026-09-25T17:33:49.643244+00:00",
+  "path": "/Users/nadan/Documents/projects/demandresponse/.codex-work/research-maintenance-20260925",
+  "branch": "codex/research-maintenance-20260925",
+  "base": "origin/codex/week-evidence-20260921",
+  "commands": [
+    {
+      "cwd": "/Users/nadan/Documents/projects/demandresponse",
+      "argv": [
+        "git",
+        "rev-parse",
+        "origin/codex/week-evidence-20260921"
+      ],
+      "stdin": null,
+      "exit_code": 0,
+      "stdout": "d04b11876cb38866b524c3793c8aff996545e3b3\n",
+      "stderr": ""
+    },
+    {
+      "cwd": "/Users/nadan/Documents/projects/demandresponse",
+      "argv": [
+        "git",
+        "ls-tree",
+        "-rl",
+        "origin/codex/week-evidence-20260921"
+      ],
+      "stdin": null,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout_summary": {
+        "omitted_from_publication": true,
+        "bytes": 1288715,
+        "lines": 8956,
+        "sha256": "53e9bdc79054f11117a331609865024ca891427e881527a2f14dca5e460f9dff",
+        "reason": "Full-tree listing is redundant; selected sparse file count/bytes and base SHA remain recorded."
+      }
+    },
+    {
+      "cwd": "/Users/nadan/Documents/projects/demandresponse",
+      "argv": [
+        "git",
+        "worktree",
+        "add",
+        "--no-checkout",
+        "-b",
+        "codex/research-maintenance-20260925",
+        "/Users/nadan/Documents/projects/demandresponse/.codex-work/research-maintenance-20260925",
+        "origin/codex/week-evidence-20260921"
+      ],
+      "stdin": null,
+      "exit_code": 0,
+      "stdout": "branch 'codex/research-maintenance-20260925' set up to track 'origin/codex/week-evidence-20260921'.\n",
+      "stderr": "Preparing worktree (new branch 'codex/research-maintenance-20260925')\n"
+    },
+    {
+      "cwd": "/Users/nadan/Documents/projects/demandresponse/.codex-work/research-maintenance-20260925",
+      "argv": [
+        "git",
+        "sparse-checkout",
+        "set",
+        "--no-cone",
+        "--stdin"
+      ],
+      "stdin": "/outputs/research_management_20260925/\n/outputs/research_register/entries/\n/outputs/research_register/README.md\n",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "cwd": "/Users/nadan/Documents/projects/demandresponse/.codex-work/research-maintenance-20260925",
+      "argv": [
+        "git",
+        "read-tree",
+        "-mu",
+        "HEAD"
+      ],
+      "stdin": null,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "cwd": "/Users/nadan/Documents/projects/demandresponse/.codex-work/research-maintenance-20260925",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "stdin": null,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "cwd": "/Users/nadan/Documents/projects/demandresponse/.codex-work/research-maintenance-20260925",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "stdin": null,
+      "exit_code": 0,
+      "stdout": "d04b11876cb38866b524c3793c8aff996545e3b3\n",
+      "stderr": ""
+    },
+    {
+      "cwd": "/Users/nadan/Documents/projects/demandresponse/.codex-work/research-maintenance-20260925",
+      "argv": [
+        "git",
+        "sparse-checkout",
+        "list"
+      ],
+      "stdin": null,
+      "exit_code": 0,
+      "stdout": "/outputs/research_management_20260925/\n/outputs/research_register/entries/\n/outputs/research_register/README.md\n",
+      "stderr": ""
+    }
+  ],
+  "base_sha": "d04b11876cb38866b524c3793c8aff996545e3b3",
+  "sparse_existing_file_count": 9,
+  "sparse_existing_bytes": 97152,
+  "status": "",
+  "head": "d04b11876cb38866b524c3793c8aff996545e3b3",
+  "sparse_patterns": "/outputs/research_management_20260925/\n/outputs/research_register/entries/\n/outputs/research_register/README.md\n",
+  "root_readme_exists": false,
+  "register_readme_exists": true,
+  "completed_at_utc": "2026-09-25T17:33:50.825433+00:00",
+  "success": true,
+  "full_receipt_local_only": {
+    "path": "/private/tmp/demandresponse-maintenance_worktree_receipt_full_20260925.json",
+    "bytes": 1310365,
+    "sha256": "80e6805104562e5ce8684360adabd61a4ea9818dd36ba857060315803591d42b"
+  }
+}
