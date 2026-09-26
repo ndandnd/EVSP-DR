@@ -1,0 +1,15 @@
+{
+  "changed_bytes": 1,
+  "compilation": "all Python files and patched original compiled; bash -n passed",
+  "original_bytes": 4711,
+  "original_module_sha256": "990a2a5a741d89e921acbf654c07137d4739444294092d3b4210cc7fbb8914db",
+  "patched_bytes": 4711,
+  "patched_module_sha256": "a85b3a0b6e485d81ff83ebeff58a13ff7e27eec9f050f30054f68312ca7419d8",
+  "reversible_exact_guard_only_patch": true,
+  "runtime": "local Python3.12.2",
+  "selected_sha256": "c771a2c97b8ba3a32af3201f0b7f3d898861e9c19b03d1f0ddb80df908ce5768",
+  "solver_executed": false,
+  "source_sha256": "684886c6dd791357cab107bc5eb951f951c91b21bf8b53a2171b3073d5551aac",
+  "tests": "7/7 pass; source and selection tamper rejection; collector discovery; original hash; AST sole constant10->11",
+  "verified_utc": "2026-09-26T08:18:31.593051+00:00"
+}

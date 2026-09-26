@@ -1,0 +1,105 @@
+JobId=520378 JobName=sx_rc_mix1_two_price_split
+   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A
+   Priority=14829 Nice=0 Account=scaglione QOS=normal WCKey=*
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=00:03:11 TimeLimit=05:00:00 TimeMin=N/A
+   SubmitTime=2026-09-26T04:22:05 EligibleTime=2026-09-26T04:22:05
+   AccrueTime=2026-09-26T04:22:05
+   StartTime=2026-09-26T04:22:10 EndTime=2026-09-26T09:22:10 Deadline=N/A
+   PreemptEligibleTime=2026-09-26T04:22:10 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-26T04:22:10 Scheduler=Main
+   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:862888
+   ReqNodeList=(null) ExcNodeList=scaglione-compute-01
+   NodeList=luxlab-cpu-02
+   BatchHost=luxlab-cpu-02
+   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=8,mem=48G,node=1,billing=8
+   AllocTRES=cpu=8,mem=48G,node=1,billing=8
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=8 MinMemoryNode=48G MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)
+   Command=/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/recovery_20260926_case11/recovery.sbatch
+   WorkDir=/home/nc437/ladder-lite/spatial_tariff_expansion_20260925
+   StdErr=/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/logs/sx_rc_mix1_two_price_split_520378.err
+   StdIn=/dev/null
+   StdOut=/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/logs/sx_rc_mix1_two_price_split_520378.out
+   TresPerTask=cpu=8
+   
+
+{
+  "argv": [
+    "/home/nc437/evsp_env/bin/python",
+    "-u",
+    "/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/recovery_20260926_case11/cleanup_case11.py",
+    "--source",
+    "/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/results/mix1_two_price_split/fresh_cg/job499021_r0/out/summary.json",
+    "--source-sha256",
+    "684886c6dd791357cab107bc5eb951f951c91b21bf8b53a2171b3073d5551aac",
+    "--out",
+    "/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/results/mix1_two_price_split/cleanup/job520378_r0/out",
+    "--seconds",
+    "3600.0",
+    "--threads",
+    "8"
+  ],
+  "cell": "mix1_two_price_split",
+  "code": "/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/code",
+  "cohort": "mix1",
+  "config_sha256": "040f5567d4e68dacc03243711a9dbe46d7405a965fde48791ca433e72d9f2bcb",
+  "cpus": "8",
+  "execution_commit": "4a8b497e668be9962bca5906a8b69116fa634882",
+  "fleet_cap": 5,
+  "idx": 43,
+  "input_hashes": {
+    "/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/instances/cohorts_20260925/Practice_Custom_DutyUnion_MIX1_eligible_k05_20260925.csv": "cd318d00aed132f9a0d040a7b4fcf7efc724c008e11c5af1d438adbcf04531a5",
+    "/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/tariffs/two_price_split_h26.csv": "d9af72ccdb209d2946e778a79ad2052a6cdf87d3ba4a82fe581bc65fd2a09051"
+  },
+  "instance": "/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/instances/cohorts_20260925/Practice_Custom_DutyUnion_MIX1_eligible_k05_20260925.csv",
+  "instance_sha256": "cd318d00aed132f9a0d040a7b4fcf7efc724c008e11c5af1d438adbcf04531a5",
+  "node": "luxlab-cpu-02.infosci.cornell.edu",
+  "original_module_sha256": "990a2a5a741d89e921acbf654c07137d4739444294092d3b4210cc7fbb8914db",
+  "patched_module_sha256": "a85b3a0b6e485d81ff83ebeff58a13ff7e27eec9f050f30054f68312ca7419d8",
+  "physics": {
+    "battery_kwh": 240,
+    "charge_kw": 350,
+    "charge_start_fee": 0,
+    "coverage": "cover",
+    "initial_kwh": 240,
+    "reserve_kwh": 0,
+    "shared_capacity": false,
+    "soc_step": 2.5,
+    "time_step": 5
+  },
+  "recovery_design": "/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/results/mix1_two_price_split/cleanup/job520378_r0/recovery_design.json",
+  "recovery_guard": 11,
+  "recovery_of_post": "498962",
+  "resources": {
+    "cpus": 8,
+    "exclude": "scaglione-compute-01",
+    "memory": "48G",
+    "partition": "default_partition",
+    "requeue": true,
+    "walltime": "05:00:00"
+  },
+  "run_cells_sha256": "f6d4d9bf9caf4e9a82652e1a05656d8a0821b7d2a700c2baa3dc618067f8ffb2",
+  "selected_source_sha256": "c771a2c97b8ba3a32af3201f0b7f3d898861e9c19b03d1f0ddb80df908ce5768",
+  "slurm_array_job_id": null,
+  "slurm_array_task_id": null,
+  "slurm_job_id": "520378",
+  "slurm_restart": "0",
+  "source_attempt": "/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/results/mix1_two_price_split/fresh_cg/job499021_r0",
+  "source_is_fallback": false,
+  "source_sha256": "684886c6dd791357cab107bc5eb951f951c91b21bf8b53a2171b3073d5551aac",
+  "stage": "cleanup",
+  "started_utc": "2026-09-26T08:22:11.017481+00:00",
+  "state": "running",
+  "target_kwh": 379.7984451,
+  "tariff": "/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/tariffs/two_price_split_h26.csv",
+  "tariff_sha256": "d9af72ccdb209d2946e778a79ad2052a6cdf87d3ba4a82fe581bc65fd2a09051",
+  "worker_sha256": "c463dedeacdaf10c841551eb9f8de4f3a4539256e26de655f5695ea89752d9bd",
+  "wrapper_sha256": "1fc91b8ac4706c19624c785b0ad96e5ade2c92367bc10bd6995cc8cab6bf2c24"
+}

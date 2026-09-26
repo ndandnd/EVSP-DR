@@ -1,0 +1,223 @@
+{
+  "prepared_at_utc": "2026-09-26T08:33:03.094759+00:00",
+  "worktree": "/Users/nadan/Documents/projects/demandresponse/.codex-work/research-maintenance-20260925",
+  "branch": "codex/research-maintenance-20260925",
+  "base_commit": "7edda2f32782667cd859367b5e305278ab0ae8d2",
+  "source": "/Users/nadan/Documents/projects/demandresponse/outputs/research_management_20260926/overnight_monitor",
+  "scope": "Only overnight_monitor selected code/README/CSV/JSON/TXT/MD/diff/SHA256SUMS, the new dated register entry, and exact new four-line section prepended to prior maintenance register history. No commit or push.",
+  "sparse_patterns_before": [
+    "/outputs/research_management_20260925/",
+    "/outputs/research_register/entries/",
+    "/outputs/research_register/README.md"
+  ],
+  "sparse_patterns_after": [
+    "/outputs/research_management_20260925/",
+    "/outputs/research_register/entries/",
+    "/outputs/research_register/README.md",
+    "/outputs/research_management_20260926/overnight_monitor/"
+  ],
+  "selected_files": [
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/README.md",
+      "bytes": 6965,
+      "sha256": "be906c58a6145e4c3d78339357ac18a072ff4c9af1b644e7eeed40133f1b0496"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/collect_terminal_receipts.py",
+      "bytes": 2706,
+      "sha256": "7ee654c2d92e684a664701413a9feac3b5b21a2e2c87dfc883b30b8970b386df"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/doc_after.md",
+      "bytes": 11799,
+      "sha256": "3249050ffb3b2c5ec5fb061e6e69bd41f9aaf2605c60f5a220f2e0532de0c90c"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/doc_before.md",
+      "bytes": 11368,
+      "sha256": "d763537ddf69edf53887daf9d34675996dd074151db8e57af0678ed0fe3be099"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/endpoint_summary/README.md",
+      "bytes": 6507,
+      "sha256": "b2123cbebab95a0bbd825f34c233a550ee91f9f52c6feaf00832c87660c13a77"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/endpoint_summary/attempt_receipts.csv",
+      "bytes": 87951,
+      "sha256": "b763b7c72808227b14537f245c217fd233b488180bf98111783c8bc72be46e92"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/endpoint_summary/expansion_cells.csv",
+      "bytes": 142187,
+      "sha256": "3ceada93e80fc0e3072cd3e29079d360d42e1a18bccd748690c88a39c6f8c996"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/endpoint_summary/original_root_recoveries.csv",
+      "bytes": 2610,
+      "sha256": "d0518ec47141b3bcadb5bdbfba3c629480227dd2d88356a54c477a547567a49f"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/endpoint_summary/provenance.json",
+      "bytes": 166065,
+      "sha256": "0de26be9743145654547414e2d19def7e99699c501bf1d4e38ed6d3e811acc25"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/endpoint_summary/reduce_receipts.py",
+      "bytes": 15060,
+      "sha256": "770ccd8bbbe9fa71363e346afe4f5516615b1a74a74f0c2113c69509f004f97a"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/endpoint_summary/scheduler_jobs.csv",
+      "bytes": 26423,
+      "sha256": "07f061196310d81f9cb4d7faa351ba2dabdc3205710c17e0704405156e36e652"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/endpoint_summary/summary.json",
+      "bytes": 3212,
+      "sha256": "c029d5d4006a63d187db49f27e124e050324cfb185109b53338e2e4fc5b78645"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/policy_resources_owner_0400.txt",
+      "bytes": 6068,
+      "sha256": "e76c0b51301f52c671dce6b25fece10dfee7c293d19d35dc37fc70a3a2331de5"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/publication/verification.json",
+      "bytes": 15524,
+      "sha256": "c09ae04d66c50428fd1b40cbb49f429c36641ec070547fd3ee97c69637165489"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/publication/verify_publication.py",
+      "bytes": 4236,
+      "sha256": "9bb7bcae4c0a93e74e275ae358acc37ce2a800e950ccaa06be3994da3781f037"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/recovery/README.md",
+      "bytes": 2496,
+      "sha256": "fb0384551f42d59ff6ec7a32587464942c641c28a2ee0486f55fc8891436da56"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/recovery/SHA256SUMS",
+      "bytes": 574,
+      "sha256": "4c42852faf9053944f2414c0949e0cf4b28980c1fead44c661331ae2442e3df1"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/recovery/cleanup_case11.py",
+      "bytes": 5497,
+      "sha256": "1fc91b8ac4706c19624c785b0ad96e5ade2c92367bc10bd6995cc8cab6bf2c24"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/recovery/guard_only.diff",
+      "bytes": 583,
+      "sha256": "d245d97bb37e7d1c0b7c615caf75ade6ba774585a58bbdc15e59061d6d8fb71a"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/recovery/preflight_remote.txt",
+      "bytes": 39900,
+      "sha256": "32e2435f3263501695f7d8cc341c4bd97a9b5a2d63f6c08dadd79e377921a864"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/recovery/recovery.sbatch",
+      "bytes": 1075,
+      "sha256": "72248f9d56471ee989c9e6e2369df1703e92695c8562159c341d6853bd104659"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/recovery/recovery_worker.py",
+      "bytes": 5895,
+      "sha256": "c463dedeacdaf10c841551eb9f8de4f3a4539256e26de655f5695ea89752d9bd"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/recovery/start_verification.txt",
+      "bytes": 5467,
+      "sha256": "2027c31758ba39d92d343e7afd153b9b2711d4c857e336c5ec295e07982e86e3"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/recovery/submission.json",
+      "bytes": 1499,
+      "sha256": "c304387de5eb0b0bbaa27016823151a83d39be033e90842496dfe2a5e2f0ff33"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/recovery/submit_recovery.py",
+      "bytes": 1998,
+      "sha256": "63f8d97e42073730a1d94767ad1a5f5bef1c177977e8c990bd284b72aae7e7bf"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/recovery/test_case11.py",
+      "bytes": 5887,
+      "sha256": "4076d8ecb4410145d1e698447368f6c39193c23dea439abeb946d39866895ec7"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/recovery/verification.json",
+      "bytes": 811,
+      "sha256": "ee31bea176473a5ded9a9e76310e1a423264f0011767e67cdde0a247dbaabcf9"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/terminal_receipts_0400.json",
+      "bytes": 7447130,
+      "sha256": "9d61b0811a95f1fd0702e7198c916a182466b067cc50af158f8b219ec0846c8b"
+    },
+    {
+      "path": "outputs/research_register/entries/20260926_overnight_spatial_endpoints.md",
+      "bytes": 4093,
+      "sha256": "6684197e85e48db90216922be1c15847cee7c22046031bb29ecbdd13c992713e"
+    },
+    {
+      "path": "outputs/research_register/README.md",
+      "bytes": 69187,
+      "sha256": "b9b2ed7151dbe329dc26db555dfdf753216bffd8bba8ab952c666c561cb96ab8",
+      "selection": "Exact new 4-line section from root plus unchanged maintenance-branch register history",
+      "base_sha256": "8edf18da0c74a2e045ceb25c77ee846c647aa900fba62e89ee855f6f46bd7a82"
+    }
+  ],
+  "selected_file_count": 30,
+  "selected_bytes": 8100773,
+  "excluded_files": [
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/publication/slide55.png",
+      "bytes": 106922,
+      "sha256": "5b27c5228e38b28dee67fcf7f1e74aa6a5463d89b5c62981041f2ec92889d05d",
+      "reason": "Native export or image retained locally"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/publication/slides_after.pdf",
+      "bytes": 3202522,
+      "sha256": "852bbfe517680268c686f442f14ae5fcc482668f90b5dac2e78c8d5d469cea7c",
+      "reason": "Native export or image retained locally"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/publication/slides_after.pptx",
+      "bytes": 5163579,
+      "sha256": "45c6cc7a2da37865de5af6996551f1f094fa422c2aa7b9abcbf6888ce131d41e",
+      "reason": "Native export or image retained locally"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/publication/slides_before.pptx",
+      "bytes": 5159206,
+      "sha256": "cdb10a707b6c1ccc0be631068f91be221968ebbf3170adf415a34649710f331f",
+      "reason": "Native export or image retained locally"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/recovery/__pycache__/cleanup_case11.cpython-312.pyc",
+      "bytes": 9584,
+      "sha256": "e4879af39a82048d3a95f125b8e0fc643cfe2e4bbb535177fc0cf399391c4986",
+      "reason": "Python cache excluded"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/recovery/__pycache__/test_case11.cpython-312.pyc",
+      "bytes": 11367,
+      "sha256": "eea6fac1040b5f9085ed270c1f054d28a93080f6afdda8de963684f7c9768458",
+      "reason": "Python cache excluded"
+    }
+  ],
+  "native_export_note": "Full native Slides PPTX/PDF and the PNG remain local in the primary workspace. publication/verification.json records their hashes and the published-content verification; reproducing that verifier requires the local native files. Excluded file hashes are also recorded here.",
+  "relative_link_issues": [],
+  "register_diff": "+4 lines, -0 lines",
+  "prior_maintenance_content_preserved": true,
+  "primary_workspace_modified": false,
+  "staged_files": [],
+  "verification_scope": "Copied-byte SHA256 equality, unchanged HEAD, clean start, exact register delta, no staged changes, scoped relative links. Parent already completed publication and endpoint checks; those were not rerun.",
+  "final_refresh_at_utc": "2026-09-26T08:33:25.155174+00:00",
+  "final_refresh_note": "Refreshed doc_after.md and publication/verification.json after the source timestamp correction from 04:07 to 04:25.",
+  "root_review_note": "Root added spacing to register summary and dated entry after preparation; hashes refreshed."
+}

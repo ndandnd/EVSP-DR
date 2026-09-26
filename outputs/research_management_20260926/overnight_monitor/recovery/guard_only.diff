@@ -1,0 +1,11 @@
+--- 4a8b497e/src/terminal_duplicate_cleanup.py
++++ recovery_case11/terminal_duplicate_cleanup.py
+@@ -65,7 +65,7 @@
+     routes=[];sequences=set()
+     for original in selected:
+         duplicated=[t for t in original['trips'] if counts[t]>1]
+-        assert len(duplicated)<=10,'Require an explicit larger repair design'
++        assert len(duplicated)<=11,'Require an explicit larger repair design'
+         for n in range(len(duplicated)+1):
+             for removed in combinations(duplicated,n):
+                 sequence=tuple(t for t in original['trips'] if t not in removed)

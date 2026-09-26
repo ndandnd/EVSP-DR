@@ -1,3 +1,7 @@
+## 26 September overnight spatial-price endpoints
+
+[Audited endpoints and one pinned cleanup recovery](entries/20260926_overnight_spatial_endpoints.md). The 80-case expansion has 61 certified CG LPs and 79 exact-once five-bus cleanups: 54 direct and 25 with GIRO-based fallback columns. Charging is proved within 60 repair pools and open in 19; shared charger capacity remains unmodeled. One cleanup hit a duplicate-count guard; same-setting recovery 520378 is running. Current Doc and weekly slide 55 are updated, with figures/history retained. The next morning check will pause monitoring.
+
 ## 25 September current status and maintenance
 
 [Current results, organized Doc and Git cleanup](entries/20260925_current_status_and_git_maintenance.md). The targets 33–40 extension is complete: no target matches among 48 cases; target 40 fleets 43/44/44/47/44/45. New C1 cap pilots end at nine buses / bound eight. The 13:30 EDT queue has 12 running spatial-price jobs and five true dependencies. No recovery submission was needed. Earlier dated entries below remain historical; this entry supersedes their running-status claims for these campaigns.

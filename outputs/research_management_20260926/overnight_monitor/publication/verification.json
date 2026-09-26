@@ -1,0 +1,708 @@
+{
+  "checks": [
+    {
+      "name": "Doc line count retained",
+      "passed": true
+    },
+    {
+      "name": "Only date and two current-work paragraphs changed",
+      "passed": true
+    },
+    {
+      "name": "Doc figures and source footer byte-identical",
+      "passed": true
+    },
+    {
+      "name": "Doc recovery ID and proof limits present",
+      "passed": true
+    },
+    {
+      "name": "One slide appended:54 to55",
+      "passed": true
+    },
+    {
+      "name": "Slide1 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide1 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide1 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide2 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide2 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide2 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide3 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide3 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide3 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide4 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide4 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide4 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide5 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide5 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide5 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide6 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide6 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide6 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide7 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide7 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide7 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide8 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide8 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide8 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide9 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide9 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide9 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide10 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide10 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide10 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide11 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide11 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide11 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide12 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide12 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide12 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide13 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide13 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide13 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide14 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide14 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide14 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide15 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide15 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide15 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide16 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide16 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide16 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide17 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide17 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide17 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide18 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide18 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide18 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide19 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide19 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide19 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide20 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide20 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide20 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide21 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide21 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide21 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide22 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide22 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide22 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide23 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide23 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide23 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide24 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide24 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide24 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide25 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide25 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide25 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide26 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide26 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide26 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide27 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide27 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide27 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide28 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide28 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide28 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide29 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide29 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide29 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide30 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide30 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide30 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide31 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide31 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide31 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide32 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide32 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide32 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide33 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide33 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide33 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide34 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide34 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide34 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide35 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide35 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide35 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide36 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide36 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide36 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide37 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide37 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide37 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide38 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide38 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide38 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide39 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide39 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide39 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide40 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide40 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide40 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide41 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide41 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide41 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide42 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide42 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide42 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide43 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide43 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide43 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide44 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide44 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide44 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide45 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide45 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide45 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide46 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide46 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide46 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide47 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide47 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide47 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide48 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide48 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide48 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide49 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide49 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide49 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide50 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide50 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide50 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide51 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide51 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide51 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide52 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide52 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide52 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide53 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide53 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide53 notes retained",
+      "passed": true
+    },
+    {
+      "name": "Slide54 retained except generated table UUID",
+      "passed": true
+    },
+    {
+      "name": "Slide54 image bindings retained",
+      "passed": true
+    },
+    {
+      "name": "Slide54 notes retained",
+      "passed": true
+    },
+    {
+      "name": "All prior embedded images retained",
+      "passed": true
+    },
+    {
+      "name": "New result table is native editable table",
+      "passed": true
+    },
+    {
+      "name": "New slide counts and caveats",
+      "passed": true
+    },
+    {
+      "name": "New slide source and recovery notes",
+      "passed": true
+    }
+  ],
+  "passed": 171,
+  "failed": 0,
+  "doc_changed_lines": [
+    3,
+    68,
+    70
+  ],
+  "hashes": {
+    "slides_before.pptx": "cdb10a707b6c1ccc0be631068f91be221968ebbf3170adf415a34649710f331f",
+    "slides_after.pptx": "45c6cc7a2da37865de5af6996551f1f094fa422c2aa7b9abcbf6888ce131d41e",
+    "slides_after.pdf": "852bbfe517680268c686f442f14ae5fcc482668f90b5dac2e78c8d5d469cea7c",
+    "slide55.png": "5b27c5228e38b28dee67fcf7f1e74aa6a5463d89b5c62981041f2ec92889d05d"
+  },
+  "doc_hashes": {
+    "doc_before.md": "d763537ddf69edf53887daf9d34675996dd074151db8e57af0678ed0fe3be099",
+    "doc_after.md": "3249050ffb3b2c5ec5fb061e6e69bd41f9aaf2605c60f5a220f2e0532de0c90c"
+  },
+  "visual_review": "Slide55 rendered from native Google PDF and inspected; text/table readable, no clipping. Doc status paragraph inspected in browser.",
+  "slides_url": "https://docs.google.com/presentation/d/1F6udjgkiPH51vMUcku7ZT3PhZPAxsQwUCi3TK9vFRDM/edit?slide=id.h5de1531e14aadef0_4_1",
+  "doc_url": "https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.79m3d3x4h45m"
+}

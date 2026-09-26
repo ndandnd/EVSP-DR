@@ -1,0 +1,173 @@
+{
+  "collected_utc": "2026-09-26T08:12:46.417528+00:00",
+  "root": "/home/nc437/ladder-lite/spatial_tariff_expansion_20260925",
+  "cells": 80,
+  "original_cg_certificates": {
+    "False": 19,
+    "True": 61
+  },
+  "original_cg_stops": {
+    "cg_time_limit": 17,
+    "pricing_certified": 61,
+    "restricted_lp_not_optimal": 2
+  },
+  "original_fleet_status": {
+    "INFEASIBLE": 11,
+    "OPTIMAL": 55,
+    "TIME_LIMIT": 14
+  },
+  "original_charging_status": {
+    "OPTIMAL": 53,
+    "TIME_LIMIT": 2,
+    "missing": 25
+  },
+  "fixed_charging_status": {
+    "OPTIMAL": 73,
+    "TIME_LIMIT": 7
+  },
+  "post_branches": {
+    "cleanup": 55,
+    "fallback_then_cleanup": 25
+  },
+  "post_state": {
+    "failed": 1,
+    "finished": 79
+  },
+  "successful_cleanup_by_branch": {
+    "cleanup": 54,
+    "fallback_then_cleanup": 25
+  },
+  "fallback_charging_status": {
+    "OPTIMAL": 18,
+    "TIME_LIMIT": 7
+  },
+  "fallback_original_cg_certificates": {
+    "False": 16,
+    "True": 9
+  },
+  "cleanup_fleet_status": {
+    "OPTIMAL": 79,
+    "missing": 1
+  },
+  "cleanup_charging_status": {
+    "OPTIMAL": 60,
+    "TIME_LIMIT": 19,
+    "missing": 1
+  },
+  "cleanup_exact_once": {
+    "None": 1,
+    "True": 79
+  },
+  "cleanup_replay": {
+    "None": 1,
+    "True": 79
+  },
+  "fallback_all_giro_sequences": {
+    "False": 8,
+    "True": 17
+  },
+  "scheduler_jobs": 240,
+  "scheduler_states": {
+    "COMPLETED": 214,
+    "FAILED": 26
+  },
+  "scheduler_restart_sum": 17,
+  "scheduler_restarted_jobs": 16,
+  "scheduler_by_stage": {
+    "fixed_duty": {
+      "jobs": 80,
+      "states": {
+        "COMPLETED": 80
+      },
+      "restarts": 4,
+      "restarted_jobs": 4
+    },
+    "fresh_cg": {
+      "jobs": 80,
+      "states": {
+        "COMPLETED": 55,
+        "FAILED": 25
+      },
+      "restarts": 13,
+      "restarted_jobs": 12
+    },
+    "post": {
+      "jobs": 80,
+      "states": {
+        "COMPLETED": 79,
+        "FAILED": 1
+      },
+      "restarts": 0,
+      "restarted_jobs": 0
+    }
+  },
+  "attempt_receipts": 282,
+  "attempt_states": {
+    "failed": 26,
+    "finished": 239,
+    "running": 17
+  },
+  "attempt_stage_counts": {
+    "cleanup": 80,
+    "fixed_duty": 84,
+    "fresh_cg": 93,
+    "fresh_cg_fallback": 25
+  },
+  "original_recovery_jobs": 5,
+  "failed_cleanup_diagnosis": {
+    "selection": "/home/nc437/ladder-lite/spatial_tariff_expansion_20260925/results/mix1_two_price_split/fresh_cg/job499021_r0/out/selected_routes.json",
+    "sha256": "c771a2c97b8ba3a32af3201f0b7f3d898861e9c19b03d1f0ddb80df908ce5768",
+    "route_trip_counts": [
+      40,
+      18,
+      12,
+      20,
+      33
+    ],
+    "duplicated_trip_counts_by_route": [
+      10,
+      1,
+      0,
+      2,
+      11
+    ],
+    "duplicated_trip_ids_by_route": [
+      [
+        48,
+        94,
+        95,
+        97,
+        98,
+        99,
+        100,
+        101,
+        102,
+        106
+      ],
+      [
+        48
+      ],
+      [],
+      [
+        63,
+        64
+      ],
+      [
+        63,
+        64,
+        94,
+        95,
+        97,
+        98,
+        99,
+        100,
+        101,
+        102,
+        106
+      ]
+    ],
+    "duplicated_distinct_trips": 12,
+    "duplicate_excess": 12,
+    "subsequence_upper_count": 3079
+  }
+}
