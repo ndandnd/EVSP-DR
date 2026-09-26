@@ -1,6 +1,6 @@
-## 26 September overnight spatial-price endpoints
+## 26 September final morning endpoints — monitoring paused
 
-[Audited endpoints and one pinned cleanup recovery](entries/20260926_overnight_spatial_endpoints.md). The 80-case expansion has 61 certified CG LPs and 79 exact-once five-bus cleanups: 54 direct and 25 with GIRO-based fallback columns. Charging is proved within 60 repair pools and open in 19; shared charger capacity remains unmodeled. One cleanup hit a duplicate-count guard; same-setting recovery 520378 is running. Current Doc and weekly slide 55 are updated, with figures/history retained. The next morning check will pause monitoring.
+[Final spatial-price endpoints and completed recovery](entries/20260926_overnight_spatial_endpoints.md). All 80 expansion cells now have exact-once five-bus cleanups: 55 direct fresh-CG and 25 GIRO-frontier fallbacks. Charging is proved within 61 finite cleanup pools and time-limited in 19; the original 61/80 CG pricing certificates are unchanged. Recovery 520378 completed in 45m57s with 17.71 GiB peak RSS, and the morning receipt audit passed 181 checks. The 08:09 EDT scoped EVSP–DR queue has no remaining jobs; monitoring is paused. Shared charger capacity remains unvalidated.
 
 ## 25 September current status and maintenance
 

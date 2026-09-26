@@ -1,5 +1,17 @@
 # Overnight spatial-price expansion endpoints
 
+## Final morning result — 26 September 2026, 08:09 EDT
+
+The expansion is complete with **80/80 exact-once five-bus cleanups: 55 direct fresh-CG and 25 labelled GIRO-frontier fallbacks**. Charging is proved to solver tolerance in **61 finite cleanup pools**, while **19 remain time-limited**. Original CG pricing certificates remain **61/80**; no new CG certificate is claimed. Shared charger capacity remains unvalidated.
+
+Recovery **520378** completed at 05:08:07 EDT after **45m57s**, with **17.71 GiB peak RSS**, 8 CPUs and an unchanged 48 GiB allocation. It closes the `mix1_two_price_split` cleanup with all 111 trips exactly once and no added fixed-duty fallback. The [morning audit](../../research_management_20260926/overnight_monitor/morning/README.md) passed [181 saved-receipt and route-arithmetic checks](../../research_management_20260926/overnight_monitor/morning/verification.json); [updated 80-cell table](../../research_management_20260926/overnight_monitor/morning/expansion_cells.csv).
+
+At the saved 08:09:43 EDT snapshot, no scoped EVSP–DR jobs remain in the queue and all scoped jobs are terminal. The overnight heartbeat is **PAUSED**, confirmed separately through the automation tool. Final current-Doc and slide 55 publication passed [171 preservation/content checks](../../research_management_20260926/overnight_monitor/morning/publication/verification.json), separately from the scheduler and scientific audit. The [automation receipt](../../research_management_20260926/overnight_monitor/morning/automation_pause.json) records the pause.
+
+## Frozen 04:12 endpoint and 04:30 recovery record — historical
+
+The following sections preserve the earlier 79-cleanup state and running recovery. Their incomplete counts and next-heartbeat instructions are superseded by the final morning result above.
+
 Snapshot: 26 September 2026, 04:12 EDT. [Entry point and remaining recovery](../../research_management_20260926/overnight_monitor/README.md). [80-cell audited table](../../research_management_20260926/overnight_monitor/endpoint_summary/expansion_cells.csv). Raw remote paths/hashes, attempts, scheduler receipts, executable reducer and 1,849 binding checks are retained beside it.
 
 ## Result and proof scopes

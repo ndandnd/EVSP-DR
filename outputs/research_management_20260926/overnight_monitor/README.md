@@ -1,8 +1,20 @@
 # Overnight EVSP–DR monitor — 26 September 2026
 
+## Final morning check — 08:09 EDT; monitoring paused
+
+Recovery **520378 completed** at 05:08:07 EDT in **45m57s**, using **17.71 GiB peak RSS** against its unchanged 48 GiB / 8 CPU request. The saved 08:09:43 EDT snapshot has no remaining scoped EVSP–DR jobs; all scoped allocations are terminal. The overnight heartbeat is **PAUSED**, confirmed separately through the automation tool.
+
+The expansion now has **80/80 exact-once five-bus cleanups: 55 direct fresh-CG and 25 GIRO-frontier fallbacks**. Charging is proved to solver tolerance within **61 finite cleanup pools**, with **19 time-limited**. The original **61/80 CG pricing certificates are unchanged**. Shared charger capacity remains unvalidated; these results do not prove a full-model charging optimum.
+
+The recovered `mix1_two_price_split` covers all 111 trip indices exactly once, adds no fixed-duty fallback, and passes the **181-check saved-receipt and route-arithmetic audit**. [Final morning audit and provenance](morning/README.md) · [updated 80-cell table](morning/expansion_cells.csv) · [181-check verification](morning/verification.json). The failed original post and frozen 04:12 audit remain preserved. Final Doc and slide 55 publication passed [171 preservation/content checks](morning/publication/verification.json); the [automation receipt](morning/automation_pause.json) records the paused heartbeat.
+
+## Historical overnight record — superseded by the final morning check
+
+The monitoring instructions and incomplete counts below are retained as historical records. No further heartbeat or recovery is pending under this overnight request.
+
 User authorized monitoring overnight. Reuse heartbeat `unicorn-evsp-dr-research-progress`, every four hours. End after the morning check at/after 08:00 America/New_York, or earlier if all scoped work is terminal and results/recovery decisions are recorded. Keep unchanged checks quiet.
 
-## Latest check and remaining work — 04:30 EDT
+## Historical check and remaining work — 04:30 EDT
 
 The 80-case expansion's 240 original allocations are terminal. This is useful completed work, not an idle queue with broken dependencies. The frozen [endpoint audit](endpoint_summary/README.md) records 61/80 certified CG LPs; 79 exact-once five-bus cleanups (54 direct fresh, 25 using added GIRO fixed-duty frontier columns); charging optimality in 60 repair pools and time limits in 19. All 79 pass individual-route replay, but shared charger capacity is not modeled. The 25 CG scheduler failures are documented no-selection return-code-3 endpoints, followed by successful fallback/cleanup. Sixteen allocations restarted 17 times; stale attempt files are superseded. Five original-root recovery jobs also completed, separately recorded.
 

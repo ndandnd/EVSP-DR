@@ -1,0 +1,106 @@
+{
+  "prepared_at_utc": "2026-09-26T12:17:33.686971+00:00",
+  "maintenance_base_commit": "96d1b456faa468c4a05d00221e312b930f1c9437",
+  "scope": "Final morning record sections only, plus morning text/code/audit/publication evidence and automation pause receipt. No commit, push or SSH.",
+  "main_preexisting_tracked_edits_preserved": true,
+  "register_branch_specific_remainder_preserved": true,
+  "verification_checks_passed": 181,
+  "copied_files": [
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/README.md",
+      "bytes": 5023,
+      "sha256": "747295ffb44a83d23157a2f9af8a24da8f8395db2183096eb2414ef16f0d028a"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/automation_pause.json",
+      "bytes": 210,
+      "sha256": "518df2ff09b3e5bc18d301f5b1a80e4af102483f8f67561c4a597772be316efa"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/collect_morning.py",
+      "bytes": 2092,
+      "sha256": "e76f3ef347be9b8aefe1c966bccde84072f2fbe0cb0619e090387f1a2e71a363"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/expansion_cells.csv",
+      "bytes": 144594,
+      "sha256": "c36eef496990e10076e45e3fba68f9f0278a109cb272c4774ca61548e0ec9541"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/publication/README.md",
+      "bytes": 1089,
+      "sha256": "94da01e394ba513cb1f2346fdbd20ef5689508c3ba98dde49cc6195028aeb932"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/publication/doc_after.md",
+      "bytes": 11685,
+      "sha256": "8b310527f329c0b696b8efb453c8ac41620467643984dde5121a1a92013c1e1b"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/publication/doc_before.md",
+      "bytes": 11799,
+      "sha256": "3249050ffb3b2c5ec5fb061e6e69bd41f9aaf2605c60f5a220f2e0532de0c90c"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/publication/verification.json",
+      "bytes": 15511,
+      "sha256": "2851d1ed6229382a5d8a0af5501536dab92fa3e54a7282c638a6391d8349b5fd"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/publication/verify_publication.py",
+      "bytes": 4201,
+      "sha256": "a1cfd06cd196e3d3f3a98069d522d8b90c5ae32d8ee66caeff169eee24664bbf"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/reduce_morning.py",
+      "bytes": 11922,
+      "sha256": "bb49053a6f6f78cf9a2eddc99c0957fb7666da7001bf6e9f3408c192b69eaf13"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/snapshot.json",
+      "bytes": 104552,
+      "sha256": "d5c86c44211e69a2374fba2cf26b2f2cb46255214b1a86449ef8de461efe08f9"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/verification.json",
+      "bytes": 12828,
+      "sha256": "5f7bf306e2f921dc44c0b9b55324d96d0941cf83590516db732e0a26f0d18781"
+    }
+  ],
+  "excluded_local_native_exports": [
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/publication/slide55.png",
+      "bytes": 104436,
+      "sha256": "c73ce6f863672cfa10a2bdef14e1eabfddf04ba639abedd6295c1ed08963a1c6"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/publication/slides_after.pdf",
+      "bytes": 3202502,
+      "sha256": "ad4f51eaf9d815dc241f471a968410a73763e7f0721c77557d58c215e7fb3a1f"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/publication/slides_after.pptx",
+      "bytes": 5163673,
+      "sha256": "ace0cc2c2d4cb320e005f8e313b04e8a4fd71e972217b4780040a931dd41e8f3"
+    },
+    {
+      "path": "outputs/research_management_20260926/overnight_monitor/morning/publication/slides_before.pptx",
+      "bytes": 5163574,
+      "sha256": "19327c475e6a4c2b529c83845a73dd82ce6170262326d0bd542a2d3e827da327"
+    }
+  ],
+  "native_export_note": "Full native PPTX/PDF/PNG exports remain local. The included publication verifier/verification JSON records their hashes, 171 passing preservation/content checks, unchanged 55-slide count and changes limited to two Doc paragraphs plus slide 55 table/notes.",
+  "changed_record_paths": [
+    "outputs/research_management_20260926/overnight_monitor/README.md",
+    "outputs/research_register/entries/20260926_overnight_spatial_endpoints.md",
+    "outputs/research_register/README.md"
+  ],
+  "finalized_at_utc": "2026-09-26T12:18:59.904049+00:00",
+  "publication_checks_passed": 171,
+  "publication_evidence": "publication/verification.json",
+  "record_sha256": {
+    "outputs/research_management_20260926/overnight_monitor/README.md": "35743b94ff171acef085eafea17ea3d26d0fc5d3228af7563f7e47d170cbf703",
+    "outputs/research_register/entries/20260926_overnight_spatial_endpoints.md": "41fa35b021718dc0d205ef8c94711fe28da59f04a66ef4951a8490c93a5e972e",
+    "outputs/research_register/README.md": "daaa93334ea562bb7718cfe529bc4a8361ce9f5f3d7d3fd4e146b28f3fef62e4"
+  }
+}
