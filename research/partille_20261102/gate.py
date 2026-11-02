@@ -43,6 +43,8 @@ def pilot(root, case, jobs):
             verified[arm] = False
             continue
         attempt = latest_attempt(folder/directory, job)
+        if arm == 'blind' and not attempt.name.endswith('_r0'):
+            raise ValueError('pilot restarted: reconcile cumulative budget before scaled comparison')
         if arm == 'blind':
             selection, summary = attempt/'selected_routes.json',attempt/'summary.json'
             info=read(summary).get('integer_pricing') or {}
@@ -65,6 +67,8 @@ def paired_outcome(root, cell, arm, expected, job_family):
         raise ValueError(f'no receipt for the registered job family {job_family}')
     path=max(candidates, key=lambda p:read(p)['started_unix'])
     r=read(path)
+    if not r['attempt'].endswith('_r0'):
+        raise ValueError('restarted arm: reconcile cumulative budget before scaled comparison')
     if 'ended_unix' not in r or r['hashes']['instance'] != expected['instance_sha256']:
         raise ValueError(f'incomplete attempt or mismatched data in {cell}/{arm}')
     if r['exit_code']==3 and read(path.parent/'solve/summary.json').get('selection_state') == 'no_selection':
