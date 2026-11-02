@@ -1,0 +1,42 @@
+{
+  "schema": "immutable_original_c2_k08_explicit_partition_audit_v1",
+  "source_instance_sha256": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+  "full_pool_sha256": "5744645fa8fc62e3c79e3880a12b1388dda8e0342fe46bb6c700d61e98c86d0d",
+  "full_pool_columns": 39390,
+  "full_root_columns": 28253,
+  "full_root_sha256": "e0d2c8fb02c6e6c966fea22505ca22dc6ecb0d2481e61b2221e1603aa1a5351f",
+  "full_graph_weighted_lp_certified": true,
+  "full_graph_weighted_lp_bound": 800236.6770606566,
+  "matched_capacity_model": "240 kWh/240 kW opportunity/60 kW PARX/zero reserve and terminal target/5 per charging start",
+  "exact_floor_diagnostic": {
+    "feasible_in_original_pool": false,
+    "columns_eligible_after_peak_filter": 27282,
+    "unique_trip_sets": 14026,
+    "overlap_sets": 4,
+    "distinct_peak_trips": 25,
+    "filtered_columns": 12108,
+    "trip_rows": 173,
+    "proof": "At each set of 8 simultaneous trips, each of 8 buses must serve exactly one. Remove routes missing any peak. Exact cover over all remaining distinct trip sets is infeasible even after removing shared plug and charge constraints.",
+    "python_nodes": 132499,
+    "cpp_nodes": 132575,
+    "independent_readback_trip_sets_sha256": "120ad764c4e9ca1bb0ceed329fa273b4580ec0d6b89ddf73c643fe5f597d008c"
+  },
+  "unconditional_cover_diagnostic": {
+    "feasible_in_original_pool": null,
+    "original_60s_result": "time limit, no solution, 2822 nodes",
+    "native_continuation_array_task": "906021_1",
+    "limit_seconds": 7200
+  },
+  "superseded_native_partition": "906021_0 cancelled while pending after independent exhaustive partition checks; zero CPU time",
+  "artifacts_sha256": {
+    "original_pool_at_floor.py": "d6c46ddce3a5055b8bb90d0432456f7262cc2cd1c721c9f5558ef12b93ffbcde",
+    "partition_search.py": "67183ec0ee59b3ec0e900a4752fc3acc2b8d42a7c0f8248e94ed6e7335e5b56f",
+    "dlx_input.py": "a84df2c9b9df6aa104a01704c4f8d16eb54ebe3f541346b2ef677acfb4e936cd",
+    "verify_partition_dlx.cpp": "45f94fd28989e7ce004695b833d83f620e88b56d74261eeff849f98cc005360c",
+    "old_partition_60/result.json": "b7d44a760ef263d6cdf1337aceaf9f96ff68db7dc45a2746ddbe47aadb3c2b35",
+    "old_cover_60/result.json": "822bcc0ea5870d7490ec09c0b1f93069b10b59c74d6002ff9217c9baf57a8188",
+    "partition_relaxation.json": "867772f951f8d8ce1bc694a70a98fc7d060feaa255144a9a2cb7cbf3fb2dd6fe",
+    "dlx_preparation.json": "600f8dd7bf6d45a2c4b40292fe0e16c155054ed3e5a816a40b24218891ebf8a2",
+    "dlx_result.json": "5a69cc44185fb6e3254ae9ed1a712abd44f02f456438b4bc0ad0004789f196dd"
+  }
+}
