@@ -1,0 +1,98 @@
+{
+  "arms": {
+    "recorded": {
+      "buses": 5,
+      "exactly_once_source_trips": 62,
+      "starts": 52,
+      "electricity_cost": 230.64477764554266,
+      "energy_charged_kwh": 1891.1132549881074,
+      "min_soc_kwh": 39.82460679767299,
+      "min_reserve_margin_kwh": 4.358606797672991,
+      "terminal_sum_kwh": 250.7182695261234,
+      "terminal_floor_sum_kwh": 250.7182695261234,
+      "station_peaks": {
+        "4808": 1,
+        "2190L": 1
+      },
+      "max_interval_overlap_minutes": 0.0,
+      "minimum_terminal_margin_kwh": 0.0,
+      "raw_kwh_capping_sum": 5.481189263178976e-05,
+      "raw_kwh_capping_max": 1.206844439494148e-05
+    },
+    "original": {
+      "buses": 5,
+      "exactly_once_source_trips": 62,
+      "starts": 47,
+      "electricity_cost": 178.3358094849714,
+      "energy_charged_kwh": 1890.7842088368095,
+      "min_soc_kwh": 35.465999999994324,
+      "min_reserve_margin_kwh": -5.6772364587232005e-12,
+      "terminal_sum_kwh": 250.7182695261078,
+      "terminal_floor_sum_kwh": 250.7182695261234,
+      "station_peaks": {
+        "4808": 1,
+        "2190L": 1
+      },
+      "max_interval_overlap_minutes": 0.0,
+      "restricted_solver_status": 2,
+      "fixed_path_lower_bound": 178.32917067224668,
+      "solved_gap_percent": 0.0037226470362421563,
+      "minimum_terminal_margin_kwh": -6.174616373755271e-12
+    },
+    "saved_joint_fee0": {
+      "buses": 5,
+      "exactly_once_source_trips": 62,
+      "starts": 42,
+      "electricity_cost": 163.8190217944326,
+      "energy_charged_kwh": 1891.183329167222,
+      "min_soc_kwh": 35.46599999999869,
+      "min_reserve_margin_kwh": -1.3145040611561853e-12,
+      "terminal_sum_kwh": 250.7182695261158,
+      "terminal_floor_sum_kwh": 250.7182695261234,
+      "station_peaks": {
+        "4808": 1,
+        "2190L": 1
+      },
+      "max_interval_overlap_minutes": 0.0,
+      "restricted_solver_status": 2,
+      "fixed_path_lower_bound": 163.80706895783865,
+      "solved_gap_percent": 0.007296366724295621,
+      "minimum_terminal_margin_kwh": -4.632738637155853e-12
+    }
+  },
+  "stage_order": [
+    "recorded",
+    "original",
+    "saved_joint_fee0"
+  ],
+  "outputs_sha256": {
+    "recorded_witness": "971084e45318f11f6abe48ffe84e375019978d0f2431c0ec23bcd6893f53a8a8",
+    "recorded_independent_replay": "525381b4d91afffd19b1a64fc201fe9f46493fa6bb17b0a1656cb5f046b91fa6",
+    "original/paths.json": "8dcb9cc9c252fdd9495b27af25d356cc889660566350349108cc0bc05073359e",
+    "original/original.json": "97972415b864696ed3d56b1cf179559b97c3f742ef1a6a2755fd7b9cd1511803",
+    "original/independent_replay.json": "23d69b53151129afbea27feb096759ddf7ab42a738aefa7ac51f8a5dee81ccc1",
+    "original/original.lp": "0adf3be5739c8223a2eb6b225098e2ed4772ee6691f8673dad9c0557007862ff",
+    "original/original.gurobi.log": "86f6b4ed78fe454233cb86ec1acc29e84db3b8a24fc25c5c6b2cf61c224d3fa7",
+    "saved_joint_fee0/paths.json": "2b0be6d122b8bd9d7c4385f48f99903996e530bc109e0b6fedf19c256fd51cad",
+    "saved_joint_fee0/saved_joint_fee0.json": "3bffc8c8493e1dc0d1654f684c1efd672d29eafa45cb77b395d471741a02966c",
+    "saved_joint_fee0/independent_replay.json": "83a84dcc86e36c447eeca626e4ed985a7cfb74e2b4d22d5abec5961c7902c939",
+    "saved_joint_fee0/saved_joint_fee0.lp": "086cdb0cd1c2e564f81140e48619ea4053df1974c7518c8fcbc46fafc6c71b15",
+    "saved_joint_fee0/saved_joint_fee0.gurobi.log": "b067017b1044acfe461c24b26edad209a9531642ba1845a2c7b29b2a06d216c3"
+  },
+  "verifier_sha256": "0375f0a80a2cc3dd1816e1017fbe17412a6ff94f2ce917997df087bc02360ae3",
+  "historical_checker_sha256": "5df2b73d522b00e7e2c18ab70f1e5d1fb5cd9199774b8c53e8e7e7c37958e7ed",
+  "static_reference_input_sha256": {
+    "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+  },
+  "check_tolerances": {
+    "soc_kwh": 1e-05,
+    "time_overlap_min": 1e-05,
+    "cost_units": 0.0001
+  },
+  "reductions_percent": {
+    "recorded_to_original": 22.67945049289615,
+    "original_to_saved": 8.140141754178748,
+    "recorded_to_saved": 28.97345282788436
+  }
+}

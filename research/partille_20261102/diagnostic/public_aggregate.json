@@ -1,0 +1,85 @@
+{
+  "schema": "matched_capacity_c2_k8_aggregate_v1",
+  "execution_commit": "3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c",
+  "source_hashes": {
+    "Practice_Custom_DutyUnion_k08_p02_20260908.csv": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+    "hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+  },
+  "duty_source_sha256": "6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f",
+  "physics": {
+    "battery_kwh": 240.0,
+    "initial_kwh": 240.0,
+    "charge_kw": 240.0,
+    "station_kw": {
+      "PARX": 60.0
+    },
+    "reserve_kwh": 0,
+    "soc_step": 2.5,
+    "time_step": 5,
+    "shared_capacity": true,
+    "plug_rows": "1-minute conservative, lazy",
+    "charge_start_fee": 5.0,
+    "coverage": "cover",
+    "non_strict_tariff": true,
+    "bus_cost_kx": 100000.0,
+    "max_trip2trip_min": 57.0,
+    "max_station_to_trip_wait_min": 1560.0
+  },
+  "plugs": {
+    "2190L": 1,
+    "4808": 1,
+    "7880C": 1,
+    "JON_A": 1,
+    "3127L": 2,
+    "PARX": null
+  },
+  "target_blind": false,
+  "initialization": "historical trip sequences only; charging stations, windows and energy newly generated",
+  "witness": {
+    "fleet": 8,
+    "trip_count": 173,
+    "exact_once": true,
+    "duplicate_service": 0,
+    "grid_plug_overload_minutes": 0,
+    "objective_nonfleet": 337.48799999999756,
+    "continuous_nonfleet": 322.6569031676336,
+    "grid_terminal_kwh": 11.526999400000001,
+    "peak_simultaneous_trips": 8,
+    "validated": true,
+    "selected_sha256": "bc592c5b3f01a83a088ddf0d2c546981c5a8f2762a02a0f47b70f01e095402e9"
+  },
+  "source_cover": {
+    "fleet": 9,
+    "cover_valid": true,
+    "exact_once": false,
+    "duplicate_service": 44,
+    "grid_plug_overload_minutes": 0,
+    "objective_nonfleet": 324.7360000000044,
+    "continuous_nonfleet": 310.09983093648043,
+    "grid_terminal_kwh": 16.479001100000005,
+    "selected_sha256": "07c6a01781642771a07d86b24605793c7edddcd93340adf3ffcac09a5c97d62b"
+  },
+  "source_pool": {
+    "source_pool_sha256": "5744645fa8fc62e3c79e3880a12b1388dda8e0342fe46bb6c700d61e98c86d0d",
+    "root_prefix_sha256": "e0d2c8fb02c6e6c966fea22505ca22dc6ecb0d2481e61b2221e1603aa1a5351f",
+    "column_count": 39390,
+    "historical_sequences": 8,
+    "present": 1,
+    "matches": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4
+    ],
+    "source_summary_sha256": "209bde0a89b1bc2be8e0cb7df33280c23aa195b75fb54cd985b65e071e2a5c54"
+  },
+  "witness_method_sha256": "b106a250d57e807f75619dafcf701caeb40aa128d68b9802ebb61644882c5f88",
+  "validate_method_sha256": "5a72fb549251e9889cc7d1376481ab65d1c2d630f706bc9df0cbacd63692538a",
+  "proof_scope": "Existence of an exactly-once 8-bus schedule and fleet minimum under named modeled transfers/power/plugs. This is a GIRO-trip-informed witness. No optimal nonfleet cost or blind-search claim."
+}

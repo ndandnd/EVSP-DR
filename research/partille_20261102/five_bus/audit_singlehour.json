@@ -1,0 +1,72 @@
+{
+  "arms": {
+    "recorded": {
+      "buses": 5,
+      "exactly_once_source_trips": 62,
+      "starts": 52,
+      "electricity_cost": 230.64478767050468,
+      "energy_charged_kwh": 1891.1133098,
+      "min_soc_kwh": 39.824619078576994,
+      "min_reserve_margin_kwh": 4.358619078576993,
+      "terminal_sum_kwh": 250.71832435235578,
+      "terminal_floor_sum_kwh": 250.71832435235578,
+      "station_peaks": {
+        "4808": 1,
+        "2190L": 1
+      },
+      "max_interval_overlap_minutes": 0.0,
+      "minimum_terminal_margin_kwh": 0.0,
+      "raw_kwh_capping_sum": 0.0,
+      "raw_kwh_capping_max": 0.0
+    },
+    "original": {
+      "restricted_solver_status": 3,
+      "incumbent": false
+    },
+    "saved_joint_fee0": {
+      "buses": 5,
+      "exactly_once_source_trips": 62,
+      "starts": 43,
+      "electricity_cost": 164.91053870892605,
+      "energy_charged_kwh": 1891.1968815162804,
+      "min_soc_kwh": 35.46599999999869,
+      "min_reserve_margin_kwh": -1.3145040611561853e-12,
+      "terminal_sum_kwh": 250.7183243523499,
+      "terminal_floor_sum_kwh": 250.71832435235578,
+      "station_peaks": {
+        "4808": 1,
+        "2190L": 1
+      },
+      "max_interval_overlap_minutes": 0.0,
+      "restricted_solver_status": 2,
+      "fixed_path_lower_bound": 164.90179339459718,
+      "solved_gap_percent": 0.0053030657698405525,
+      "minimum_terminal_margin_kwh": -3.453237695794087e-12
+    }
+  },
+  "stage_order": [
+    "recorded",
+    "original",
+    "saved_joint_fee0"
+  ],
+  "outputs_sha256": {
+    "recorded_witness": "504bf704c72cbdafd2dd3fb11d2c858ccbcfdb8702ca3b297d39717d45738f0f",
+    "recorded_independent_replay": "289716c9a62a6ca83274ab9eb158cc91b6572d764a5480440a1e49083c0c4201",
+    "saved_joint_fee0/paths.json": "2b0be6d122b8bd9d7c4385f48f99903996e530bc109e0b6fedf19c256fd51cad",
+    "saved_joint_fee0/saved_joint_fee0.json": "df31695680a605a31d59db9a9b2f3a20f5e598ce3a49d5fe7ebc9befc8d15db8",
+    "saved_joint_fee0/independent_replay.json": "3fa3749dd0649900ddfe1806462927106a091623bb4c78cc2148653d7a23b7ec",
+    "saved_joint_fee0/saved_joint_fee0.lp": "c993185bdd07b588daf3b20d28fa22f904a25216b6b21f18785051ac10e878b6",
+    "saved_joint_fee0/saved_joint_fee0.gurobi.log": "b9f150e89a5967f8be796e894f51fbd5341b8519d1bb50424b61cc6ea6b206d0"
+  },
+  "verifier_sha256": "0375f0a80a2cc3dd1816e1017fbe17412a6ff94f2ce917997df087bc02360ae3",
+  "historical_checker_sha256": "5df2b73d522b00e7e2c18ab70f1e5d1fb5cd9199774b8c53e8e7e7c37958e7ed",
+  "static_reference_input_sha256": {
+    "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+  },
+  "check_tolerances": {
+    "soc_kwh": 1e-05,
+    "time_overlap_min": 1e-05,
+    "cost_units": 0.0001
+  }
+}

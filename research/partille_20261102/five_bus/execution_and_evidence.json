@@ -1,0 +1,175 @@
+{
+  "historical_solver_commit": "b931772dadf1e5930fd87bf4a89edd7dcaf6c51a",
+  "data_checkout_git_head": "f37c6ce4c6e0a7ccffd3719a633bacd40b9a351c",
+  "executed_code_sha256": {
+    "build_receipt.py": "1d7e62f6f1297b924528f5a3e1997f68ba117d6f8aa0ec315666f146cc52eaa1",
+    "multihour.py": "a72941c402a1672ba5ee171b0e6c55582aee0c2056acc7222535f29014ce29cb",
+    "solve_five.py": "88e6818cab5c5201cfb17ce8275743e047a3e4bb40819ea6c3fffaff6bf1a7a0",
+    "verify_five.py": "0375f0a80a2cc3dd1816e1017fbe17412a6ff94f2ce917997df087bc02360ae3"
+  },
+  "frozen_model_and_input_sha256": {
+    "bundle/tariffs/peak12.csv": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+    "bundle/tariffs/peak18.csv": "d70c3c3f9c15b82f26e1262fb2067f9fcc5e41d63e9ffbe877d33b5fa16563a6",
+    "bundle/tariffs/peak08.csv": "b461f12cf8ca41ba8a89102b32d46ea16b974566ea05849dd75776a7108f341e",
+    "bundle/data/Par_VehicleDetails_Updated.csv": "11dff837f8f62efb73f8fe98a2c325a8033e56754fa6334f853c9899404ee846",
+    "bundle/.codex-work/review-strict-chain-20260916/src/giro_partille_physics.py": "861e83411316adf9b73d95015f475c496e7d49d7963cf48d682d74b198a4b29f",
+    "bundle/outputs/meeting_20260917/route_explainer/inputs/original.json": "a015a776f9103b3d6e274c60a7b3378e8c8ccfbdee7dfedc5d5ee74391175baa",
+    "bundle/outputs/meeting_20260917/route_explainer/inputs/k05.csv": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+    "bundle/outputs/week_20260921/cleanup_physics/joint_sequence_charging.py": "5afaafb3bd1f8dbb2c2b57c1ad0c0500f7dceedd07b386f017d647cfbda3dedb",
+    "bundle/outputs/week_20260921/cleanup_physics/saved_sequence_replay.json": "c1da7af401110e34bcd3a45a0e6a262a33eff582ff21516225d01c264b0a4bcd",
+    "bundle/outputs/week_20260921/cleanup_physics/matched_fixed_windows.py": "ee7e34f3a767f41c3beb69c20de9ea78de6dffc5da5f019326a55c691870b53d",
+    "bundle/outputs/week_20260921/cleanup_physics/inputs/peak08_h26.csv": "b461f12cf8ca41ba8a89102b32d46ea16b974566ea05849dd75776a7108f341e"
+  },
+  "strict_single_hour_wrapper_sha256": "962b5a6d70057fae5ae8994940a2f8492a8af313d32816d88d8a479a1ed411b9",
+  "strict_cross_hour_wrapper_sha256": "058dcbcb7b9acf31d033ab803fca52cd93e70e49374c19d830cd8a0fab8a405c",
+  "executed_clock_capped_wrapper_sha256": "88e6818cab5c5201cfb17ce8275743e047a3e4bb40819ea6c3fffaff6bf1a7a0",
+  "solver_version": [
+    12,
+    0,
+    1
+  ],
+  "resources": {
+    "host": "local",
+    "threads_per_model": 2,
+    "seconds_per_model": 600,
+    "seed": 0,
+    "relative_mip_gap": 0.0001,
+    "scheduler_jobs": [],
+    "external_dependencies": []
+  },
+  "audited_transfer_evidence": {
+    "2190->2190L": {
+      "minutes": 1,
+      "kwh": 0.400000006,
+      "raw_observations": 73
+    },
+    "2190L->2190": {
+      "minutes": 0,
+      "kwh": 0.0,
+      "raw_observations": 81
+    }
+  },
+  "runs": {
+    "literal_single_hour": {
+      "original": {
+        "status": 3,
+        "objective": null,
+        "fixed_path_solver_bound": null,
+        "wall_seconds": 0.7392251491546631,
+        "incumbents": 0,
+        "files_sha256": {
+          "original.gurobi.log": "9b3f7e5bc438b488e59f894acedd97b0a2e63f4cf1b2aab907f976864d527837",
+          "original.json": "9a12081f7227d2b6c8ad8421351f59a2288fa275d0c3dec3d8f12c84e58b7900",
+          "original.lp": "4fe3bbcd37d6014f076f8fe43ddbdb24f6adefa56bf2a3f9d05313644919698f",
+          "paths.json": "8dcb9cc9c252fdd9495b27af25d356cc889660566350349108cc0bc05073359e",
+          "run.json": "9d033bdd8074ee1a64fab635845e705c59a6e2d47a8de0e6566fed3c64b42ee4"
+        }
+      },
+      "saved_joint_fee0": {
+        "status": 2,
+        "objective": 164.9105387089263,
+        "fixed_path_solver_bound": 164.90179339459718,
+        "wall_seconds": 0.3399059772491455,
+        "incumbents": 5,
+        "files_sha256": {
+          "independent_replay.json": "3fa3749dd0649900ddfe1806462927106a091623bb4c78cc2148653d7a23b7ec",
+          "paths.json": "2b0be6d122b8bd9d7c4385f48f99903996e530bc109e0b6fedf19c256fd51cad",
+          "run.json": "bf375ba9f1f5210b16fb9cce2127eddc8c2377f7b9e3554f9e89dea1e4aaddf7",
+          "saved_joint_fee0.gurobi.log": "b9f150e89a5967f8be796e894f51fbd5341b8519d1bb50424b61cc6ea6b206d0",
+          "saved_joint_fee0.json": "df31695680a605a31d59db9a9b2f3a20f5e598ce3a49d5fe7ebc9befc8d15db8",
+          "saved_joint_fee0.lp": "c993185bdd07b588daf3b20d28fa22f904a25216b6b21f18785051ac10e878b6"
+        }
+      }
+    },
+    "literal_cross_hour": {
+      "original": {
+        "status": 3,
+        "objective": null,
+        "fixed_path_solver_bound": null,
+        "wall_seconds": 63.37499403953552,
+        "incumbents": 0,
+        "files_sha256": {
+          "original.gurobi.log": "033ed4112ec0f03d95be91ca35f449981ff1218668238ecbdecfaf80df32a9be",
+          "original.json": "e56e30f25a35666bc31a8c4901b99ac021f9bffa8f69c76bcaf29d7b3e7065b2",
+          "original.lp": "6cc358619fb5170116d8e957038c21d7459eaf7debdfaf440226976a1e601317",
+          "paths.json": "8dcb9cc9c252fdd9495b27af25d356cc889660566350349108cc0bc05073359e",
+          "run.json": "3416d415f5422a85c98d314110ee7b73a39935bcf28b1552626ef16e681646c6"
+        }
+      },
+      "saved_joint_fee0": {
+        "status": 2,
+        "objective": 163.81902759426265,
+        "fixed_path_solver_bound": 163.8032981280746,
+        "wall_seconds": 2.591845989227295,
+        "incumbents": 7,
+        "files_sha256": {
+          "independent_replay.json": "c4f7224a5421e3de5946129366e9c81c9bacf4406ae697d663b7193a94948c50",
+          "paths.json": "2b0be6d122b8bd9d7c4385f48f99903996e530bc109e0b6fedf19c256fd51cad",
+          "run.json": "f4792f9a19c99bbec3fe5fbdd9c94f293f0a4d5bebde620a65409c72493f4b16",
+          "saved_joint_fee0.gurobi.log": "509de1e7536e9e9d693491bf2bcc9117f1deed9ece02d18a17550260d8ec98f3",
+          "saved_joint_fee0.json": "be475d309a3ac4d975e9f7bf9171a2f011c9efd79cf4b1989088308155e4ad2a",
+          "saved_joint_fee0.lp": "2a1fe5ce7afa929ca0b6ebc2d1da0d3c7802af03dd7853001bd516fb1b515e5f"
+        }
+      }
+    },
+    "clock_capped_cross_hour": {
+      "original": {
+        "status": 2,
+        "objective": 178.33580948497303,
+        "fixed_path_solver_bound": 178.32917067224668,
+        "wall_seconds": 1.3704619407653809,
+        "incumbents": 5,
+        "files_sha256": {
+          "independent_replay.json": "23d69b53151129afbea27feb096759ddf7ab42a738aefa7ac51f8a5dee81ccc1",
+          "original.gurobi.log": "86f6b4ed78fe454233cb86ec1acc29e84db3b8a24fc25c5c6b2cf61c224d3fa7",
+          "original.json": "97972415b864696ed3d56b1cf179559b97c3f742ef1a6a2755fd7b9cd1511803",
+          "original.lp": "0adf3be5739c8223a2eb6b225098e2ed4772ee6691f8673dad9c0557007862ff",
+          "paths.json": "8dcb9cc9c252fdd9495b27af25d356cc889660566350349108cc0bc05073359e",
+          "run.json": "33d730ac701177a984fd7887a677a24d2f471579bc5d27f5ed2b0ac5a335e32a"
+        }
+      },
+      "saved_joint_fee0": {
+        "status": 2,
+        "objective": 163.81902179443293,
+        "fixed_path_solver_bound": 163.80706895783865,
+        "wall_seconds": 2.3429291248321533,
+        "incumbents": 6,
+        "files_sha256": {
+          "independent_replay.json": "83a84dcc86e36c447eeca626e4ed985a7cfb74e2b4d22d5abec5961c7902c939",
+          "paths.json": "2b0be6d122b8bd9d7c4385f48f99903996e530bc109e0b6fedf19c256fd51cad",
+          "run.json": "10b044174e6b4db6fa4f787b53acca6b4d0a4ffcae215497f6b89aacb40325cc",
+          "saved_joint_fee0.gurobi.log": "b067017b1044acfe461c24b26edad209a9531642ba1845a2c7b29b2a06d216c3",
+          "saved_joint_fee0.json": "3bffc8c8493e1dc0d1654f684c1efd672d29eafa45cb77b395d471741a02966c",
+          "saved_joint_fee0.lp": "086cdb0cd1c2e564f81140e48619ea4053df1974c7518c8fcbc46fafc6c71b15"
+        }
+      }
+    }
+  },
+  "nominal_replay_tolerance_kwh": 1e-05,
+  "tighter_solver_feasibility_tolerance_across_hours": 1e-08,
+  "relaxed_single_bus_terminal_upper_bound_minus_exact_nominal_floor_kwh": {
+    "one_hour_minimum": -11.119265138918706,
+    "cross_hour_minimum": -8.630137621423728e-06
+  },
+  "reconstructed_baseline": {
+    "charges_capped_gt_1e_minus_8_kwh": 19,
+    "sum_capping_kwh": 5.481189678135934e-05,
+    "max_one_charge_capping_kwh": 1.2068444451784899e-05,
+    "min_one_duty_floor_reduction_kwh": 4.001826411581533e-06,
+    "max_one_duty_floor_reduction_kwh": 1.3265274816376404e-05,
+    "per_duty_floor_reductions_sorted_kwh": [
+      4.001826411581533e-06,
+      1.1529337257343286e-05,
+      1.2958132572293835e-05,
+      1.3071662834818198e-05,
+      1.3265274816376404e-05
+    ],
+    "sum_floor_reduction_kwh": 5.4826233892413256e-05
+  },
+  "aggregate_audit_sha256": {
+    "audit_clock_capped_multihour.json": "43ca8ba0e92fc87683e6ff6a7dfc26315e21323b52662ebbc20b7f7e5ebaf683",
+    "audit_multihour.json": "a3d492a25155cb2f70ed5bd1b987805c0728aef1df479b70ec01d39dd944de61",
+    "audit_singlehour.json": "a06e422a1a6f97712ad3114b31759c46199c8425e6ea8c6247143a66741ecb64"
+  },
+  "scope": "Five buses; fixed route assignment and mandatory recovered station paths; no pricing certificate or global duty optimum."
+}

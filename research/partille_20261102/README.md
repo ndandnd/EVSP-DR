@@ -1,0 +1,27 @@
+# Partille fleet recovery and charging costs · 2 November 2026
+
+| Question | Result or decision |
+| --- | --- |
+| Does reassigning trips save money after GIRO’s charging has been retimed? | On the five-bus, 62-trip morning-peak example, reoptimizing the original duties costs 178.336 and reoptimizing the saved alternative duties costs 163.819 (8.14% less). Reconstructed recorded charging costs 230.645. All three complete exactly the same trips and meet their individual reconstructed return-energy floors. This is the separately specified recording-precision sensitivity on fixed candidate station paths. |
+| What happens with the literal nominal return floors? | The original assignment cannot attain one floor even at maximum allowable charging. With hour crossings allowed, the shortfall is 0.00000863 kWh. A three-way percentage at those literal floors is undefined. The detailed report also retains the older one-hour-per-session restriction as a separate control. |
+| Is the chain-2 eight-bus target possible with the modeled plug limits and 60 kW at the depot? | Yes. New charging choices on the eight original trip sequences serve all 173 trips exactly once, with zero overloaded station minutes. Eight simultaneously running trips independently require eight buses. This proves the minimum for this chain under the tested model. |
+| Why did the earlier search return nine? | Its nine selected bus duties cover all trips but contain 44 surplus services. Seven of the eight known feasible trip sequences are absent from the entire 39,390-column pool. There may be a different eight-route partition in that pool. The repair-pricing run tests whether a fresh method can generate one without the eight witness duties. |
+
+**The two experiments use different physics.** The cost example uses a 236.44 kWh battery, 15% reserve, nonlinear opportunity charging, a three-minute minimum session, actual recorded connector times, individual terminal energy requirements and no start fee. The chain experiment reproduces the v15 model with a 240 kWh battery, zero reserve, 240 kW opportunity stations, 60 kW at PARX, limited opportunity plugs, a flat price, a five-unit start fee and no positive terminal floor. Neither measures an operator’s electricity bill.
+
+## Evidence
+
+- [Five-bus results, rules, checks and reproduction commands](five_bus/README.md)
+- [Eight-bus diagnostic evidence](diagnostic/public_aggregate.json) · [fixed-duty witness generator](diagnostic/witness.py) · [independent selection replay](diagnostic/validate_selection.py)
+- [Literature and commercial practice review](LITERATURE.md). The closest precedents, deployed software and testable algorithm changes are distinguished. The eight-duty witness above postdates the October benchmark discussed at the start of the review.
+- [Frozen comparison inputs and fleet floors](design.json) · [paired solver wrapper](campaign.py) · [scientific release rules](gate.py)
+
+## Replication protocol
+
+The pilot is chain 2, target 8. Only the feasibility diagnostic can use the original duty grouping. The two fresh search arms start without route seeds. They share the historical loose fleet cap (12 in the pilot), which independently equals the time-only fleet floor plus four. The diagnostic explicitly verifies an eight-bus partition. The experimental search has to discover its own duties. Giving that search the known eight-bus solution as a MIP start would invalidate the comparison.
+
+The fresh control uses simple diving. The experimental arm replaces that time with integer-directed repair pricing. Graph construction starts from scratch in each. Both receive 8 CPUs, a 20-hour allocation ceiling, up to 3 hours of root CG, 90 minutes of the respective heuristic, and one hour of final MIP. The final MIP first minimizes fleet, then caps fleet at its incumbent and minimizes charging-related cost. Record elapsed graph, CG, heuristic, MIP and end-to-end time. Equal limits need not imply equal time consumed. Both fresh arms have zero ancestor cost. The diagnostic witness is outside this performance comparison.
+
+A gate requires independently replayed eight-bus, exactly-once schedules for both the known-sequence witness and the unseeded C2 repair. It checks frozen inputs, selected artifact hashes, costs, plug usage and evidence that integer pricing ran. The new C2 control and the remaining ten fresh runs give six paired chains including the exploratory pilot. A second gate permits target 10 only if repairs reach eight in at least four chains, beat the simple arm in hit count and retain every control hit. This is a decision rule on six related instances, not a statistical test. A covering solution with duplicate passenger service counts as a miss for this endpoint. Missing validation or a software error blocks scaling. Scientific misses are preserved.
+
+The reusable scripts require the authorized Partille input directory and capacity solver at commit `3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c`. The execution package accepts paths and checks four input hashes and the tracked solver revision. Raw timetables, schedules, local licensing details and native logs are retained in the private research workspace. The branch stores code, aggregate results and content hashes.
