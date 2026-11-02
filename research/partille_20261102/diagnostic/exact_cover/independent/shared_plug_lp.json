@@ -1,0 +1,40 @@
+{
+  "instance_sha256": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+  "owner_summary_sha256": "209bde0a89b1bc2be8e0cb7df33280c23aa195b75fb54cd985b65e071e2a5c54",
+  "post_dive_journal_sha256": "5744645fa8fc62e3c79e3880a12b1388dda8e0342fe46bb6c700d61e98c86d0d",
+  "root_prefix_sha256": "e0d2c8fb02c6e6c966fea22505ca22dc6ecb0d2481e61b2221e1603aa1a5351f",
+  "journal_columns": 39390,
+  "root_prefix_columns": 28253,
+  "distinct_trip_sets": 19399,
+  "trips": 173,
+  "maximum_simultaneous_service": 8,
+  "distinct_maximum_sets": 4,
+  "all_journal_routes_trip_valid_and_temporally_disjoint": true,
+  "records_touching_all_maximum_sets": 27282,
+  "gurobi_version": [
+    12,
+    0,
+    1
+  ],
+  "solver_status": 2,
+  "sol_count": 1,
+  "solver_seconds": 0.7029168605804443,
+  "solver_limit_seconds": 60.0,
+  "threads": 2,
+  "constraints": "trip equality, fleet equality, original terminal lower bound, all finite station-minute upper bounds, 0<=x<=1",
+  "eligible_columns": 27282,
+  "finite_minute_rows": 3319,
+  "checked_all_eligible_occupancy_against_source_windows": true,
+  "matrix_nonzeros": 2565140,
+  "verification_source_sha256": "a85ac6db301212a948191cc807ca7537e90455f5b988bb9dd84930167e1fe0f1",
+  "input_adapter_sha256": "287fab448bce8f110c75f36c8f2ad0a6bda0f25fb2ff89a3f755df51e09196f0",
+  "residuals": {
+    "max_abs_trip_residual": 6.661338147750939e-15,
+    "abs_fleet_residual": 5.329070518200751e-15,
+    "max_plug_violation": 0.0,
+    "terminal_shortfall": 0.0,
+    "max_bound_violation": 0.0
+  },
+  "feasible_to_1e_7": true,
+  "interior_columns": 152
+}
