@@ -81,5 +81,23 @@
   },
   "witness_method_sha256": "b106a250d57e807f75619dafcf701caeb40aa128d68b9802ebb61644882c5f88",
   "validate_method_sha256": "5a72fb549251e9889cc7d1376481ab65d1c2d630f706bc9df0cbacd63692538a",
-  "proof_scope": "Existence of an exactly-once 8-bus schedule and fleet minimum under named modeled transfers/power/plugs. This is a GIRO-trip-informed witness. No optimal nonfleet cost or blind-search claim."
+  "proof_scope": "Existence of an exactly-once 8-bus schedule and fleet minimum under named modeled transfers/power/plugs. This is a GIRO-trip-informed witness. No optimal nonfleet cost or blind-search claim.",
+  "augmented_pool_mip": {
+    "status": 15,
+    "nsolutions": 1,
+    "bound": 0.0,
+    "solver_seconds": 3.6399049758911133,
+    "fleet": 8,
+    "source_columns": 39390,
+    "old_giro_sequence_count": 1,
+    "new_witness_columns": 8,
+    "witness_sha256": "bc592c5b3f01a83a088ddf0d2c546981c5a8f2762a02a0f47b70f01e095402e9",
+    "full_pool_sha256": "5744645fa8fc62e3c79e3880a12b1388dda8e0342fe46bb6c700d61e98c86d0d",
+    "augmented_columns": 39398,
+    "selected_sha256": "e6e32b01f865e17b0b7043a467eaf98916677dcf30bf67293561dad0da587b04",
+    "exact_once": true,
+    "grid_plug_overload_minutes": 0,
+    "solver": "Gurobi 12.0.1 macOS ARM, 2 threads, stop when independently derived fleet floor reached",
+    "charging_optimized": false
+  }
 }
