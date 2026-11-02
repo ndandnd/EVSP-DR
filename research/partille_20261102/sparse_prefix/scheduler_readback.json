@@ -1,0 +1,33 @@
+{
+  "verified_utc": "2026-11-02T20:21:27.506479+00:00",
+  "families": {
+    "k08": {
+      "job_id": "906017",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "dependency": "afterok:905844(unfulfilled)",
+      "tasks": "0-5%6",
+      "throttle": 6,
+      "partition": "default_partition",
+      "cpus": 8,
+      "mem_per_node": "48G",
+      "time_limit": "20:00:00",
+      "excluded_node": "scaglione-compute-01",
+      "nice": 10000
+    },
+    "k10": {
+      "job_id": "906018",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "dependency": "afterok:905846(unfulfilled)",
+      "tasks": "0-5%6",
+      "throttle": 6,
+      "partition": "default_partition",
+      "cpus": 8,
+      "mem_per_node": "48G",
+      "time_limit": "20:00:00",
+      "excluded_node": "scaglione-compute-01",
+      "nice": 10000
+    }
+  }
+}

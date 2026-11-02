@@ -1,0 +1,13 @@
+{
+  "result": "5 passed",
+  "solver_base_commit": "3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c",
+  "patch_sha256": "1c4e346218f83c64fd696f5a60b82a9bd40adf1a99cf3c0c999497b69ece1ebb",
+  "private_log_sha256": "3cc6cf575d50ed0c63c2c0936c72fe431c24803a78b8eaf8b6725fa394986f29",
+  "checks": [
+    "phase sharing and measured overrun debit",
+    "stable-ID remap and nested service attributes",
+    "tampered source file rejection",
+    "valid authenticated remap and rejection of changed tariff",
+    "charged receiving graph, normal CG/MIP path, fresh singleton and legacy guard"
+  ]
+}

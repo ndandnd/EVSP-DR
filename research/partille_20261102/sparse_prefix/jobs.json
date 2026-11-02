@@ -1,0 +1,14 @@
+{
+  "k08": {
+    "job": "906017",
+    "gate": "905844",
+    "array": "0-5%6",
+    "dependency": "afterok:905844"
+  },
+  "k10": {
+    "job": "906018",
+    "gate": "905846",
+    "array": "0-5%6",
+    "dependency": "afterok:905846"
+  }
+}

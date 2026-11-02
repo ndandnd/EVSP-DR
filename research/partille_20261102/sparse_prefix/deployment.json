@@ -1,0 +1,17 @@
+{
+  "base_commit": "3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c",
+  "patched_commit": "04a0ef92ef94248e3e035c729d17684aacaab977",
+  "initializer_sha256": "4535d024bf0b42c122990d2e3b86606c40726f9758386468188dff5b3eee62e7",
+  "solver_source_sha256": "11b2ad510255b2884f75b64a3d938816bb983449b05375489a3192488b16b7f2",
+  "files_sha256": {
+    "sparse_worker.py": "f2df9b2caa01929b3576ca9f9ada615adf83200d6375a60240460d623b531fb9",
+    "sparse.sbatch": "88460880d292046defc269c85d0ca5584e37d2bf059186dab26eb2096afb8668",
+    "receiver.patch": "1c4e346218f83c64fd696f5a60b82a9bd40adf1a99cf3c0c999497b69ece1ebb",
+    "paired_design.json": "586fc4b7766b21754b429d873913034027fd9458e236feb8f23e50cabe5b9caa",
+    "prefix_k05.json": "285c699382ef6c699f5cec2712124ecc641186ee5298e6cd107dd3b13b1ad193",
+    "test_sparse.py": "9f507bd00df4ee4192e9c84c03349041e379cede223d7643a8f12c98fd9141be",
+    "deploy.py": "3aba896533e18036f99098bb03cb0d6315e7f6ba25cecc24930943ae82f443fd"
+  },
+  "validator_sha256": "5a72fb549251e9889cc7d1376481ab65d1c2d630f706bc9df0cbacd63692538a",
+  "policy_sha256": "f9c5982718da6ab758019ceb85e31b539aea5416adc51816bc4bae220728e40b"
+}

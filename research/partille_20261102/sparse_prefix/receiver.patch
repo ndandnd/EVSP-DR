@@ -1,0 +1,212 @@
+diff --git a/src/prefix_initializer.py b/src/prefix_initializer.py
+new file mode 100644
+index 00000000..cf1c619d
+--- /dev/null
++++ b/src/prefix_initializer.py
+@@ -0,0 +1,114 @@
++"""Authenticated, sequence-only sparse-prefix initialization on the receiving graph."""
++from collections import Counter
++import csv
++import hashlib
++import json
++import math
++from pathlib import Path
++
++
++def digest(path):
++    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
++
++
++def require(ok, reason):
++    if not ok:
++        raise ValueError(reason)
++
++
++def read(path):
++    return json.loads(Path(path).read_text())
++
++
++def row_index(path):
++    with path.open(newline='') as stream:
++        rows=list(csv.DictReader(stream))
++    keys=('From1','Start1','End1','To1','Usage kWh')
++    pairs=[(int(r['Ordered_Trip_ID']),tuple(r[k] for k in keys)) for r in rows]
++    require(len({k for k,_ in pairs})==len(rows),'duplicate stable trip ID')
++    return pairs
++
++
++def remap_sequences(parent_csv, child_csv, selected):
++    source=row_index(parent_csv)
++    dest=row_index(child_csv)
++    child={stable:(idx,attr) for idx,(stable,attr) in enumerate(dest)}
++    require(len(dest)>len(source),'receiver must strictly extend the predecessor')
++    require(all(stable in child and child[stable][1]==attr for stable,attr in source),
++            'predecessor trips missing or physics changed in receiving instance')
++    seqs=[]
++    coverage=Counter()
++    for record in selected:
++        trips=record['trips']
++        require(trips and all(type(t) is int and 0<=t<len(source) for t in trips)
++                and len(set(trips))==len(trips),'invalid local trip sequence')
++        coverage.update(trips)
++        seqs.append([child[source[t][0]][0] for t in trips])
++    require(set(coverage)==set(range(len(source))),'predecessor selection omits service')
++    return seqs
++
++
++REQUIRED_PHYSICS=dict(battery_kwh=240,initial_kwh=240,charge_kw=240,station_kw={'PARX':60},
++    reserve_kwh=0,soc_step=2.5,time_step=5,shared_capacity=True,charge_start_fee=5,coverage='cover',
++    non_strict_tariff=True,bus_cost_kx=100000,max_trip2trip_min=57,max_station_to_trip_wait_min=1560)
++
++
++def authenticated_sequences(seal_file, receiver_csv, data, prices, net):
++    seal_file=Path(seal_file)
++    seal=read(seal_file)
++    folder=seal_file.parent
++    req=('summary','selected','validation')
++    files=dict(summary=folder/'solve/summary.json',selected=folder/'solve/selected_routes.json',
++               validation=folder/'verification.json')
++    require(all(digest(files[k])==seal[k+'_sha256'] for k in req),'mutated predecessor artifact')
++    summary=read(files['summary'])
++    check=read(files['validation'])
++    require(seal['base_solver_commit']=='3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c'
++            and seal['solver_source_sha256']==digest(Path(__file__).with_name('run_capacity_terminal_cg.py'))
++            and seal['initializer_sha256']==digest(__file__),'incompatible solver provenance')
++    require(check.get('schema')=='partille-selection-replay-v1' and check.get('arm')=='baseline'
++            and check.get('cover_valid') is True and check.get('grid_plug_overload_minutes')==0
++            and (check.get('validated') is True or check.get('reason')=='cover is feasible but has duplicate service')
++            and check.get('summary_sha256')==seal['summary_sha256'] and check.get('selected_sha256')==seal['selected_sha256'],
++            'predecessor lacks valid source replay')
++    require(all(summary['physics'].get(k)==v for k,v in REQUIRED_PHYSICS.items()) and summary['plugs']==net.plugs
++            and summary['terminal_target_kwh']==0,'source physics or plug policy mismatch')
++    require(net.g==240 and net.reserve==0 and net.soc_step==2.5 and net.block_min==5
++            and net.power.record()==dict(charge_kw=240,station_kw={'PARX':60}),'receiver physics mismatch')
++    source=Path(summary['inputs']['instance'])
++    require(source.resolve()==(data/seal['parent_csv']).resolve() and source.resolve().is_relative_to(data.resolve())
++            and receiver_csv.resolve()==(data/seal['receiver_csv']).resolve(),'case lineage mismatch')
++    require(digest(source)==seal['source_instance_sha256']==check['instance_sha256']
++            and digest(receiver_csv)==seal['receiver_instance_sha256'],'instance hash mismatch')
++    for f in (source, prices, data/'Ref_dict.csv', data/'par_ref_dhd.csv'):
++        require(summary['input_hashes'].get(str(f))==digest(f),'receiver/source shared inputs differ')
++    return remap_sequences(source,receiver_csv,read(files['selected']))
++
++
++def regenerate(net, sequences):
++    from audit_giro_known_columns import HORIZON_MIN
++    from capacity_event_pricer import record_occupancy
++    from expanded_path_realization import realize_expanded_path, realized_costs
++    from run_exact_pool_mip import validate_injected_route
++    rebuilt=[]
++    for seq in sequences:
++        record=net.fixed_sequence_record(seq)
++        require(record is not None and record['trips']==seq,'sequence unavailable in current event graph')
++        realized, detail=realize_expanded_path(net.problem,record,g_kwh=net.g,charge_kw=net.power,
++            reserve_kwh=net.reserve,soc_step=net.soc_step,block_min=net.block_min,time_model='event')
++        require(realized is not None,'receiver expanded-path replay failed')
++        reason=validate_injected_route(net.problem,realized,net.g,net.power,net.reserve,HORIZON_MIN,arrival_grace_min=0)
++        require(reason is None,'receiver continuous replay failed: '+str(reason))
++        costs=realized_costs(realized,detail['mapping'],station_prices=net.prices)
++        close=lambda a,b:math.isclose(a,b,rel_tol=1e-12,abs_tol=1e-6)
++        require(close(record['cost'],costs['recomputed_expanded_grid_cost'])
++                and close(record['continuous_realized_cost'],costs['continuous_realized_cost']),'receiver repricing mismatch')
++        require(record['physical_realization']['continuous_realized_charging_blocks_sha256']
++                ==costs['continuous_realized_charging_blocks_sha256'],'receiver charge block mismatch')
++        record['terminal_energy_kwh']=detail['mapping']['expanded_grid_terminal_soc_kwh']
++        occupancy=record_occupancy(record)
++        require(all(site in net.plugs and count==1 for (site,_),count in occupancy.items()),
++                'overlapping or unrecognized single-vehicle occupancy')
++        record['capacity_occupancy']=sorted([site,minute,count] for (site,minute),count in occupancy.items() if net.plugs[site] is not None)
++        rebuilt.append(record)
++    return rebuilt
+diff --git a/src/run_capacity_terminal_cg.py b/src/run_capacity_terminal_cg.py
+index 9d09ea0f..d6d52c7f 100644
+--- a/src/run_capacity_terminal_cg.py
++++ b/src/run_capacity_terminal_cg.py
+@@ -46,7 +46,7 @@ DEFAULT_PLUGS = {'2190L': 1, '4808': 1, '7880C': 1, 'JON_A': 1, '3127L': 2, 'PAR
+ def run(net, out, *, target, fleet_cap, cg_seconds, mip_seconds, batch_size=30, seeds=(),
+         max_iters=100000, rc_eps=1e-6, viol_tol=1e-6, smoothing=0.0, dive_seconds=0.0, dive_theta=0.7,
+         partial_pricing=None, directional=False, dive_mode='simple', dive_options=None,
+-        integer_pricing_seconds=0.0, integer_pricing_options=None, partition=False):
++        integer_pricing_seconds=0.0, integer_pricing_options=None, partition=False, prefix_sequences=()):
+     # partition: trip rows '= 1' (every trip served exactly once, as in GERAD's MDEVSP) instead of
+     # covering '>= 1'. Trip duals are then free in sign; the DAG pricing handles any sign.
+     if partition and integer_pricing_seconds > 0:
+@@ -139,6 +139,15 @@ def run(net, out, *, target, fleet_cap, cg_seconds, mip_seconds, batch_size=30,
+         # map they need re-realization and repricing first (AGENTS.md). Refuse rather than admit stale seeds.
+         raise ValueError('--seed-routes is not supported with station-specific charging power '
+                          f'{power.record()}; re-realize the seeds under the new physics first')
++    if seeds and prefix_sequences:
++        raise ValueError('mixed route and sequence seed modes')
++    prefix_start = time.monotonic()
++    if prefix_sequences:
++        from prefix_initializer import regenerate
++        for record in regenerate(net, prefix_sequences):
++            add(record)
++    prefix_admitted = len(records)
++    prefix_seconds = time.monotonic() - prefix_start
+     for record in seeds:
+         add(record)
+     if not seeds:
+@@ -299,6 +308,7 @@ def run(net, out, *, target, fleet_cap, cg_seconds, mip_seconds, batch_size=30,
+         summary['certificate_tolerance'] = (last.get('tolerance_certificate') or {}).get('effective_tolerance', rc_eps)
+     save(out / 'summary.json', summary)
+     dive_start = None
++    h_tick = time.monotonic()
+     if dive_seconds > 0 and phase == 'combined-cost':
+         # primal dive after the certified LP (heuristic; never affects the certificate above)
+         ctx = DiveContext(m=m, variables=variables, records=records, artificial=artificial, plugs=plugs,
+@@ -327,6 +337,8 @@ def run(net, out, *, target, fleet_cap, cg_seconds, mip_seconds, batch_size=30,
+         save(out / 'summary.json', summary)
+         m.dispose()
+         return summary
++    heuristic_wall = time.monotonic() - h_tick
++    mip_tick = time.monotonic()
+     # MIP: every plug row whose column total could exceed its plug count.
+     add_rows([k for k, items in incidence.items()
+               if k not in cap_rows and sum(c for _v, c in items) > plugs[k[0]]])
+@@ -373,6 +385,8 @@ def run(net, out, *, target, fleet_cap, cg_seconds, mip_seconds, batch_size=30,
+                 r['continuous_realized_cost'] - BUS_COST_KX for r in selected)
+             save(out / 'selected_routes.json', selected)
+     save(out / 'summary.json', summary)
++    summary['sparse_timing'] = dict(cg=summary['cg_seconds'],heuristic=heuristic_wall,mip=time.monotonic()-mip_tick,
++        seed_replay_seconds=prefix_seconds, prefix_requested=len(prefix_sequences),prefix_admitted=prefix_admitted)
+     m.dispose()
+     return summary
+ 
+@@ -441,6 +455,7 @@ def main():
+     p.add_argument('--start-fee', type=float, default=0.0, help='per-charge start fee (chains used 5)')
+     p.add_argument('--non-strict-tariff', action='store_true',
+                    help='extend the last tariff hour to the horizon (24-hour tariffs used by the chains)')
++    p.add_argument('--validated-prefix', type=Path)
+     p.add_argument('--seed-routes', action='append', default=[],
+                    help='route JSON list (e.g. a fixed_duty frontier_routes.json) added as initial columns')
+     p.add_argument('--max-trip2trip-min', type=float, default=None,
+@@ -469,6 +484,13 @@ def main():
+     seeds = []
+     for path in args.seed_routes:
+         seeds.extend(json.loads(Path(path).read_text()))
++    prefix_sequences = ()
++    if args.validated_prefix:
++        from prefix_initializer import authenticated_sequences
++        if (seeds or args.start_fee != 5 or args.target != 0 or args.partition or not args.non_strict_tariff
++                or args.max_trip2trip_min not in (None,57) or plugs != DEFAULT_PLUGS):
++            raise ValueError('invalid matched sparse-prefix receiver parameters')
++        prefix_sequences = authenticated_sequences(args.validated_prefix, data / args.csv, data, Path(args.prices), net)
+     dive_options = dict(max_discrepancy=args.dive_max_discrepancy, max_depth=args.dive_max_depth,
+                         candidates=args.dive_candidates, strong_cg_seconds=args.dive_strong_cg_seconds,
+                         strong_depth=args.dive_strong_depth, restarts=args.dive_restarts,
+@@ -483,12 +505,13 @@ def main():
+                  integer_pricing_options=dict(gamma=args.integer_pricing_gamma, beta0=args.integer_pricing_beta0,
+                                               rep_seconds=args.integer_pricing_rep_seconds,
+                                               rep_columns=args.integer_pricing_rep_columns),
+-                 partition=args.partition)
++                 partition=args.partition, prefix_sequences=prefix_sequences)
+     if partial is not None or args.directional_smoothing:
+         result['stabilization_settings'] = dict(partial_pricing=partial, directional=args.directional_smoothing)
+     result.update(graph_seconds=graph_seconds, plugs=plugs, smoothing=args.smoothing, seed_routes=args.seed_routes,
+                   capacity_alternatives=net.n_alternatives, capacity_window_keys=int(len(net.key_arrival)),
+                   capacity_terminal_alternatives=int(len(net.t_src)), packed_arcs=int(net.n_arcs))
++    result['validated_prefix_sha256'] = sha(args.validated_prefix) if args.validated_prefix else None
+     result['input_hashes'] = {str(path): sha(path) for path in
+                               [data / args.csv, Path(args.prices), data / 'Ref_dict.csv', data / 'par_ref_dhd.csv']}
+     result['inputs'] = dict(data_dir=str(data), instance=str(data / args.csv), tariff=str(Path(args.prices)))
