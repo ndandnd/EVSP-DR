@@ -1,0 +1,59 @@
+{
+  "utc": "2026-11-03T08:21:15.529360+00:00",
+  "job": "917989",
+  "array": "0-2%3",
+  "registration_sha256": "2010e4e0d875e547fac3f9d2303b0dce6b3d6db355b02552deb602eaebca7310",
+  "scontrol": [
+    {
+      "JobState": "PENDING",
+      "ArrayJobId": "917989",
+      "ArrayTaskId": "0",
+      "ExcNodeList": "scaglione-compute-01",
+      "Partition": "default_partition",
+      "Nice": "0",
+      "TimeLimit": "20:00:00",
+      "NumCPUs": "8",
+      "MinMemoryNode": "48G",
+      "Reason": "None",
+      "Dependency": "(null)",
+      "Requeue": "1",
+      "ArrayTaskThrottle": "3"
+    },
+    {
+      "JobState": "PENDING",
+      "ArrayJobId": "917989",
+      "ArrayTaskId": "1",
+      "ExcNodeList": "scaglione-compute-01",
+      "Partition": "default_partition",
+      "Nice": "0",
+      "TimeLimit": "20:00:00",
+      "NumCPUs": "8",
+      "MinMemoryNode": "48G",
+      "Reason": "None",
+      "Dependency": "(null)",
+      "Requeue": "1",
+      "ArrayTaskThrottle": "3"
+    },
+    {
+      "JobState": "PENDING",
+      "ArrayJobId": "917989",
+      "ArrayTaskId": "2",
+      "ExcNodeList": "scaglione-compute-01",
+      "Partition": "default_partition",
+      "Nice": "0",
+      "TimeLimit": "20:00:00",
+      "NumCPUs": "8",
+      "MinMemoryNode": "48G",
+      "Reason": "None",
+      "Dependency": "(null)",
+      "Requeue": "1",
+      "ArrayTaskThrottle": "3"
+    }
+  ],
+  "squeue": [
+    "0|PENDING|None|default_partition|14278",
+    "1|PENDING|None|default_partition|14278",
+    "2|PENDING|None|default_partition|14278"
+  ],
+  "receipt_scope": "accepted jobs and admission, no scientific outcomes yet"
+}

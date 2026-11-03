@@ -1,0 +1,28 @@
+{
+  "cg_pricing_certified": true,
+  "cg_stop": "pricing_certified",
+  "continuous_nonfleet_cost": 301.6612302759022,
+  "covers_all": true,
+  "exactly_once": false,
+  "extra_trip_visits": 3,
+  "final_pool_rows": 40304,
+  "final_pool_sha256": "c5571ede0a19fac2c388ed5e25c566acc5344ef09d1ef64da32affd2f0fa4bae",
+  "fleet": 8,
+  "grid_nonfleet_cost": 310.4320000000007,
+  "grid_terminal_energy_kwh": 13.652000600000001,
+  "inputs_sha256": {
+    "Practice_Custom_DutyUnion_k08_p06_20260908.csv": "749b356e355c6b7f08f45aa04764f193281215214e084460027fbe63176e400b",
+    "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+  },
+  "per_route_replayed": true,
+  "pricing_scope": "conservative weighted covering model on stated SOC grid",
+  "root_columns": 24125,
+  "root_prefix_sha256": "093469f0b9bf320bd3fdb4b8cae5d066220ec6e5f34feafa632383e5dcf7f1ae",
+  "selected_sha256": "036a9790de40bdf5e1ae0cc2b1942fb37afbbfe2fa95802d2306bc6834fc8645",
+  "selection_state": "selected",
+  "shared_plug_overloads": 0,
+  "soc_step": 2.5,
+  "summary_sha256": "694c9ee4c64d1d80e041c0495fb9e70e8a90dc2a2e77e7ca47f03998638f9db4"
+}

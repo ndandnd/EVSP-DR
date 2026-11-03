@@ -1,0 +1,119 @@
+{
+  "cases": [
+    {
+      "case": "c2_k08",
+      "control_grid": 2.5,
+      "control_post_dive_pool_sha256": "5744645fa8fc62e3c79e3880a12b1388dda8e0342fe46bb6c700d61e98c86d0d",
+      "control_root_sha256": "e0d2c8fb02c6e6c966fea22505ca22dc6ecb0d2481e61b2221e1603aa1a5351f",
+      "control_sacct": [
+        "COMPLETED",
+        "0:0",
+        "default_partition",
+        "8",
+        "07:04:18"
+      ],
+      "input_hashes": {
+        "Practice_Custom_DutyUnion_k08_p02_20260908.csv": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+        "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      },
+      "new_runs": 1,
+      "owner_array_task": "920164_7",
+      "owner_attempt": 0,
+      "owner_instance": "Practice_Custom_DutyUnion_k08_p02_20260908.csv",
+      "owner_raw_job": 920637,
+      "replay_receipt_sha256": "7562cb95b1257b20eca30e3c633b4a14c854c14b0a6fe6edb4c16b99d4f882d5",
+      "summary_sha256": "209bde0a89b1bc2be8e0cb7df33280c23aa195b75fb54cd985b65e071e2a5c54",
+      "treatment_grid": 5.0
+    },
+    {
+      "case": "c3_k08",
+      "control_grid": 2.5,
+      "control_post_dive_pool_sha256": "2e020523b7f9c80e0c2d02626ec7804ebf70a471ea8ddaa1502fbd181edd441a",
+      "control_root_sha256": "4604744b2450557f371d5865eab947f652ce07cc906dc3ec1b40271f73d36685",
+      "control_sacct": [
+        "COMPLETED",
+        "0:0",
+        "default_partition",
+        "8",
+        "04:53:04"
+      ],
+      "input_hashes": {
+        "Practice_Custom_DutyUnion_k08_p03_20260908.csv": "9d1d4ed1ab86dfa3ae09541180d1a67e612d5473d9964db36b08e9ebce72cd2b",
+        "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      },
+      "new_runs": 1,
+      "owner_array_task": "920164_11",
+      "owner_attempt": 0,
+      "owner_instance": "Practice_Custom_DutyUnion_k08_p03_20260908.csv",
+      "owner_raw_job": 920641,
+      "replay_receipt_sha256": "9f794190c69affd4bb2a3cf2014d34be7a6f2930a4ca6df0025c14680a4e4e7b",
+      "summary_sha256": "7bd161aca93a487da239cd832338f4efd0a2d3a6d65ef43524a62848489fcf30",
+      "treatment_grid": 5.0
+    },
+    {
+      "case": "c6_k08",
+      "control_grid": 2.5,
+      "control_post_dive_pool_sha256": "c5571ede0a19fac2c388ed5e25c566acc5344ef09d1ef64da32affd2f0fa4bae",
+      "control_root_sha256": "093469f0b9bf320bd3fdb4b8cae5d066220ec6e5f34feafa632383e5dcf7f1ae",
+      "control_sacct": [
+        "COMPLETED",
+        "0:0",
+        "default_partition",
+        "8",
+        "03:30:15"
+      ],
+      "input_hashes": {
+        "Practice_Custom_DutyUnion_k08_p06_20260908.csv": "749b356e355c6b7f08f45aa04764f193281215214e084460027fbe63176e400b",
+        "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+      },
+      "new_runs": 1,
+      "owner_array_task": "920164_23",
+      "owner_attempt": 0,
+      "owner_instance": "Practice_Custom_DutyUnion_k08_p06_20260908.csv",
+      "owner_raw_job": 920653,
+      "replay_receipt_sha256": "c8f4f30ea08c00caf510c22b9e89bd97de525ec192a679dfe5841d7154aba782",
+      "summary_sha256": "694c9ee4c64d1d80e041c0495fb9e70e8a90dc2a2e77e7ca47f03998638f9db4",
+      "treatment_grid": 5.0
+    }
+  ],
+  "design": "preselected C2,C3,C6 k8; archived default-partition controls; fresh singleton start, no external routes, caches, predecessors or deck/holdout gates; one new arm per case; covering trip master, stage1 fleet then stage2 charging cost incl start fees; clocks and host allocation can affect time-limited dives",
+  "execution_commit": "3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c",
+  "initialization": "new process, fresh in-memory graph and internal singleton columns for every new run. No persistent graph cache and no previous-k dependency",
+  "outcomes": "Report separately graph wall/size, root weighted conservative LP pricing certificate and route-weight; finite-pool fleet, bound and economic cost; independent selected-route replay and exact-once and modeled plug validation. Compare charging at equal fleet only. Do not claim SOC is continuous, target-blind full-model optimality, or runtime significance from historical single attempts. Missing certificates and no selection are outcomes. No optimistic grid bound is requested. No changes to held jobs or future k10 decisions.",
+  "owner_batch_sha256": "bd726a5423082793fbb6d12a8455a09d6cbc6dcd57d538e6cc62bc66925469f2",
+  "owner_tasks_sha256": "16e56812dfefae666c33a90845d0850bda9b9083fc087045fa91034c6e1d2d32",
+  "policy_sha256": "f9c5982718da6ab758019ceb85e31b539aea5416adc51816bc4bae220728e40b",
+  "protocol_files_sha256": {
+    "campaign.py": "e753b8dac1b41716c17266dd4d4bf6ac326127bbc65bd9adba055e082b4a9f0b",
+    "replay.py": "031f15552c7133b881c2fac3f937c52a8de1506069aab6fe7a52dc452e776e76",
+    "replay_smoke_2.5.json": "0580bcb77f8aa03fa3615537483bc3e3d72d9231b53d7da40c7bade0bbee22cd",
+    "replay_smoke_5.0.json": "ad16affbc102fe0b9841c84bba7c60ffff18655b742ed7636d2c8214314b222b",
+    "run.sbatch": "0493d50ff2c89e12402469009a3400062dc857150941990b500054a61e41b2a0",
+    "smoke.json": "11776f11b70174de57ce900368ed4ba25d1e6615cd3fa79f192b63b149061dba",
+    "smoke.py": "da7f9f18c2562a7b4fd1faebbbb65f9e9cefcf6cc09e4604ebd4b0696d92b68a"
+  },
+  "registered_utc": "2026-11-03T08:19:53.921050+00:00",
+  "resources": {
+    "budget_seconds": {
+      "cg": 10800,
+      "pool_mip": 3600,
+      "simple_dive": 5400
+    },
+    "concurrency": 3,
+    "cpus": 8,
+    "exclude": "scaglione-compute-01",
+    "hours": 20,
+    "nice": 0,
+    "partition": "default_partition",
+    "ram_gib": 48,
+    "requeue": true
+  },
+  "schema": "c236_grid_protocol_v1",
+  "sole_scientific_switch": "--soc-step 5.0 versus frozen default 2.5"
+}

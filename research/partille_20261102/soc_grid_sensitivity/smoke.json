@@ -1,0 +1,60 @@
+{
+  "2.5": {
+    "packed_arcs": 432,
+    "capacity_alternatives": 0,
+    "capacity_window_keys": 286,
+    "columns": 34,
+    "cg_pricing_certified": true,
+    "selection_state": "selected",
+    "selected_plug_violations": {},
+    "physics": {
+      "battery_kwh": 240.0,
+      "initial_kwh": 240.0,
+      "charge_kw": 240.0,
+      "station_kw": {
+        "PARX": 60.0
+      },
+      "reserve_kwh": 0,
+      "soc_step": 2.5,
+      "time_step": 5,
+      "shared_capacity": true,
+      "plug_rows": "1-minute conservative, lazy",
+      "charge_start_fee": 5.0,
+      "coverage": "cover",
+      "non_strict_tariff": true,
+      "bus_cost_kx": 100000.0,
+      "max_trip2trip_min": 57.0,
+      "max_station_to_trip_wait_min": 1560.0
+    },
+    "selected_records": 3
+  },
+  "5.0": {
+    "packed_arcs": 218,
+    "capacity_alternatives": 0,
+    "capacity_window_keys": 141,
+    "columns": 22,
+    "cg_pricing_certified": true,
+    "selection_state": "selected",
+    "selected_plug_violations": {},
+    "physics": {
+      "battery_kwh": 240.0,
+      "initial_kwh": 240.0,
+      "charge_kw": 240.0,
+      "station_kw": {
+        "PARX": 60.0
+      },
+      "reserve_kwh": 0,
+      "soc_step": 5.0,
+      "time_step": 5,
+      "shared_capacity": true,
+      "plug_rows": "1-minute conservative, lazy",
+      "charge_start_fee": 5.0,
+      "coverage": "cover",
+      "non_strict_tariff": true,
+      "bus_cost_kx": 100000.0,
+      "max_trip2trip_min": 57.0,
+      "max_station_to_trip_wait_min": 1560.0
+    },
+    "selected_records": 3
+  }
+}
