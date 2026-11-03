@@ -1,0 +1,648 @@
+{
+  "schema": "heldout-first-order-miss-bounded-singles-summary-v1",
+  "post_outcome_diagnostic": true,
+  "changes_heldout_scores": false,
+  "new_dispatch_hits": 0,
+  "cases": [
+    {
+      "schema": "bounded-fixed-path-single-reachability-v1",
+      "case": "c1_k08",
+      "case_limit_seconds": 180,
+      "start_fee": 5,
+      "source_execution_commit": "701b74b5518dc473e6d2a1bdda74e1ad31d891a8",
+      "source_solver_commit": "3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c",
+      "source_hashes": {
+        "driver": "a80a1075b4d822e976923f4486ed27d9f05f1aa7276ba2e4eb566444f14af3a7",
+        "registered_engine": "f5e86db569e18121a3f4193dd56a002fcd82e3dd959e8e9e564c424a184e57c4",
+        "native_manifest": "ec4171473d698d3c1cf85fb87d1f07bd70b4172bb06bb2d30dd5642169485b52",
+        "original_receipt": "b011b92d8b657c03643ce315c1a41e65d5568928e6164be3ae97af4b786e970c",
+        "original_paths": "b058fb6080e81e4f85856a5e91500c34925f8d08a3fc399089473d4d63be8cbe"
+      },
+      "inputs_sha256": {
+        "deadheads": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "instance": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "locations": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "prices": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+      },
+      "physics": {
+        "battery_kwh": 240,
+        "initial_kwh": 240,
+        "charge_kw": 240,
+        "station_kw": {
+          "PARX": 60
+        },
+        "reserve_kwh": 0,
+        "soc_step": 2.5,
+        "time_step": 5,
+        "shared_capacity": true,
+        "charge_start_fee": 5,
+        "coverage": "cover",
+        "non_strict_tariff": true,
+        "bus_cost_kx": 100000,
+        "max_trip2trip_min": 57,
+        "max_station_to_trip_wait_min": 1560
+      },
+      "plugs": {
+        "2190L": 1,
+        "4808": 1,
+        "7880C": 1,
+        "JON_A": 1,
+        "3127L": 2,
+        "PARX": null
+      },
+      "paths_frozen": 8,
+      "per_path_candidate_limit": 1,
+      "shared_reservations": "none;fresh occupancy for each original path",
+      "alternative_paths_or_orders_tested": false,
+      "dispatch_hits_added": 0,
+      "original_failure_class": "fixed_sequence_unreachable",
+      "original_failure_path_ordinal": 0,
+      "paths": [
+        {
+          "path_ordinal": 0,
+          "trip_count": 26,
+          "single_retime_attempts": 1,
+          "outcome": "single_path_unreachable",
+          "validated": false,
+          "error_class": "CheckFailure",
+          "elapsed_seconds": 1.469208374619484,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 26,
+              "graph_seconds": 0.21372108440846205,
+              "pricing_seconds": 0.005451750010251999
+            }
+          ]
+        },
+        {
+          "path_ordinal": 1,
+          "trip_count": 29,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 0.4100000400000008,
+          "elapsed_seconds": 0.6984417494386435,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 29,
+              "graph_seconds": 0.49679158348590136,
+              "pricing_seconds": 0.025832584127783775,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 2,
+          "trip_count": 17,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 1.9209996999999994,
+          "elapsed_seconds": 0.39318383298814297,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 17,
+              "graph_seconds": 0.20417908392846584,
+              "pricing_seconds": 0.011193499900400639,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 3,
+          "trip_count": 28,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 2.3579999999999997,
+          "elapsed_seconds": 0.5220827078446746,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 28,
+              "graph_seconds": 0.28459870908409357,
+              "pricing_seconds": 0.05291841737926006,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 4,
+          "trip_count": 30,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 2.1999999999999993,
+          "elapsed_seconds": 0.39679641742259264,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 30,
+              "graph_seconds": 0.22458012495189905,
+              "pricing_seconds": 0.010133459232747555,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 5,
+          "trip_count": 17,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 2.3380005000000006,
+          "elapsed_seconds": 0.3552778325974941,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 17,
+              "graph_seconds": 0.1387548753991723,
+              "pricing_seconds": 0.017290334217250347,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 6,
+          "trip_count": 21,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 2.0,
+          "elapsed_seconds": 0.4886386664584279,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 21,
+              "graph_seconds": 0.24063199944794178,
+              "pricing_seconds": 0.023107499815523624,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 7,
+          "trip_count": 26,
+          "single_retime_attempts": 1,
+          "outcome": "single_path_unreachable",
+          "validated": false,
+          "error_class": "CheckFailure",
+          "elapsed_seconds": 0.8496899157762527,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 26,
+              "graph_seconds": 0.6768456660211086,
+              "pricing_seconds": 0.004672041162848473
+            }
+          ]
+        }
+      ],
+      "earliest_infeasible_prefix": "not isolated;no extra prefix retimes;terminal reachability and intermediate energy effects not uniquely localized",
+      "elapsed_seconds": 5.174587000161409,
+      "paths_attempted": 8,
+      "reachable_singles": 6,
+      "unreachable_singles": 2,
+      "technical_or_replay_errors": 0,
+      "timing_scope": "case clock covers single retime attempts and individual replay;source/input authentication precedes it;no archive construction or global optimization",
+      "interpretation": "Unreachable singles demonstrate that these first-order misses cannot be explained solely by reservations from other buses.Individually reachable singles do not establish compatibility as a dispatch.The eight-path matching certificate establishes observed adjacency suffices for an eight-path cover only;it does not establish energy reachability.",
+      "diagnostic_qualification": "Unreachable means no terminal candidate in this fixed-sequence discrete event graph with other-bus reservations absent. It does not prove continuous-physics infeasibility. Earlier prefix and root energy/clock mechanism were not isolated.",
+      "source_aggregate_sha256": "eb8614d7bbbe1ffd6f59a7d458a59ac4cf7d76240e8a8a5e7b7f52e9dcd5746a"
+    },
+    {
+      "schema": "bounded-fixed-path-single-reachability-v1",
+      "case": "c4_k08",
+      "case_limit_seconds": 180,
+      "start_fee": 5,
+      "source_execution_commit": "701b74b5518dc473e6d2a1bdda74e1ad31d891a8",
+      "source_solver_commit": "3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c",
+      "source_hashes": {
+        "driver": "a80a1075b4d822e976923f4486ed27d9f05f1aa7276ba2e4eb566444f14af3a7",
+        "registered_engine": "f5e86db569e18121a3f4193dd56a002fcd82e3dd959e8e9e564c424a184e57c4",
+        "native_manifest": "2adf0012e795863c871eed1cfa70b784b89d4e3f7ca24ee1c14a40ffe1a4dad3",
+        "original_receipt": "d6663ca9aae30fbecf79a2a81b811d5d3df202fcf5846b7668ced310243e7ab2",
+        "original_paths": "ddf0f7e317e7e7b74707698f217cfb62728f5a59408ac89584966d8fea96e22e"
+      },
+      "inputs_sha256": {
+        "deadheads": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "instance": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+        "locations": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "prices": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+      },
+      "physics": {
+        "battery_kwh": 240,
+        "initial_kwh": 240,
+        "charge_kw": 240,
+        "station_kw": {
+          "PARX": 60
+        },
+        "reserve_kwh": 0,
+        "soc_step": 2.5,
+        "time_step": 5,
+        "shared_capacity": true,
+        "charge_start_fee": 5,
+        "coverage": "cover",
+        "non_strict_tariff": true,
+        "bus_cost_kx": 100000,
+        "max_trip2trip_min": 57,
+        "max_station_to_trip_wait_min": 1560
+      },
+      "plugs": {
+        "2190L": 1,
+        "4808": 1,
+        "7880C": 1,
+        "JON_A": 1,
+        "3127L": 2,
+        "PARX": null
+      },
+      "paths_frozen": 8,
+      "per_path_candidate_limit": 1,
+      "shared_reservations": "none;fresh occupancy for each original path",
+      "alternative_paths_or_orders_tested": false,
+      "dispatch_hits_added": 0,
+      "original_failure_class": "fixed_sequence_unreachable",
+      "original_failure_path_ordinal": 2,
+      "paths": [
+        {
+          "path_ordinal": 0,
+          "trip_count": 24,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 1.8590003999999993,
+          "elapsed_seconds": 1.6931044161319733,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 24,
+              "graph_seconds": 0.3028588332235813,
+              "pricing_seconds": 0.013744915835559368,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 1,
+          "trip_count": 29,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 0.4100000400000008,
+          "elapsed_seconds": 0.6280752923339605,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 29,
+              "graph_seconds": 0.3418661253526807,
+              "pricing_seconds": 0.08469316735863686,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 2,
+          "trip_count": 29,
+          "single_retime_attempts": 1,
+          "outcome": "single_path_unreachable",
+          "validated": false,
+          "error_class": "CheckFailure",
+          "elapsed_seconds": 0.3532644994556904,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 29,
+              "graph_seconds": 0.17741079162806273,
+              "pricing_seconds": 0.0028911251574754715
+            }
+          ]
+        },
+        {
+          "path_ordinal": 3,
+          "trip_count": 24,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 0.32899990000000123,
+          "elapsed_seconds": 0.9170897919684649,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 24,
+              "graph_seconds": 0.685152874328196,
+              "pricing_seconds": 0.0367991654202342,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 4,
+          "trip_count": 29,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 2.0,
+          "elapsed_seconds": 0.9109589578583837,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 29,
+              "graph_seconds": 0.5624771248549223,
+              "pricing_seconds": 0.02515916619449854,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 5,
+          "trip_count": 15,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 0.47000050000000204,
+          "elapsed_seconds": 0.2836335841566324,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 15,
+              "graph_seconds": 0.1288167079910636,
+              "pricing_seconds": 0.007719582878053188,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 6,
+          "trip_count": 11,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 2.3579999999999997,
+          "elapsed_seconds": 0.3229524167254567,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 11,
+              "graph_seconds": 0.17675604205578566,
+              "pricing_seconds": 0.008317708037793636,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 7,
+          "trip_count": 27,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 2.3380005000000006,
+          "elapsed_seconds": 0.4989767912775278,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 27,
+              "graph_seconds": 0.30627699941396713,
+              "pricing_seconds": 0.011794541031122208,
+              "overload_minutes": 0
+            }
+          ]
+        }
+      ],
+      "earliest_infeasible_prefix": "not isolated;no extra prefix retimes;terminal reachability and intermediate energy effects not uniquely localized",
+      "elapsed_seconds": 5.609449458308518,
+      "paths_attempted": 8,
+      "reachable_singles": 7,
+      "unreachable_singles": 1,
+      "technical_or_replay_errors": 0,
+      "timing_scope": "case clock covers single retime attempts and individual replay;source/input authentication precedes it;no archive construction or global optimization",
+      "interpretation": "Unreachable singles demonstrate that these first-order misses cannot be explained solely by reservations from other buses.Individually reachable singles do not establish compatibility as a dispatch.The eight-path matching certificate establishes observed adjacency suffices for an eight-path cover only;it does not establish energy reachability.",
+      "diagnostic_qualification": "Unreachable means no terminal candidate in this fixed-sequence discrete event graph with other-bus reservations absent. It does not prove continuous-physics infeasibility. Earlier prefix and root energy/clock mechanism were not isolated.",
+      "source_aggregate_sha256": "7c93ab895518dab43f12cc69a10677565ee397918ce1b050ada48e15aed62073"
+    },
+    {
+      "schema": "bounded-fixed-path-single-reachability-v1",
+      "case": "c5_k08",
+      "case_limit_seconds": 180,
+      "start_fee": 5,
+      "source_execution_commit": "701b74b5518dc473e6d2a1bdda74e1ad31d891a8",
+      "source_solver_commit": "3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c",
+      "source_hashes": {
+        "driver": "a80a1075b4d822e976923f4486ed27d9f05f1aa7276ba2e4eb566444f14af3a7",
+        "registered_engine": "f5e86db569e18121a3f4193dd56a002fcd82e3dd959e8e9e564c424a184e57c4",
+        "native_manifest": "c82f0e083ced281ea3c33ce514aaec1bef47ad95e862bc5f510c5b8fb15f44b5",
+        "original_receipt": "f2eacd888414dab32bb8da5178d808bc7abaede7f994834acba4a07b02c16c45",
+        "original_paths": "05127d6fda49511789e47d6a204ea2e6963329861156ce28effc38121868010c"
+      },
+      "inputs_sha256": {
+        "deadheads": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "instance": "85aa4a37119b2604a41aa83f46c8b8987bb95c8165c4adfb0a58ce65dbeee05b",
+        "locations": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "prices": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+      },
+      "physics": {
+        "battery_kwh": 240,
+        "initial_kwh": 240,
+        "charge_kw": 240,
+        "station_kw": {
+          "PARX": 60
+        },
+        "reserve_kwh": 0,
+        "soc_step": 2.5,
+        "time_step": 5,
+        "shared_capacity": true,
+        "charge_start_fee": 5,
+        "coverage": "cover",
+        "non_strict_tariff": true,
+        "bus_cost_kx": 100000,
+        "max_trip2trip_min": 57,
+        "max_station_to_trip_wait_min": 1560
+      },
+      "plugs": {
+        "2190L": 1,
+        "4808": 1,
+        "7880C": 1,
+        "JON_A": 1,
+        "3127L": 2,
+        "PARX": null
+      },
+      "paths_frozen": 8,
+      "per_path_candidate_limit": 1,
+      "shared_reservations": "none;fresh occupancy for each original path",
+      "alternative_paths_or_orders_tested": false,
+      "dispatch_hits_added": 0,
+      "original_failure_class": "fixed_sequence_unreachable",
+      "original_failure_path_ordinal": 4,
+      "paths": [
+        {
+          "path_ordinal": 0,
+          "trip_count": 18,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 1.233000200000001,
+          "elapsed_seconds": 1.3530332501977682,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 18,
+              "graph_seconds": 0.3084915839135647,
+              "pricing_seconds": 0.011547250673174858,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 1,
+          "trip_count": 31,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 0.47000050000000204,
+          "elapsed_seconds": 0.45737637486308813,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 31,
+              "graph_seconds": 0.31402137503027916,
+              "pricing_seconds": 0.018524708226323128,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 2,
+          "trip_count": 20,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 2.3380005000000006,
+          "elapsed_seconds": 0.4273719163611531,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 20,
+              "graph_seconds": 0.3083995832130313,
+              "pricing_seconds": 0.012142375111579895,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 3,
+          "trip_count": 15,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 0.47000050000000204,
+          "elapsed_seconds": 0.2637290423735976,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 15,
+              "graph_seconds": 0.14523333311080933,
+              "pricing_seconds": 0.009036416187882423,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 4,
+          "trip_count": 25,
+          "single_retime_attempts": 1,
+          "outcome": "single_path_unreachable",
+          "validated": false,
+          "error_class": "CheckFailure",
+          "elapsed_seconds": 0.20405474957078695,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 25,
+              "graph_seconds": 0.10344624985009432,
+              "pricing_seconds": 0.0016272496432065964
+            }
+          ]
+        },
+        {
+          "path_ordinal": 5,
+          "trip_count": 15,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 2.0,
+          "elapsed_seconds": 0.3208775417879224,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 15,
+              "graph_seconds": 0.20636870805174112,
+              "pricing_seconds": 0.008721540682017803,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 6,
+          "trip_count": 29,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 2.3380005000000006,
+          "elapsed_seconds": 0.40733316633850336,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 29,
+              "graph_seconds": 0.27224062476307154,
+              "pricing_seconds": 0.01583183277398348,
+              "overload_minutes": 0
+            }
+          ]
+        },
+        {
+          "path_ordinal": 7,
+          "trip_count": 14,
+          "single_retime_attempts": 1,
+          "outcome": "individually_reachable_and_replayed",
+          "validated": true,
+          "grid_terminal_kwh": 1.5190002000000007,
+          "elapsed_seconds": 0.6489938329905272,
+          "engine_steps": [
+            {
+              "path_ordinal": 0,
+              "trip_count": 14,
+              "graph_seconds": 0.4681067084893584,
+              "pricing_seconds": 0.011118750087916851,
+              "overload_minutes": 0
+            }
+          ]
+        }
+      ],
+      "earliest_infeasible_prefix": "not isolated;no extra prefix retimes;terminal reachability and intermediate energy effects not uniquely localized",
+      "elapsed_seconds": 4.083521666936576,
+      "paths_attempted": 8,
+      "reachable_singles": 7,
+      "unreachable_singles": 1,
+      "technical_or_replay_errors": 0,
+      "timing_scope": "case clock covers single retime attempts and individual replay;source/input authentication precedes it;no archive construction or global optimization",
+      "interpretation": "Unreachable singles demonstrate that these first-order misses cannot be explained solely by reservations from other buses.Individually reachable singles do not establish compatibility as a dispatch.The eight-path matching certificate establishes observed adjacency suffices for an eight-path cover only;it does not establish energy reachability.",
+      "diagnostic_qualification": "Unreachable means no terminal candidate in this fixed-sequence discrete event graph with other-bus reservations absent. It does not prove continuous-physics infeasibility. Earlier prefix and root energy/clock mechanism were not isolated.",
+      "source_aggregate_sha256": "6e8c06dc213868460d9b220e4ee4876ec1b8b865bfb9c3d3907970df0c726a25"
+    }
+  ],
+  "total_fixed_paths": 24,
+  "reachable_and_independently_replayed": 20,
+  "unreachable_in_fixed_sequence_event_graph": 4,
+  "diagnostic_case_clock_sum_seconds": 14.867558125406504,
+  "limits": [
+    "One retime and first candidate for each frozen original passenger path.",
+    "Fresh occupancy for each single path;all other-bus reservations removed;all remaining engine/settings unchanged.",
+    "No alternative paths,orders,tariffs,physics,network knobs or campaigns.",
+    "No extra prefix retimes;earliest infeasible prefix not inferred.",
+    "Singles that pass replay need not fit together under shared plugs.",
+    "Eight-path observed-adjacency cover does not establish battery/charging reachability.",
+    "Discrete event-graph terminal failure is not a proof of continuous physical infeasibility.",
+    "Reported case clock includes retimes and individual replay;source/input authentication precedes it."
+  ]
+}

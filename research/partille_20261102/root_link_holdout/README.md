@@ -1,5 +1,7 @@
 # Testing whole duties against recombined trip connections
 
+[Held-out results](RESULTS.md) · [Editable per-chain table](paired_table.csv)
+
 Start with the [registered protocol](PROTOCOL.md) and [case manifest](cases.json). Chain 2 provided the development example. The other five chain instances contribute the test outcomes.
 
 ## Reproduce
