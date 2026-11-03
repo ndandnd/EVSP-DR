@@ -7,3 +7,5 @@ The algorithm selects eight paths using the connections observed in the original
 The frozen budget is 180 seconds and at most 32 candidate covers per chain, including reading the archived root and testing the charging schedules. Historical graph and CG computation is recorded separately. All three archived roots lacked a pricing certificate. No GIRO duty or known dispatch is used as input.
 
 The timestamped [freeze](FREEZE.json), [protocol](protocol.json) and [source fingerprints](source_index.json) bind the implementation and the three private input manifests. Authorized reproduction requires the original restricted records and manifests under the project campaign. The unit check exhaustively tests the matching exclusion on 225 small cases and the solver smoke test verifies that it still permits extensions.
+
+[All three outcomes, independent replay and root-column membership](RESULTS.md). The audit uses the [frozen dispatch validator](../diagnostic/validate_selection.py).

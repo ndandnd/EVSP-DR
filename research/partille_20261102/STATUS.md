@@ -52,3 +52,5 @@ With duplicate passenger service allowed and shared plug rows active, Gurobi exp
 [November 3 jobs, model comparisons and decision rules](NOV03_NEXT.md).
 
 Alternative visits repair all 12 archived slow-depot fixed-visit misses on the same GIRO passenger duties. [Assumptions, terminal tolerance and all 12 receipts](fixed_duty_visit_transfer/RESULTS.md).
+
+The revised matching search recovered independently verified eight-bus dispatches on C1, C4 and C5, the three known misses in the earlier test. Across them the original root columns contained all 525 adjacent trip connections and none of the 24 complete winning sequences. [Rematching results and proof scope](bounded_rematching/RESULTS.md).

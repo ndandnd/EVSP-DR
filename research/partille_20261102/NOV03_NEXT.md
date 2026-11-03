@@ -19,6 +19,8 @@ The separate three-of-five threshold for expanding the original trip-link repair
 
 **Visit transfer endpoint.** All 12 cells passed replay on the same passenger duties using alternative charging visits. Five distinct passenger inputs were represented. Charging cost minimization remains open. [Results and tolerances](fixed_duty_visit_transfer/RESULTS.md).
 
+**Rematching endpoint.** All three known misses produced verified eight-bus schedules. [Case counts, timings and why the earlier pools missed](bounded_rematching/RESULTS.md).
+
 ## Next decision
 
-If rematching repairs a miss, freeze the method before testing it on new eight-bus cohorts. If the coarser grid saves time, compare fleet, duplicated trips and replay first, then isolate the energy-grid effect on cost with matched-fleet, identical-service schedules. Run a station-choice optimization for missing witnesses or to measure the best cost at 60 kW. Compare candidate station choices with the same opportunity windows and terminal requirements. These experiments use distinct historical model settings and cannot by themselves validate every GIRO physical assumption.
+The rematching result now warrants a prospective test on new eight-bus cohorts, with method and budget frozen in advance. If the coarser grid saves time, compare fleet, duplicated trips and replay first, then isolate the energy-grid effect on cost with matched-fleet, identical-service schedules. Run a station-choice optimization for missing witnesses or to measure the best cost at 60 kW. Compare candidate station choices with the same opportunity windows and terminal requirements. These experiments use distinct historical model settings and cannot by themselves validate every GIRO physical assumption.

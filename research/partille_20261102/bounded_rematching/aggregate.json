@@ -1,0 +1,384 @@
+{
+  "schema": "independent-final-rematch-winner-audit-v1",
+  "audit_source_sha256": "50f27862042f3af080a3922ba905b886d8fb585fc5dac7c364d02f6896f82912",
+  "registered_validator_sha256": "5a72fb549251e9889cc7d1376481ab65d1c2d630f706bc9df0cbacd63692538a",
+  "freeze_sha256": "8a704328bca27673d8a98aca2e3c3808e74028c321bd56de06d7bab1c119d9ce",
+  "freeze_utc": "2026-11-03T08:25:17.987580+00:00",
+  "native_evidence_tar_sha256": "e1da12a87449ad870e477da5886aed2542dbd5c7d336ab3a641f0d2ef76e9938",
+  "array_job_id": "918045",
+  "cases": [
+    {
+      "case": "c1_k08",
+      "validated": true,
+      "fleet": 8,
+      "fleet_only_lower_bound": 8,
+      "fleet_minimum_scope": "Frozen trips and named v15 model;simultaneous passenger trips plus fully replayed8-bus dispatch. No cost optimality claim.",
+      "trip_count": 194,
+      "exact_once": true,
+      "missing_trips": 0,
+      "duplicate_service": 0,
+      "physical_charging_stop_overload_minutes": 0,
+      "expanded_grid_stop_overload_minutes": 0,
+      "grid_terminal_kwh": 13.2320001,
+      "grid_nonfleet_cost": 629.711999999985,
+      "continuous_nonfleet_cost": 611.4017595762125,
+      "charging_cost_optimal": false,
+      "source_solver_commit": "3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c",
+      "root_pricing_certified": false,
+      "root_columns": 19901,
+      "root_prefix_sha256": "96630a780ef13b60234aa565a8996a87c0a9d86e3e31f57eb7c5e2a467e0f1e8",
+      "input_sha256": {
+        "deadheads": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "instance": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "locations": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "prices": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+      },
+      "source_execution": {
+        "rematch_sha256": "ec99c59a3865ce5a8dafcc4133733c82315c4683c2b7a2bd8dbc4eb2ac1fcdbc",
+        "engine_sha256": "f5e86db569e18121a3f4193dd56a002fcd82e3dd959e8e9e564c424a184e57c4",
+        "native_matching_solver": "12.0.3 build v12.0.3rc0 (linux64 - \"Ubuntu 24.04.5 LTS\")"
+      },
+      "source_hashes": {
+        "winner_routes": "1e836b7d9e4ab2768ab178474c0b70a1fe8acc6728dd41e1b53909c1adc69405",
+        "winner_paths": "e44f82a5677445401671df0a7c14f92e9edaafe5e2f2fdc5d3d5088fc1ef844f",
+        "native_receipt": "3db19f588e5acb62dc9713a3548b458fea55ea89e6bc54479d51e0743001e1b6",
+        "native_wrapper": "2c7a1a6f7d2bf8c27d9924b25a4151d2d8d4d81ee207d074c43adf9a7ee20fe1",
+        "native_matching_log": "14208ffec997deb4de9c9947140e7400ca73bdfa649cb74c03171660a827b3d4",
+        "postrun_independent_replay": "8cdc1faf38716ebcf32048ec3abfffab8b53dfa051b2409a209a37334196391c",
+        "root_gzip": "303d0cab79a37226b0233adef093885eaa371a89f81afd2b08762bdbae43c715"
+      },
+      "registration_adherence": {
+        "frozen_before_start": true,
+        "artifact_hashes_verified": true,
+        "candidate_cap": 32,
+        "wall_limit_seconds": 180,
+        "candidates_attempted": 7,
+        "safe_whole_path_nogoods": 6,
+        "heuristic_shared_matching_exclusions": 0,
+        "individual_retime_calls": 14,
+        "individual_cache_hits": 0,
+        "joint_retime_calls": 1,
+        "first_cover_and_all_following_rank_objectives_match_native_optimality_logs": true,
+        "all_prior_cuts_satisfied_by_later_covers": true,
+        "no_shared_miss_used_as_path_infeasibility_cut": true,
+        "negative_paths_not_repriced_in_postrun_audit": true,
+        "cut_sequence": [
+          {
+            "candidate_ordinal": 0,
+            "rank_objective": 27407,
+            "native_rank_optimality_log_verified": true,
+            "outcome": "excluded_exact_unreachable_path",
+            "cut_kind": "exact_whole_path_with_source_and_sink_boundaries",
+            "failed_path_ordinal": 0
+          },
+          {
+            "candidate_ordinal": 1,
+            "rank_objective": 27417,
+            "native_rank_optimality_log_verified": true,
+            "outcome": "excluded_exact_unreachable_path",
+            "cut_kind": "exact_whole_path_with_source_and_sink_boundaries",
+            "failed_path_ordinal": 0
+          },
+          {
+            "candidate_ordinal": 2,
+            "rank_objective": 27429,
+            "native_rank_optimality_log_verified": true,
+            "outcome": "excluded_exact_unreachable_path",
+            "cut_kind": "exact_whole_path_with_source_and_sink_boundaries",
+            "failed_path_ordinal": 0
+          },
+          {
+            "candidate_ordinal": 3,
+            "rank_objective": 27434,
+            "native_rank_optimality_log_verified": true,
+            "outcome": "excluded_exact_unreachable_path",
+            "cut_kind": "exact_whole_path_with_source_and_sink_boundaries",
+            "failed_path_ordinal": 0
+          },
+          {
+            "candidate_ordinal": 4,
+            "rank_objective": 27437,
+            "native_rank_optimality_log_verified": true,
+            "outcome": "excluded_exact_unreachable_path",
+            "cut_kind": "exact_whole_path_with_source_and_sink_boundaries",
+            "failed_path_ordinal": 0
+          },
+          {
+            "candidate_ordinal": 5,
+            "rank_objective": 27437,
+            "native_rank_optimality_log_verified": true,
+            "outcome": "excluded_exact_unreachable_path",
+            "cut_kind": "exact_whole_path_with_source_and_sink_boundaries",
+            "failed_path_ordinal": 0
+          },
+          {
+            "candidate_ordinal": 6,
+            "rank_objective": 27438,
+            "native_rank_optimality_log_verified": true,
+            "outcome": "validated_exploratory_candidate",
+            "cut_kind": "none_winner"
+          }
+        ]
+      },
+      "run_clocks_seconds": {
+        "worker": 31.441745899035595,
+        "parent": 31.72803393600043,
+        "wrapper": 31.877078310935758,
+        "phases": {
+          "authentication": 0.2114251060411334,
+          "connections": 3.9700642769457772,
+          "matching_mip": 0.4338379440596327,
+          "individual_retime_and_replay": 19.96719426929485,
+          "joint_retime_and_replay": 6.520785500993952
+        },
+        "parent_timed_out": false
+      },
+      "source_ancestor_durations": {
+        "heldout_repair_seconds": 10.860923995962366,
+        "heldout_receipt_sha256": "b011b92d8b657c03643ce315c1a41e65d5568928e6164be3ae97af4b786e970c",
+        "post_outcome_singles_seconds": 5.174587000161409,
+        "post_outcome_singles_receipt_sha256": "eb8614d7bbbe1ffd6f59a7d458a59ac4cf7d76240e8a8a5e7b7f52e9dcd5746a",
+        "reuse_of_previous_paths_or_retimestarts": false,
+        "prior_single_outcomes": "motivated exploratory design only;no inherited no-goods or schedule cache",
+        "note": "Root graph/CG fields separately authenticated from owner;native LP/pricing are components of CG,not additional costs;full restarted-ancestor ledger is incomplete,so no fair cold-speed comparison."
+      },
+      "source_graph_seconds": 7366.820925139007,
+      "source_root_cg_seconds": 10811.482574756956,
+      "postrun_audit_seconds": 2.34058825019747,
+      "postrun_replay_seconds": 1.1899945000186563
+    },
+    {
+      "case": "c4_k08",
+      "validated": true,
+      "fleet": 8,
+      "fleet_only_lower_bound": 8,
+      "fleet_minimum_scope": "Frozen trips and named v15 model;simultaneous passenger trips plus fully replayed8-bus dispatch. No cost optimality claim.",
+      "trip_count": 188,
+      "exact_once": true,
+      "missing_trips": 0,
+      "duplicate_service": 0,
+      "physical_charging_stop_overload_minutes": 0,
+      "expanded_grid_stop_overload_minutes": 0,
+      "grid_terminal_kwh": 7.927002100000006,
+      "grid_nonfleet_cost": 603.1760000000068,
+      "continuous_nonfleet_cost": 583.7466844010341,
+      "charging_cost_optimal": false,
+      "source_solver_commit": "3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c",
+      "root_pricing_certified": false,
+      "root_columns": 20378,
+      "root_prefix_sha256": "da16f3779c573a2b4a0b41e78bdf4cec9a4d913a2889dd2beaa68fbfb7952a63",
+      "input_sha256": {
+        "deadheads": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "instance": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+        "locations": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "prices": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+      },
+      "source_execution": {
+        "rematch_sha256": "ec99c59a3865ce5a8dafcc4133733c82315c4683c2b7a2bd8dbc4eb2ac1fcdbc",
+        "engine_sha256": "f5e86db569e18121a3f4193dd56a002fcd82e3dd959e8e9e564c424a184e57c4",
+        "native_matching_solver": "12.0.3 build v12.0.3rc0 (linux64 - \"Ubuntu 24.04.5 LTS\")"
+      },
+      "source_hashes": {
+        "winner_routes": "0d3c79b26b99b00f435d7305aed9706c939cc32f90c80abd99b3fe1500856195",
+        "winner_paths": "afbb31fb6ff4e02089ad74b849ad2ea5cbccbe384f7aa1104026e199154da05d",
+        "native_receipt": "628ee705582d3f0f5ff05ac04287f552c5b63dab07389444e81f76449408a607",
+        "native_wrapper": "ed3651a19696e3982e0f4867204ea8d0a893297ee5dc86105b7d4a575bacee70",
+        "native_matching_log": "29f58739b5f5ab66a1f4a3a4b684a15fd0eb5c6460e273af6683e95584fbcf03",
+        "postrun_independent_replay": "8af3b8768dccb79c6ea6e8271554e50ca2eb0ae600c1c24d2dd8c8eed26b5966",
+        "root_gzip": "44bf25cd9fbdb55da146e205a5886c0facf01a199d77cdfa41c86ada525f1ddd"
+      },
+      "registration_adherence": {
+        "frozen_before_start": true,
+        "artifact_hashes_verified": true,
+        "candidate_cap": 32,
+        "wall_limit_seconds": 180,
+        "candidates_attempted": 2,
+        "safe_whole_path_nogoods": 1,
+        "heuristic_shared_matching_exclusions": 0,
+        "individual_retime_calls": 10,
+        "individual_cache_hits": 5,
+        "joint_retime_calls": 1,
+        "first_cover_and_all_following_rank_objectives_match_native_optimality_logs": true,
+        "all_prior_cuts_satisfied_by_later_covers": true,
+        "no_shared_miss_used_as_path_infeasibility_cut": true,
+        "negative_paths_not_repriced_in_postrun_audit": true,
+        "cut_sequence": [
+          {
+            "candidate_ordinal": 0,
+            "rank_objective": 26459,
+            "native_rank_optimality_log_verified": true,
+            "outcome": "excluded_exact_unreachable_path",
+            "cut_kind": "exact_whole_path_with_source_and_sink_boundaries",
+            "failed_path_ordinal": 6
+          },
+          {
+            "candidate_ordinal": 1,
+            "rank_objective": 26472,
+            "native_rank_optimality_log_verified": true,
+            "outcome": "validated_exploratory_candidate",
+            "cut_kind": "none_winner"
+          }
+        ]
+      },
+      "run_clocks_seconds": {
+        "worker": 20.04453757707961,
+        "parent": 20.253145377966575,
+        "wrapper": 20.37557285197545,
+        "phases": {
+          "authentication": 0.26965730695519596,
+          "connections": 2.956360879004933,
+          "matching_mip": 0.09289381594862789,
+          "individual_retime_and_replay": 11.617301371879876,
+          "joint_retime_and_replay": 4.881972367060371
+        },
+        "parent_timed_out": false
+      },
+      "source_ancestor_durations": {
+        "heldout_repair_seconds": 12.796076847007498,
+        "heldout_receipt_sha256": "d6663ca9aae30fbecf79a2a81b811d5d3df202fcf5846b7668ced310243e7ab2",
+        "post_outcome_singles_seconds": 5.609449458308518,
+        "post_outcome_singles_receipt_sha256": "7c93ab895518dab43f12cc69a10677565ee397918ce1b050ada48e15aed62073",
+        "reuse_of_previous_paths_or_retimestarts": false,
+        "prior_single_outcomes": "motivated exploratory design only;no inherited no-goods or schedule cache",
+        "note": "Root graph/CG fields separately authenticated from owner;native LP/pricing are components of CG,not additional costs;full restarted-ancestor ledger is incomplete,so no fair cold-speed comparison."
+      },
+      "source_graph_seconds": 6684.900487857056,
+      "source_root_cg_seconds": 10816.825731057907,
+      "postrun_audit_seconds": 2.2490698751062155,
+      "postrun_replay_seconds": 0.9917973326519132
+    },
+    {
+      "case": "c5_k08",
+      "validated": true,
+      "fleet": 8,
+      "fleet_only_lower_bound": 8,
+      "fleet_minimum_scope": "Frozen trips and named v15 model;simultaneous passenger trips plus fully replayed8-bus dispatch. No cost optimality claim.",
+      "trip_count": 167,
+      "exact_once": true,
+      "missing_trips": 0,
+      "duplicate_service": 0,
+      "physical_charging_stop_overload_minutes": 0,
+      "expanded_grid_stop_overload_minutes": 0,
+      "grid_terminal_kwh": 11.106000400000005,
+      "grid_nonfleet_cost": 582.0719999999856,
+      "continuous_nonfleet_cost": 568.6109546186053,
+      "charging_cost_optimal": false,
+      "source_solver_commit": "3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c",
+      "root_pricing_certified": false,
+      "root_columns": 25421,
+      "root_prefix_sha256": "2972f81e592c368b5e0d692cadcb256a110e7a3bf7b17c89e440f18448e0a24e",
+      "input_sha256": {
+        "deadheads": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "instance": "85aa4a37119b2604a41aa83f46c8b8987bb95c8165c4adfb0a58ce65dbeee05b",
+        "locations": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "prices": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+      },
+      "source_execution": {
+        "rematch_sha256": "ec99c59a3865ce5a8dafcc4133733c82315c4683c2b7a2bd8dbc4eb2ac1fcdbc",
+        "engine_sha256": "f5e86db569e18121a3f4193dd56a002fcd82e3dd959e8e9e564c424a184e57c4",
+        "native_matching_solver": "12.0.3 build v12.0.3rc0 (linux64 - \"Ubuntu 24.04.5 LTS\")"
+      },
+      "source_hashes": {
+        "winner_routes": "c5854607721f8450ddb276b927adfa1992a9efd22e929d76954ad6b8bafaf5bd",
+        "winner_paths": "1831e4ec76c4a6bd7936ab90d86a2d9afbbbd0630cfcceb1a2ec2badd7bc2e39",
+        "native_receipt": "9e6d8ce53b36f3fd18018599469c96d0c5d3812dc8cfae7d1e2e19ba697b38f6",
+        "native_wrapper": "9e9b543c49e12404bbfbd60fdc8914734dffac1eb15ab812ae4b55d052f4f7e0",
+        "native_matching_log": "f9a544d1244157e3108c0ae4ab612f8f9b3db078e380d58f1b586a85e0ebb889",
+        "postrun_independent_replay": "a255c555b661c1cde9f73877e62778cff0f5a2fe4b11c20d06ecfb35731fd09e",
+        "root_gzip": "e193a9693aa508ead14000d7f8e3f4185cfa8cfeada81a1f723dffa9ffee864b"
+      },
+      "registration_adherence": {
+        "frozen_before_start": true,
+        "artifact_hashes_verified": true,
+        "candidate_cap": 32,
+        "wall_limit_seconds": 180,
+        "candidates_attempted": 5,
+        "safe_whole_path_nogoods": 0,
+        "heuristic_shared_matching_exclusions": 4,
+        "individual_retime_calls": 16,
+        "individual_cache_hits": 24,
+        "joint_retime_calls": 5,
+        "first_cover_and_all_following_rank_objectives_match_native_optimality_logs": true,
+        "all_prior_cuts_satisfied_by_later_covers": true,
+        "no_shared_miss_used_as_path_infeasibility_cut": true,
+        "negative_paths_not_repriced_in_postrun_audit": true,
+        "cut_sequence": [
+          {
+            "candidate_ordinal": 0,
+            "rank_objective": 18805,
+            "native_rank_optimality_log_verified": true,
+            "outcome": "reservation_guided_retiming_miss",
+            "cut_kind": "heuristic_visited_matching_only",
+            "shared_reason": "first_order_capacity_conflict"
+          },
+          {
+            "candidate_ordinal": 1,
+            "rank_objective": 18807,
+            "native_rank_optimality_log_verified": true,
+            "outcome": "reservation_guided_retiming_miss",
+            "cut_kind": "heuristic_visited_matching_only",
+            "shared_reason": "first_order_capacity_conflict"
+          },
+          {
+            "candidate_ordinal": 2,
+            "rank_objective": 18808,
+            "native_rank_optimality_log_verified": true,
+            "outcome": "reservation_guided_retiming_miss",
+            "cut_kind": "heuristic_visited_matching_only",
+            "shared_reason": "first_order_capacity_conflict"
+          },
+          {
+            "candidate_ordinal": 3,
+            "rank_objective": 18810,
+            "native_rank_optimality_log_verified": true,
+            "outcome": "reservation_guided_retiming_miss",
+            "cut_kind": "heuristic_visited_matching_only",
+            "shared_reason": "first_order_capacity_conflict"
+          },
+          {
+            "candidate_ordinal": 4,
+            "rank_objective": 18811,
+            "native_rank_optimality_log_verified": true,
+            "outcome": "validated_exploratory_candidate",
+            "cut_kind": "none_winner"
+          }
+        ]
+      },
+      "run_clocks_seconds": {
+        "worker": 45.373196096974425,
+        "parent": 45.613311897963285,
+        "wrapper": 45.79784514091443,
+        "phases": {
+          "authentication": 0.325250557041727,
+          "connections": 4.008723749080673,
+          "matching_mip": 0.2439990199636668,
+          "individual_retime_and_replay": 18.0515481159091,
+          "joint_retime_and_replay": 22.41763526306022
+        },
+        "parent_timed_out": false
+      },
+      "source_ancestor_durations": {
+        "heldout_repair_seconds": 9.923680747975595,
+        "heldout_receipt_sha256": "f2eacd888414dab32bb8da5178d808bc7abaede7f994834acba4a07b02c16c45",
+        "post_outcome_singles_seconds": 4.083521666936576,
+        "post_outcome_singles_receipt_sha256": "6e8c06dc213868460d9b220e4ee4876ec1b8b865bfb9c3d3907970df0c726a25",
+        "reuse_of_previous_paths_or_retimestarts": false,
+        "prior_single_outcomes": "motivated exploratory design only;no inherited no-goods or schedule cache",
+        "note": "Root graph/CG fields separately authenticated from owner;native LP/pricing are components of CG,not additional costs;full restarted-ancestor ledger is incomplete,so no fair cold-speed comparison."
+      },
+      "source_graph_seconds": 3559.4010869553313,
+      "source_root_cg_seconds": 10803.754198274575,
+      "postrun_audit_seconds": 2.2813437078148127,
+      "postrun_replay_seconds": 0.9153120843693614
+    }
+  ],
+  "all_three_verified": true,
+  "postrun_audit_total_seconds": 6.87265779171139,
+  "limits": [
+    "Exploratory follow-up on3 selected first-order failures;does not replace prospective comparison or heldout scores.",
+    "Code/input/root hashes,route replay,occupancy and cut algebra were independently checked. Rank optimality uses archived native Gurobi logs;matching MIPs and negative-path pricing were not rerun.",
+    "Budget clocks are incremental saved-root worker/parent times;upstream root graph/CG and prior screening/diagnostic work remain separate.",
+    "C5 used4 heuristic visited-matching exclusions following actual shared plug conflicts;these are not infeasibility proofs.",
+    "No electricity-cost optimum,full-model lower bound,cold speed ratio,continuous-grid equivalence or operational portability claim."
+  ]
+}
