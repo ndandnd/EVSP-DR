@@ -1,0 +1,52 @@
+{
+  "c1_k08": {
+    "archived_attempt": "job920633_r0",
+    "root_columns": 19901,
+    "root_sha256": "96630a780ef13b60234aa565a8996a87c0a9d86e3e31f57eb7c5e2a467e0f1e8",
+    "owner_summary_sha256": "37888f50deafa29f30009dca1f491f6b63d1789f0fc19a52f3c88fbcf07bbb95",
+    "instance_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+    "root_pricing_certified": false,
+    "graph_seconds": 7366.820925139007,
+    "root_cg_seconds": 10811.482574756956
+  },
+  "c3_k08": {
+    "archived_attempt": "job920641_r0",
+    "root_columns": 21447,
+    "root_sha256": "4604744b2450557f371d5865eab947f652ce07cc906dc3ec1b40271f73d36685",
+    "owner_summary_sha256": "7bd161aca93a487da239cd832338f4efd0a2d3a6d65ef43524a62848489fcf30",
+    "instance_sha256": "9d1d4ed1ab86dfa3ae09541180d1a67e612d5473d9964db36b08e9ebce72cd2b",
+    "root_pricing_certified": true,
+    "graph_seconds": 6424.463375390973,
+    "root_cg_seconds": 5459.7072366247885
+  },
+  "c4_k08": {
+    "archived_attempt": "job920645_r1",
+    "root_columns": 20378,
+    "root_sha256": "da16f3779c573a2b4a0b41e78bdf4cec9a4d913a2889dd2beaa68fbfb7952a63",
+    "owner_summary_sha256": "4cdc17571fd0692531dab96aaa6e28414ed17ea96c5d2f13b4f453a6330d0e31",
+    "instance_sha256": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+    "root_pricing_certified": false,
+    "graph_seconds": 6684.900487857056,
+    "root_cg_seconds": 10816.825731057907
+  },
+  "c5_k08": {
+    "archived_attempt": "job920649_r0",
+    "root_columns": 25421,
+    "root_sha256": "2972f81e592c368b5e0d692cadcb256a110e7a3bf7b17c89e440f18448e0a24e",
+    "owner_summary_sha256": "371b193f0617aacbc4b64ac1c11ec9cb1f37322b2b60b1862a670006b5b64286",
+    "instance_sha256": "85aa4a37119b2604a41aa83f46c8b8987bb95c8165c4adfb0a58ce65dbeee05b",
+    "root_pricing_certified": false,
+    "graph_seconds": 3559.4010869553313,
+    "root_cg_seconds": 10803.754198274575
+  },
+  "c6_k08": {
+    "archived_attempt": "job920653_r0",
+    "root_columns": 24125,
+    "root_sha256": "093469f0b9bf320bd3fdb4b8cae5d066220ec6e5f34feafa632383e5dcf7f1ae",
+    "owner_summary_sha256": "694c9ee4c64d1d80e041c0495fb9e70e8a90dc2a2e77e7ca47f03998638f9db4",
+    "instance_sha256": "749b356e355c6b7f08f45aa04764f193281215214e084460027fbe63176e400b",
+    "root_pricing_certified": true,
+    "graph_seconds": 1682.948993921047,
+    "root_cg_seconds": 5466.743241520016
+  }
+}
