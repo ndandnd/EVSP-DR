@@ -22,3 +22,15 @@ Two sparse-prefix arrays are registered on the same release gates. Job **906017*
 **Superseding the exact-once timeout.** Two complete searches independently proved the original pool has no eight-bus partition even after relaxing away the plug rows. The exact-once repeat (906021_0) was therefore cancelled while pending. The separate eight-bus covering search (906021_1) remains registered. [Proof and reproducibility](diagnostic/exact_cover/README.md).
 
 **Fractional versus integer at eight.** A separate LP checked all 173 exact trip equalities and 3,319 occupied finite station-minute limits at fleet weight eight. It succeeds with 152 fractional columns and zero plug overload. The integer search is impossible in the same archived pool. This comparison controls both the column pool and the trip/plug rules.
+
+## Operational amendment · 2 November Pacific / 3 November UTC
+
+At Nathan's direction, the existing 11 scoped jobs were updated in place with `scontrol ... Nice=0`: 905307, 905509, 905510, 905843, 905844, 905845, 905846, 905847, 906017, 906018 and **906021_1 only**. This supersedes the historical niceness 10000 above. The cancelled partition task 906021_0 was not changed. Ready-job priority rose from 4300–4301 to 14300–14301. Job IDs, scientific settings, phase budgets, resource allocations, dependencies and exclusion of scaglione-compute-01 were preserved; no duplicate jobs were submitted.
+
+Live scheduler and accounting readback confirmed that blind repair 905307, witness repeat 905509, simple control 905843 and original-pool covering test 906021_1 all started at **2 November 20:03 PST / 3 November 04:03 UTC**. At 20:04 PST / 04:04 UTC, the other seven scoped jobs remained pending on their intended dependencies. Running status establishes no scientific result.
+
+The current `run_pair.sbatch`, `gate.sbatch` and `sparse_prefix/sparse.sbatch` templates now use nice 0 for future recovery consistency and carry explicit amendment comments. The original as-submitted niceness remains in historical readbacks, deployment receipts, Git history and `sparse_prefix/SHA256SUMS`; that frozen manifest describes the pre-amendment template. Amended template SHA-256 values are:
+
+- `run_pair.sbatch`: `a71bbd55cdde77695ae60aa4c772b0d43a1df9649e082f7687601c64502af23a`
+- `gate.sbatch`: `3fa013db88db91d53da0be77a217e5a3168d288db574d2a389e054d694338eea`
+- `sparse_prefix/sparse.sbatch`: `9b6613040694e8736ddfcf33076084111a66efa6bbf5fac81f33acfa0d1f47f0`

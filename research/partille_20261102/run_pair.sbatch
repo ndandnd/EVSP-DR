@@ -1,11 +1,12 @@
 #!/bin/bash
 #SBATCH --partition=default_partition
-#SBATCH --nice=10000
+#SBATCH --nice=0
 #SBATCH --exclude=scaglione-compute-01
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=48G
 #SBATCH --time=20:00:00
 #SBATCH --requeue
+# Operational amendment: 2026-11-02 Pacific / 2026-11-03 UTC; as-submitted template used nice=10000.
 set -euo pipefail
 unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
 export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONHASHSEED=0
