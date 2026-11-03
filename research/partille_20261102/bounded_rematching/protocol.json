@@ -1,0 +1,78 @@
+{
+  "schema": "exploratory-rematch-protocol-v1",
+  "prepared_utc": "2026-11-03T08:22:23.670399+00:00",
+  "cases": [
+    "c1_k08",
+    "c4_k08",
+    "c5_k08"
+  ],
+  "case_fleet_target": 8,
+  "source": "original unseeded standard-v15 PARX60 root prefixes;authenticated source/input hashes from earlier native audit",
+  "design_status": "exploratory follow-up after failed first-order holdout repairs;not a new held-out/generalization score",
+  "no_giro_assignments": true,
+  "no_alternative_seed_routes": true,
+  "inherited_no_goods_or_retime_starts": false,
+  "budget": {
+    "child_hard_wall_seconds_per_case": 180,
+    "candidate_cover_cap_per_case": 32,
+    "one_first_candidate_per_fixed_sequence_retime": true,
+    "single_tests_memoized_within_case": true,
+    "all_import_authentication_connections_matching_retiming_and_replay_in_worker_budget": true,
+    "prior_archive_and_diagnostic_durations": "separately retained in manifests and receipts;not called zero;no cold or equal-end-to-end ratio",
+    "timeouts": "parent terminates entire child process group at180s;last atomic checkpoint retained;no fresh automatic budget"
+  },
+  "matching": {
+    "domain": "only observed source root passenger adjacencies",
+    "variables": "binary y_uv;at most one predecessor and successor;sum y=n-8",
+    "objective": "minimize sum edge ranks;rank by frequency descending,source start minute,source id,successor id",
+    "tie_policy": "Gurobi seed0,threads1;equal rank sums resolved by that fixed solver;no row permutations or parameter tuning",
+    "ranking_not_schedule_cost": true
+  },
+  "safe_path_no_good": {
+    "precondition": "registered complete fixed-sequence event graph returns no terminal candidate with empty other-bus reservations;no physical replay/technical error is accepted as this proof",
+    "formula": "sum(y_uv for internal consecutive path arcs)-sum(y_us for arcs entering first node)-sum(y_tv for arcs leaving last node)<=len(path)-2",
+    "proof": "Unit predecessor/successor matching:violation iff every internal arc is selected and both endpoints are unmatched to outside nodes,i.e.the exact forbidden whole path is a connected component. Extensions,subpaths and alternate predecessor/successor choices remain allowed. Additional buses cannot restore reachability lost without their reservations. Scope is specified event graph,not continuous physics.",
+    "tests": "225 exhaustive acyclic4-node component checks and actual Gurobi endpoint-extension smoke passed"
+  },
+  "shared_conflict_policy": {
+    "rule": "every path must first pass empty-reservation test;shared-guided no-terminal or overloaded schedules never create path-infeasibility no-goods",
+    "alternative_enumeration": "exclude only the already-visited complete matching after a first-order shared retiming miss;this is explicitly heuristic enumeration and can skip another timing realization of a feasible matching",
+    "no_global_infeasibility_claim": true
+  },
+  "hit": "exactly8 independently replayed schedules,all source trips exactly once,zero minute plug overload,grid/continuous physical chronology and energy/cost block checks using registered independent replay",
+  "null_and_failure_outcomes": [
+    "observed links insufficient",
+    "no further observed matching after cuts/enumeration",
+    "candidate cap exhausted",
+    "180s timeout",
+    "technical/validation error"
+  ],
+  "earliest_prefix_diagnosis": false,
+  "physics": {
+    "battery_kwh": 240,
+    "initial_kwh": 240,
+    "reserve_kwh": 0,
+    "soc_step_kwh": 2.5,
+    "event_step_min": 5,
+    "opportunity_kw": 240,
+    "PARX_kw": 60,
+    "plugs": "original finite opportunity and unlimited PARX",
+    "terminal_target_kwh": 0,
+    "tariff": "authenticated flat",
+    "start_fee": 5
+  },
+  "resources": {
+    "partition": "default_partition",
+    "nice": 0,
+    "excluded_nodes": [
+      "scaglione-compute-01"
+    ],
+    "array": "0-2%3",
+    "cpus_per_task": 2,
+    "memory_gib": 4,
+    "allocation_minutes": 10,
+    "automatic_requeue": false,
+    "resource_reason": "Three independent streamed-root/small matching MIPs and fixed-sequence graphs;all-case concurrency3;prior lightweight root cases fit4GiB;hard180s worker cap plus source/setup/replay bookkeeping under10min."
+  },
+  "publication": "No Git push or Docs edits by this task;source/protocol frozen remotely and hashed before job start;raw licensed artifacts private."
+}

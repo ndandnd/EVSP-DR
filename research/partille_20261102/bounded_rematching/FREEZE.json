@@ -1,0 +1,53 @@
+{
+  "schema": "immutable-exploratory-rematch-freeze-v1",
+  "frozen_utc": "2026-11-03T08:25:17.987580+00:00",
+  "task_map": [
+    "c1_k08",
+    "c4_k08",
+    "c5_k08"
+  ],
+  "artifact_sha256": {
+    "code/array_worker.py": "c6d503cd335e70536b239c927d37170113917e7a63bbf3c2e0265c3fe46c3d18",
+    "code/engine.py": "f5e86db569e18121a3f4193dd56a002fcd82e3dd959e8e9e564c424a184e57c4",
+    "code/rematch.py": "ec99c59a3865ce5a8dafcc4133733c82315c4683c2b7a2bd8dbc4eb2ac1fcdbc",
+    "code/rematch.sbatch": "f71bd4104947d5334e9bfca1db7754581bd0ceffae2f169930a7f8b8b2b1126e",
+    "code/smoke_matching.py": "33e9aeffb97379201ae0a26d285defd82c9c45b1ca042adebe629447f4a0de9f",
+    "code/test_nogood.py": "4a15378abd7b0524a4ed17e7410a11ef91d3e36321afe7f3c52f1d32a38cda27",
+    "manifests/c1_k08.json": "a358b325b6e29d83ebf96dfe36d655d91ff64c64485c489206a368c3d19859f8",
+    "manifests/c4_k08.json": "9cf425556754ea631152938403f909ce9f9e602124b9f744347dc14bbf147f24",
+    "manifests/c5_k08.json": "7e498d1e0ef289cb7900990c6877490ad43f3b40681d5303f234323c64554be6",
+    "protocol.json": "b0df83fe2e10a23a25760be8a6db2deb19f1f268795d28fba7b1473d97e9b11e"
+  },
+  "policy_sha256": "f9c5982718da6ab758019ceb85e31b539aea5416adc51816bc4bae220728e40b",
+  "preflight_cases": [
+    {
+      "case": "c1_k08",
+      "root_columns": 19901,
+      "root_prefix_sha256": "96630a780ef13b60234aa565a8996a87c0a9d86e3e31f57eb7c5e2a467e0f1e8",
+      "source_and_inputs_authenticated": true,
+      "root_pricing_certified": false
+    },
+    {
+      "case": "c4_k08",
+      "root_columns": 20378,
+      "root_prefix_sha256": "da16f3779c573a2b4a0b41e78bdf4cec9a4d913a2889dd2beaa68fbfb7952a63",
+      "source_and_inputs_authenticated": true,
+      "root_pricing_certified": false
+    },
+    {
+      "case": "c5_k08",
+      "root_columns": 25421,
+      "root_prefix_sha256": "2972f81e592c368b5e0d692cadcb256a110e7a3bf7b17c89e440f18448e0a24e",
+      "source_and_inputs_authenticated": true,
+      "root_pricing_certified": false
+    }
+  ],
+  "tests": "225 exhaustive component checks and synthetic Gurobi endpoint-extension pass",
+  "heldout_candidate_generation_before_freeze": false,
+  "submissions_before_freeze": false,
+  "limits": {
+    "case_child_wall_seconds": 180,
+    "candidate_cover_cap": 32,
+    "array_concurrency": 3
+  }
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "case": "c1_k08",
+    "root_columns": 19901,
+    "root_prefix_sha256": "96630a780ef13b60234aa565a8996a87c0a9d86e3e31f57eb7c5e2a467e0f1e8",
+    "schema": "frozen-root-trip-link-manifest-v1",
+    "solver_commit": "3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c",
+    "input_sha256": {
+      "deadheads": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "instance": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "locations": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "prices": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+    },
+    "source_provenance_limit": "Audit authenticates the current pinned source. Archived as-run owner summary does not independently record source hashes.",
+    "summary_sha256": "37888f50deafa29f30009dca1f491f6b63d1789f0fc19a52f3c88fbcf07bbb95",
+    "expected_cg_pricing_certified": false,
+    "target_fleet": 8,
+    "private_manifest_sha256": "a358b325b6e29d83ebf96dfe36d655d91ff64c64485c489206a368c3d19859f8"
+  },
+  {
+    "case": "c4_k08",
+    "root_columns": 20378,
+    "root_prefix_sha256": "da16f3779c573a2b4a0b41e78bdf4cec9a4d913a2889dd2beaa68fbfb7952a63",
+    "schema": "frozen-root-trip-link-manifest-v1",
+    "solver_commit": "3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c",
+    "input_sha256": {
+      "deadheads": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "instance": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+      "locations": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "prices": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+    },
+    "source_provenance_limit": "Audit authenticates the current pinned source. Archived as-run owner summary does not independently record source hashes.",
+    "summary_sha256": "4cdc17571fd0692531dab96aaa6e28414ed17ea96c5d2f13b4f453a6330d0e31",
+    "expected_cg_pricing_certified": false,
+    "target_fleet": 8,
+    "private_manifest_sha256": "9cf425556754ea631152938403f909ce9f9e602124b9f744347dc14bbf147f24"
+  },
+  {
+    "case": "c5_k08",
+    "root_columns": 25421,
+    "root_prefix_sha256": "2972f81e592c368b5e0d692cadcb256a110e7a3bf7b17c89e440f18448e0a24e",
+    "schema": "frozen-root-trip-link-manifest-v1",
+    "solver_commit": "3a0ab6a8ab50e4af7d5a7be7688d5ffa1fbbf78c",
+    "input_sha256": {
+      "deadheads": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "instance": "85aa4a37119b2604a41aa83f46c8b8987bb95c8165c4adfb0a58ce65dbeee05b",
+      "locations": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "prices": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+    },
+    "source_provenance_limit": "Audit authenticates the current pinned source. Archived as-run owner summary does not independently record source hashes.",
+    "summary_sha256": "371b193f0617aacbc4b64ac1c11ec9cb1f37322b2b60b1862a670006b5b64286",
+    "expected_cg_pricing_certified": false,
+    "target_fleet": 8,
+    "private_manifest_sha256": "7e498d1e0ef289cb7900990c6877490ad43f3b40681d5303f234323c64554be6"
+  }
+]
