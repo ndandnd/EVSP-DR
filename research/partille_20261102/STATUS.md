@@ -34,3 +34,9 @@ The current `run_pair.sbatch`, `gate.sbatch` and `sparse_prefix/sparse.sbatch` t
 - `run_pair.sbatch`: `a71bbd55cdde77695ae60aa4c772b0d43a1df9649e082f7687601c64502af23a`
 - `gate.sbatch`: `3fa013db88db91d53da0be77a217e5a3168d288db574d2a389e054d694338eea`
 - `sparse_prefix/sparse.sbatch`: `9b6613040694e8736ddfcf33076084111a66efa6bbf5fac81f33acfa0d1f47f0`
+
+## Eight-bus repair and cluster repeat · evening of 2 November Pacific
+
+The local repair recombined adjacent passenger trips from the original columns. It recovered eight buses serving all 173 trips exactly once with zero overloaded plug minutes, without using GIRO assignments. After root CG alone it took 4.79 s to construct, retime and check the duties. After the route dive it took 7.70 s. The graph and root CG took 4.56 h upstream. A two-minute fixed-fleet cost MIP on the augmented pool kept all eight new duties at 361.752. Its finite-pool cost bound was 238.369. This one-case retrospective test is separate from the prospective Slurm comparison. [Methods and validation](https://github.com/ndandnd/EVSP-DR/tree/3611e544b23034cfb10d2d7b1d41184461ba5c49/research/partille_20261102/diagnostic/link_recombination).
+
+Cluster repeat 905509 completed in 91 s. The native GIRO-duty witness and augmented selection both passed replay at eight buses, 173 trips exactly once and zero overloaded plug minutes. Gurobi accepted the supplied start in 19.58 s at its objective limit. Blind repair 905307, simple control 905843 and original covering test 906021_1 were running at that check. Only the registered prospective result may release the six-chain comparison.
