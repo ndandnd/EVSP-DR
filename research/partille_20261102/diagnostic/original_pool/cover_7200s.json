@@ -1,0 +1,29 @@
+{
+  "status": 9,
+  "solutions": 0,
+  "solver_seconds": 7200.006577014923,
+  "explored_nodes": 318737.0,
+  "model_rows": 3443,
+  "model_columns": 27282,
+  "solver_version": [
+    12,
+    0,
+    3
+  ],
+  "finite_pool_infeasible": false,
+  "fleet": null,
+  "instance_sha256": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+  "source_pool_sha256": "5744645fa8fc62e3c79e3880a12b1388dda8e0342fe46bb6c700d61e98c86d0d",
+  "root_prefix_sha256": "e0d2c8fb02c6e6c966fea22505ca22dc6ecb0d2481e61b2221e1603aa1a5351f",
+  "pool_size": 39390,
+  "eligible_count": 27282,
+  "filtered_count": 12108,
+  "peak_simultaneous_trips": 8,
+  "distinct_peak_sets": 4,
+  "distinct_trips_in_peak_sets": 25,
+  "trip_rows": "cover",
+  "threads": 4,
+  "time_limit": 7200.0,
+  "objective": "feasibility at the independently derived fleet floor",
+  "filter": "Every selected route must hit every simultaneous peak set once; any failure was excluded."
+}

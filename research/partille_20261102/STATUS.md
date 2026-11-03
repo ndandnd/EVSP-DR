@@ -44,3 +44,7 @@ Cluster repeat 905509 completed in 91 s. The native GIRO-duty witness and augmen
 ## Five held-out chains · all ten tasks terminal
 
 In array 915057, recombining root-column trip connections recovered the eight-bus minimum on C3 and C6. Selecting whole root duties recovered it on 0/5. C1, C4 and C5 had original pools proved infeasible at eight with exactly-once service. The C3 and C6 controls timed out, leaving feasibility within those two pools unresolved. Frozen-path tests showed that every missed repair had at least one duty that could not finish even with no competing charger reservations. The k10 expansion threshold was three successes and the panel produced two. [Full results, times and scope](root_link_holdout/RESULTS.md).
+
+## 3 November · Eight-bus covering search on the original C2 pool
+
+With duplicate passenger service allowed and shared plug rows active, Gurobi explored 318,737 nodes in 7,200.01 seconds. It found no feasible eight-bus cover and reached its time limit. Eight-bus covering remains unresolved in that pool. The independent exactly-once infeasibility proof still applies to the stricter selection. The original 39,390-column pool was screened safely to 27,282 columns. [Two-hour receipt](diagnostic/original_pool/cover_7200s.json).
