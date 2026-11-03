@@ -1,6 +1,6 @@
 # Partille research decisions, 3 November
 
-## Which experiments are active?
+## Registered experiments
 
 | Scientific question | Saved inputs and comparator | Cluster record | What counts as an answer |
 |---|---|---|---|
@@ -9,7 +9,7 @@
 | Can an alternative set of station visits serve the same GIRO duties under the 60 kW depot rate? | All 12 October cells with a fixed-visit infeasibility proof. Try the registered flat-price donor in the same family with identical duties, inputs, power, plugs and ending-energy requirement. | 917978 in partille_visit_transfer_20261103 | Replay all trips, station windows, SOC, plugs and end energy and reprice the actual donor energy at the receiver prices. A pass gives a feasible upper bound. A miss on this donor leaves alternative station choices open. |
 | Does fresh integer-directed pricing beat a simple dive under equal resource limits? | C2 preregistered pilot and control, then conditional expansion to remaining chains, conditional k10, and sparse-prefix controls. | 905307, 905843 and original November 2 ledgers | Only terminal, hash-bound results may open the gates. k10 requires repair hits on at least 4/6, strictly more than the controls, and retention of every control hit. |
 
-The separate three-of-five threshold for expanding the original trip-link repair to k10 was missed. The two k10 rules refer to different treatments. Do not launch additional k10 or k15 work or replace any archived control in these comparisons. The registered four-hour check includes each job family and ends by noon Pacific on November 6.
+The separate three-of-five threshold for expanding the original trip-link repair to k10 was missed. The two k10 rules refer to different treatments. Do not launch additional k10 or k15 work or replace any archived control in these comparisons. The four-hour check covered the job families listed here through their terminal results on November 3.
 
 ## Verified observations at registration
 
@@ -24,3 +24,13 @@ The separate three-of-five threshold for expanding the original trip-link repair
 ## Next decision
 
 The rematching result now warrants a prospective test on new eight-bus cohorts, with method and budget frozen in advance. If the coarser grid saves time, compare fleet, duplicated trips and replay first, then isolate the energy-grid effect on cost with matched-fleet, identical-service schedules. Run a station-choice optimization for missing witnesses or to measure the best cost at 60 kW. Compare candidate station choices with the same opportunity windows and terminal requirements. These experiments use distinct historical model settings and cannot by themselves validate every GIRO physical assumption.
+
+## Campaign handback · 3 November
+
+All 2–3 November jobs assigned to this monitor are terminal. No scoped job remains in Slurm. The separate, independently registered extended SOC-grid campaign is outside this handback.
+
+- The two fresh C2 methods each selected nine buses. Repair pricing produced 21 extra services and simple diving produced 11. Both release checks recorded a scientific hold. All 34 conditional tasks ended without starting. Their sparse prefixes consumed zero compute. [Fresh pilot comparison](pilot_endpoint/RESULTS.md).
+- The three 5 kWh runs used about one quarter of the pricing arcs and 43.6–52.5% less root CG time than the 2.5 kWh historical controls. All three selected eight buses. C6 served all 128 trips exactly once; C2 and C3 repeated 19 and 7 services, respectively. [Full grid panel](soc_grid_sensitivity/results/RESULTS.md).
+- The earlier three exploratory rematch winners and 12 verified alternative-visit price cases retain their original scopes. [Rematching](bounded_rematching/RESULTS.md) · [Station-visit replay](fixed_duty_visit_transfer/RESULTS.md).
+
+The next fleet test would freeze the rematching method on previously unused k8 inputs and use exactly-once replay as the primary outcome. A cost comparison would optimize station visits and charging times on both assignments at the same fleet and level of passenger service. Neither test was submitted by this monitor.

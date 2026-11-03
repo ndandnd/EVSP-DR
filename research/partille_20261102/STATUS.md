@@ -54,3 +54,13 @@ With duplicate passenger service allowed and shared plug rows active, Gurobi exp
 Alternative visits repair all 12 archived slow-depot fixed-visit misses on the same GIRO passenger duties. [Assumptions, terminal tolerance and all 12 receipts](fixed_duty_visit_transfer/RESULTS.md).
 
 The revised matching search recovered independently verified eight-bus dispatches on C1, C4 and C5, the three known misses in the earlier test. Across them the original root columns contained all 525 adjacent trip connections and none of the 24 complete winning sequences. [Rematching results and proof scope](bounded_rematching/RESULTS.md).
+
+## Campaign handback · 3 November
+
+All 2–3 November jobs assigned to this monitor are terminal. No scoped job remains in Slurm. The separate, independently registered extended SOC-grid campaign is outside this handback.
+
+- The two fresh C2 methods each selected nine buses. Repair pricing produced 21 extra services and simple diving produced 11. Both release checks recorded a scientific hold. All 34 conditional tasks ended without starting. Their sparse prefixes consumed zero compute. [Fresh pilot comparison](pilot_endpoint/RESULTS.md).
+- The three 5 kWh runs used about one quarter of the pricing arcs and 43.6–52.5% less root CG time than the 2.5 kWh historical controls. All three selected eight buses. C6 served all 128 trips exactly once; C2 and C3 repeated 19 and 7 services, respectively. [Full grid panel](soc_grid_sensitivity/results/RESULTS.md).
+- The earlier three exploratory rematch winners and 12 verified alternative-visit price cases retain their original scopes. [Rematching](bounded_rematching/RESULTS.md) · [Station-visit replay](fixed_duty_visit_transfer/RESULTS.md).
+
+The next fleet test would freeze the rematching method on previously unused k8 inputs and use exactly-once replay as the primary outcome. A cost comparison would optimize station visits and charging times on both assignments at the same fleet and level of passenger service. Neither test was submitted by this monitor.

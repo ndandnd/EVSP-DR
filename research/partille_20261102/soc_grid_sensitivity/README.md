@@ -13,3 +13,5 @@ The registered comparison changes the battery state grid from 2.5 to 5.0 kWh for
 Each selected control covers every trip and passes independent route replay and the shared one-minute plug rows. Each has duplicated trip service. The registered fine and coarse arms use a covering master, the recorded flat tariff, a per-start fee of 5, a 240 kWh battery, 240 kW opportunity chargers, PARX 60 kW with unlimited plugs, and zero reserve and terminal requirement. The full comparison will separate graph time and size, weighted grid-LP certificates, finite-pool fleet and cost, and independently validated selected schedules. No optimistic bound was launched.
 
 The four-trip end-to-end CLI smoke certified both grid roots and produced MIP selections. The graph had 432 arcs at 2.5 kWh and 218 at 5 kWh. The separate grid-aware validator reproduced total terminal energy of 536.769 and 534.269 kWh across the respective selections. The production replay also checks input hashes, final journal membership, charge windows, billed costs and minute-by-minute finite plug limits.
+
+[Completed three-chain sensitivity, replayed dispatch outcomes and compute](results/RESULTS.md).
