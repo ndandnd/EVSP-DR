@@ -1,0 +1,146 @@
+{
+  "schema": "archive-adjacency-new-paths-exact-pool-v1",
+  "source_hashes": {
+    "owner_summary": "209bde0a89b1bc2be8e0cb7df33280c23aa195b75fb54cd985b65e071e2a5c54",
+    "original_pool": "5744645fa8fc62e3c79e3880a12b1388dda8e0342fe46bb6c700d61e98c86d0d",
+    "original_root_prefix": "e0d2c8fb02c6e6c966fea22505ca22dc6ecb0d2481e61b2221e1603aa1a5351f",
+    "paths": "34df7e8d4065edefb125bc314d17b4223574a22946fc90583ce77825f2583314",
+    "retimer_routes": "abdbd275aa8ef3bdcc2cfa8cb6c4f4738e5a14db4161bddb3180597f2e514dd3",
+    "retimer_receipt": "21ab4999f169575956792553032db089876caaa23700a06a3dfcf69f8a18008a",
+    "link_receipt": "c462b52743f0334404860b06c7501e978c54d29b26e5d951fb38320a576ba34f",
+    "validator_code": "5a72fb549251e9889cc7d1376481ab65d1c2d630f706bc9df0cbacd63692538a",
+    "driver_code": "300fb1b0b6a5c45b9f4c662bb12a84f4270909da3e7465e59a9c20b198d02e60",
+    "final_selection": "abdbd275aa8ef3bdcc2cfa8cb6c4f4738e5a14db4161bddb3180597f2e514dd3",
+    "native_solver_log_private": "423ed83cb30f902447c646bda3a85b004a0f119514423a6e0a98df7a339d103d",
+    "initial_replay_private": "67391f79a16e484b6a6b3b458d98dcbe7ce45a20b04186d32f654d6a2d417607",
+    "final_replay_private": "67391f79a16e484b6a6b3b458d98dcbe7ce45a20b04186d32f654d6a2d417607"
+  },
+  "input_hashes": {
+    "Practice_Custom_DutyUnion_k08_p02_20260908.csv": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+    "hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+  },
+  "solver_source_hashes": {
+    "audit_giro_known_columns.py": "f4f18439c303962f2e6276306e06481aef326d4da331eb9a289828dfdb0ba4fb",
+    "capacity_event_pricer.py": "eec8fe4c2799b2582a8165e122a55726af7b250793866a7206b1f7fba99fd58c",
+    "event_pricer_network.py": "bfa56f994ebba94c132869a07c13f57b47286eb1a22d3e8503f0d21cb2c92dfd",
+    "expanded_path_realization.py": "5df7a4ea46a0ac8b9b790f5323442a838341a437fd8c9ddeae314d1248529167",
+    "run_capacity_terminal_cg.py": "11b2ad510255b2884f75b64a3d938816bb983449b05375489a3192488b16b7f2",
+    "run_exact_pool_mip.py": "1abec921528527136a058c3336a925a15c5246350297d84a8fb614d842d88e05"
+  },
+  "solver": {
+    "version": "12.0.1",
+    "threads": 2,
+    "limit_seconds": 120,
+    "objective": "charging cost at fixed fleet eight",
+    "status": 9,
+    "status_name": "TIME_LIMIT",
+    "runtime_seconds": 120.05329203605652,
+    "optimize_wall_seconds": 120.05308791715652,
+    "solutions": 1,
+    "objective_nonfleet": 361.75199999999313,
+    "bound_nonfleet_finite_pool": 238.3689525018248,
+    "mip_gap": 0.34107080955508384,
+    "weighted_objective": 800361.752,
+    "weighted_bound_finite_pool": 800238.3689525018,
+    "nodes": 1092.0,
+    "columns": 39398,
+    "rows": 3815,
+    "plug_rows": 3640,
+    "trip_equalities": 173,
+    "new_columns_selected": 8
+  },
+  "original_columns": 39390,
+  "new_columns": 8,
+  "physics": {
+    "battery_kwh": 240.0,
+    "initial_kwh": 240.0,
+    "charge_kw": 240.0,
+    "station_kw": {
+      "PARX": 60.0
+    },
+    "reserve_kwh": 0,
+    "soc_step": 2.5,
+    "time_step": 5,
+    "shared_capacity": true,
+    "plug_rows": "1-minute conservative, lazy",
+    "charge_start_fee": 5.0,
+    "coverage": "cover",
+    "non_strict_tariff": true,
+    "bus_cost_kx": 100000.0,
+    "max_trip2trip_min": 57.0,
+    "max_station_to_trip_wait_min": 1560.0
+  },
+  "actual_master_trip_rows": "partition (=1)",
+  "fixed_fleet": 8,
+  "terminal_target_kwh": 0,
+  "plugs": {
+    "2190L": 1,
+    "4808": 1,
+    "7880C": 1,
+    "JON_A": 1,
+    "3127L": 2,
+    "PARX": null
+  },
+  "initial_replay": {
+    "validated": true,
+    "fleet": 8,
+    "trip_count": 173,
+    "exact_once": true,
+    "duplicate_service": 0,
+    "grid_plug_overload_minutes": 0,
+    "objective_nonfleet": 361.75199999999313,
+    "continuous_nonfleet": 343.2331426011806,
+    "grid_terminal_kwh": 14.631000600000002,
+    "peak_simultaneous_trips": 8
+  },
+  "final_replay": {
+    "validated": true,
+    "fleet": 8,
+    "trip_count": 173,
+    "exact_once": true,
+    "duplicate_service": 0,
+    "grid_plug_overload_minutes": 0,
+    "objective_nonfleet": 361.75199999999313,
+    "continuous_nonfleet": 343.2331426011806,
+    "grid_terminal_kwh": 14.631000600000002,
+    "peak_simultaneous_trips": 8
+  },
+  "timing_seconds": {
+    "initial_independent_replay": 1.419864042662084,
+    "pool_load_and_incidence": 3.3307574996724725,
+    "model_build": 1.999329541809857,
+    "optimize_wall": 120.05308791715652,
+    "final_independent_replay": 1.2630811659619212,
+    "driver_total": 129.19559245742857,
+    "incremental_workflow_total_excluding_driver_startup_gap": 135.94984366651624
+  },
+  "upstream_incremental_seconds": {
+    "archive_edge_matching": 1.657659667544067,
+    "fixed_sequence_retimer": 5.096591541543603
+  },
+  "historical_ancestor_compute": {
+    "graph_seconds": 7965.730485877022,
+    "root_cg_seconds": 8465.745419886895,
+    "root_lp_seconds_component": 249.23953007627279,
+    "root_pricing_seconds_component": 6572.3459916296415,
+    "dive_requested_seconds": 5400.0,
+    "dive_actual_seconds": null,
+    "dive_state": "time_limit",
+    "fleet_mip_seconds": 1800.3186592138372,
+    "charging_mip_actual_seconds": null,
+    "historical_selected_fleet": 9,
+    "historical_selected_duplicate_service": 44,
+    "warning": "Missing native dive and charging elapsed times; do not report an equal-end-to-end speed ratio."
+  },
+  "scope": "One deterministic archive-edge recombination pilot. Existing 39,390-route archive and its ancestor graph/CG/dive cost are reused. Fleet minimum eight follows from independent simultaneous-trip floor plus replayed selection. Charging bound is finite augmented-pool only. Not blind from-scratch or a new pricing certificate.",
+  "mip_start_accepted": true,
+  "mip_start_note": "Accepted constructive start from eight newly recombined/retimed routes; this is not MIP discovery time.",
+  "hardware": {
+    "machine": "arm64",
+    "operating_system": "Darwin",
+    "python": "3.12.2"
+  },
+  "provenance_note": "driver_code identifies the exact run; start-acceptance, machine metadata and private log/check hashes were appended by packaging after completion."
+}

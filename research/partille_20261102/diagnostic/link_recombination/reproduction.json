@@ -1,0 +1,58 @@
+{
+  "blind_public_aggregate_sha256": "f7a71f2205f8913949485af89565a85bbd3e548107243f416f7bec380bae6b59",
+  "captured_fees": {
+    "capacity_event_pricer": 5.0,
+    "config": 5.0,
+    "event_pricer_network": 5.0,
+    "expanded_path_realization": 5.0
+  },
+  "execution_source_provenance": "New local diagnostic scripts were uncommitted at execution; exact script and imported solver-module hashes are retained instead of asserting a nonexistent execution commit. The final public package commit pins the published sources.",
+  "fixed_sequence_graph_parameters": {
+    "max_station_to_trip_wait_min": 1560.0
+  },
+  "original_execution_sources_sha256": {
+    "blind_link.py": "0aff68043d14c2ad690c82100d1715427e2a359e81c64bb01a78d8300696041d",
+    "retime_once.py": "22d6421eec1250696a299421bea53f81c6c848ead91f8275e01db99ced085771",
+    "verify_pilot.py": "103317518f63afed69fd6dd7d7225260b706a7d45b2b9fd31e23b14e13d2e22a"
+  },
+  "published_sources_sha256": {
+    "blind_link.py": "0aff68043d14c2ad690c82100d1715427e2a359e81c64bb01a78d8300696041d",
+    "posthoc_check_links.py": "7264e6081b3d8c334e9553c0a0833f49eac0e538ec3b44fc912e0d07e9645a65",
+    "retime_once.py": "2bd9836b6394f2ee8f18acd3ffe0e0d295a7f86d1bc865d02cf4492d778a20a3",
+    "root_blind_link.py": "288be99d8342d75a8b014afc5a5b17ed64956553e5c631dbe2c7951615ebda52",
+    "verify_pilot.py": "103317518f63afed69fd6dd7d7225260b706a7d45b2b9fd31e23b14e13d2e22a"
+  },
+  "raw_private_receipts_sha256": {
+    "final_replay_receipt.json": "d9fce9cd32b720e09d4152449306051cb0993ec898a7cb2801319e6bb937c138",
+    "receipt.json": "c462b52743f0334404860b06c7501e978c54d29b26e5d951fb38320a576ba34f",
+    "retime_receipt.json": "21ab4999f169575956792553032db089876caaa23700a06a3dfcf69f8a18008a"
+  },
+  "required_model_inputs_sha256": {
+    "Practice_Custom_DutyUnion_k08_p02_20260908.csv": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+    "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+  },
+  "required_solver_modules_sha256": {
+    "audit_giro_known_columns.py": "f4f18439c303962f2e6276306e06481aef326d4da331eb9a289828dfdb0ba4fb",
+    "capacity_event_pricer.py": "eec8fe4c2799b2582a8165e122a55726af7b250793866a7206b1f7fba99fd58c",
+    "event_pricer_network.py": "bfa56f994ebba94c132869a07c13f57b47286eb1a22d3e8503f0d21cb2c92dfd",
+    "expanded_path_realization.py": "5df7a4ea46a0ac8b9b790f5323442a838341a437fd8c9ddeae314d1248529167",
+    "run_capacity_terminal_cg.py": "11b2ad510255b2884f75b64a3d938816bb983449b05375489a3192488b16b7f2",
+    "run_exact_pool_mip.py": "1abec921528527136a058c3336a925a15c5246350297d84a8fb614d842d88e05"
+  },
+  "retiming_cli_adaptation": "Only import/argument parsing and OUT/data/instance assignments changed from the exact executed retime_once.py; fixed 180-second cap, one path order, algorithm and scientific parameters preserved. Adapted CLI syntax checked; no new retiming run performed for publication.",
+  "root_only_execution_sources_sha256": {
+    "blind_link.py": "288be99d8342d75a8b014afc5a5b17ed64956553e5c631dbe2c7951615ebda52",
+    "retime_once.py": "db6b15f96008ae20264dea3bd0bc38abb5f8bec87d28bc0fcab5a7a92ac11848",
+    "verify_pilot.py": "103317518f63afed69fd6dd7d7225260b706a7d45b2b9fd31e23b14e13d2e22a"
+  },
+  "root_only_raw_private_receipts_sha256": {
+    "final_replay_receipt.json": "d38f2f3b2fbb72c747d23e13a0d903f791e44f623f94e50281ec871732601c47",
+    "receipt.json": "943ee247bcc79ba1f89481b5a40c2e499e4ae035229f0ade465888040c861205",
+    "retime_receipt.json": "66c185938e7e39e3baa99a7fb5ed03e851994a56b96867449cdedf0f95cdd946"
+  },
+  "root_only_reproduction": "Use root_blind_link.py for construction; use the same published retime_once.py and verify_pilot.py CLI with a fresh private output directory. Both exact executed retiming variants differ from their published CLI by path/argument handling only.",
+  "root_public_aggregate_sha256": "a70fe4d3f64feda2c53efc5021197c56a2dc9873e718265b8b3632bb0c668b47",
+  "schema": "link-recombination-reproduction-v1"
+}

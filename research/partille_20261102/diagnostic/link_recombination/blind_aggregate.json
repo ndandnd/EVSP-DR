@@ -1,0 +1,67 @@
+{
+  "adjacency_edges": 1876,
+  "blindness_note": "No witness routes, assignments or duty-label files accessed. Construction and the only retiming attempt finished before an unsolicited post-hoc aggregate message; no subsequent edge/path selection or retiming attempts.",
+  "charging_sessions": 29,
+  "clocks": {
+    "independent_replay_limit_seconds": null,
+    "independent_replay_scope": "separate certificate/replay/exact coverage/cost/charging-block/shared occupancy check; includes imports, excludes interpreter startup",
+    "independent_replay_seconds": 0.9414090001955628,
+    "matching_limit_seconds": null,
+    "matching_scope": "file parse, authenticated pool scan, graph/matching/certificate, sequence comparison and output; excludes interpreter startup/source discovery",
+    "matching_seconds": 1.657659667544067,
+    "retiming_limit_seconds": 180,
+    "retiming_scope": "one ordering, includes imports/input hashing/graphs/shortest paths/individual energy and route checks/shared occupancy/output; excludes interpreter startup",
+    "retiming_seconds": 5.096591541543603
+  },
+  "construction": "Consecutive passenger-trip adjacencies from immutable archived priced routes; deterministic frequency/id matching; no witness input used",
+  "continuous_nonfleet_cost": 343.2331426011806,
+  "continuous_terminal_kwh": 34.32900240000001,
+  "exact_once": true,
+  "execution_code_sha256": {
+    "blind_link.py": "0aff68043d14c2ad690c82100d1715427e2a359e81c64bb01a78d8300696041d",
+    "retime_once.py": "22d6421eec1250696a299421bea53f81c6c848ead91f8275e01db99ced085771",
+    "verify_pilot.py": "103317518f63afed69fd6dd7d7225260b706a7d45b2b9fd31e23b14e13d2e22a"
+  },
+  "graph_certificate_sha256": "c0bf7cb81ebb821e3362386489161766cedf006bde3c9db3fd7eb6ba922d0a1c",
+  "grid_nonfleet_cost": 361.75199999999313,
+  "grid_terminal_kwh": 14.631000600000002,
+  "independent_replay": true,
+  "maximum_matching": 165,
+  "minimum_trip_paths": 8,
+  "minimum_vertex_cover": 165,
+  "new_complete_sequences": 8,
+  "overload_minutes": 0,
+  "paths_sha256": "34df7e8d4065edefb125bc314d17b4223574a22946fc90583ce77825f2583314",
+  "physics": {
+    "battery_kwh": 240,
+    "charge_kw": 240,
+    "initial_kwh": 240,
+    "reserve_kwh": 0,
+    "soc_step": 2.5,
+    "start_fee": 5,
+    "station_kw": {
+      "PARX": 60
+    },
+    "terminal_target_kwh": 0,
+    "time_step": 5
+  },
+  "plugs": {
+    "2190L": 1,
+    "3127L": 2,
+    "4808": 1,
+    "7880C": 1,
+    "JON_A": 1,
+    "PARX": null
+  },
+  "pool_routes": 39390,
+  "retiming_order_attempts": 1,
+  "retiming_outcome": "eight_replayed_shared_capacity_feasible",
+  "schedule_sha256": "abdbd275aa8ef3bdcc2cfa8cb6c4f4738e5a14db4161bddb3180597f2e514dd3",
+  "schema": "blind-link-sanitized-aggregate-v1",
+  "scope": "Feasible candidate under independently replayed matching C2 chain physics; no CG/full-model pricing or charging-cost optimality certificate claimed",
+  "source_instance_sha256": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+  "source_pool_gzip_sha256": "c5e711514195ef4b31066d28f9c61bc134335f445fafa0a4a45efac10e22060c",
+  "source_pool_uncompressed_sha256": "5744645fa8fc62e3c79e3880a12b1388dda8e0342fe46bb6c700d61e98c86d0d",
+  "trips": 173,
+  "unique_pool_sequences": 19399
+}

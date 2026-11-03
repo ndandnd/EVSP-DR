@@ -1,0 +1,118 @@
+{
+  "schema": "evsp-dr-local-witness-passenger-link-audit-v1",
+  "started_utc": "2026-11-03T04:04:45.772235+00:00",
+  "inputs_sha256": {
+    "pool": "c5e711514195ef4b31066d28f9c61bc134335f445fafa0a4a45efac10e22060c",
+    "summary": "209bde0a89b1bc2be8e0cb7df33280c23aa195b75fb54cd985b65e071e2a5c54",
+    "membership": "7bda4c8e54292a2ea453a56b0018a7ac736f77e82e31253522d947c45c3fe5ab",
+    "replay": "78890a429524363eac4fdc1ed0c032621f718165521d0a6db1c8ce12d56c62ff",
+    "selected": "bc592c5b3f01a83a088ddf0d2c546981c5a8f2762a02a0f47b70f01e095402e9",
+    "instance": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+    "duty_source": "6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f"
+  },
+  "uncompressed_pool_sha256": "5744645fa8fc62e3c79e3880a12b1388dda8e0342fe46bb6c700d61e98c86d0d",
+  "root_prefix_sha256": "e0d2c8fb02c6e6c966fea22505ca22dc6ecb0d2481e61b2221e1603aa1a5351f",
+  "archive_routes": 39390,
+  "root_prefix_routes": 28253,
+  "passenger_trips": 173,
+  "independently_regenerated_witnesses": 8,
+  "witness_partition_exact_once": true,
+  "independently_regenerated_matches_saved_selection": true,
+  "full_sequences_present": 1,
+  "full_sequences_missing": 7,
+  "pool_distinct_passenger_links": 1876,
+  "witness_distinct_links": 165,
+  "witness_links_present": 161,
+  "witness_links_missing": 4,
+  "missing_full_sequences_with_all_links_present": 3,
+  "per_witness": [
+    {
+      "witness_ordinal": 1,
+      "passenger_trips": 50,
+      "distinct_links": 49,
+      "links_present": 49,
+      "links_missing": 0,
+      "full_sequence_matches": 0,
+      "full_sequence_present": false,
+      "all_links_present": true
+    },
+    {
+      "witness_ordinal": 2,
+      "passenger_trips": 14,
+      "distinct_links": 13,
+      "links_present": 13,
+      "links_missing": 0,
+      "full_sequence_matches": 4,
+      "full_sequence_present": true,
+      "all_links_present": true
+    },
+    {
+      "witness_ordinal": 3,
+      "passenger_trips": 15,
+      "distinct_links": 14,
+      "links_present": 13,
+      "links_missing": 1,
+      "full_sequence_matches": 0,
+      "full_sequence_present": false,
+      "all_links_present": false
+    },
+    {
+      "witness_ordinal": 4,
+      "passenger_trips": 14,
+      "distinct_links": 13,
+      "links_present": 12,
+      "links_missing": 1,
+      "full_sequence_matches": 0,
+      "full_sequence_present": false,
+      "all_links_present": false
+    },
+    {
+      "witness_ordinal": 5,
+      "passenger_trips": 24,
+      "distinct_links": 23,
+      "links_present": 23,
+      "links_missing": 0,
+      "full_sequence_matches": 0,
+      "full_sequence_present": false,
+      "all_links_present": true
+    },
+    {
+      "witness_ordinal": 6,
+      "passenger_trips": 16,
+      "distinct_links": 15,
+      "links_present": 14,
+      "links_missing": 1,
+      "full_sequence_matches": 0,
+      "full_sequence_present": false,
+      "all_links_present": false
+    },
+    {
+      "witness_ordinal": 7,
+      "passenger_trips": 22,
+      "distinct_links": 21,
+      "links_present": 20,
+      "links_missing": 1,
+      "full_sequence_matches": 0,
+      "full_sequence_present": false,
+      "all_links_present": false
+    },
+    {
+      "witness_ordinal": 8,
+      "passenger_trips": 18,
+      "distinct_links": 17,
+      "links_present": 17,
+      "links_missing": 0,
+      "full_sequence_matches": 0,
+      "full_sequence_present": false,
+      "all_links_present": true
+    }
+  ],
+  "elapsed_seconds": 1.3296977914869785,
+  "limits": [
+    "Passenger adjacency only; charging nodes between passengers are ignored.",
+    "Union-of-links availability does not imply one archived route or compatible charging schedule contains the full witness.",
+    "No physical feasibility, charging compatibility, optimality, pricing, or full-model certificate is established by this scan."
+  ],
+  "diagnostic_role": "post hoc GIRO-witness passenger-link membership; independent blind check reported separately",
+  "clock_scope": "elapsed_seconds includes authentication hashes, CSV reconstruction, selected-sequence matching, gzip journal parsing and link/sequence counts; excludes exploratory file discovery, checker writing and publication"
+}

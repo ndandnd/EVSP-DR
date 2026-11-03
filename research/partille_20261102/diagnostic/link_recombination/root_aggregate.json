@@ -1,0 +1,82 @@
+{
+  "adjacency_edges": 1753,
+  "blindness_note": "No witness route, assignment or duty-label files used. Root-only robustness protocol declared before root-only execution, after the full-pool pilot. Previously received post-hoc aggregate was not used to choose edges or schedules.",
+  "charging_sessions": 30,
+  "clocks": {
+    "independent_replay_limit_seconds": null,
+    "independent_replay_scope": "separate certificate/replay/exact coverage/cost/charging-block/shared occupancy check; includes imports, excludes interpreter startup",
+    "independent_replay_seconds": 0.8104089582338929,
+    "matching_limit_seconds": null,
+    "matching_scope": "file parse, authenticated pool scan, graph/matching/certificate, sequence comparison and output; excludes interpreter startup/source discovery",
+    "matching_seconds": 1.0595160843804479,
+    "retiming_limit_seconds": 180,
+    "retiming_scope": "one ordering, includes imports/input hashing/graphs/shortest paths/individual energy and route checks/shared occupancy/output; excludes interpreter startup",
+    "retiming_seconds": 2.923403917811811,
+    "total_measured_computation_seconds": 4.793328960426152,
+    "total_scope": "sum of measured matching, single retiming attempt, separate final replay scopes; excludes source discovery, script preparation, orchestration and interpreter startup"
+  },
+  "conclusion": "For this chosen retrospective case, the extra 90-minute dive is unnecessary for this repair: the original certified root-CG pool already supports a feasible eight-bus recombination. This does not establish general performance or prospective success rates.",
+  "construction": "Identical blind observed-adjacency matching and first retiming order as full-pool pilot; first 28,253 original root-CG columns only; no dive columns used",
+  "continuous_nonfleet_cost": 354.8824192821485,
+  "continuous_terminal_kwh": 26.00600120000001,
+  "exact_once": true,
+  "execution_code_sha256": {
+    "blind_link.py": "288be99d8342d75a8b014afc5a5b17ed64956553e5c631dbe2c7951615ebda52",
+    "retime_once.py": "db6b15f96008ae20264dea3bd0bc38abb5f8bec87d28bc0fcab5a7a92ac11848",
+    "verify_pilot.py": "103317518f63afed69fd6dd7d7225260b706a7d45b2b9fd31e23b14e13d2e22a"
+  },
+  "graph_certificate_sha256": "7f0f15d5980c14beca94dc5eed2a81ba4b2a73afee154614b28873fb31854c36",
+  "grid_nonfleet_cost": 374.6879999999801,
+  "grid_terminal_kwh": 14.631000600000004,
+  "independent_replay": true,
+  "maximum_matching": 165,
+  "minimum_trip_paths": 8,
+  "minimum_vertex_cover": 165,
+  "new_complete_sequences": 8,
+  "overload_minutes": 0,
+  "paths_sha256": "dcbbb5827791284ab068d4ef5c50e823a219ffe97399aa149c8a0c78e3930157",
+  "physics": {
+    "battery_kwh": 240,
+    "charge_kw": 240,
+    "initial_kwh": 240,
+    "reserve_kwh": 0,
+    "soc_step": 2.5,
+    "start_fee": 5,
+    "station_kw": {
+      "PARX": 60
+    },
+    "terminal_target_kwh": 0,
+    "time_step": 5
+  },
+  "plugs": {
+    "2190L": 1,
+    "3127L": 2,
+    "4808": 1,
+    "7880C": 1,
+    "JON_A": 1,
+    "PARX": null
+  },
+  "pool_routes": 28253,
+  "retiming_order_attempts": 1,
+  "retiming_outcome": "eight_replayed_shared_capacity_feasible",
+  "retrospective_case": "Archived 2 November 2026 C2 k8 Partille 173-trip instance, original 28,253-column certified root-CG prefix only",
+  "schedule_sha256": "938221ae4216bcfacf716614ff86ca4bc516548000bd901597024236fcce115f",
+  "schema": "blind-link-root-only-sanitized-aggregate-v1",
+  "scope": "Feasible candidate under independently replayed matching C2 chain physics; no CG/full-model pricing or charging-cost optimality certificate claimed",
+  "source_instance_sha256": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+  "source_pool_gzip_sha256": "c5e711514195ef4b31066d28f9c61bc134335f445fafa0a4a45efac10e22060c",
+  "source_pool_uncompressed_sha256": "e0d2c8fb02c6e6c966fea22505ca22dc6ecb0d2481e61b2221e1603aa1a5351f",
+  "source_prefix_authenticated": true,
+  "source_prefix_columns": 28253,
+  "tie_break_caveat": {
+    "arcs_in_equal_frequency_tie_groups": 252,
+    "dependence": "Canonical row renumbering can change selected maximum matching and the first greedy retiming outcome when scores tie; graph optimum cardinality is invariant under consistent relabelling. No row-permutation robustness runs were performed.",
+    "left_order": "trip start minute then canonical input row id",
+    "path_order": "first-trip start minute then canonical input row id",
+    "sources_with_equal_frequency_successor_ties": 83,
+    "successor_order": "descending observed-connection frequency then canonical input row id",
+    "trips_with_nonunique_start_time": 37
+  },
+  "trips": 173,
+  "unique_pool_sequences": 13093
+}
