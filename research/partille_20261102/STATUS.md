@@ -50,3 +50,5 @@ In array 915057, recombining root-column trip connections recovered the eight-bu
 With duplicate passenger service allowed and shared plug rows active, Gurobi explored 318,737 nodes in 7,200.01 seconds. It found no feasible eight-bus cover and reached its time limit. Eight-bus covering remains unresolved in that pool. The independent exactly-once infeasibility proof still applies to the stricter selection. The original 39,390-column pool was screened safely to 27,282 columns. [Two-hour receipt](diagnostic/original_pool/cover_7200s.json).
 
 [November 3 jobs, model comparisons and decision rules](NOV03_NEXT.md).
+
+Alternative visits repair all 12 archived slow-depot fixed-visit misses on the same GIRO passenger duties. [Assumptions, terminal tolerance and all 12 receipts](fixed_duty_visit_transfer/RESULTS.md).

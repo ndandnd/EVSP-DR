@@ -1,0 +1,11 @@
+# All 12 fixed-visit misses admit a five-bus schedule on the same GIRO duties
+
+The original experiment slowed the depot to 60 kW and kept the station visits chosen under faster charging. The charging model proved those specific visits could not serve the duties in 12 price cells. We tried the archived flat-price plan on the same five passenger duties and replayed its visits and charging at the target prices. All 12 passed, spanning five distinct sets of passenger duties. Slurm job 917978 completed in 41 seconds.
+
+All trips were served exactly once. The route returned to PARX on time, battery energy stayed within the tested limits, and charger occupancy never exceeded the available plugs in any minute. The opportunity chargers operated at 350 kW, with 240 kWh batteries, zero reserve, zero session fee and the historical aggregate terminal-energy requirement. All witnesses finished about 0.000001 kWh below the nominal energy target, as allowed by the source model's explicit 0.000001 kWh allowance; the replay numerical tolerance was 0.00001 kWh. The costs in the aggregate are feasible upper bounds for the tested model. They include the supplied energy distributed uniformly within each occupied charging session. No optimization over station choices or prices was performed in this check.
+
+A separate boundary audit checked duty IDs and ordered trip lists in all 104 source records. Six donor campaign records (five distinct route files) supplied 30 source duty records. They all departed from and returned to the literal depot node, none visited a charger before passenger service, and each of the 210 positive sessions fit a unique native visit window. The audit binds the input, results and checker to their hashes. The 12 newly replayed cells complement the 92 successful native fixed-visit records. They are repeated price scenarios on five cohorts.
+
+The open comparison is cost: how much a joint optimizer can save against the best charging locations and times on the same GIRO duties. This result provides a feasible comparator for each previously missing cell. Separate, matched-fleet optimization is required to quantify any assignment advantage.
+
+[Replay protocol](PROTOCOL.md) · [All 12 cases and feasible costs](aggregate.json) · [Independent boundary audit](boundary_guard/boundary_receipt.json)
