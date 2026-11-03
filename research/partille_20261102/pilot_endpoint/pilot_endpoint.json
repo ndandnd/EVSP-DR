@@ -1,0 +1,323 @@
+{
+  "verification_scope": "Native final files re-bound to route selections, input hashes, root and final pools; original registered gates rerun locally. Costs in modeled units include five per charging start.",
+  "job_accounting": {
+    "905307": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "08:32:05",
+      "start_local": "2026-11-02T23:03:00",
+      "end_local": "2026-11-03T07:35:05",
+      "restarts": 0
+    },
+    "905510": {
+      "state": "FAILED",
+      "exit_code": "3:0",
+      "elapsed": "00:00:13",
+      "start_local": "2026-11-03T07:35:38",
+      "end_local": "2026-11-03T07:35:51",
+      "restarts": 0
+    },
+    "905843": {
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "06:42:18",
+      "start_local": "2026-11-02T23:03:00",
+      "end_local": "2026-11-03T05:45:18",
+      "restarts": 0
+    },
+    "905844": {
+      "state": "FAILED",
+      "exit_code": "42:0",
+      "elapsed": "00:00:00",
+      "start_local": "2026-11-03T07:35:55",
+      "end_local": "2026-11-03T07:35:55",
+      "restarts": 0
+    },
+    "905846": {
+      "state": "FAILED",
+      "exit_code": "42:0",
+      "elapsed": "00:00:00",
+      "start_local": "2026-11-03T07:36:56",
+      "end_local": "2026-11-03T07:36:56",
+      "restarts": 0
+    },
+    "905845_[0-9%10]": {
+      "state": "CANCELLED",
+      "exit_code": "0:0",
+      "elapsed": "00:00:00",
+      "start_local": "None",
+      "end_local": "2026-11-03T07:35:56",
+      "restarts": 0
+    },
+    "905847_[0-11%12]": {
+      "state": "CANCELLED",
+      "exit_code": "0:0",
+      "elapsed": "00:00:00",
+      "start_local": "None",
+      "end_local": "2026-11-03T07:36:56",
+      "restarts": 0
+    },
+    "906017_[0-5%6]": {
+      "state": "CANCELLED",
+      "exit_code": "0:0",
+      "elapsed": "00:00:00",
+      "start_local": "None",
+      "end_local": "2026-11-03T07:35:56",
+      "restarts": 0
+    },
+    "906018_[0-5%6]": {
+      "state": "CANCELLED",
+      "exit_code": "0:0",
+      "elapsed": "00:00:00",
+      "start_local": "None",
+      "end_local": "2026-11-03T07:36:56",
+      "restarts": 0
+    }
+  },
+  "scheduler_time_zone": "America/New_York",
+  "arms": {
+    "blind": {
+      "job": 905307,
+      "attempt": 0,
+      "cpu_model": "Intel(R) Xeon(R) CPU E7-4850 v4 @ 2.10GHz",
+      "physics": {
+        "battery_kwh": 240.0,
+        "initial_kwh": 240.0,
+        "charge_kw": 240.0,
+        "station_kw": {
+          "PARX": 60.0
+        },
+        "reserve_kwh": 0,
+        "soc_step": 2.5,
+        "time_step": 5,
+        "shared_capacity": true,
+        "plug_rows": "1-minute conservative, lazy",
+        "charge_start_fee": 5.0,
+        "coverage": "cover",
+        "non_strict_tariff": true,
+        "bus_cost_kx": 100000.0,
+        "max_trip2trip_min": 57.0,
+        "max_station_to_trip_wait_min": 1560.0
+      },
+      "plugs": {
+        "2190L": 1,
+        "4808": 1,
+        "7880C": 1,
+        "JON_A": 1,
+        "3127L": 2,
+        "PARX": null
+      },
+      "weighted_root_lp_certified": false,
+      "root_stop": "cg_time_limit",
+      "weighted_full_graph_lp_bound": null,
+      "last_rmp_objective": 800236.678243288,
+      "last_route_weight": 8.000000000000053,
+      "last_minimum_reduced_cost": -0.02925696279183665,
+      "graph_seconds": 10842.29909807723,
+      "cg_seconds": 10810.152349970303,
+      "root_and_pool": {
+        "root_count": 26085,
+        "final_count": 26220,
+        "root_sha256": "49b086c14bd0d1022cca682d730986813d5a2aef52b1e2127ddcbe582d635aaf",
+        "final_pool_sha256": "4307f7ae2bfd5b228b7a22611956d776786a280f6917413e082650e7be42d2c6",
+        "initial_26085_sha256": "49b086c14bd0d1022cca682d730986813d5a2aef52b1e2127ddcbe582d635aaf",
+        "selected_verified_in_pool": 9,
+        "postroot_selected": 3,
+        "native_summary_sha256": "efa25193b9bbe07fb3c3edc8566aa7fdc8f71ca29bdd973ceaee7c4ab8ad82a1",
+        "native_selected_sha256": "40d942473ee1a2fc55e08eaf7a40ef7d0195f36106733bad5a670bd89bddad21",
+        "native_validation_sha256": "42fc9fce5764769f2de25769fc93207f01349bc5785b7fdb01c3801960d9621d",
+        "input_hashes": {
+          "Practice_Custom_DutyUnion_k08_p02_20260908.csv": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+          "hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+          "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+          "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+        }
+      },
+      "fleet_mip": {
+        "status": 9,
+        "seconds": 1800.365352742374,
+        "bound": 8.000000000000004,
+        "buses": 9
+      },
+      "charging_mip": {
+        "status": 9,
+        "cost": 254.43200000001525,
+        "bound": 227.31914116951455,
+        "fleet": 9
+      },
+      "charging_seconds": 1799.47,
+      "total_trip_services": 194,
+      "distinct_trips": 173,
+      "distinct_duplicated_trips": 20,
+      "duplicate_services": 21,
+      "cover_checked": true,
+      "exact_once": false,
+      "grid_plug_overload_minutes": 0,
+      "grid_terminal_kwh": 21.471002800000004,
+      "continuous_nonfleet_cost": 242.94434028606338,
+      "grid_nonfleet_cost": 254.43200000001525,
+      "fleet_cap": 12,
+      "simultaneous_trip_fleet_floor": 8,
+      "integer_pricing": {
+        "seconds": 5418.125276921317,
+        "budget_seconds": 5400.0,
+        "pricing_calls": 89,
+        "pricing_seconds": 3622.771800071001,
+        "lp_resolves": 105,
+        "rep_solves": 15,
+        "rep_seconds": 63.68438804987818,
+        "neighbourhoods": 16,
+        "improvements": 3,
+        "columns_offered": 305,
+        "columns_new": 135,
+        "columns_rejected_theorem1": 0,
+        "local_optimum": false,
+        "initial_fleet": 9,
+        "initial_nonfleet": 260.88,
+        "final_fleet": 9,
+        "final_nonfleet": 254.4319999999134,
+        "final_neighbourhood_stop": "time_limit",
+        "accepted_steps": [
+          {
+            "step": 4,
+            "nonfleet": 260.632
+          },
+          {
+            "step": 9,
+            "nonfleet": 258.648
+          },
+          {
+            "step": 14,
+            "nonfleet": 254.432
+          }
+        ],
+        "native_log_sha256": "aef95589dfbb799464b5d2630ce07dd3a54cdb10ca290f18b2295011f86183fb",
+        "native_receipt_sha256": "64e31d7b370c843f47912107aa9a5f76f146af96d5e7ee73535a0c5782401bfe"
+      }
+    },
+    "simple": {
+      "job": 905843,
+      "attempt": 0,
+      "cpu_model": "Intel(R) Xeon(R) Gold 6134 CPU @ 3.20GHz",
+      "physics": {
+        "battery_kwh": 240.0,
+        "initial_kwh": 240.0,
+        "charge_kw": 240.0,
+        "station_kw": {
+          "PARX": 60.0
+        },
+        "reserve_kwh": 0,
+        "soc_step": 2.5,
+        "time_step": 5,
+        "shared_capacity": true,
+        "plug_rows": "1-minute conservative, lazy",
+        "charge_start_fee": 5.0,
+        "coverage": "cover",
+        "non_strict_tariff": true,
+        "bus_cost_kx": 100000.0,
+        "max_trip2trip_min": 57.0,
+        "max_station_to_trip_wait_min": 1560.0
+      },
+      "plugs": {
+        "2190L": 1,
+        "4808": 1,
+        "7880C": 1,
+        "JON_A": 1,
+        "3127L": 2,
+        "PARX": null
+      },
+      "weighted_root_lp_certified": true,
+      "root_stop": "pricing_certified",
+      "weighted_full_graph_lp_bound": 800236.6770606566,
+      "last_rmp_objective": 800236.6770606635,
+      "last_route_weight": 7.999999999999986,
+      "last_minimum_reduced_cost": -5.747642362052829e-10,
+      "graph_seconds": 8017.170783157926,
+      "cg_seconds": 7059.826976005919,
+      "root_and_pool": {
+        "root_count": 28253,
+        "final_count": 41340,
+        "root_sha256": "e0d2c8fb02c6e6c966fea22505ca22dc6ecb0d2481e61b2221e1603aa1a5351f",
+        "final_pool_sha256": "719b65e8f1c19ae8960074d71828e5c7e082ca84f2c62d73d3417d9110a5092c",
+        "initial_26085_sha256": "55967d340fd776e5eeed2d72ba90ac0a75e114687f70d278c2463ff701c6aae3",
+        "selected_verified_in_pool": 9,
+        "postroot_selected": 6,
+        "native_summary_sha256": "c3325f16e688235988035760cc1c8ffc6987dcfff37a042cb01452ab36db44b7",
+        "native_selected_sha256": "0268076d9e41054effe9474724f22d6b82363b44b59d289f928f1be5495be4c6",
+        "native_validation_sha256": "fe6b20194f80ceeda209dce7088b046f0ec957a7fd2493cdb37aeaef2cd030b3",
+        "input_hashes": {
+          "Practice_Custom_DutyUnion_k08_p02_20260908.csv": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+          "hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+          "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+          "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+        }
+      },
+      "fleet_mip": {
+        "status": 9,
+        "seconds": 1800.3122965710936,
+        "bound": 8.000000000000025,
+        "buses": 9
+      },
+      "charging_mip": {
+        "status": 9,
+        "cost": 239.512000000017,
+        "bound": 216.51749703508628,
+        "fleet": 9
+      },
+      "charging_seconds": 1799.19,
+      "total_trip_services": 184,
+      "distinct_trips": 173,
+      "distinct_duplicated_trips": 11,
+      "duplicate_services": 11,
+      "cover_checked": true,
+      "exact_once": false,
+      "grid_plug_overload_minutes": 0,
+      "grid_terminal_kwh": 11.196001400000004,
+      "continuous_nonfleet_cost": 228.47947013008525,
+      "grid_nonfleet_cost": 239.512000000017,
+      "fleet_cap": 12,
+      "simultaneous_trip_fleet_floor": 8,
+      "wrapper_sha256": "cf2a4bc2e174d9c0506bdb63c2eba50749964b3df0106eea1a936e1fc53e0f9b",
+      "simple_dive": {
+        "state": "time_limit",
+        "fixes": 3,
+        "steps": 3,
+        "seconds_through_final_logged_iteration": 5414.634216272039,
+        "dive_trace_sha256": "4d6288a51e9a0c221f99abe867676f412503817ce8fd9287b42dcc29c9c31553"
+      }
+    }
+  },
+  "comparison": {
+    "protocol": "Fresh covering roots and equal phase limits of 10800s CG, 5400s integer treatment and 3600s final two-stage MIP. Both requested 8 CPUs, 48 GiB, with cap 12.",
+    "equal_first_26085_serialized_root_columns": false,
+    "exact_once_target_hits": 0,
+    "interpretation": "Both missed exact-once eight. Different physical CPUs and attained root pools preclude isolating the effect of the integer-side method on cost or elapsed time.",
+    "recovery": "Both solver jobs completed and produced replayable covers. Native verification exit 3 and gate exits 42 were expected scientific rejections. Neither stopped gate merits a retry or release."
+  },
+  "gates": {
+    "eight": {
+      "status": "scientific_hold",
+      "evidence": {
+        "blind": false,
+        "fixed_giro_diagnostic": true
+      },
+      "sha256": "cac474c0e844aaca3b80592f24ae5ae91dc72fc8ebb9ba41ebaea76dffdf106f"
+    },
+    "ten": {
+      "status": "scientific_hold",
+      "evidence": {
+        "blind": false,
+        "fixed_giro_diagnostic": true
+      },
+      "sha256": "6b53903e51bccaaa150298965d780546fd9f6ca0b5673b5ec105e077b583a34a"
+    }
+  },
+  "native_source_hashes": {
+    "design": "586fc4b7766b21754b429d873913034027fd9458e236feb8f23e50cabe5b9caa",
+    "gate_source": "a22251c3b5de3bd7724db5461e81a296a55882421adf238fa4ec59aa72a6ea60",
+    "blind_wrapper": "f07d7e3b8a9a4d7129b84754453503eba8fe0b40831e43e41042e79826bb273b",
+    "control_driver": "cc21d0c3c2535e28e7675fc2621f6af4510e0d87c6c26839bd2d9bd7e32243b8",
+    "validation_driver": "5a72fb549251e9889cc7d1376481ab65d1c2d630f706bc9df0cbacd63692538a",
+    "terminal_accounting": "1f878eacbefb3fe2e555031700dd2f65dba9154e4b8ff9b32c4f9adc775f75a1"
+  }
+}
