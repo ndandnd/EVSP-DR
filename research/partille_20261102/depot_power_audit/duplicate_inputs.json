@@ -1,0 +1,82 @@
+[
+  {
+    "tag": "k5",
+    "cell": "loc_flat",
+    "arm": "fixed_parx60",
+    "trip_sha256": "59f6a937b4299a53574375c3f7f822227bf7a93b9bd221642c1f47ebdf81aa40",
+    "tariff_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3",
+    "fixed_trip_sequences_sha256": "86dd5b35b37e998e0ed1897d961d4f3df793365718d57c2008dcc61f6790ceec",
+    "terminal_target_kwh": 397.91849548,
+    "route_file_sha256": "c52b057b055c4bbf1012d49bb252d79312d209f93b1541c1dc357a849eea1ed6"
+  },
+  {
+    "tag": "k5",
+    "cell": "loc_flat",
+    "arm": "joint_parx60",
+    "trip_sha256": "59f6a937b4299a53574375c3f7f822227bf7a93b9bd221642c1f47ebdf81aa40",
+    "tariff_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3",
+    "fixed_trip_sequences_sha256": "86dd5b35b37e998e0ed1897d961d4f3df793365718d57c2008dcc61f6790ceec",
+    "terminal_target_kwh": 397.91849548,
+    "route_file_sha256": "9bb3e646499ea47aa3d8028853c562086bc23a633a5308e8518bf472963ff3ba"
+  },
+  {
+    "tag": "k5",
+    "cell": "r21_flat",
+    "arm": "fixed_parx60",
+    "trip_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+    "tariff_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3",
+    "fixed_trip_sequences_sha256": "f6266070980022d94311af817af284e42bc11986340e4d71d068d8f3c9b2d673",
+    "terminal_target_kwh": 280.7833253,
+    "route_file_sha256": "8217278e4ba9ff92694cea12dfe0679789ec6b5e5a61f0dcabf0a8962df26512"
+  },
+  {
+    "tag": "k5",
+    "cell": "r21_flat",
+    "arm": "joint_parx60",
+    "trip_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+    "tariff_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3",
+    "fixed_trip_sequences_sha256": "f6266070980022d94311af817af284e42bc11986340e4d71d068d8f3c9b2d673",
+    "terminal_target_kwh": 280.7833253,
+    "route_file_sha256": "9d4fa1544e9819ac9f8360b5529a4a33267ca44cb9f6d9bf1eb12a4513889dad"
+  },
+  {
+    "tag": "exp",
+    "cell": "loc_flat",
+    "arm": "fixed_parx60",
+    "trip_sha256": "59f6a937b4299a53574375c3f7f822227bf7a93b9bd221642c1f47ebdf81aa40",
+    "tariff_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3",
+    "fixed_trip_sequences_sha256": "86dd5b35b37e998e0ed1897d961d4f3df793365718d57c2008dcc61f6790ceec",
+    "terminal_target_kwh": 397.91849548,
+    "route_file_sha256": "c52b057b055c4bbf1012d49bb252d79312d209f93b1541c1dc357a849eea1ed6"
+  },
+  {
+    "tag": "exp",
+    "cell": "loc_flat",
+    "arm": "joint_parx60",
+    "trip_sha256": "59f6a937b4299a53574375c3f7f822227bf7a93b9bd221642c1f47ebdf81aa40",
+    "tariff_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3",
+    "fixed_trip_sequences_sha256": "86dd5b35b37e998e0ed1897d961d4f3df793365718d57c2008dcc61f6790ceec",
+    "terminal_target_kwh": 397.91849548,
+    "route_file_sha256": "9bb3e646499ea47aa3d8028853c562086bc23a633a5308e8518bf472963ff3ba"
+  },
+  {
+    "tag": "exp",
+    "cell": "r21_flat",
+    "arm": "fixed_parx60",
+    "trip_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+    "tariff_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3",
+    "fixed_trip_sequences_sha256": "f6266070980022d94311af817af284e42bc11986340e4d71d068d8f3c9b2d673",
+    "terminal_target_kwh": 280.7833253,
+    "route_file_sha256": "8217278e4ba9ff92694cea12dfe0679789ec6b5e5a61f0dcabf0a8962df26512"
+  },
+  {
+    "tag": "exp",
+    "cell": "r21_flat",
+    "arm": "joint_parx60",
+    "trip_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+    "tariff_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3",
+    "fixed_trip_sequences_sha256": "f6266070980022d94311af817af284e42bc11986340e4d71d068d8f3c9b2d673",
+    "terminal_target_kwh": 280.7833253,
+    "route_file_sha256": "9d4fa1544e9819ac9f8360b5529a4a33267ca44cb9f6d9bf1eb12a4513889dad"
+  }
+]
